@@ -1012,7 +1012,21 @@ fn publish_wait(
     timer_wheel: &TimerWheel,
     runnable_count: &AtomicI64,
 ) -> bool {
-    publish_wait_with(proc, entry, state, timer_wheel, runnable_count, |_| {})
+    publish_wait_with(proc, entry, state, timer_wheel, runnable_count, false, |_| {})
+}
+
+/// Return a woken process that found nothing to do to the wait it was in.
+/// Its timer, if still pending, already belongs to that wait and is kept:
+/// registering it again would leave one more heap entry per such wake
+/// until the deadline.
+fn rewait(
+    proc: RuntimeProcessGuard<'_>,
+    entry: &ProcessEntry,
+    state: ProcessState,
+    timer_wheel: &TimerWheel,
+    runnable_count: &AtomicI64,
+) -> bool {
+    publish_wait_with(proc, entry, state, timer_wheel, runnable_count, true, |_| {})
 }
 
 fn publish_wait_with(
@@ -1021,6 +1035,7 @@ fn publish_wait_with(
     state: ProcessState,
     timer_wheel: &TimerWheel,
     runnable_count: &AtomicI64,
+    same_wait: bool,
     mut window: impl FnMut(WaitWindow),
 ) -> bool {
     let pid = proc.id;
@@ -1033,8 +1048,12 @@ fn publish_wait_with(
     // it into a later timed receive; a registration made after that would
     // replace the later timer with this stale one, and the later receive
     // would wait with no timer at all.
+    // A timer that fires between the pending check and the publish is
+    // caught by the race check below.
     if let Some(deadline) = deadline {
-        timer_wheel.insert(deadline, pid);
+        if !(same_wait && timer_wheel.has_pending_for(pid)) {
+            timer_wheel.insert(deadline, pid);
+        }
     }
     window(WaitWindow::BeforePublish);
     proc.transition(state);
@@ -1350,7 +1369,7 @@ fn worker_loop(
                 // in_flight flag it carries) is stranded, and the reactor
                 // spins on stale edge-trigger events for a half-closed peer.
                 let waiting = proc.scheduling_state();
-                if publish_wait(proc, &proc_entry, waiting, &timer_wheel, &runnable_count) {
+                if rewait(proc, &proc_entry, waiting, &timer_wheel, &runnable_count) {
                     local.push(proc_entry);
                     continue;
                 }
@@ -2198,7 +2217,7 @@ mod tests {
         let scheduler = Scheduler::new(1);
         let (pid, entry) = running_process(&scheduler);
         let requeued = publish_wait_with(entry.lock_for_runtime(), &entry, timed_wait(10),
-            &scheduler.timer_wheel, &scheduler.runnable_count, |window| {
+            &scheduler.timer_wheel, &scheduler.runnable_count, false, |window| {
                 if window != WaitWindow::AfterPublish {
                     return;
                 }
@@ -2226,7 +2245,7 @@ mod tests {
         let scheduler = Scheduler::new(1);
         let (pid, entry) = running_process(&scheduler);
         let requeued = publish_wait_with(entry.lock_for_runtime(), &entry, timed_wait(1),
-            &scheduler.timer_wheel, &scheduler.runnable_count, |window| {
+            &scheduler.timer_wheel, &scheduler.runnable_count, false, |window| {
                 if window != WaitWindow::BeforePublish {
                     return;
                 }
@@ -2260,13 +2279,37 @@ mod tests {
         let proc = entry.lock_for_runtime();
         let waiting = proc.scheduling_state();
         assert_eq!(waiting, timed_wait(1));
-        let requeued = publish_wait(proc, &entry, waiting,
+        let requeued = rewait(proc, &entry, waiting,
             &scheduler.timer_wheel, &scheduler.runnable_count);
         if !requeued {
             wake_expired(&scheduler, 1);
         }
         assert_eq!(entry.published_status(), ASTATUS_READY, "the receive must time out");
         assert_eq!(scheduler.runnable_count.load(Ordering::Acquire), 1);
+    }
+
+    // Found in review of the fix above: returning a woken process to its wait
+    // registered its still-pending timer again, so each wake that brought
+    // nothing (socket readiness, an ignored exit signal) left one more heap
+    // entry until the deadline.
+    #[test]
+    fn waking_without_work_keeps_a_single_timer() {
+        let scheduler = Scheduler::new(1);
+        let (_, entry) = running_process(&scheduler);
+        assert!(!publish_wait(entry.lock_for_runtime(), &entry, timed_wait(1_000),
+            &scheduler.timer_wheel, &scheduler.runnable_count));
+        for _ in 0..100 {
+            assert!(entry.try_wake());
+            scheduler.runnable_count.fetch_add(1, Ordering::AcqRel);
+            let proc = entry.lock_for_runtime();
+            let waiting = proc.scheduling_state();
+            assert!(!rewait(proc, &entry, waiting,
+                &scheduler.timer_wheel, &scheduler.runnable_count));
+        }
+        assert_eq!(scheduler.timer_wheel.queued_entries(), 1);
+        assert_eq!(scheduler.runnable_count.load(Ordering::Acquire), 0);
+        assert_eq!(wake_expired(&scheduler, 1_000), 1, "the wait keeps its timeout");
+        assert_eq!(entry.published_status(), ASTATUS_READY);
     }
 
     // The same EUnit run also ended early about once in 300 runs, before EUnit

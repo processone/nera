@@ -265,6 +265,12 @@ impl TimerWheel {
         self.pid_to_timer.lock().contains_key(&pid)
     }
 
+    /// Heap entries, cancelled ones included, for tests that check none pile up.
+    #[cfg(test)]
+    pub(crate) fn queued_entries(&self) -> usize {
+        self.heap.lock().len()
+    }
+
     /// Return the deadline of the earliest pending timer, or None.
     pub fn next_deadline(&self) -> Option<u64> {
         self.heap.lock().peek().map(|e| e.deadline_ms)
