@@ -5,10 +5,9 @@ Intent (NERA-87): the demo runs 85 Cowlib calls plus 6 semantic probes through
 `cowlib_demo:start_canonical/0`, which sorts map entries and spells out atoms.
 This script builds that entry point with Nera, runs the same sources on OTP
 (rebar3 + erl), sorts both outputs and requires every line to match, except
-the four known lines in KNOWN_DIFFERENCES:
+the two known lines in KNOWN_DIFFERENCES:
 
   cookie.setcookie, http.merge_pseudo_headers  bytes follow atom-key map order
-  fmt.quoted_atom_p, fmt.quoted_atom_w         Nera prints 'HTTP/1.1' unquoted (NERA-18)
 
 A known line that starts to match is reported but does not fail; any other
 difference, a missing line or a raised exception fails. This is a correctness
@@ -35,8 +34,6 @@ EXPECTED_LINES = 92  # 85 checks + 6 semantic probes + SUMMARY
 KNOWN_DIFFERENCES = {
     "cookie.setcookie",
     "http.merge_pseudo_headers",
-    "fmt.quoted_atom_p",
-    "fmt.quoted_atom_w",
 }
 
 

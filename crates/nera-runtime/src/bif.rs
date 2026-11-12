@@ -1223,12 +1223,91 @@ fn format_binary_bytes(bytes: &[u8], bit_count: usize) -> String {
     }
 }
 
-/// Format an `ErlTerm` for display, similar to Erlang's `io_lib:format("~w", [Term])`.
+/// Words OTP 29 always writes quoted: `erl_scan`'s fixed reserved words and
+/// the keywords of the `maybe_expr` feature, which OTP enables by default.
+const RESERVED_WORDS: [&str; 29] = [
+    "after", "begin", "case", "try", "cond", "catch", "andalso", "orelse", "end", "fun", "if",
+    "let", "of", "receive", "when", "bnot", "not", "div", "rem", "band", "and", "bor", "bxor",
+    "bsl", "bsr", "or", "xor", "maybe", "else",
+];
+
+/// OTP's `io_lib:quote_atom/2`: an atom is written bare only when it starts
+/// with a Latin-1 lowercase letter, continues with Latin-1 letters, digits,
+/// `_` or `@`, and is not a reserved word.
+fn atom_needs_quotes(name: &str) -> bool {
+    let lower = |c: char| c.is_ascii_lowercase() || (('ß'..='ÿ').contains(&c) && c != '÷');
+    let name_char = |c: char| {
+        lower(c)
+            || c.is_ascii_uppercase()
+            || (('À'..='Þ').contains(&c) && c != '×')
+            || c.is_ascii_digit()
+            || c == '_'
+            || c == '@'
+    };
+    let mut chars = name.chars();
+    match chars.next() {
+        Some(first) if lower(first) => {
+            !chars.all(name_char) || RESERVED_WORDS.contains(&name)
+        }
+        _ => true,
+    }
+}
+
+/// Write an atom as `~w` and `~p` do, following OTP's `io_lib:write_atom/1`
+/// (`unicode`, as with the `t` modifier) or `write_atom_as_latin1/1`, which
+/// also escapes characters above 255 as `\x{HEX}`.
+pub(crate) fn write_atom(name: &str, unicode: bool) -> String {
+    if !atom_needs_quotes(name) {
+        return name.to_string();
+    }
+    let mut out = String::with_capacity(name.len() + 2);
+    out.push('\'');
+    for c in name.chars() {
+        match c {
+            '\'' => out.push_str("\\'"),
+            '\\' => out.push_str("\\\\"),
+            ' '..='~' | '\u{a0}'..='\u{ff}' => out.push(c),
+            _ if c > '\u{ff}' => {
+                if unicode {
+                    out.push(c);
+                } else {
+                    out.push_str(&format!("\\x{{{:X}}}", c as u32));
+                }
+            }
+            '\n' => out.push_str("\\n"),
+            '\r' => out.push_str("\\r"),
+            '\t' => out.push_str("\\t"),
+            '\u{b}' => out.push_str("\\v"),
+            '\u{8}' => out.push_str("\\b"),
+            '\u{c}' => out.push_str("\\f"),
+            '\u{1b}' => out.push_str("\\e"),
+            '\u{7f}' => out.push_str("\\d"),
+            // Other control characters below 160 as three octal digits.
+            _ => {
+                let c = c as u32;
+                out.push_str(&format!("\\{}{}{}", c >> 6, (c >> 3) & 7, c & 7));
+            }
+        }
+    }
+    out.push('\'');
+    out
+}
+
+/// Format an `ErlTerm` for display, as Erlang's `io_lib:format("~tw", [Term])`
+/// does for atoms (quoted where needed, characters above 255 kept).
 /// # Safety
 /// Every reachable input object must have the runtime layout and remain live,
 /// immutable and unmoved throughout this call, including externally owned
 /// storage. No moving GC or reentrant mutation may occur during graph access.
 pub unsafe fn format_term(term: ErlTerm) -> String {
+    format_term_as(term, true)
+}
+
+/// [`format_term`] for `~w` (`unicode` false), which escapes atom characters
+/// above 255, or `~tw` (`unicode` true), which keeps them.
+/// # Safety
+/// Source graphs obey [`format_term`]'s live, immutable, unmoved contract.
+pub(crate) unsafe fn format_term_as(term: ErlTerm, unicode: bool) -> String {
     if term.is_nil() {
         return "[]".to_string();
     }
@@ -1239,7 +1318,10 @@ pub unsafe fn format_term(term: ErlTerm) -> String {
 
     if let Some(id) = term.as_atom_id() {
         let table = global_atom_table();
-        return table.resolve(id).unwrap_or_else(|| format!("atom#{}", id));
+        return match table.resolve(id) {
+            Some(name) => write_atom(&name, unicode),
+            None => format!("atom#{}", id),
+        };
     }
 
     if let Some(pid) = term.as_pid_id() {
@@ -1247,11 +1329,11 @@ pub unsafe fn format_term(term: ErlTerm) -> String {
     }
 
     if term.is_cons() {
-        return format_list(term);
+        return format_list(term, unicode);
     }
 
     if term.is_boxed() {
-        return format_boxed(term);
+        return format_boxed(term, unicode);
     }
 
     format!("#unknown<{:#x}>", term.0)
@@ -1261,14 +1343,14 @@ pub unsafe fn format_term(term: ErlTerm) -> String {
 /// lists or `[1,2|3]` for improper lists.
 /// # Safety
 /// Source graphs obey the enclosing BIF live, immutable, unmoved input contract.
-unsafe fn format_list(term: ErlTerm) -> String {
+unsafe fn format_list(term: ErlTerm, unicode: bool) -> String {
     let mut parts: Vec<String> = Vec::new();
     let mut cursor = term;
 
     while cursor.is_cons() {
         unsafe {
             let cell = &*cursor.as_cons_ptr().unwrap();
-            parts.push(format_term(cell.head));
+            parts.push(format_term_as(cell.head, unicode));
             cursor = cell.tail;
         }
     }
@@ -1276,14 +1358,14 @@ unsafe fn format_list(term: ErlTerm) -> String {
     if cursor.is_nil() {
         format!("[{}]", parts.join(","))
     } else {
-        format!("[{}|{}]", parts.join(","), format_term(cursor))
+        format!("[{}|{}]", parts.join(","), format_term_as(cursor, unicode))
     }
 }
 
 /// Format a boxed term: tuple, float, or generic.
 /// # Safety
 /// Source graphs obey the enclosing BIF live, immutable, unmoved input contract.
-unsafe fn format_boxed(term: ErlTerm) -> String {
+unsafe fn format_boxed(term: ErlTerm, unicode: bool) -> String {
     unsafe {
         let ptr = term.as_boxed_ptr().unwrap();
         let header = BoxedHeader(*ptr);
@@ -1294,7 +1376,7 @@ unsafe fn format_boxed(term: ErlTerm) -> String {
             BOXED_TUPLE => {
                 let mut elems: Vec<String> = Vec::with_capacity(arity);
                 for i in 0..arity {
-                    elems.push(format_term(ErlTerm(*ptr.add(1 + i))));
+                    elems.push(format_term_as(ErlTerm(*ptr.add(1 + i)), unicode));
                 }
                 format!("{{{}}}", elems.join(","))
             }
@@ -1333,7 +1415,11 @@ unsafe fn format_boxed(term: ErlTerm) -> String {
                 for i in crate::ffi::compare::map_iteration_order(ptr, npairs) {
                     let key = ErlTerm(*ptr.add(1 + i * 2));
                     let val = ErlTerm(*ptr.add(1 + i * 2 + 1));
-                    parts.push(format!("{} => {}", format_term(key), format_term(val)));
+                    parts.push(format!(
+                        "{} => {}",
+                        format_term_as(key, unicode),
+                        format_term_as(val, unicode)
+                    ));
                 }
                 format!("#{{{}}}", parts.join(","))
             }
@@ -1362,19 +1448,24 @@ unsafe fn format_boxed(term: ErlTerm) -> String {
 /// (`pretty = true`) do. A negative depth is unlimited. Terms deeper than
 /// the limit become `...`, following OTP's `io_lib:write/2` for `~W` and
 /// `io_lib_pretty` for `~P`; the two differ only for maps. Leaves use
-/// `format_term`, so `~P` shares `~p`'s rendering (no strings or line
-/// breaks).
+/// `format_term_as`, so `~P` shares `~p`'s rendering (no strings or line
+/// breaks) and `unicode` is the `t` modifier.
 /// # Safety
 /// Source graphs obey the enclosing BIF live, immutable, unmoved input contract.
-pub(crate) unsafe fn format_term_limited(term: ErlTerm, depth: i64, pretty: bool) -> String {
+pub(crate) unsafe fn format_term_limited(
+    term: ErlTerm,
+    depth: i64,
+    pretty: bool,
+    unicode: bool,
+) -> String {
     let mut out = String::new();
-    write_limited(&mut out, term, depth, pretty);
+    write_limited(&mut out, term, depth, pretty, unicode);
     out
 }
 
 /// # Safety
 /// Source graphs obey the enclosing BIF live, immutable, unmoved input contract.
-unsafe fn write_limited(out: &mut String, term: ErlTerm, depth: i64, pretty: bool) {
+unsafe fn write_limited(out: &mut String, term: ErlTerm, depth: i64, pretty: bool, unicode: bool) {
     if depth == 0 {
         out.push_str("...");
         return;
@@ -1386,7 +1477,7 @@ unsafe fn write_limited(out: &mut String, term: ErlTerm, depth: i64, pretty: boo
             return;
         }
         out.push('[');
-        write_limited(out, (*cell).head, below, pretty);
+        write_limited(out, (*cell).head, below, pretty, unicode);
         let (mut tail, mut d) = ((*cell).tail, below);
         loop {
             if tail.is_nil() {
@@ -1398,12 +1489,12 @@ unsafe fn write_limited(out: &mut String, term: ErlTerm, depth: i64, pretty: boo
             }
             if let Some(next) = tail.as_cons_ptr() {
                 out.push(',');
-                write_limited(out, (*next).head, d.saturating_sub(1), pretty);
+                write_limited(out, (*next).head, d.saturating_sub(1), pretty, unicode);
                 tail = (*next).tail;
                 d = d.saturating_sub(1);
             } else {
                 out.push('|');
-                write_limited(out, tail, d.saturating_sub(1), pretty);
+                write_limited(out, tail, d.saturating_sub(1), pretty, unicode);
                 break;
             }
         }
@@ -1411,7 +1502,7 @@ unsafe fn write_limited(out: &mut String, term: ErlTerm, depth: i64, pretty: boo
         return;
     }
     let Some(ptr) = term.as_boxed_ptr() else {
-        out.push_str(&format_term(term));
+        out.push_str(&format_term_as(term, unicode));
         return;
     };
     let header = BoxedHeader(*ptr);
@@ -1423,7 +1514,7 @@ unsafe fn write_limited(out: &mut String, term: ErlTerm, depth: i64, pretty: boo
                 return;
             }
             out.push('{');
-            write_limited(out, ErlTerm(*ptr.add(1)), below, pretty);
+            write_limited(out, ErlTerm(*ptr.add(1)), below, pretty, unicode);
             let mut d = below;
             for i in 1..arity {
                 if d == 1 {
@@ -1431,7 +1522,7 @@ unsafe fn write_limited(out: &mut String, term: ErlTerm, depth: i64, pretty: boo
                     break;
                 }
                 out.push(',');
-                write_limited(out, ErlTerm(*ptr.add(1 + i)), d.saturating_sub(1), pretty);
+                write_limited(out, ErlTerm(*ptr.add(1 + i)), d.saturating_sub(1), pretty, unicode);
                 d = d.saturating_sub(1);
             }
             out.push('}');
@@ -1457,9 +1548,9 @@ unsafe fn write_limited(out: &mut String, term: ErlTerm, depth: i64, pretty: boo
                 if n > 0 {
                     out.push(',');
                 }
-                write_limited(out, ErlTerm(*ptr.add(1 + i * 2)), below, pretty);
+                write_limited(out, ErlTerm(*ptr.add(1 + i * 2)), below, pretty, unicode);
                 out.push_str(" => ");
-                write_limited(out, ErlTerm(*ptr.add(2 + i * 2)), below, pretty);
+                write_limited(out, ErlTerm(*ptr.add(2 + i * 2)), below, pretty, unicode);
                 left = left.saturating_sub(1);
             }
             if cut || (!pretty && left == 1) {
@@ -1501,7 +1592,7 @@ unsafe fn write_limited(out: &mut String, term: ErlTerm, depth: i64, pretty: boo
             }
             out.push_str(">>");
         }
-        _ => out.push_str(&format_term(term)),
+        _ => out.push_str(&format_term_as(term, unicode)),
     }
 }
 

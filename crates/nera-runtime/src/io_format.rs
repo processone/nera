@@ -331,7 +331,7 @@ unsafe fn render(fmt: &str, args: &[ErlTerm]) -> Result<String, ()> {
         let directive = chars.next().ok_or(())?;
         let text = match directive {
             'w' | 'd' => term_field(
-                bif::format_term(argument(args, &mut index)?),
+                bif::format_term_as(argument(args, &mut index)?, unicode),
                 width,
                 precision,
                 pad,
@@ -343,7 +343,7 @@ unsafe fn render(fmt: &str, args: &[ErlTerm]) -> Result<String, ()> {
                 if left {
                     return Err(());
                 }
-                bif::format_term(argument(args, &mut index)?)
+                bif::format_term_as(argument(args, &mut index)?, unicode)
             }
             // Depth-limited ~w and ~p. EUnit's reporter prints failures with
             // ~tP and passes the result to io:fwrite again, so a literal
@@ -352,7 +352,7 @@ unsafe fn render(fmt: &str, args: &[ErlTerm]) -> Result<String, ()> {
                 let term = argument(args, &mut index)?;
                 let depth = argument(args, &mut index)?.as_small_int().ok_or(())?;
                 term_field(
-                    bif::format_term_limited(term, depth, false),
+                    bif::format_term_limited(term, depth, false, unicode),
                     width,
                     precision,
                     pad,
@@ -365,7 +365,7 @@ unsafe fn render(fmt: &str, args: &[ErlTerm]) -> Result<String, ()> {
                 }
                 let term = argument(args, &mut index)?;
                 let depth = argument(args, &mut index)?.as_small_int().ok_or(())?;
-                bif::format_term_limited(term, depth, true)
+                bif::format_term_limited(term, depth, true, unicode)
             }
             's' => {
                 let term = argument(args, &mut index)?;

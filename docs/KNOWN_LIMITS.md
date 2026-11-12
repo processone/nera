@@ -52,11 +52,11 @@ platform and scope.
   calls across all 25 modules without an exception. Its output matches OTP
   except for map iteration order: Cowlib walks atom-keyed maps, and Nera orders
   atom keys differently from OTP, so `Set-Cookie` attributes and HTTP/2
-  pseudo-headers come out in another byte order (equivalent when sorted). Two
-  atoms also print without quotes. Cowlib's upstream `cow_cookie` and
-  `cow_date` EUnit suites pass natively on 2.22.0 (157/157 and 27/27, as on
-  BEAM). The other upstream suites were last run on the 2.20.0 pin, and
-  Cowlib's date property cannot run natively until `rand` can be seeded.
+  pseudo-headers come out in another byte order (equivalent when sorted).
+  Cowlib's upstream `cow_cookie` and `cow_date` EUnit suites pass natively on
+  2.22.0 (157/157 and 27/27, as on BEAM). The other upstream suites were last
+  run on the 2.20.0 pin, and Cowlib's date property cannot run natively until
+  `rand` can be seeded.
 - **Poolboy:** does not compile.
 - **Thoas** (JSON) passes its recorded checks. **PropEr** passes a scoped probe.
 - **OneCached:** worked in early runs, which have not been revalidated.

@@ -29,7 +29,7 @@ erl -noshell -pa ebin _build/default/lib/cowlib/ebin \
 To compare the two runs, call `cowlib_demo:start_canonical()`, which prints map
 entries sorted and atoms quoted, so that only a difference in value shows up.
 `scripts/test-cowlib-demo.py` builds both and checks that the sorted outputs
-match, except for four known lines. `benchmarks/cowlib_bench.sh` times the same
+match, except for two known lines. `benchmarks/cowlib_bench.sh` times the same
 program on both runtimes (on demand; it is not a correctness check).
 
 ## Result (Nera main 3b2abf2, macOS arm64, OTP 29.1.2)
@@ -40,12 +40,16 @@ program on both runtimes (on demand; it is not a correctness check).
   10 runs.
 - Against OTP 29, 75 lines are byte-identical. 8 print the same value
   differently (6 maps with atom keys listed in another key order, 2
-  `'HTTP/1.1'` atoms printed without quotes, NERA-18). 2 differ in byte order
+  `'HTTP/1.1'` atoms printed without quotes). 2 differ in byte order
   only because Cowlib walks an atom-keyed map (`Set-Cookie` attribute order,
   HTTP/2 pseudo-header order); sorted, they are equivalent. The HTTP/2
   SETTINGS frame is byte-identical and re-parses to the original map on both
   runtimes. In the sorted comparison, 87 of 91 lines are identical; the 4 left
   are those 2 orders and 2 atom-quoting probes.
+- Since atoms print quoted as on OTP, 77 lines are byte-identical and the 6
+  map orders and 2 byte orders remain. In the sorted comparison, 89 of 91
+  lines are identical; the 2 left are the byte orders (macOS arm64, OTP
+  29.1.2).
 
 Speed, measured on an Apple M4 (shared machine, so treat as indicative; rerun
 `benchmarks/cowlib_bench.sh`):
