@@ -60,6 +60,13 @@ jobs:
           ${{ github.workspace }}/target/release/nera build -o thoas_test
           ./thoas_test
 
+      - name: Install BEAM reference (Linux)
+        if: runner.os == 'Linux'
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: '29.0.5'
+          rebar3-version: '3.27.0'
+
       - name: Test Cowlib differential harness
         run: python3 -m unittest discover -s tests/integration/cowlib -p 'test_*.py'
 
@@ -68,13 +75,6 @@ jobs:
           python3 -m unittest discover -s tests/integration/thoas/differential -p test_runner.py
           python3 -m unittest discover -s tests/integration/thoas/upstream -p test_run.py
           python3 -m unittest discover -s tests/integration/thoas/eunit -p 'test_*.py'
-
-      - name: Install BEAM reference (Linux)
-        if: runner.os == 'Linux'
-        uses: erlef/setup-beam@v1
-        with:
-          otp-version: '29.0.5'
-          rebar3-version: '3.27.0'
 
       - name: Compare all 122 Cowlib cases on BEAM and Nera (Linux)
         if: runner.os == 'Linux'
