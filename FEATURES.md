@@ -460,6 +460,7 @@ numbers raise `badarith`. This does not imply other `math` APIs are supported.
 | Function | Status | Notes |
 |----------|--------|-------|
 | extension/1 | ✅ | Project-owned Erlang stdlib; Unix semantics (`/` separator, no Windows backslash handling). Binary in gives binary; atoms and nested lists give a list. |
+| flatten/1 | ✅ | Atoms and nested lists become one flat character list; a binary is returned unchanged, and binaries inside a list are kept. |
 
 
 ### binary module

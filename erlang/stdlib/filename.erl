@@ -1,7 +1,7 @@
 %% Project-owned subset of filename for Unix path semantics. No OTP
 %% implementation is vendored.
 -module(filename).
--export([extension/1]).
+-export([extension/1, flatten/1]).
 
 %% The extension is the text from the last dot of the final path component,
 %% unless that dot starts the component. Binaries give binaries; any other
@@ -40,6 +40,8 @@ last_dot_list([], Found) -> Found;
 last_dot_list([$. | Tail] = Here, _) -> last_dot_list(Tail, Here);
 last_dot_list([_ | Rest], Found) -> last_dot_list(Rest, Found).
 
+%% Atoms and nested lists become one flat character list; binaries are kept.
+%% OTP's EUnit server calls it for watched paths.
 flatten(Bin) when is_binary(Bin) -> Bin;
 flatten(List) -> do_flatten(List, []).
 
