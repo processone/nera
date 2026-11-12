@@ -1,0 +1,41 @@
+[
+  {
+    "probe": "immediate_exit",
+    "native": {
+      "exit": 0,
+      "out": "before\nafter: {EXIT,timeout}\n",
+      "err": ""
+    },
+    "beam": {
+      "exit": 0,
+      "out": "before\nafter: {'EXIT',timeout}\n",
+      "err": ""
+    }
+  },
+  {
+    "probe": "nested_timeout_exit",
+    "native": {
+      "exit": 0,
+      "out": "before\n",
+      "err": ""
+    },
+    "beam": {
+      "exit": 0,
+      "out": "before\nafter: {'EXIT',timeout}\n",
+      "err": ""
+    }
+  },
+  {
+    "probe": "nested_timeout_return",
+    "native": {
+      "exit": 0,
+      "out": "before\nafter: done\n",
+      "err": ""
+    },
+    "beam": {
+      "exit": 0,
+      "out": "before\nafter: done\n",
+      "err": ""
+    }
+  }
+]

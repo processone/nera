@@ -1,0 +1,798 @@
+{
+  "start": {
+    "utc": "2026-10-15T07:30:55.131449+00:00",
+    "load": [
+      3.7109375,
+      4.55224609375,
+      4.3154296875
+    ]
+  },
+  "cases": {
+    "io": {
+      "samples_us": [
+        {
+          "before": [
+            {
+              "tcp_binary": 29846,
+              "tcp_flat": 32388,
+              "tcp_nested": 26007,
+              "file_binary": 9621,
+              "file_flat": 9932
+            },
+            {
+              "tcp_binary": 32720,
+              "tcp_flat": 31501,
+              "tcp_nested": 26453,
+              "file_binary": 9879,
+              "file_flat": 9551
+            },
+            {
+              "tcp_binary": 30345,
+              "tcp_flat": 33349,
+              "tcp_nested": 26043,
+              "file_binary": 9427,
+              "file_flat": 9676
+            },
+            {
+              "tcp_binary": 29862,
+              "tcp_flat": 31876,
+              "tcp_nested": 25609,
+              "file_binary": 11090,
+              "file_flat": 14093
+            },
+            {
+              "tcp_binary": 29960,
+              "tcp_flat": 32952,
+              "tcp_nested": 25685,
+              "file_binary": 15412,
+              "file_flat": 24142
+            },
+            {
+              "tcp_binary": 31350,
+              "tcp_flat": 32063,
+              "tcp_nested": 25452,
+              "file_binary": 19663,
+              "file_flat": 10084
+            },
+            {
+              "tcp_binary": 29930,
+              "tcp_flat": 33545,
+              "tcp_nested": 26081,
+              "file_binary": 9935,
+              "file_flat": 14377
+            },
+            {
+              "tcp_binary": 32328,
+              "tcp_flat": 31278,
+              "tcp_nested": 25180,
+              "file_binary": 9661,
+              "file_flat": 9928
+            },
+            {
+              "tcp_binary": 29824,
+              "tcp_flat": 31966,
+              "tcp_nested": 25304,
+              "file_binary": 11668,
+              "file_flat": 9746
+            }
+          ],
+          "after": [
+            {
+              "tcp_binary": 30115,
+              "tcp_flat": 32357,
+              "tcp_nested": 25838,
+              "file_binary": 10773,
+              "file_flat": 9533
+            },
+            {
+              "tcp_binary": 30693,
+              "tcp_flat": 30098,
+              "tcp_nested": 26781,
+              "file_binary": 9815,
+              "file_flat": 9552
+            },
+            {
+              "tcp_binary": 29883,
+              "tcp_flat": 32292,
+              "tcp_nested": 25914,
+              "file_binary": 9316,
+              "file_flat": 11904
+            },
+            {
+              "tcp_binary": 30378,
+              "tcp_flat": 32116,
+              "tcp_nested": 29803,
+              "file_binary": 12574,
+              "file_flat": 11004
+            },
+            {
+              "tcp_binary": 30328,
+              "tcp_flat": 33254,
+              "tcp_nested": 26894,
+              "file_binary": 12100,
+              "file_flat": 15125
+            },
+            {
+              "tcp_binary": 29995,
+              "tcp_flat": 33939,
+              "tcp_nested": 25727,
+              "file_binary": 11249,
+              "file_flat": 14150
+            },
+            {
+              "tcp_binary": 29795,
+              "tcp_flat": 31491,
+              "tcp_nested": 25973,
+              "file_binary": 9454,
+              "file_flat": 9717
+            },
+            {
+              "tcp_binary": 30521,
+              "tcp_flat": 35794,
+              "tcp_nested": 29997,
+              "file_binary": 9504,
+              "file_flat": 12522
+            },
+            {
+              "tcp_binary": 30175,
+              "tcp_flat": 31951,
+              "tcp_nested": 26462,
+              "file_binary": 9533,
+              "file_flat": 10244
+            }
+          ]
+        },
+        {
+          "before": [
+            {
+              "tcp_binary": 30211,
+              "tcp_flat": 31764,
+              "tcp_nested": 26185,
+              "file_binary": 9495,
+              "file_flat": 9738
+            },
+            {
+              "tcp_binary": 30338,
+              "tcp_flat": 31477,
+              "tcp_nested": 25216,
+              "file_binary": 9908,
+              "file_flat": 9849
+            },
+            {
+              "tcp_binary": 29712,
+              "tcp_flat": 32057,
+              "tcp_nested": 25418,
+              "file_binary": 9350,
+              "file_flat": 9609
+            },
+            {
+              "tcp_binary": 30158,
+              "tcp_flat": 31759,
+              "tcp_nested": 25238,
+              "file_binary": 9715,
+              "file_flat": 9541
+            },
+            {
+              "tcp_binary": 30184,
+              "tcp_flat": 32269,
+              "tcp_nested": 25336,
+              "file_binary": 9356,
+              "file_flat": 10002
+            },
+            {
+              "tcp_binary": 29980,
+              "tcp_flat": 31915,
+              "tcp_nested": 25896,
+              "file_binary": 9330,
+              "file_flat": 9824
+            },
+            {
+              "tcp_binary": 30175,
+              "tcp_flat": 32442,
+              "tcp_nested": 25256,
+              "file_binary": 9562,
+              "file_flat": 10133
+            },
+            {
+              "tcp_binary": 29815,
+              "tcp_flat": 32046,
+              "tcp_nested": 25475,
+              "file_binary": 9773,
+              "file_flat": 9964
+            },
+            {
+              "tcp_binary": 29663,
+              "tcp_flat": 31758,
+              "tcp_nested": 25683,
+              "file_binary": 10094,
+              "file_flat": 9753
+            }
+          ],
+          "after": [
+            {
+              "tcp_binary": 30536,
+              "tcp_flat": 31974,
+              "tcp_nested": 25625,
+              "file_binary": 9409,
+              "file_flat": 9912
+            },
+            {
+              "tcp_binary": 30255,
+              "tcp_flat": 32123,
+              "tcp_nested": 25548,
+              "file_binary": 8916,
+              "file_flat": 9542
+            },
+            {
+              "tcp_binary": 29551,
+              "tcp_flat": 32913,
+              "tcp_nested": 25700,
+              "file_binary": 9484,
+              "file_flat": 9425
+            },
+            {
+              "tcp_binary": 30133,
+              "tcp_flat": 32375,
+              "tcp_nested": 25923,
+              "file_binary": 9292,
+              "file_flat": 9680
+            },
+            {
+              "tcp_binary": 43261,
+              "tcp_flat": 33635,
+              "tcp_nested": 25987,
+              "file_binary": 9479,
+              "file_flat": 10252
+            },
+            {
+              "tcp_binary": 28438,
+              "tcp_flat": 32168,
+              "tcp_nested": 25647,
+              "file_binary": 9987,
+              "file_flat": 10223
+            },
+            {
+              "tcp_binary": 29906,
+              "tcp_flat": 33135,
+              "tcp_nested": 26262,
+              "file_binary": 9634,
+              "file_flat": 10229
+            },
+            {
+              "tcp_binary": 30280,
+              "tcp_flat": 31114,
+              "tcp_nested": 27446,
+              "file_binary": 9942,
+              "file_flat": 9758
+            },
+            {
+              "tcp_binary": 30175,
+              "tcp_flat": 31815,
+              "tcp_nested": 25352,
+              "file_binary": 9874,
+              "file_flat": 9725
+            }
+          ]
+        },
+        {
+          "before": [
+            {
+              "tcp_binary": 30208,
+              "tcp_flat": 31634,
+              "tcp_nested": 24979,
+              "file_binary": 10071,
+              "file_flat": 9994
+            },
+            {
+              "tcp_binary": 29985,
+              "tcp_flat": 31833,
+              "tcp_nested": 24892,
+              "file_binary": 9206,
+              "file_flat": 9455
+            },
+            {
+              "tcp_binary": 29884,
+              "tcp_flat": 32033,
+              "tcp_nested": 25427,
+              "file_binary": 9472,
+              "file_flat": 10509
+            },
+            {
+              "tcp_binary": 29578,
+              "tcp_flat": 31802,
+              "tcp_nested": 25886,
+              "file_binary": 9626,
+              "file_flat": 9831
+            },
+            {
+              "tcp_binary": 29513,
+              "tcp_flat": 32009,
+              "tcp_nested": 25593,
+              "file_binary": 11017,
+              "file_flat": 9872
+            },
+            {
+              "tcp_binary": 30134,
+              "tcp_flat": 32735,
+              "tcp_nested": 25689,
+              "file_binary": 9944,
+              "file_flat": 9613
+            },
+            {
+              "tcp_binary": 30407,
+              "tcp_flat": 31068,
+              "tcp_nested": 25480,
+              "file_binary": 9912,
+              "file_flat": 9808
+            },
+            {
+              "tcp_binary": 30097,
+              "tcp_flat": 31783,
+              "tcp_nested": 25606,
+              "file_binary": 9577,
+              "file_flat": 9621
+            },
+            {
+              "tcp_binary": 30654,
+              "tcp_flat": 32546,
+              "tcp_nested": 25808,
+              "file_binary": 9085,
+              "file_flat": 9581
+            }
+          ],
+          "after": [
+            {
+              "tcp_binary": 29824,
+              "tcp_flat": 32055,
+              "tcp_nested": 27875,
+              "file_binary": 9607,
+              "file_flat": 10521
+            },
+            {
+              "tcp_binary": 30124,
+              "tcp_flat": 32965,
+              "tcp_nested": 25369,
+              "file_binary": 9739,
+              "file_flat": 10105
+            },
+            {
+              "tcp_binary": 30022,
+              "tcp_flat": 32355,
+              "tcp_nested": 25768,
+              "file_binary": 10654,
+              "file_flat": 10860
+            },
+            {
+              "tcp_binary": 29982,
+              "tcp_flat": 32633,
+              "tcp_nested": 26159,
+              "file_binary": 10403,
+              "file_flat": 11009
+            },
+            {
+              "tcp_binary": 30554,
+              "tcp_flat": 31903,
+              "tcp_nested": 26082,
+              "file_binary": 9624,
+              "file_flat": 9775
+            },
+            {
+              "tcp_binary": 30523,
+              "tcp_flat": 31479,
+              "tcp_nested": 26648,
+              "file_binary": 9683,
+              "file_flat": 9766
+            },
+            {
+              "tcp_binary": 29711,
+              "tcp_flat": 32349,
+              "tcp_nested": 26650,
+              "file_binary": 10282,
+              "file_flat": 9585
+            },
+            {
+              "tcp_binary": 30384,
+              "tcp_flat": 31812,
+              "tcp_nested": 26096,
+              "file_binary": 9677,
+              "file_flat": 9965
+            },
+            {
+              "tcp_binary": 30254,
+              "tcp_flat": 32749,
+              "tcp_nested": 25824,
+              "file_binary": 9696,
+              "file_flat": 9758
+            }
+          ]
+        }
+      ],
+      "medians_us": {
+        "before": {
+          "file_binary": 9715,
+          "file_flat": 9831,
+          "tcp_binary": 30097,
+          "tcp_flat": 31966,
+          "tcp_nested": 25593
+        },
+        "after": {
+          "file_binary": 9683,
+          "file_flat": 9965,
+          "tcp_binary": 30175,
+          "tcp_flat": 32292,
+          "tcp_nested": 25987
+        }
+      },
+      "percent_change": {
+        "file_binary": -0.3293875450334549,
+        "file_flat": 1.3630352965110282,
+        "tcp_binary": 0.2591620427285113,
+        "tcp_flat": 1.0198335731715025,
+        "tcp_nested": 1.5394834525065404
+      },
+      "series_percent_change": [
+        {
+          "file_binary": -1.2078510317060864,
+          "file_flat": 10.79339508658881,
+          "tcp_binary": 0.7176234979973328,
+          "tcp_flat": 0.7142188815769002,
+          "tcp_nested": 3.025111933034852
+        },
+        {
+          "file_binary": -0.8157289270027235,
+          "file_flat": -0.6718241042345308,
+          "tcp_binary": 0.05636978579481866,
+          "tcp_flat": 0.7927306908976917,
+          "tcp_nested": 1.10944999606577
+        },
+        {
+          "file_binary": 0.7271971743195493,
+          "file_flat": 1.6007340946166293,
+          "tcp_binary": 0.08970993786756587,
+          "tcp_flat": 1.6209593817736234,
+          "tcp_nested": 1.9653811589106507
+        }
+      ]
+    },
+    "spawn": {
+      "samples_us": [
+        {
+          "before": [
+            {
+              "closure_empty": 7170,
+              "closure_heap": 6416,
+              "mfa_heap": 7042
+            },
+            {
+              "closure_empty": 7585,
+              "closure_heap": 7526,
+              "mfa_heap": 6531
+            },
+            {
+              "closure_empty": 7335,
+              "closure_heap": 6456,
+              "mfa_heap": 6910
+            },
+            {
+              "closure_empty": 7006,
+              "closure_heap": 6341,
+              "mfa_heap": 7136
+            },
+            {
+              "closure_empty": 7537,
+              "closure_heap": 7003,
+              "mfa_heap": 6970
+            },
+            {
+              "closure_empty": 12144,
+              "closure_heap": 7026,
+              "mfa_heap": 7335
+            },
+            {
+              "closure_empty": 8322,
+              "closure_heap": 7236,
+              "mfa_heap": 6749
+            },
+            {
+              "closure_empty": 7604,
+              "closure_heap": 7071,
+              "mfa_heap": 7105
+            },
+            {
+              "closure_empty": 6695,
+              "closure_heap": 6983,
+              "mfa_heap": 7047
+            }
+          ],
+          "after": [
+            {
+              "closure_empty": 7418,
+              "closure_heap": 7069,
+              "mfa_heap": 6929
+            },
+            {
+              "closure_empty": 7073,
+              "closure_heap": 6624,
+              "mfa_heap": 7054
+            },
+            {
+              "closure_empty": 7164,
+              "closure_heap": 6156,
+              "mfa_heap": 6916
+            },
+            {
+              "closure_empty": 7126,
+              "closure_heap": 6798,
+              "mfa_heap": 7030
+            },
+            {
+              "closure_empty": 7088,
+              "closure_heap": 6548,
+              "mfa_heap": 7002
+            },
+            {
+              "closure_empty": 7016,
+              "closure_heap": 6649,
+              "mfa_heap": 6943
+            },
+            {
+              "closure_empty": 7855,
+              "closure_heap": 7163,
+              "mfa_heap": 7108
+            },
+            {
+              "closure_empty": 7671,
+              "closure_heap": 7266,
+              "mfa_heap": 7381
+            },
+            {
+              "closure_empty": 7808,
+              "closure_heap": 6747,
+              "mfa_heap": 7102
+            }
+          ]
+        },
+        {
+          "before": [
+            {
+              "closure_empty": 6727,
+              "closure_heap": 6847,
+              "mfa_heap": 7317
+            },
+            {
+              "closure_empty": 7389,
+              "closure_heap": 7512,
+              "mfa_heap": 7309
+            },
+            {
+              "closure_empty": 7524,
+              "closure_heap": 6758,
+              "mfa_heap": 7201
+            },
+            {
+              "closure_empty": 7713,
+              "closure_heap": 7551,
+              "mfa_heap": 7040
+            },
+            {
+              "closure_empty": 7854,
+              "closure_heap": 7533,
+              "mfa_heap": 6701
+            },
+            {
+              "closure_empty": 7036,
+              "closure_heap": 7092,
+              "mfa_heap": 6703
+            },
+            {
+              "closure_empty": 7285,
+              "closure_heap": 6708,
+              "mfa_heap": 7381
+            },
+            {
+              "closure_empty": 7518,
+              "closure_heap": 6527,
+              "mfa_heap": 6925
+            },
+            {
+              "closure_empty": 6752,
+              "closure_heap": 6202,
+              "mfa_heap": 7242
+            }
+          ],
+          "after": [
+            {
+              "closure_empty": 7483,
+              "closure_heap": 6454,
+              "mfa_heap": 7032
+            },
+            {
+              "closure_empty": 7506,
+              "closure_heap": 6460,
+              "mfa_heap": 6556
+            },
+            {
+              "closure_empty": 6747,
+              "closure_heap": 6751,
+              "mfa_heap": 6857
+            },
+            {
+              "closure_empty": 7152,
+              "closure_heap": 6732,
+              "mfa_heap": 7123
+            },
+            {
+              "closure_empty": 7882,
+              "closure_heap": 6992,
+              "mfa_heap": 7095
+            },
+            {
+              "closure_empty": 7279,
+              "closure_heap": 6652,
+              "mfa_heap": 7034
+            },
+            {
+              "closure_empty": 7178,
+              "closure_heap": 6907,
+              "mfa_heap": 7524
+            },
+            {
+              "closure_empty": 6851,
+              "closure_heap": 6600,
+              "mfa_heap": 6807
+            },
+            {
+              "closure_empty": 6686,
+              "closure_heap": 6638,
+              "mfa_heap": 6450
+            }
+          ]
+        },
+        {
+          "before": [
+            {
+              "closure_empty": 7377,
+              "closure_heap": 6450,
+              "mfa_heap": 6566
+            },
+            {
+              "closure_empty": 7088,
+              "closure_heap": 6749,
+              "mfa_heap": 6964
+            },
+            {
+              "closure_empty": 6694,
+              "closure_heap": 6746,
+              "mfa_heap": 6972
+            },
+            {
+              "closure_empty": 6689,
+              "closure_heap": 6480,
+              "mfa_heap": 6833
+            },
+            {
+              "closure_empty": 6382,
+              "closure_heap": 6055,
+              "mfa_heap": 6982
+            },
+            {
+              "closure_empty": 7032,
+              "closure_heap": 5995,
+              "mfa_heap": 5755
+            },
+            {
+              "closure_empty": 7137,
+              "closure_heap": 6707,
+              "mfa_heap": 7353
+            },
+            {
+              "closure_empty": 7677,
+              "closure_heap": 6675,
+              "mfa_heap": 7833
+            },
+            {
+              "closure_empty": 7272,
+              "closure_heap": 6679,
+              "mfa_heap": 6646
+            }
+          ],
+          "after": [
+            {
+              "closure_empty": 7273,
+              "closure_heap": 6995,
+              "mfa_heap": 6955
+            },
+            {
+              "closure_empty": 7099,
+              "closure_heap": 6749,
+              "mfa_heap": 7004
+            },
+            {
+              "closure_empty": 7971,
+              "closure_heap": 7122,
+              "mfa_heap": 6737
+            },
+            {
+              "closure_empty": 6513,
+              "closure_heap": 6755,
+              "mfa_heap": 6450
+            },
+            {
+              "closure_empty": 7813,
+              "closure_heap": 6685,
+              "mfa_heap": 6781
+            },
+            {
+              "closure_empty": 6795,
+              "closure_heap": 6856,
+              "mfa_heap": 6626
+            },
+            {
+              "closure_empty": 6402,
+              "closure_heap": 6011,
+              "mfa_heap": 6937
+            },
+            {
+              "closure_empty": 7446,
+              "closure_heap": 7134,
+              "mfa_heap": 7217
+            },
+            {
+              "closure_empty": 6754,
+              "closure_heap": 6731,
+              "mfa_heap": 6611
+            }
+          ]
+        }
+      ],
+      "medians_us": {
+        "before": {
+          "closure_empty": 7285,
+          "closure_heap": 6746,
+          "mfa_heap": 6982
+        },
+        "after": {
+          "closure_empty": 7164,
+          "closure_heap": 6747,
+          "mfa_heap": 6955
+        }
+      },
+      "percent_change": {
+        "closure_empty": -1.6609471516815355,
+        "closure_heap": 0.014823599169888624,
+        "mfa_heap": -0.38670867946146714
+      },
+      "series_percent_change": [
+        {
+          "closure_empty": -4.948918667905,
+          "closure_heap": -3.655576181636444,
+          "mfa_heap": -0.17040613462084853
+        },
+        {
+          "closure_empty": -2.8555961564487697,
+          "closure_heap": -2.847962611362642,
+          "mfa_heap": -2.3468962644077163
+        },
+        {
+          "closure_empty": 0.15519187358916664,
+          "closure_heap": 1.1985018726591745,
+          "mfa_heap": -2.6278001148765107
+        }
+      ]
+    }
+  },
+  "binary_sha256": {
+    "/tmp/nera-iodata-before": "ca6fb8e56070a60674dd6d4d20d707e91e275885f3b88b7f15e8f86eef34308f",
+    "/tmp/nera-iodata-after": "017266790797e1e597145fc0f66da794568a146254b5b3b2c63fce7787eb47be",
+    "/tmp/nera-spawn-options-before": "c4f35be5300616e5e20ba2ebdbc135384f2d61d03fe3eb29fd1c5b50efe045fc",
+    "/tmp/nera-spawn-options-after": "09e0bb90f1f5570c092491eb5e8276300ef7d5ae4b9863a9c753f2246b6d7bcb"
+  },
+  "end": {
+    "utc": "2026-10-15T07:31:17.207480+00:00",
+    "load": [
+      2.9404296875,
+      4.32177734375,
+      4.2373046875
+    ]
+  }
+}

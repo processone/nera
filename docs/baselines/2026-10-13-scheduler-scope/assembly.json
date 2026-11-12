@@ -1,0 +1,256 @@
+{
+  "archives": {
+    "before": {
+      "path": "/tmp/nera-scheduler-artifacts/before/libnera_runtime.a",
+      "sha256": "94d926fa8307e4231ad0d724d4285b45a2783b1ad00e32bf979d34aa3dcbae2c"
+    },
+    "after": {
+      "path": "/tmp/nera-scheduler-artifacts/after/libnera_runtime.a",
+      "sha256": "71f2dcbe838e59d11027e23eedbd64daad27dd06ca9d841acab9da5a0a31e5d2"
+    }
+  },
+  "symbols": {
+    "nera_rt_send_message": {
+      "before": {
+        "instructions": 391,
+        "encoding_sha256": "918575eaafa6bbda706efe8dc50f6982b22425896ce7a1d079ce8d6ff6d974f9"
+      },
+      "after": {
+        "instructions": 399,
+        "encoding_sha256": "f99debb4b667eb1026db15da5a33ee12042916c68df31d21526eabeab88c7694"
+      },
+      "identical_instruction_encodings": false
+    },
+    "nera_rt_send_tuple": {
+      "before": {
+        "instructions": 1167,
+        "encoding_sha256": "cea678a080822596c2d258a244efe9212b1e494c26fc95839898fbc0d5fc38b6"
+      },
+      "after": {
+        "instructions": 1167,
+        "encoding_sha256": "aa2e6832c58a96a9c38a502f83cb59f450b866da8136917893b0f76f76758505"
+      },
+      "identical_instruction_encodings": false
+    },
+    "nera_rt_spawn": {
+      "before": {
+        "instructions": 300,
+        "encoding_sha256": "fc2628abd696b9c13fa36d50101829d4e84ccd3b99bdbc7f669d64c16558ad4b"
+      },
+      "after": {
+        "instructions": 309,
+        "encoding_sha256": "be5e7bea8f327a4e5335883a29264e200cce558ee745bc9a1d5308c06614aa9f"
+      },
+      "identical_instruction_encodings": false
+    },
+    "nera_rt_spawn_closure": {
+      "before": {
+        "instructions": 264,
+        "encoding_sha256": "d0bbea66d7e0e675385b60a74cfe3c2b65712cf047857438fb581aa79bb8dbf2"
+      },
+      "after": {
+        "instructions": 265,
+        "encoding_sha256": "76eb0b1b13892c840221731dfabffda690ce59602ee89572d93f3af21c4df28e"
+      },
+      "identical_instruction_encodings": false
+    },
+    "nera_rt_link": {
+      "before": {
+        "instructions": 147,
+        "encoding_sha256": "7071606179b461534346c79f50817ec6fcdeb74348b5e331c324f522fed1ef14"
+      },
+      "after": {
+        "instructions": 151,
+        "encoding_sha256": "019b2221f9af2f66b6e08838ade46c895f17f88c2c35a8de1412a8074fb87998"
+      },
+      "identical_instruction_encodings": false
+    },
+    "nera_rt_unlink": {
+      "before": {
+        "instructions": 222,
+        "encoding_sha256": "b454209bbd970e724bb9978e1f751fc7ba7c0f0f008707dd4247fff222c74135"
+      },
+      "after": {
+        "instructions": 226,
+        "encoding_sha256": "ca7c1d7f1e2ca60a598245bce6dbfc8116debf275ba21d5c996c71fd50f2b8ec"
+      },
+      "identical_instruction_encodings": false
+    },
+    "nera_rt_monitor": {
+      "before": {
+        "instructions": 227,
+        "encoding_sha256": "9bc38630c967cd006f6e3ed1c072c3df01b25b6c648213500c00057a2d6b7411"
+      },
+      "after": {
+        "instructions": 283,
+        "encoding_sha256": "1ec95330732bee04265cf828bd93e6a5aca7c06b054747869c160ac6729ac187"
+      },
+      "identical_instruction_encodings": false
+    },
+    "nera_rt_demonitor": {
+      "before": {
+        "instructions": 239,
+        "encoding_sha256": "767c18ab39a8a37967269fb76c83f0154a51f564af5bdf5e89b8a5f47aaf4b83"
+      },
+      "after": {
+        "instructions": 240,
+        "encoding_sha256": "2c969821ab65344bc35abbab748969364ecef2e6d0b3cc752eb1e97d771084c0"
+      },
+      "identical_instruction_encodings": false
+    },
+    "nera_rt_register": {
+      "before": {
+        "instructions": 297,
+        "encoding_sha256": "c6a75e6ff85e02cb730e7a1ac5e823c0e230089c0c0d3824d2995cc4885e908d"
+      },
+      "after": {
+        "instructions": 312,
+        "encoding_sha256": "f3f87487552bc036e218adc328e34ee7dce644e48f2aad15c0d04a375e605edb"
+      },
+      "identical_instruction_encodings": false
+    },
+    "nera_rt_whereis": {
+      "before": {
+        "instructions": 113,
+        "encoding_sha256": "6f078f3cdb3696b73c6ff121da49f7f3b050021ece45eba17e882d97a7c05284"
+      },
+      "after": {
+        "instructions": 112,
+        "encoding_sha256": "298e47f4d97c12f09f341214e6dfedd4a61e81fd15a5a57bf9652051e5e88a09"
+      },
+      "identical_instruction_encodings": false
+    },
+    "nera_rt_unregister": {
+      "before": {
+        "instructions": 195,
+        "encoding_sha256": "3caf2e9be343b20108f491e74b181b5f605107055a27124748a34c45633d5da3"
+      },
+      "after": {
+        "instructions": 199,
+        "encoding_sha256": "f425d9227508c0c8d0eca1f961bc204a470b842e1ebe81aad69c7feb0a44a25c"
+      },
+      "identical_instruction_encodings": false
+    },
+    "nera_rt_registered": {
+      "before": {
+        "instructions": 207,
+        "encoding_sha256": "d6cb4a71155b213882b69069d266c86a991ca3cb54cfef130d55d8fcece7b5e2"
+      },
+      "after": {
+        "instructions": 213,
+        "encoding_sha256": "b380e31a1db1acca44f9ea8896f6863299a98b2e243073044c7edb9e855539b2"
+      },
+      "identical_instruction_encodings": false
+    },
+    "nera_rt_spawn_link": {
+      "before": {
+        "instructions": 316,
+        "encoding_sha256": "4f9992b7bc806a48fae6f0a00388038e91acaf5f600d2ffb6dcc142a555cb3c7"
+      },
+      "after": {
+        "instructions": 318,
+        "encoding_sha256": "c287b4edf6f5548fc1629b9ef3cf68a12662580659732daeb07011b4b1985cd7"
+      },
+      "identical_instruction_encodings": false
+    },
+    "nera_rt_spawn_link_closure": {
+      "before": {
+        "instructions": 273,
+        "encoding_sha256": "c9d88a83f95895a07b62856847e475bafc487eb1c4bdf249697e0bc57f8d3d64"
+      },
+      "after": {
+        "instructions": 274,
+        "encoding_sha256": "547392ecf990ef3ee28f2153c0891e7c5a33d904550f6e5ff77f927eb05cf33b"
+      },
+      "identical_instruction_encodings": false
+    },
+    "nera_rt_spawn_monitor": {
+      "before": {
+        "instructions": 468,
+        "encoding_sha256": "55d3a7dc09a997d6e0f95bf60e9dbe86daaaf2fbd61628a77fd0239669ea6695"
+      },
+      "after": {
+        "instructions": 477,
+        "encoding_sha256": "171053fe6852384b92d1c9e1e1b22b135f7e1c63ef2fe895e186e2c57a04ab31"
+      },
+      "identical_instruction_encodings": false
+    },
+    "nera_rt_spawn_monitor_closure": {
+      "before": {
+        "instructions": 423,
+        "encoding_sha256": "a2123405bec078c7394e56ecd0e26981b8b654b229d452847800dfaa4e15ae95"
+      },
+      "after": {
+        "instructions": 424,
+        "encoding_sha256": "c025a9725478f21e0d8ffc8f826d92eacb58ad18eef5bc56577db7496f1ed03d"
+      },
+      "identical_instruction_encodings": false
+    },
+    "nera_rt_is_process_alive": {
+      "before": {
+        "instructions": 38,
+        "encoding_sha256": "aea629fd14b2280a9f47a5af46420693d013dc54bb0de0b541ee33caa5b0906f"
+      },
+      "after": {
+        "instructions": 38,
+        "encoding_sha256": "aea629fd14b2280a9f47a5af46420693d013dc54bb0de0b541ee33caa5b0906f"
+      },
+      "identical_instruction_encodings": true
+    },
+    "nera_rt_exit_2": {
+      "before": {
+        "instructions": 185,
+        "encoding_sha256": "21f009c0d7b7723a45db9de2ad066e1a0cde6bb3918fe2751ba8693aea6378b2"
+      },
+      "after": {
+        "instructions": 189,
+        "encoding_sha256": "dcdb3c76dc2a989d699f523c304bf694a89bba2789cd92a7c6f7049ddcd1007b"
+      },
+      "identical_instruction_encodings": false
+    },
+    "nera_rt_spawn_opt": {
+      "before": {
+        "instructions": 649,
+        "encoding_sha256": "902b46523497ff64ebcfe0128791778c090deda6b9129dc0b2d95fa5b766b7c5"
+      },
+      "after": {
+        "instructions": 657,
+        "encoding_sha256": "93b79f1ab8dc393be0c633c218ce83c60a402679a18d242043287e4b4931686a"
+      },
+      "identical_instruction_encodings": false
+    },
+    "nera_rt_spawn_opt_closure": {
+      "before": {
+        "instructions": 546,
+        "encoding_sha256": "2ba8480e2046a011e4621ac6be47bead5afc7ae7473eb9fe533f7ba14eb150bf"
+      },
+      "after": {
+        "instructions": 545,
+        "encoding_sha256": "fec5be3bd1563902e981cb2f73c3c14e0e5edfdae93a5dc97b08748520175f98"
+      },
+      "identical_instruction_encodings": false
+    },
+    "nera_rt_send_after": {
+      "before": {
+        "instructions": 469,
+        "encoding_sha256": "a4aaa648ecfe270e1b8edfcb79fd74bad6303f09a91e273a1a618b9da142df4a"
+      },
+      "after": {
+        "instructions": 504,
+        "encoding_sha256": "a9b5737e903a582ba16d15eb31bfb85d81d2f66018b8aeab8d710117fc6a8f5c"
+      },
+      "identical_instruction_encodings": false
+    },
+    "nera_rt_start_timer": {
+      "before": {
+        "instructions": 572,
+        "encoding_sha256": "ea2b45bceed5b3dc5ad447da50948bc291179267398ef917f0af41bfd1efa398"
+      },
+      "after": {
+        "instructions": 599,
+        "encoding_sha256": "4b4eb093ce451c0152906a10367093d1089bae3313a7bfb3ab1763bbac399e2c"
+      },
+      "identical_instruction_encodings": false
+    }
+  }
+}

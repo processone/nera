@@ -1,0 +1,101 @@
+{
+  "date": "2026-10-11",
+  "platform": "macOS 15.7.7 arm64",
+  "otp": "29.0.5",
+  "upstream": {
+    "url": "https://github.com/lpil/thoas.git",
+    "version": "1.2.1",
+    "commit": "7cdcec7e52b80d2869900893b2acf47199d84190",
+    "dependencies": []
+  },
+  "target": "uncommitted worktree over 4b35bf718bfbe0ea51f1e01aea7f3fb101b3cc78",
+  "base_ref": "HEAD (this correction only)",
+  "base_tree": "adff13bed35686f57b4acc9320bc6f2fef3b1258",
+  "compiler_source_commit": "326814af210ed7923c69dc53c0baa644ac149dbd",
+  "compiler_note": "Reused frozen compiler; rebuilt release runtime from this worktree and linked the adjacent archive. Compiler sources are unchanged since 326814a.",
+  "compiler_sha256": "4cbf7e9b1e5af4292da153da5ddba9f20f0ac5e8091f0db1fc3836391c964571",
+  "runtime_sha256": "b65ecaac0cded4be10c3cea7792c9df1d65cf740168b477a3835b2d756347e5b",
+  "source_sha256": {
+    "crates/nera-runtime/src/ffi/io_format.rs": "cad1f03d6c3cdaca9a745a71ff85fc040adb963c06b1672dc8bf60fb2ade1b7b",
+    "tests/io_lib_integer_format.erl": "ad463877ca67eadeced3e5d5d2d7886a65759288ff17c6e89ebb0a48ea2c30eb"
+  },
+  "checks": {
+    "red": "Rust date assertion and native Erlang match fail with unpadded fields before the fix; BEAM passes.",
+    "runtime_unit_tests": 451,
+    "runtime_doctests": 5,
+    "clippy": "passed, all targets, -D warnings",
+    "erlang_regression": {
+      "beam": "passed",
+      "nera": "passed"
+    },
+    "upstream_eunit": {
+      "returncode": 0,
+      "all_36_passed": true,
+      "beam_passed": 36,
+      "nera_passed": 36,
+      "nera_returncode": 0
+    },
+    "differential_corpus": {
+      "status": "passed",
+      "cases": 80
+    }
+  },
+  "scope": "Original upstream EUnit assertions run on BEAM; native mode forwards only Thoas API calls to the native executable. No upstream source or assertion was modified.",
+  "not_rerun": [
+    "ExUnit, JSONTestSuite and property tests (see previous full run)",
+    "full compiler workspace and full Erlang suite",
+    "Linux"
+  ],
+  "remaining_blockers": [
+    "float_to_binary short representation",
+    "binary backing-storage sharing and referenced_byte_size/1",
+    "direct native EUnit include resolution"
+  ],
+  "local_logs": "/private/tmp/nera-date-validation",
+  "corpus_report": "/private/tmp/nera-date-corpus/report.json",
+  "runtime_log": "/private/tmp/nera-date-runtime-tests-final.log",
+  "publication": "Original results above predate publication; publication_revalidation records the checks after rebasing onto main. Later commit changes only this evidence and documentation.",
+  "publication_revalidation": {
+    "base_ref": "origin/main",
+    "base_commit": "e046d620f7e6e1f552c30caf74fff0c453b3bcf4",
+    "tested_commit": "0a150dc12080526774dda73ed23ea4d320b54cdd",
+    "tested_tree": "3d3925f5280db12d21378cd43e8acc4baf573a62",
+    "compiler_profile": "release, freshly rebuilt together with the adjacent runtime",
+    "compiler_sha256": "86df1795c8240dc009787a379ced6b7283165bab529a4834878e2540743a8209",
+    "runtime_sha256": "dbd8975619adce46863d8016cb483df451dfaf419a9b0645f4477fcee2255be4",
+    "workspace_tests": {
+      "passed": 1775,
+      "failed": 0,
+      "ignored": 1,
+      "ignored_test": "reactor::tests::accept_cancellation_scaling (opt-in benchmark)"
+    },
+    "clippy": "workspace and all targets, -D warnings: passed",
+    "harness_unit_tests": {
+      "differential": 14,
+      "upstream": 9
+    },
+    "upstream_eunit": {
+      "beam_passed": 36,
+      "nera_passed": 36
+    },
+    "differential_corpus": {
+      "passed": 80
+    },
+    "scope": "ExUnit, properties and JSONTestSuite were not rerun; the earlier complete upstream run is historical.",
+    "local_logs": "/private/tmp/nera-date-pr-validation",
+    "corpus_report": "/private/tmp/nera-date-pr-corpus/report.json",
+    "workspace_log": "/private/tmp/nera-date-pr-workspace.log",
+    "build_log": "/private/tmp/nera-date-pr-build.log",
+    "clippy_log": "/private/tmp/nera-date-pr-clippy.log",
+    "erlang_suite": {
+      "passed": 294,
+      "failed": 0,
+      "skipped": 2,
+      "skipped_tests": [
+        "ets_onecached_full_startup",
+        "ets_onecached_pattern"
+      ],
+      "log": "/private/tmp/nera-date-pr-e2e.log"
+    }
+  }
+}

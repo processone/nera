@@ -1,0 +1,20 @@
+series 1 group 1 complete
+series 1 group 2 complete
+series 1 group 3 complete
+series 1 group 4 complete
+series 1 group 5 complete
+series 2 group 1 complete
+series 2 group 2 complete
+series 2 group 3 complete
+series 2 group 4 complete
+series 2 group 5 complete
+series 3 group 1 complete
+series 3 group 2 complete
+series 3 group 3 complete
+series 3 group 4 complete
+series 3 group 5 complete
+{'before-scan-0': 497237, 'after-scan-0': 496248, 'before-scan-3': 899124, 'after-scan-3': 860126}
+whole process user CPU (including warmup/startup) {'before-scan-0': 0.9911649999999952, 'after-scan-0': 0.9877409999999998, 'before-scan-3': 1.6774739999999966, 'after-scan-3': 1.6715690000000052}
+offset 0 change% -0.2
+offset 3 change% -4.34
+load (11.03759765625, 8.92333984375, 6.919921875) (13.05859375, 10.0771484375, 7.5693359375)

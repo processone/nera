@@ -1,0 +1,640 @@
+[
+  {
+    "fixture": "counters",
+    "workload": "set single",
+    "before_us": [
+      187139,
+      155086,
+      127983,
+      204978,
+      125585,
+      137736,
+      119177,
+      89924,
+      103544
+    ],
+    "after_us": [
+      810007,
+      152460,
+      891365,
+      149049,
+      118610,
+      127010,
+      120734,
+      123382,
+      362147
+    ],
+    "before_median_us": 127983,
+    "after_median_us": 149049,
+    "change_percent": 16.46
+  },
+  {
+    "fixture": "counters",
+    "workload": "set batch",
+    "before_us": [
+      223508,
+      155352,
+      342934,
+      539081,
+      167582,
+      186534,
+      221657,
+      438927,
+      248338
+    ],
+    "after_us": [
+      404442,
+      214981,
+      984832,
+      182010,
+      419000,
+      230356,
+      163496,
+      164038,
+      294950
+    ],
+    "before_median_us": 223508,
+    "after_median_us": 230356,
+    "change_percent": 3.06
+  },
+  {
+    "fixture": "counters",
+    "workload": "ordered_set single",
+    "before_us": [
+      94810,
+      111244,
+      390590,
+      209418,
+      79600,
+      108463,
+      164822,
+      269122,
+      189883
+    ],
+    "after_us": [
+      167426,
+      77055,
+      609807,
+      128553,
+      105007,
+      118258,
+      75185,
+      111113,
+      94319
+    ],
+    "before_median_us": 164822,
+    "after_median_us": 111113,
+    "change_percent": -32.59
+  },
+  {
+    "fixture": "counters",
+    "workload": "ordered_set batch",
+    "before_us": [
+      295791,
+      138003,
+      1389574,
+      113212,
+      179465,
+      204308,
+      155800,
+      112244,
+      189780
+    ],
+    "after_us": [
+      210251,
+      134780,
+      257384,
+      903594,
+      168744,
+      192113,
+      137820,
+      348415,
+      185751
+    ],
+    "before_median_us": 179465,
+    "after_median_us": 192113,
+    "change_percent": 7.05
+  },
+  {
+    "fixture": "updates",
+    "workload": "set insert",
+    "before_us": [
+      84818,
+      45736,
+      72678,
+      57881,
+      86724,
+      75356,
+      93047,
+      57801,
+      60774
+    ],
+    "after_us": [
+      73439,
+      64551,
+      53454,
+      69324,
+      54623,
+      62120,
+      64272,
+      55679,
+      990103
+    ],
+    "before_median_us": 72678,
+    "after_median_us": 64272,
+    "change_percent": -11.57
+  },
+  {
+    "fixture": "updates",
+    "workload": "set overwrite",
+    "before_us": [
+      144809,
+      92728,
+      323230,
+      243278,
+      235674,
+      131822,
+      116695,
+      212470,
+      341387
+    ],
+    "after_us": [
+      130232,
+      88163,
+      173028,
+      713556,
+      322671,
+      279906,
+      123212,
+      75819,
+      813169
+    ],
+    "before_median_us": 212470,
+    "after_median_us": 173028,
+    "change_percent": -18.56
+  },
+  {
+    "fixture": "updates",
+    "workload": "set immediate",
+    "before_us": [
+      86912,
+      37311,
+      98331,
+      74482,
+      131605,
+      66328,
+      46041,
+      282430,
+      49843
+    ],
+    "after_us": [
+      40645,
+      37017,
+      64723,
+      186248,
+      50543,
+      83041,
+      36888,
+      42816,
+      379908
+    ],
+    "before_median_us": 74482,
+    "after_median_us": 50543,
+    "change_percent": -32.14
+  },
+  {
+    "fixture": "updates",
+    "workload": "set boxed",
+    "before_us": [
+      116772,
+      93030,
+      296422,
+      217442,
+      116179,
+      89157,
+      95529,
+      294037,
+      190948
+    ],
+    "after_us": [
+      79630,
+      60254,
+      107755,
+      124151,
+      177963,
+      144734,
+      60726,
+      78645,
+      1237883
+    ],
+    "before_median_us": 116772,
+    "after_median_us": 107755,
+    "change_percent": -7.72
+  },
+  {
+    "fixture": "updates",
+    "workload": "set lookup",
+    "before_us": [
+      277312,
+      85648,
+      267360,
+      326290,
+      269416,
+      133790,
+      121696,
+      287672,
+      214022
+    ],
+    "after_us": [
+      87294,
+      67038,
+      229183,
+      549105,
+      162109,
+      176576,
+      135468,
+      78396,
+      684766
+    ],
+    "before_median_us": 267360,
+    "after_median_us": 162109,
+    "change_percent": -39.37
+  },
+  {
+    "fixture": "updates",
+    "workload": "set concurrent",
+    "before_us": [
+      57726,
+      90833,
+      81349,
+      92652,
+      88495,
+      96059,
+      89911,
+      97849,
+      154447
+    ],
+    "after_us": [
+      80482,
+      79868,
+      92447,
+      99633,
+      71782,
+      92156,
+      71859,
+      102684,
+      252327
+    ],
+    "before_median_us": 90833,
+    "after_median_us": 92156,
+    "change_percent": 1.46
+  },
+  {
+    "fixture": "updates",
+    "workload": "set concurrent_boxed",
+    "before_us": [
+      46433,
+      49937,
+      30824,
+      39827,
+      59060,
+      57639,
+      45529,
+      59251,
+      32157
+    ],
+    "after_us": [
+      40896,
+      29970,
+      31081,
+      53024,
+      59624,
+      53600,
+      61420,
+      45207,
+      118922
+    ],
+    "before_median_us": 46433,
+    "after_median_us": 53024,
+    "change_percent": 14.19
+  },
+  {
+    "fixture": "updates",
+    "workload": "ordered_set insert",
+    "before_us": [
+      108522,
+      119785,
+      344644,
+      265520,
+      233669,
+      91914,
+      96947,
+      202512,
+      331165
+    ],
+    "after_us": [
+      74497,
+      73117,
+      89764,
+      312970,
+      70621,
+      235651,
+      77659,
+      90063,
+      388229
+    ],
+    "before_median_us": 202512,
+    "after_median_us": 89764,
+    "change_percent": -55.67
+  },
+  {
+    "fixture": "updates",
+    "workload": "ordered_set overwrite",
+    "before_us": [
+      285712,
+      325437,
+      731145,
+      755965,
+      373799,
+      272258,
+      212443,
+      445808,
+      3741239
+    ],
+    "after_us": [
+      382660,
+      184437,
+      533653,
+      467646,
+      254076,
+      391893,
+      161714,
+      162712,
+      475564
+    ],
+    "before_median_us": 373799,
+    "after_median_us": 382660,
+    "change_percent": 2.37
+  },
+  {
+    "fixture": "updates",
+    "workload": "ordered_set immediate",
+    "before_us": [
+      198262,
+      205102,
+      474447,
+      310038,
+      461431,
+      156962,
+      129998,
+      271910,
+      717455
+    ],
+    "after_us": [
+      204560,
+      114112,
+      407782,
+      320175,
+      254313,
+      194400,
+      132881,
+      101241,
+      507466
+    ],
+    "before_median_us": 271910,
+    "after_median_us": 204560,
+    "change_percent": -24.77
+  },
+  {
+    "fixture": "updates",
+    "workload": "ordered_set boxed",
+    "before_us": [
+      163888,
+      199668,
+      545036,
+      285761,
+      433439,
+      189235,
+      164046,
+      312280,
+      2326036
+    ],
+    "after_us": [
+      163771,
+      131125,
+      447685,
+      462059,
+      235474,
+      173632,
+      184774,
+      132792,
+      932505
+    ],
+    "before_median_us": 285761,
+    "after_median_us": 184774,
+    "change_percent": -35.34
+  },
+  {
+    "fixture": "updates",
+    "workload": "ordered_set lookup",
+    "before_us": [
+      288520,
+      410041,
+      409981,
+      731034,
+      649405,
+      232962,
+      338801,
+      712260,
+      6296588
+    ],
+    "after_us": [
+      251185,
+      180571,
+      1106158,
+      782635,
+      415262,
+      330235,
+      216641,
+      191712,
+      701355
+    ],
+    "before_median_us": 410041,
+    "after_median_us": 330235,
+    "change_percent": -19.46
+  },
+  {
+    "fixture": "updates",
+    "workload": "ordered_set concurrent",
+    "before_us": [
+      87255,
+      128990,
+      121629,
+      137299,
+      131526,
+      100175,
+      140992,
+      106200,
+      452788
+    ],
+    "after_us": [
+      112273,
+      124392,
+      110301,
+      114392,
+      118297,
+      115513,
+      154850,
+      140590,
+      99698
+    ],
+    "before_median_us": 128990,
+    "after_median_us": 115513,
+    "change_percent": -10.45
+  },
+  {
+    "fixture": "updates",
+    "workload": "ordered_set concurrent_boxed",
+    "before_us": [
+      38451,
+      51653,
+      35789,
+      39296,
+      60124,
+      58770,
+      65800,
+      44493,
+      153207
+    ],
+    "after_us": [
+      55392,
+      69384,
+      110548,
+      35679,
+      39991,
+      55955,
+      57418,
+      44532,
+      52934
+    ],
+    "before_median_us": 51653,
+    "after_median_us": 55392,
+    "change_percent": 7.24
+  },
+  {
+    "fixture": "selection",
+    "workload": "set 1",
+    "before_us": [
+      14971,
+      17550,
+      10819,
+      15675,
+      16043,
+      18256,
+      14917,
+      12827,
+      12228
+    ],
+    "after_us": [
+      19532,
+      18502,
+      44656,
+      29451,
+      16151,
+      23355,
+      22775,
+      32895,
+      20629
+    ],
+    "before_median_us": 14971,
+    "after_median_us": 22775,
+    "change_percent": 52.13
+  },
+  {
+    "fixture": "selection",
+    "workload": "ordered_set 1",
+    "before_us": [
+      11726,
+      15169,
+      15380,
+      13312,
+      19681,
+      15949,
+      12115,
+      15048,
+      14589
+    ],
+    "after_us": [
+      15024,
+      15805,
+      29934,
+      26482,
+      18072,
+      46663,
+      31295,
+      40778,
+      27411
+    ],
+    "before_median_us": 15048,
+    "after_median_us": 27411,
+    "change_percent": 82.16
+  },
+  {
+    "fixture": "selection",
+    "workload": "set 50000",
+    "before_us": [
+      4802,
+      2653,
+      2469,
+      9727,
+      2413,
+      3376,
+      3631,
+      15283,
+      10909
+    ],
+    "after_us": [
+      4196,
+      4383,
+      12247,
+      20986,
+      10263,
+      6113,
+      10438,
+      8066,
+      8140
+    ],
+    "before_median_us": 3631,
+    "after_median_us": 8140,
+    "change_percent": 124.18
+  },
+  {
+    "fixture": "selection",
+    "workload": "ordered_set 50000",
+    "before_us": [
+      14668,
+      14120,
+      4175,
+      7285,
+      41542,
+      19958,
+      4956,
+      36787,
+      26886
+    ],
+    "after_us": [
+      9813,
+      15028,
+      123195,
+      61647,
+      13047,
+      51759,
+      74032,
+      46647,
+      72413
+    ],
+    "before_median_us": 14668,
+    "after_median_us": 51759,
+    "change_percent": 252.87
+  }
+]

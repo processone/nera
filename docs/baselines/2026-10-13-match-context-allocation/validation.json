@@ -1,0 +1,53 @@
+[
+  {
+    "name": "release",
+    "command": [
+      "cargo",
+      "build",
+      "--release",
+      "--locked"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 121.78262524999445
+  },
+  {
+    "name": "workspace-tests",
+    "command": [
+      "cargo",
+      "test",
+      "--workspace",
+      "--locked",
+      "--no-fail-fast"
+    ],
+    "exit_code": 101,
+    "elapsed_seconds": 46.78446237499884
+  },
+  {
+    "name": "clippy",
+    "command": [
+      "cargo",
+      "clippy",
+      "--workspace",
+      "--all-targets",
+      "--locked",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 4.873417915994651
+  },
+  {
+    "name": "erlang-suite",
+    "command": [
+      "./target/release/nera",
+      "test",
+      "-j",
+      "1",
+      "--timeout",
+      "30"
+    ],
+    "exit_code": 1,
+    "elapsed_seconds": 308.5670994579996
+  }
+]

@@ -1,0 +1,23 @@
+{
+  "base": "ff9828a2561214dc0a370381cc2c7f329fccdacb",
+  "branch": "mr/scheduler-borrow-scope",
+  "state": "uncommitted worktree",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "source_sha256": {
+    "crates/nera-runtime/src/ffi/helpers.rs": "245d9188b475f5e1e12c962372982676d156c7387eaa5f0bd2ae71734727fe70",
+    "crates/nera-runtime/src/ffi/process.rs": "72ceb57af4c2a84aa252b718b371066a2a0272881ff9819df65a73924d4ff891",
+    "crates/nera-runtime/src/ffi/timer.rs": "2793686b330099ac4ae7cc0359d4bc03bf2207988be7989b02111d166513323a",
+    "crates/nera-runtime/src/ffi/mod.rs": "67c22c34e8e99f4edd110273d0f45155c550a91eac373c9929f1fa02dec3c893",
+    "crates/nera-runtime/src/process.rs": "b5c9b33d82ad6d3f55623310413f721c1cc75dee94d88e356ed2500369ae6208",
+    "crates/nera-runtime/tests/scheduler_borrow_scope.rs": "ad2b78902860d655aa91108a79857cd8b07222a8823b062f2e6154288ff8687b",
+    "docs/baselines/2026-10-13-scheduler-scope/probe.erl": "0f06955415f8dbc05ccae5ccee256515f8f770b8a05f4391466af2ca3f3ab0d4"
+  },
+  "artifacts_sha256": {
+    "/tmp/nera-scheduler-artifacts/before/nera": "13abe591c0bf9ade0eddee1a47cda973a4988713197eed8f215bfa19ba83b2d4",
+    "/tmp/nera-scheduler-artifacts/before/libnera_runtime.a": "94d926fa8307e4231ad0d724d4285b45a2783b1ad00e32bf979d34aa3dcbae2c",
+    "/tmp/nera-scheduler-artifacts/before/probe": "f8d5007ac42c201fb5ec93b291818eb9f349f4d3840f0a35cd6972ff35bbc4ae",
+    "/tmp/nera-scheduler-artifacts/after/nera": "13abe591c0bf9ade0eddee1a47cda973a4988713197eed8f215bfa19ba83b2d4",
+    "/tmp/nera-scheduler-artifacts/after/libnera_runtime.a": "71f2dcbe838e59d11027e23eedbd64daad27dd06ca9d841acab9da5a0a31e5d2",
+    "/tmp/nera-scheduler-artifacts/after/probe": "7b09dd16c090052d3fb8f909726a66fabfd0ef5b297d5f08d910a6ae16a32bab"
+  }
+}

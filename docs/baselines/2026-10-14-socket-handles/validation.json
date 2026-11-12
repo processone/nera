@@ -1,0 +1,28 @@
+{
+  "workspace-tests.txt": {
+    "passed": 1945,
+    "failed": 0,
+    "ignored": 1
+  },
+  "release-tests.txt": {
+    "passed": 617,
+    "failed": 0,
+    "ignored": 1
+  },
+  "native-tcp-tests.txt": {
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0
+  },
+  "base": "4559336713d72523e73ec3d2dad364f09e3f94d8",
+  "target": "local worktree mr/socket-handle-domain",
+  "platform": "macOS-15.7.7-arm64-arm-64bit-Mach-O",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "artifacts": {
+    "/tmp/nera-transfer-target/release/nera": "a165a5e731713fb9d0b5b26636fe67313fb93653a18aa6f4b1ac3ab9551db96d",
+    "/tmp/nera-transfer-target/release/libnera_runtime.a": "e0918aaffad965c9de5dd1e3d4e672237c1550abc721d533f070d5b3b4efb6d5",
+    "/tmp/nera-socket-before": "67a33a3b413816f6b9a16922bc5ac1829047711fb237fd503086dcab3934e792",
+    "/tmp/nera-socket-after": "42ba9d177faa2ce6f1fdcb2acfe7ea5767cf0b3f5ea4bc56538f86b6cc01dc36",
+    "/tmp/nera-socket-control": "e4e67f6c6acd853d39e6556cb5745167ac38ba02bca44c23fd899f6be1cefb35"
+  }
+}

@@ -1,0 +1,7 @@
+Running 1 tests (1 threads)
+────────────────────────────────────────────────────────────
+  PASS  counters_basic                            886ms  [1/1]
+────────────────────────────────────────────────────────────
+Results: 1 passed, 0 failed (0 compile), 0 skipped / 1 total
+
+ALL TESTS PASSED

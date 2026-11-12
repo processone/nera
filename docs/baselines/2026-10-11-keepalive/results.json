@@ -1,0 +1,83 @@
+{
+  "base_ref": "origin/main",
+  "base_commit": "d0420d8800d78e641d592fe15e6b482881a8ddb9",
+  "target": "uncommitted worktree on mr/initial-process-keepalive",
+  "source_sha256": {
+    "crates/nera-runtime/src/scheduler.rs": "1fcf0629258f0e7e510b8b853c5ef043220190f5aa7729128120336142c12828",
+    "tests/initial_process_keepalive.erl": "289730729be3c83d8f496b0971476ee49253217183b336ceff49a289bef7069a",
+    "docs/baselines/2026-10-11-keepalive/README.md": "fd5ff571ce2d0b560b950ee256ee10bee0fd365a7dc485f3ad313e7504a4d77d"
+  },
+  "runtime_logic_unchanged": true,
+  "rust_tests": {
+    "passed": 1744,
+    "failed": 0,
+    "ignored": 0
+  },
+  "erlang_baseline": {
+    "passed": 285,
+    "failed": 1,
+    "compile_failed": 0,
+    "skipped": 2,
+    "total": 288
+  },
+  "clippy_exit": 0,
+  "release_build_exit": 0,
+  "nera_repetitions": {
+    "passed": 100,
+    "total": 100
+  },
+  "beam_repetitions": {
+    "explicit_keepalive_passed": 30,
+    "plain_startup_expected_failures": 10
+  },
+  "mutation_control": {
+    "original_test_exit": 0,
+    "strengthened_test_exit": 1,
+    "restored_strengthened_test_exit": 0,
+    "temporary_mutation_removed": true
+  },
+  "local_evidence_sha256": {
+    "target/keepalive-audit/verification-results.json": "e08db672b157de51fbcf152ea91cbc7bc3560d37a504832a37693ad4a92436d0",
+    "target/keepalive-audit/old-test-compile.log": "80c21403e0e432504d32b7422a4253f1938e774eab9dcf28dea4a519240982c1",
+    "target/keepalive-audit/erlang-baseline.log": "3268daf6f29918afc134def044a21669cd94a5560afa4f0cf8108640aaf99110",
+    "target/keepalive-audit/tcp-repeat-08.log": "14316926d51784897b77cf32dcd819d9cab330c704d5bc7549cb79c78fef4dd9",
+    "target/keepalive-audit/tcp-repeat-09.log": "aab24aeb21d36f0c2955fb9d8829a5979d4294fd17dd7f517f24c9c417fed168",
+    "target/keepalive-audit/tcp-recheck.log": "f08d8ff707ec41b848f88e61b64d7a1ffde67e35d3379c211dc482a147fc28cd",
+    "target/keepalive-audit/clippy.log": "3a8b04c6714efda261c65e93377f1b6eac7a0dcfce08ca4e850768c57249d2d9",
+    "target/keepalive-audit/tcp-repeat-results.json": "73026785dcdd48bce3afe1309504e03e907f0202ee3f26eac19e377f4a4d0fdf",
+    "target/keepalive-audit/rust-tests.log": "54a7f73755d98ad4c316b7b86fdb409edab4a09796c2d0f2dbf9db7149a006ed",
+    "target/keepalive-audit/old-test-mutant.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "target/keepalive-audit/restored-runtime-build.log": "9ace80de0a1072947aa8ecffbf05c85fecd17d384bb168ab710a720eddbdedf4",
+    "target/keepalive-audit/final-build.log": "aa1012f4b43242f8753372d3b22f99cbb48ddcef1f5f493f60c72c9982ad78b0",
+    "target/keepalive-audit/new-test-green.log": "6b5579dc13f8fd41b29a4e02c56ae36cd3d75b54fa34090d683ef435dda0f72a",
+    "target/keepalive-audit/beam-owner-exit.log": "95ebea940092c26b77daed50657e69f7669d61a14bf2157c5f052c7a6f21b81c",
+    "target/keepalive-audit/fresh-build.log": "8845a96e2397903ace62b5054b3f20920ea096f11f8488748e9a097c8b6da187",
+    "target/keepalive-audit/beam-results.json": "7b5a5399ba8c841bca386e8223ef38a74c27ca2a5c7815f6f4e5f3a19facc25f",
+    "target/keepalive-audit/mutant-build.log": "e6deb44a56fa4a07923eb3ae055e7272fb149d837e398d2cfaf8e06f45289965",
+    "target/keepalive-audit/new-test-mutant.log": "fcc3ea4dd83e10193a721218914bcf9e5fe811527a392070d7dbde092bed4fa8",
+    "target/keepalive-audit/tcp-repeat-07.log": "a27cbe0266d08b157b637012a89ec014c66f980a918ade89d64e2aa3e6ef41f4",
+    "target/keepalive-audit/nera-repeat-results.json": "555db64dc4bc83a5dea68cee07ca2dc6a593c59e00da4aa4698f77353dbcba72",
+    "target/keepalive-audit/repeat-compile.log": "80c21403e0e432504d32b7422a4253f1938e774eab9dcf28dea4a519240982c1",
+    "target/keepalive-audit/tcp-repeat-06.log": "5f8d85aad7f2c806f00524b4c69d7049b72c7e877d05a4b7306924cba5cf799a",
+    "target/keepalive-audit/tcp-repeat-10.log": "db30d020d8a5c17d85102262ea4226395f408bf0e08bee103b5f84118b47ecb7",
+    "target/keepalive-audit/tcp-repeat-04.log": "663a535e8098174eacfde39c2ca8a51cf56116db99ce628268c00c46b4895514",
+    "target/keepalive-audit/tcp-repeat-05.log": "1f2687c89511255e12f0a3bcbf18799cd983c627b1e31b68f160580e98fcd056",
+    "target/keepalive-audit/tcp-repeat-01.log": "89f06c6c8744ea04e91e242f069a2fe603df54931dd0a0ea910d06818c0e6cad",
+    "target/keepalive-audit/tcp-repeat-02.log": "b10027762e548d99450371966fb5a9fd0254c25180988a50b996d76b528edf53",
+    "target/keepalive-audit/mutation-results.json": "230c52dab494bf91c9de10aa2832bb49d339199e3b3ffeb45337de82bed4fb17",
+    "target/keepalive-audit/tcp-repeat-03.log": "6bb57c2ee830dcad39b16a629c607f1b7bdd385bcfe3c44ea963f361c3cc8835"
+  },
+  "omitted": [
+    "remote CI",
+    "cross-platform builds"
+  ],
+  "publication": "uncommitted; not pushed",
+  "baseline_green": false,
+  "tcp_recheck": {
+    "immediate_rerun_passed": true,
+    "subsequent_runs": 10,
+    "passed": 8,
+    "failed": 2
+  },
+  "remaining_failure": "tcp_reactor_stress: timeout_mp_rearm; cause not established"
+}

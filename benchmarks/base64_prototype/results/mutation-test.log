@@ -1,0 +1,29 @@
+
+running 3 tests
+test tests::malformed_inputs_delegate ... ok
+test tests::known_vectors_and_noncanonical_tails ... FAILED
+test tests::all_lengths_and_options_roundtrip ... FAILED
+
+failures:
+
+---- tests::known_vectors_and_noncanonical_tails stdout ----
+
+thread 'tests::known_vectors_and_noncanonical_tails' (3289218) panicked at /tmp/nera-base64-mutant.rs:102:13:
+assertion `left == right` failed
+  left: [63, 103, 61, 61]
+ right: [90, 103, 61, 61]
+
+---- tests::all_lengths_and_options_roundtrip stdout ----
+
+thread 'tests::all_lengths_and_options_roundtrip' (3289217) panicked at /tmp/nera-base64-mutant.rs:134:21:
+assertion `left == right` failed
+  left: None
+ right: Some([0])
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    tests::all_lengths_and_options_roundtrip
+    tests::known_vectors_and_noncanonical_tails
+
+test result: FAILED. 1 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

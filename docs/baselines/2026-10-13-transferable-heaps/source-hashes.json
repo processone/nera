@@ -1,0 +1,34 @@
+{
+  "base_ref": "origin/main",
+  "base": "79e2bd1eddf5e18589c601b657702ac01f7174e4",
+  "target": "uncommitted worktree /tmp/nera-transferable-heap-fragments",
+  "branch": "mr/transferable-heap-fragments",
+  "source_sha256": {
+    "CHANGELOG.md": "d4da46fbde4b299f9a7d1204f581c57711f7bd2f348cf09ac4b745bb776b287b",
+    "crates/nera-runtime/src/ffi/gen_tcp.rs": "add3b029f033d2876d132a376354f50d8c46b47967235d78ea12bd5ee5c5a344",
+    "crates/nera-runtime/src/ffi/process.rs": "4f68a57a55facf8a67f299b112490d9519bea7b51c0997f099bd20e751038564",
+    "crates/nera-runtime/src/heap.rs": "82a486a180768e796f1dc88622feb1126caea16f667c963e1469d6322d6befee",
+    "crates/nera-runtime/src/message.rs": "ca5735d16f8ffc62dc0fc64e8bd1513382f951d54d45886f83b96cb1ccc7e322",
+    "crates/nera-runtime/src/scheduler.rs": "032bfffdfdfb20ba196fe0e2a1f79d5ad30dc505061066ab364e36f987bd27ff",
+    "crates/nera-runtime/tests/fragment_heap_contract.rs": "1080d402c0ad89517b3b8fd8ac5330db4da9e892b9840a5309ca546c3aa44040",
+    "tests/process_info_snapshot_roots.erl": "41a1bef60ea2877ff919d665135ef73f5893d6fa3b29a74fcaad4b590a1c8539",
+    "docs/baselines/2026-10-13-transferable-heaps/probe.rs": "84ad90e554c8d51bc47b29019165a92c0a0f153967918452a0483c6aab75fe2b",
+    "docs/baselines/2026-10-13-transferable-heaps/measure.py": "378a06d19528b229e26db155aa926b1112dc67370574812af1ad3a78164e0e0b",
+    "Cargo.lock": "a210f397cb773d07c39ed4827a9aea44092f56ee7c2a438f708784dfa5769f80"
+  },
+  "artifact_sha256": {
+    "before": {
+      "nera": "ed282ae8be1d0604ec832f169fa96b3adc2cce824a49e2c7a66c0ab1b86916f0",
+      "libnera_runtime.rlib": "46d345692419bde00f9e23d50a5896189176b1d335a068844ec536845cbb289c",
+      "libnera_runtime.a": "d029cc3204d7be47afbb9191fa9df8ab7a97eeb7cf3e498fff17e266016c9625",
+      "probe": "f56aec6ac1ed7cb38ef3a44d89f49f143feacc89e389cabf425398847643c579"
+    },
+    "after": {
+      "nera": "bc1a8fb5b48a3dbf0a1138d60504eb655f1f5dca11d94ee043e124ffc5e7d781",
+      "libnera_runtime.rlib": "0797703e832cc908dc902f5b14ac92054dfe73ca4c57b79a13ac4f14eda1b211",
+      "libnera_runtime.a": "2505290f469d6f8c9d7fe4ba672a73147a8771370dbfcb70a14bdfed2065eaeb",
+      "probe": "9656e4873ba424903b509d190920d8dfdc0f419aaadb957f6f0882e0e5bc5653"
+    }
+  },
+  "publication_main": "f65b8be4fc36e51cafdace1df9e639bcce62c214"
+}

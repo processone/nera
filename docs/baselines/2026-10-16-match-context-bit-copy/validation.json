@@ -1,0 +1,20 @@
+{
+  "base_ref": "origin/main",
+  "base": "663aa0b41c789f1a3b90cedb74d75bfb71434e29",
+  "target": "uncommitted worktree mr/match-context-bit-copy",
+  "source_manifest_sha256": "13b6fcadf93c1e53fb5b9552cf0f84511b3bc414724a0bc780dbb88b1e7add2f",
+  "checks": {
+    "release_build": 0,
+    "clippy": 0,
+    "workspace": 0,
+    "runtime_release": 0,
+    "native_82": 0,
+    "intel_runtime_check": 0,
+    "windows_runtime_check": 0,
+    "otp29": 0,
+    "performance": 0,
+    "tracked_and_untracked_whitespace": 0,
+    "final_source_hashes_match": true
+  },
+  "publication": "not requested; no commit, push or PR"
+}

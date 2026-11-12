@@ -1,0 +1,47 @@
+%% EXPECT: ok
+%% filename:extension/1 with Unix semantics, as on OTP 29. Expected values
+%% were taken from BEAM.
+-module(filename_extension).
+-export([test/0]).
+test() ->
+    ".erl" = filename:extension("a/b.erl"),
+    <<".erl">> = filename:extension(<<"a/b.erl">>),
+    [] = filename:extension(foo),
+    [] = filename:extension(a@b),
+    ".erl" = filename:extension('x.erl'),
+    [] = filename:extension("foo"),
+    <<>> = filename:extension(<<"foo">>),
+    [] = filename:extension(".bashrc"),
+    <<>> = filename:extension(<<".bashrc">>),
+    [] = filename:extension("a.b/c"),
+    <<>> = filename:extension(<<"a.b/c">>),
+    ".gz" = filename:extension("a.b.tar.gz"),
+    <<".gz">> = filename:extension(<<"a.b.tar.gz">>),
+    ".b" = filename:extension(["a", ".b"]),
+    ".b" = filename:extension([a, ".b"]),
+    ".b" = filename:extension(["a", [".", ["b"]]]),
+    <<>> = filename:extension(<<"a.b/">>),
+    [] = filename:extension("a.b/"),
+    "." = filename:extension("a."),
+    <<".">> = filename:extension(<<"a.">>),
+    [] = filename:extension("/"),
+    [] = filename:extension(""),
+    <<>> = filename:extension(<<>>),
+    ".é" = filename:extension("a.é"),
+    <<".é"/utf8>> = filename:extension(<<"a.é"/utf8>>),
+    <<".", 255>> = filename:extension(<<"a.", 255>>),
+    ".c" = filename:extension("a//b.c"),
+    "." = filename:extension("a.b//x."),
+    "." = filename:extension(".."),
+    "." = filename:extension("a.."),
+    ".b\\c" = filename:extension("a.b\\c"),
+    [] = filename:extension(["a", 5]),
+    [] = filename:extension("a"++bad),
+    function_clause = failure(fun() -> filename:extension(5) end),
+    function_clause = failure(fun() -> filename:extension(["a", <<".">>, "b"]) end),
+    function_clause = failure(fun() -> filename:extension([<<"a.b">>|<<"c">>]) end),
+    ".erl" = apply(filename, extension, ["x.erl"]),
+    F = fun filename:extension/1,
+    ".erl" = F("x.erl"),
+    io:format("ok~n").
+failure(F) -> try F() of _ -> unexpected_return catch error:R -> R end.

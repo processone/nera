@@ -1,0 +1,56 @@
+[
+  {
+    "test": "tcp_reactor",
+    "run": 1,
+    "exit": 0,
+    "timeout": false,
+    "seconds": 0.433,
+    "stdout": "",
+    "stderr": "reactor stats: events=746 missing_token=6 active_reads=459 setopts_fastpath=0 pending=0 active_regs=0\n"
+  },
+  {
+    "test": "tcp_reactor",
+    "run": 2,
+    "exit": 0,
+    "timeout": false,
+    "seconds": 0.265,
+    "stdout": "",
+    "stderr": "reactor stats: events=1072 missing_token=13 active_reads=459 setopts_fastpath=0 pending=0 active_regs=0\n"
+  },
+  {
+    "test": "tcp_reactor",
+    "run": 3,
+    "exit": 0,
+    "timeout": false,
+    "seconds": 0.277,
+    "stdout": "",
+    "stderr": "reactor stats: events=1801 missing_token=10 active_reads=459 setopts_fastpath=0 pending=0 active_regs=0\n"
+  },
+  {
+    "test": "tcp_reactor_perf",
+    "run": 1,
+    "exit": 0,
+    "timeout": false,
+    "seconds": 0.208,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "test": "tcp_reactor_perf",
+    "run": 2,
+    "exit": 0,
+    "timeout": false,
+    "seconds": 0.041,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "test": "tcp_reactor_perf",
+    "run": 3,
+    "exit": 0,
+    "timeout": false,
+    "seconds": 0.039,
+    "stdout": "",
+    "stderr": ""
+  }
+]

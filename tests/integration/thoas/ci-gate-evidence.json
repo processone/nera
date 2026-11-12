@@ -1,0 +1,252 @@
+{
+  "date": "2026-10-11",
+  "target": "uncommitted capture fix and regression gates over e2421030e20b5d74e310610b082293df3ece951c",
+  "platform": "macOS arm64",
+  "otp": "29.0.5",
+  "linux_ci_executed": false,
+  "compiler_sha256": "5172a07ef77d6b1363b12fd746a07ab0c14b3e9bbb2cdd0c32c0a7dd0eee7c9d",
+  "runtime_sha256": "1c3e358153fe7f529e943d172781a6fc812d2e24ff6405a66aa49dd2fbbf491a",
+  "source_sha256": {
+    ".github/workflows/ci.yml": "c2b3367b82e357f09f79635f9dd69f5438942578bd9ce0eb2339b9dd9b7dfb00",
+    "tests/integration/thoas/eunit/run_assertions.py": "340c830cc8f794ff88cbfa001dfbef1c91067cd61b8fe2c611a594bb48e6a115",
+    "tests/integration/thoas/eunit/run_probes.py": "7be3ab19f8561f660e2a347667ecc8c357e2caea3e0ca0e8e3e93d2371f92616",
+    "tests/integration/thoas/eunit/known_failures.json": "130b51e85f78a4d24db0639c0ac7c3090ed87ae05e224372f66328ba14cd3381",
+    "tests/integration/thoas/eunit/test_run_assertions.py": "7f035c42b9137abaf88d1d8bc9d5c036ebbeba31f68c0e228533641426808927",
+    "tests/integration/thoas/memory/run.py": "169eaf3b7e6437480659b40bc8b50dd5c91944685e316aedfe3277300684e91d",
+    "crates/nera-ir/src/warnings/ast_walkers.rs": "d58f2e13197764b56151a0d49b07a11717e02950df0e813dfade7ead35f2d4d6",
+    "crates/nera-ir/src/lower/tests.rs": "b6023985568526dc471e8b6f8e7c74a716f0739ddf04e13a6c6a7c4756bb3b88",
+    "tests/closure_callee_capture.erl": "6270f8be25e91faea047a7a7a0003d0a77d127dfd841847f7cf20c2ee132707a"
+  },
+  "checks": {
+    "python_harness_tests": {
+      "passed": 29,
+      "new": 6,
+      "existing": 23
+    },
+    "yaml_syntax": "passed",
+    "memory": {
+      "status": "passed",
+      "cases": 4,
+      "engines": [
+        "BEAM",
+        "Nera"
+      ],
+      "referenced_byte_size_regression": "passed on both"
+    },
+    "otp_probes": {
+      "status": "passed",
+      "probes": [
+        {
+          "module": "header_probe",
+          "beam": "EUNIT_HEADERS_OK",
+          "nera": "EUNIT_HEADERS_OK"
+        },
+        {
+          "module": "assertion_probe",
+          "beam": "OTP_ASSERTIONS_OK",
+          "nera": "OTP_ASSERTIONS_OK"
+        }
+      ]
+    },
+    "native_assertion_baseline": {
+      "status": "passed_with_known_failures",
+      "upstream_commit": "7cdcec7e52b80d2869900893b2acf47199d84190",
+      "beam_eunit_passed": 36,
+      "native_counts": {
+        "passed": 26,
+        "known_failure": 10,
+        "unexpected_failure": 0,
+        "unexpected_success": 0
+      },
+      "results": [
+        {
+          "index": 1,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 2,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 3,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 4,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 5,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 6,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 7,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 8,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 9,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 10,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 11,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 12,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 13,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 14,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 15,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 16,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 17,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 18,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 19,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 20,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 21,
+          "status": "known_failure",
+          "exit_code": 1
+        },
+        {
+          "index": 22,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 23,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 24,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 25,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 26,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 27,
+          "status": "known_failure",
+          "exit_code": 1
+        },
+        {
+          "index": 28,
+          "status": "known_failure",
+          "exit_code": 1
+        },
+        {
+          "index": 29,
+          "status": "known_failure",
+          "exit_code": 1
+        },
+        {
+          "index": 30,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 31,
+          "status": "known_failure",
+          "exit_code": 1
+        },
+        {
+          "index": 32,
+          "status": "known_failure",
+          "exit_code": 1
+        },
+        {
+          "index": 33,
+          "status": "known_failure",
+          "exit_code": 1
+        },
+        {
+          "index": 34,
+          "status": "known_failure",
+          "exit_code": 1
+        },
+        {
+          "index": 35,
+          "status": "known_failure",
+          "exit_code": 1
+        },
+        {
+          "index": 36,
+          "status": "known_failure",
+          "exit_code": 1
+        }
+      ],
+      "scope": "assertion bodies with external adapter; not the native EUnit framework"
+    }
+  },
+  "limitations": [
+    "These are local macOS results; Linux CI is configured but not yet executed.",
+    "Ten native assertion failures remain.",
+    "The native EUnit framework remains unvalidated."
+  ],
+  "log_directory": "/private/tmp/nera-thoas-ci-validation"
+}

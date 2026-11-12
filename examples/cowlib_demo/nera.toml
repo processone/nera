@@ -1,0 +1,7 @@
+[project]
+name = "cowlib_demo"
+entry = "cowlib_demo:start"
+output = "cowlib_demo"
+
+[deps]
+cowlib = "2.22.0"

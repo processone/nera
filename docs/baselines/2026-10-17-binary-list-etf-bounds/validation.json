@@ -1,0 +1,41 @@
+{
+  "base_ref": "origin/main",
+  "base": "4eb9f0909383429763aa9d496126852293c0a844",
+  "target": "uncommitted worktree mr/binary-list-etf-bounds",
+  "source_manifest_sha256": "27bf2dd604db90d61b1182faf01a7ca8384108270c4bc4d7fe9debb302e85f6b",
+  "checks": {
+    "workspace_initial": {
+      "exit": 101,
+      "runtime_socket_permission_failures": 14,
+      "all_other_targets_passed": true
+    },
+    "runtime_exact_binary_rerun": {
+      "exit": 0,
+      "passed": 628,
+      "ignored": 1
+    },
+    "combined_workspace_passing_tests": 2021,
+    "runtime_release": {
+      "exit": 0,
+      "passed": 672,
+      "ignored": 1
+    },
+    "native": {
+      "exit": 0,
+      "passed": 105,
+      "skipped": 0
+    },
+    "release_build": 0,
+    "clippy": 0,
+    "otp_two_fixtures": 0,
+    "intel_runtime_check": 0,
+    "windows_runtime_check": {
+      "exit": 0,
+      "existing_warnings": 6
+    },
+    "performance_campaigns": 3,
+    "source_hashes_match": true,
+    "tracked_and_new_whitespace": 0
+  },
+  "publication": "Not requested; no stage, commit, push or PR."
+}

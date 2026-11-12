@@ -1,0 +1,26 @@
+   Compiling nera-runtime v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.73s
+     Running unittests src/lib.rs (/tmp/nera-transfer-target/debug/deps/nera_runtime-27bb0f9fcbc2d668)
+
+running 19 tests
+test socket::tests::handle_encoding_roundtrips ... ok
+test socket::tests::exhausted_socket_generation_never_reenters_free_list ... ok
+test socket::tests::final_socket_generation_is_usable_once_then_retired ... ok
+test socket::tests::accept_invalid_handle ... ok
+test socket::tests::recv_invalid_handle ... ok
+test socket::tests::accept_on_stream_handle_fails ... ok
+test socket::tests::listen_accept_send_recv_roundtrip ... ok
+test socket::tests::listen_on_port_zero ... ok
+test socket::tests::register_listener ... ok
+test socket::tests::register_and_remove_stream ... ok
+test socket::tests::remove_all_for_pid_noop_when_no_sockets ... ok
+test socket::tests::remove_nonexistent_handle ... ok
+test socket::tests::retiring_socket_preserves_other_free_slots_and_releases_owner ... ok
+test socket::tests::send_invalid_handle ... ok
+test socket::tests::remove_sends_fin_with_outstanding_arc_ref ... ok
+test socket::tests::socket_handle_domain_and_term_roundtrip ... ok
+test socket::tests::valid_handle_is_never_zero ... ok
+test socket::tests::stale_handle_after_reuse_returns_none ... ok
+test socket::tests::remove_all_for_pid_cleans_owned_sockets ... ok
+
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 558 filtered out; finished in 0.01s

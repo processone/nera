@@ -1,0 +1,22 @@
+   Compiling nera-runtime v0.1.0 (/private/tmp/nera-hibernate-gc-roots/crates/nera-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.94s
+     Running unittests src/lib.rs (/home/user/AIProjects/nera/target/debug/deps/nera_runtime-27bb0f9fcbc2d668)
+
+running 1 test
+test process::tests::hibernate_retains_mailbox_and_dictionary_graphs ... FAILED
+
+failures:
+
+---- process::tests::hibernate_retains_mailbox_and_dictionary_graphs stdout ----
+
+thread 'process::tests::hibernate_retains_mailbox_and_dictionary_graphs' (3614907) panicked at crates/nera-runtime/src/process.rs:2077:9:
+hibernation freed a live binary owner
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    process::tests::hibernate_retains_mailbox_and_dictionary_graphs
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 501 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p nera-runtime --lib`

@@ -1,0 +1,24 @@
+   Compiling nera-runtime v0.1.0 (/home/user/.codex/worktrees/binary-match-corrections/nera/crates/nera-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.01s
+     Running unittests src/lib.rs (/home/user/AIProjects/nera/target/binary-match-publication/debug/deps/nera_runtime-27bb0f9fcbc2d668)
+
+running 1 test
+test ffi::base64::tests::encoding_respects_remaining_budget_before_work ... FAILED
+
+failures:
+
+---- ffi::base64::tests::encoding_respects_remaining_budget_before_work stdout ----
+
+thread 'ffi::base64::tests::encoding_respects_remaining_budget_before_work' (4318267) panicked at crates/nera-runtime/src/ffi/base64.rs:214:9:
+assertion `left == right` failed
+  left: 0
+ right: 1
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    ffi::base64::tests::encoding_respects_remaining_budget_before_work
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 523 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p nera-runtime --lib`

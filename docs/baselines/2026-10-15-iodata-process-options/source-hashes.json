@@ -1,0 +1,17 @@
+{
+  "Cargo.lock": "a210f397cb773d07c39ed4827a9aea44092f56ee7c2a438f708784dfa5769f80",
+  "Cargo.toml": "8d8f30e39479037b8f2cb82dbcc3f4705503423f0a6db6237003281cf25d24b3",
+  "rust-toolchain.toml": "2ad6f15416572b4836585087f1d4abc53b8fa2dbd616f8dacfaa587ed6714228",
+  "crates/nera-runtime/src/ffi/helpers.rs": "74b78370e780b1f6ad536a9fd80e6fc9a4f378ce575f0d191f3854c3e363d035",
+  "crates/nera-runtime/src/ffi/file_io.rs": "a1476ccd7b42c79990883a2308a02ffa91c38ba1dd08ed1069a1b966de2dbda7",
+  "crates/nera-runtime/src/ffi/gen_tcp.rs": "ca197d749caf939ebed02e987ad6e2d57758ee11f44023c2289bca09f10edf79",
+  "crates/nera-runtime/src/ffi/process.rs": "17dd2a8ecee70444f60c635b57277c0037553320ba101effb0c513f5b5336524",
+  "tests/file_iodata_domain.erl": "7eda7e45ea48e7176dd0de095cb3a2fb5ea073e2b8f97ae1e92a1831a89020c4",
+  "tests/tcp_iodata_domain.erl": "38c8be65405fa0a76917887b192c243dc6efabe4df980eb3f54441f75e2d53dd",
+  "tests/spawn_options_domain.erl": "f3e93c5bc122c204b68759b9cbaee3650444acbdc3505cdfe366cd2dbc025add",
+  "tests/process_fullsweep_domain.erl": "c3ddbecd28792bf5e47ed283c2bb5f422812f8f471718d9d821b79aaf0d20df9",
+  "docs/baselines/2026-10-15-iodata-process-options/io_probe.erl": "702a4ca36d6c9980bb78389789d307060ab2027f5a4028e99a3f13140b35df67",
+  "docs/baselines/2026-10-15-iodata-process-options/spawn_probe.erl": "b4a39b52d89a587a6c5379a83ea6e93c76d901bb3e62721b2bffcb25be210668",
+  "docs/baselines/2026-10-15-iodata-process-options/measure.py": "b93415966c944fbc76d4ac7f0c0a84603ebf490df7c8524679d15cdbc8385631",
+  "CHANGELOG.md": "262a403075ede24b38fd7208d1c05131177a483f349938d168faf4d9aa8535a4"
+}

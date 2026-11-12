@@ -1,0 +1,25 @@
+{
+  "base": "e7395286cf1c2aaf79f5b0f2f7ba93cc11913b86",
+  "command": "cargo test --workspace --locked --no-fail-fast",
+  "passed": 1820,
+  "failed": 0,
+  "ignored": 1,
+  "e2e_passed": 10,
+  "notes": [
+    "Rebased onto main including PR 49; both changelog entries retained",
+    "Original README/validation.json are historical pre-integration evidence",
+    "Performance samples were not rerun after integration"
+  ],
+  "sources": {
+    "CHANGELOG.md": "f49a5f39c38bbfd6768c42894963d505a516d18e0aed1be2034422e232406427",
+    "crates/nera-runtime/src/ets.rs": "4feb0b4f7885286a886f4adea35c95cec73e1a8e7cebdbea40448277cdb13594",
+    "crates/nera-runtime/src/ets_pool.rs": "b52152801601182b721905b7f39ed6c8fe892504a3a1fdbc2911b68657bc834c",
+    "crates/nera-runtime/src/persistent_term.rs": "f430ccc448c7fd65f22ad7d06f44f751aeab8fd907dd66fcb8906cc61d1b837c"
+  },
+  "logs": {
+    "nera-owned-integrated-tests.log": "b03cc56e3073dbbd376dc2182b8c3310de7327159bf448b56a30ae6f7a47fc17",
+    "nera-owned-integrated-clippy.log": "276e00ee439f7ca21e42dcb1eec3319561d3910b43c0ee42c3c3300044cc34bf",
+    "nera-owned-integrated-build.log": "e565af6aa11dfc8591017b44330cd352c8199e50f99f8128952a055f53909bd1",
+    "nera-owned-integrated-e2e.log": "2cad753f50de88ba4b8551f30590a916443e27154fb73e43c3703b82a5804358"
+  }
+}

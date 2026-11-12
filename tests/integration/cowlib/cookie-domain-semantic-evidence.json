@@ -1,0 +1,492 @@
+{
+  "status": "failed",
+  "scope": "Project nera test with external OTP EUnit; Functional tests only; properties are validated separately.",
+  "modules": {
+    "cow_cookie": {
+      "expected": 54,
+      "inventory": {
+        "parse_cookie_test_": 13,
+        "parse_cookie_error_test_": 1,
+        "parse_cookie_max_cookies_test": 1,
+        "parse_set_cookie_test_": 16,
+        "cookie_test_": 5,
+        "setcookie_test_": 9,
+        "setcookie_max_age_test": 1,
+        "setcookie_failures_test_": 5,
+        "setcookie_attr_failures_test_": 3
+      },
+      "beam": {
+        "returncode": 0,
+        "passed": true
+      },
+      "adapted_sha256": "a44d6fb6bd6d89c8bed72f391dc698e1eabe5756ae2d2fb1ea6224a0e62ff44d",
+      "original_sha256": "949f38c2aaa1fd30f690289a024429ea2d8a66e08b6c87a4436e51e568ddf88d",
+      "removed": [],
+      "native": {
+        "returncode": 1,
+        "passed": false
+      },
+      "runner": "nera test (project EUnit configuration)",
+      "failure_lines": [
+        "cow_cookie: __lambda_8 (Customer=WILE_E_COYOTE; Domain=acme.com; HttpOnly)...*failed*",
+        "Failed: 1.  Skipped: 0.  Passed: 53."
+      ],
+      "native_passed": 53,
+      "native_failed": 1,
+      "native_skipped": 0
+    },
+    "cow_date": {
+      "expected": 7,
+      "inventory": {
+        "http_date_test_": 3,
+        "rfc2109_test_": 2,
+        "rfc7231_test_": 2
+      },
+      "beam": {
+        "returncode": 0,
+        "passed": true
+      },
+      "adapted_sha256": "ff401d72595eca84730076f9661528c24fd51ebefbfb11512ff3100065d67d98",
+      "original_sha256": "6f22428c9b1df2c59abe8b372f6a075c3d1b51ea6653cbf778a5bceeff813504",
+      "removed": [
+        "day_name",
+        "day_name_l",
+        "year",
+        "month",
+        "day",
+        "hour",
+        "minute",
+        "second",
+        "fixdate_gen",
+        "rfc850_gen",
+        "asctime_gen",
+        "prop_http_date",
+        "horse_http_date_fixdate",
+        "horse_http_date_rfc850",
+        "horse_http_date_asctime",
+        "horse_rfc2109_20130101_000000",
+        "horse_rfc2109_20131231_235959",
+        "horse_rfc2109_12340506_070809",
+        "horse_rfc7231_20130101_000000",
+        "horse_rfc7231_20131231_235959",
+        "horse_rfc7231_12340506_070809"
+      ],
+      "native": {
+        "returncode": 0,
+        "passed": true
+      },
+      "runner": "nera test (project EUnit configuration)",
+      "failure_lines": [],
+      "native_passed": 7,
+      "native_failed": 0,
+      "native_skipped": 0
+    }
+  },
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/private/tmp/nera-cowlib-main-proper",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/private/tmp/nera-cowlib-cookie-semantic-final",
+      "label": "proper-head",
+      "returncode": 0,
+      "stdout_sha256": "6435f6eb1643468f91ea867fe183cfd63a71804d78768c9765b0eedbe6b52e9a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/private/tmp/nera-cowlib-cookie-semantic-final",
+      "label": "cowlib-head",
+      "returncode": 0,
+      "stdout_sha256": "d987cdb63f2e2c1f01ca097d28e28f79bedaa4a0fdaa228c05b29caa265a812d",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream",
+        "status",
+        "--porcelain",
+        "--untracked-files=all",
+        "--ignored"
+      ],
+      "cwd": "/private/tmp/nera-cowlib-cookie-semantic-final",
+      "label": "cowlib-clean",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/user/.codex/worktrees/base64-one-arity/nera",
+      "label": "nera-head",
+      "returncode": 0,
+      "stdout_sha256": "496626490d3748ae2c3a058220f5c88bb925d514d4aef5aae143148ea8aa9d29",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "cwd": "/home/user/.codex/worktrees/base64-one-arity/nera",
+      "label": "nera-status",
+      "returncode": 0,
+      "stdout_sha256": "f3d15036326b21aa3ee3d0037977ace3d167b2dfc56a91055cf05b9cefd70476",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "erl",
+        "-noshell",
+        "-eval",
+        "io:format(\"~s\",[erlang:system_info(system_version)]),halt()."
+      ],
+      "cwd": "/private/tmp/nera-cowlib-cookie-semantic-final",
+      "label": "otp",
+      "returncode": 0,
+      "stdout_sha256": "0e5d220635638ebbe2981d178553ebd4c9e9036c5a6912e0bf1e00a84df6bbb8",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "erlc",
+        "-DTEST",
+        "+export_all",
+        "+{parse_transform,eunit_autoexport}",
+        "-I",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream/include",
+        "-o",
+        "/private/tmp/nera-cowlib-cookie-semantic-final/beam",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream/src/cow_cookie.erl",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream/src/cow_date.erl"
+      ],
+      "cwd": "/private/tmp/nera-cowlib-cookie-semantic-final",
+      "label": "beam-suites",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "erl",
+        "-noshell",
+        "-pa",
+        "/private/tmp/nera-cowlib-cookie-semantic-final/beam",
+        "-eval",
+        "io:format(\"COUNT:~w~n\",[length(cow_cookie:parse_cookie_test_())]),io:format(\"COUNT:~w~n\",[length(cow_cookie:parse_cookie_error_test_())]),io:format(\"COUNT:~w~n\",[1]),io:format(\"COUNT:~w~n\",[length(cow_cookie:parse_set_cookie_test_())]),io:format(\"COUNT:~w~n\",[length(cow_cookie:cookie_test_())]),io:format(\"COUNT:~w~n\",[length(cow_cookie:setcookie_test_())]),io:format(\"COUNT:~w~n\",[1]),io:format(\"COUNT:~w~n\",[length(cow_cookie:setcookie_failures_test_())]),io:format(\"COUNT:~w~n\",[length(cow_cookie:setcookie_attr_failures_test_())]),halt()."
+      ],
+      "cwd": "/private/tmp/nera-cowlib-cookie-semantic-final",
+      "label": "cow_cookie-inventory",
+      "returncode": 0,
+      "stdout_sha256": "192515b8b736c1ed522802f6e476cdfa7765a9a68d1ec95b28abb33a5f4aeb95",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "erl",
+        "-noshell",
+        "-pa",
+        "/private/tmp/nera-cowlib-cookie-semantic-final/beam",
+        "-eval",
+        "case eunit:test(cow_cookie,[verbose]) of ok -> io:format(\"NATIVE_EUNIT_OK:cow_cookie~n\"),halt(); _ -> halt(1) end."
+      ],
+      "cwd": "/private/tmp/nera-cowlib-cookie-semantic-final",
+      "label": "cow_cookie-beam",
+      "returncode": 0,
+      "stdout_sha256": "0f701b1e0500f7bb32db01b1e1bc37ce8b47e0c450b1948c2c00eb8bd8f392bf",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "erl",
+        "-noshell",
+        "-pa",
+        "/private/tmp/nera-cowlib-cookie-semantic-final/beam",
+        "-eval",
+        "io:format(\"COUNT:~w~n\",[length(cow_date:http_date_test_())]),io:format(\"COUNT:~w~n\",[length(cow_date:rfc2109_test_())]),io:format(\"COUNT:~w~n\",[length(cow_date:rfc7231_test_())]),halt()."
+      ],
+      "cwd": "/private/tmp/nera-cowlib-cookie-semantic-final",
+      "label": "cow_date-inventory",
+      "returncode": 0,
+      "stdout_sha256": "409d0b47733cf01678c39c72577c2c18a3dab135b9e19bfd396b775576293bba",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "erl",
+        "-noshell",
+        "-pa",
+        "/private/tmp/nera-cowlib-cookie-semantic-final/beam",
+        "-eval",
+        "case eunit:test(cow_date,[verbose]) of ok -> io:format(\"NATIVE_EUNIT_OK:cow_date~n\"),halt(); _ -> halt(1) end."
+      ],
+      "cwd": "/private/tmp/nera-cowlib-cookie-semantic-final",
+      "label": "cow_date-beam",
+      "returncode": 0,
+      "stdout_sha256": "51a462793bc02dec96ee5854b1ad74cfe1693998bb7fc52d4fb2623006d2f7b4",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/private/tmp/nera-base64-one-target/release/nera",
+        "test",
+        "cow_cookie",
+        "--verbose",
+        "--no-warnings",
+        "--timeout",
+        "120"
+      ],
+      "cwd": "/private/tmp/nera-cowlib-cookie-semantic-final/project",
+      "label": "cow_cookie-native-test",
+      "returncode": 1,
+      "stdout_sha256": "3051529ea913cff563faf7dd15fded846d61cb8feb2b6b620e19002f2101cf4e",
+      "stderr_sha256": "2457a03704557aea613b22c78e85d16a66fb851d77c7ae96b042d6dec8e008f9"
+    },
+    {
+      "argv": [
+        "/private/tmp/nera-base64-one-target/release/nera",
+        "test",
+        "cow_date",
+        "--verbose",
+        "--no-warnings",
+        "--timeout",
+        "120"
+      ],
+      "cwd": "/private/tmp/nera-cowlib-cookie-semantic-final/project",
+      "label": "cow_date-native-test",
+      "returncode": 0,
+      "stdout_sha256": "b0c328ee8b2412110356198fd9e8ee750e6e29ca6cf256daaf8c7762cd14ffe4",
+      "stderr_sha256": "075a23a63f0f66ee46545842b186bfc42d934c1405ee551d157dbe0ad0d4e1c8"
+    },
+    {
+      "argv": [
+        "erlc",
+        "-o",
+        "/private/tmp/nera-cowlib-cookie-semantic-final/beam",
+        "/home/user/.codex/worktrees/base64-one-arity/nera/tests/integration/eunit/eunit_native.erl"
+      ],
+      "cwd": "/private/tmp/nera-cowlib-cookie-semantic-final",
+      "label": "framework-controls-beam-build",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "erl",
+        "-noshell",
+        "-pa",
+        "/private/tmp/nera-cowlib-cookie-semantic-final/beam",
+        "-eval",
+        "eunit_native:test(),eunit:stop(),halt()."
+      ],
+      "cwd": "/private/tmp/nera-cowlib-cookie-semantic-final",
+      "label": "framework-controls-beam",
+      "returncode": 0,
+      "stdout_sha256": "d632a12e292ec721729d2e6ed9b2041e09bd8c8719d3fdb8fcac27deb9de70db",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/private/tmp/nera-base64-one-target/release/nera",
+        "build",
+        "--no-warnings"
+      ],
+      "cwd": "/private/tmp/nera-cowlib-cookie-semantic-final/project",
+      "label": "framework-controls-native-build",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "075a23a63f0f66ee46545842b186bfc42d934c1405ee551d157dbe0ad0d4e1c8"
+    },
+    {
+      "argv": [
+        "/private/tmp/nera-cowlib-cookie-semantic-final/project/run"
+      ],
+      "cwd": "/private/tmp/nera-cowlib-cookie-semantic-final/project",
+      "label": "framework-controls-native",
+      "returncode": 0,
+      "stdout_sha256": "2c435e76143b0038e3f9a3d07b8748a7e6734d418682ea9b6ac40f16372fe12d",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "erlc",
+        "-o",
+        "/private/tmp/nera-cowlib-cookie-semantic-final/beam",
+        "/home/user/.codex/worktrees/base64-one-arity/nera/tests/integration/cowlib/cookie_order_probe.erl"
+      ],
+      "cwd": "/private/tmp/nera-cowlib-cookie-semantic-final",
+      "label": "cookie-order-beam-build",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "erl",
+        "-noshell",
+        "-pa",
+        "/private/tmp/nera-cowlib-cookie-semantic-final/beam",
+        "-eval",
+        "cookie_order_probe:start(),halt()."
+      ],
+      "cwd": "/private/tmp/nera-cowlib-cookie-semantic-final",
+      "label": "cookie-order-beam",
+      "returncode": 0,
+      "stdout_sha256": "eb865f9cf0df6654218b358d6da01ce59c09fdb194e1cae43727eb0a36452a21",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/private/tmp/nera-base64-one-target/release/nera",
+        "build",
+        "--no-warnings",
+        "-e",
+        "cookie_order_probe:start",
+        "-o",
+        "/private/tmp/nera-cowlib-cookie-semantic-final/project/cookie_order_probe"
+      ],
+      "cwd": "/private/tmp/nera-cowlib-cookie-semantic-final/project",
+      "label": "cookie-order-native-build",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "075a23a63f0f66ee46545842b186bfc42d934c1405ee551d157dbe0ad0d4e1c8"
+    },
+    {
+      "argv": [
+        "/private/tmp/nera-cowlib-cookie-semantic-final/project/cookie_order_probe"
+      ],
+      "cwd": "/private/tmp/nera-cowlib-cookie-semantic-final/project",
+      "label": "cookie-order-native",
+      "returncode": 0,
+      "stdout_sha256": "63f0af5ae088acdd53c894e53d77de57e6f59c771b40197a878f00f6eb00cf25",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "upstream": {
+    "name": "cowlib",
+    "version": "2.20.0",
+    "url": "https://github.com/ninenines/cowlib.git",
+    "commit": "c768a804565ff5b8178ed968a5921e469d6bd7b2"
+  },
+  "platform": "macOS-15.7.7-arm64-arm-64bit-Mach-O",
+  "harness_sha256": "ea493cfbc3ceb5abff204f81ac098f7c5d6a900e6427d45396531371a8b446e0",
+  "nera_commit": "0e5b56b0d905549c7d830f55fc0c35946282cf66",
+  "nera_worktree_status": "M tests/integration/cowlib/native_eunit.py\n M tests/integration/cowlib/test_native_eunit.py",
+  "nera_sha256": "daecaebcaee73f36ea84d16792e12e95c87b4547da6e4fc30c703808eaaf86de",
+  "runtime_sha256": "8096d27dfef51c476884763154a722a4262dddd5b9a444575a1d0c1171bcf23a",
+  "eunit_path": "/opt/homebrew/Cellar/erlang/29.0.5/lib/erlang/lib/eunit-2.11",
+  "eunit_sources": {
+    "doc/examples/fib.erl": "d03708f1c6ae706f9dab1a530d59fe4be62ab726f632ff6a5a997d815b5fac13",
+    "include/eunit.hrl": "1ec1a665f54a4c3c78ad9d4ccb614ae58d2320b367455b964fbc2eccabf59102",
+    "src/eunit.erl": "b4ca2dc5f9f854ebd33b247d28e6ffe7fbd4d5a2fc50c2eb31f79aa7b108954c",
+    "src/eunit_autoexport.erl": "c7a26b14de6b5b2accc83b6827fac383ce7aa56ac8dd41a4a316eb5bee400e31",
+    "src/eunit_data.erl": "964ada1aa2107f7452d65a434074a42051131f0dbac8f2a3dba15dba98a56651",
+    "src/eunit_internal.hrl": "0e06a96b302003dabc18a44b16831888dcc7bfd47f70981f1880be95ab694718",
+    "src/eunit_lib.erl": "f6e8dcebbf8d478161a926013bcd71832de01b0819d7da9de43a792bc67cfc20",
+    "src/eunit_listener.erl": "9fcd2363fdf04c28ddd369e9cec5b5490623bf38f93a6565266b60ce2472c4a2",
+    "src/eunit_proc.erl": "a53d8c08181f7134d4fa49b1b7deee7dab648f9183bdef6c680b30c6ec164921",
+    "src/eunit_serial.erl": "24ab121bb9b1c11d3de890cb4d09e223cc93392e541479ab79106abe086475bf",
+    "src/eunit_server.erl": "c71f3cfdd3c4344a0ee1cc7fc6cd8126508995e85ce9162271b87bf050044b8b",
+    "src/eunit_striptests.erl": "04aac7db42326448f2b11a9666e73c529b48e38a5efd23223c0f53a64863e5b3",
+    "src/eunit_surefire.erl": "ddeacfb3f678025e6682c50d0349bd5f3273436c7056a08c5e4fce64dffd2432",
+    "src/eunit_test.erl": "6d04cb599f194c6e0230674ab5fea383ac21de4dfe0ef814a2b1c16d4c7f8bcf",
+    "src/eunit_tests.erl": "56e82ffd824553aa8a06fabc49f1da85baa205416aae4af0afcb457927f9b602",
+    "src/eunit_tty.erl": "50a735ad25eec829b6e126bc8b4b52ab9b13da91df4364191fbe00b84841cddf"
+  },
+  "gb_trees_source": "/opt/homebrew/Cellar/erlang/29.0.5/lib/erlang/lib/stdlib-8.0.3/src/gb_trees.erl",
+  "gb_trees_sha256": "890b641fa4e901c4f11bf65288ea12e8a8c0480d3a4867274f699fb4ef9c60a3",
+  "otp": "Erlang/OTP 29 [erts-17.0.5] [source] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads:1] [jit] [dtrace]",
+  "framework_controls": {
+    "fixture_sha256": "8c1719fc9a5f8d41c466c5496aefc36cb04242e6ab11ed7b62d1734296532399",
+    "beam": {
+      "returncode": 0,
+      "passed": true
+    },
+    "native_build_returncode": 0,
+    "executable_sha256": "47a69eb5680280a68694654c32b50c0adb5e06c3979d34c3bd8e0d5896e51210",
+    "native": {
+      "returncode": 0,
+      "passed": true
+    }
+  },
+  "cookie_attribute_order": {
+    "fixture_sha256": "b91a9a20d1f063db1f8eb95bd181eae42c108cc2f1cce3a5432994d4ae751817",
+    "beam": {
+      "returncode": 0,
+      "stdout": "COOKIE_ORDER:sample=value; Domain=example.org; HttpOnly\n"
+    },
+    "native_build_returncode": 0,
+    "native": {
+      "returncode": 0,
+      "stdout": "COOKIE_ORDER:sample=value; HttpOnly; Domain=example.org\n"
+    },
+    "executable_sha256": "b95a601c470afe8ed38d7850942ff70247cb049c8191ca566b8d551a832df5cb",
+    "semantic_validation": {
+      "case": "Domain / HttpOnly",
+      "comparison": "set_cookie_attributes",
+      "scope": "project-owned probe; independent of raw upstream EUnit verdict",
+      "passed": true,
+      "wire_equal": false
+    }
+  },
+  "validation_date": "2026-10-15",
+  "compiler_validation_target": {
+    "commit": "c93eb6575b2e204a4080617fada47bcbb90d46c3",
+    "state": "Merged main c93eb65 (#88), compiler/runtime/stdlib sources unchanged; only project-owned integration runner and documentation modified.",
+    "source_sha256": "623b09c3d71696c3acb1b0939814b77a438a9ecf03eecbbd52da3ed8d9877c14",
+    "source_files": 199
+  },
+  "raw_eunit_verdict": {
+    "status": "failed",
+    "beam_passed": 61,
+    "native_passed": 60,
+    "native_failed": 1,
+    "native_skipped": 0,
+    "cow_cookie": "53/54",
+    "cow_date": "7/7",
+    "exit_status": 1
+  },
+  "semantic_scope": "One project-owned Domain / HttpOnly builder probe; does not replace or mark successful the failed upstream assertion.",
+  "local_checks": {
+    "harness": {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/integration/cowlib",
+        "-p",
+        "test_*.py"
+      ],
+      "result": "65 passed",
+      "log_sha256": "26f49cc08e76cc1e6e2dfabafa0d86db13359d3b137d023b9b9e0a34d1456dd5",
+      "test_source_sha256": "382e40b65bf3d3b2ffb74d09d9553d028bb957b004262f9db9eea78068a327ba"
+    }
+  },
+  "limitations": [
+    "macOS arm64 only",
+    "No native PropEr execution; cow_date property not rerun on BEAM in this functional validation",
+    "HTTP suites and 122-case corpus not rerun in this task",
+    "Detailed EUnit failure ~P/stacktrace formatting remains partial",
+    "CI/Release remain manually paused"
+  ]
+}

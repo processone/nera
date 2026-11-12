@@ -1,0 +1,42 @@
+   Compiling nera-runtime v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.74s
+     Running unittests src/lib.rs (/tmp/nera-transfer-target/debug/deps/nera_runtime-27bb0f9fcbc2d668)
+
+running 3 tests
+test ffi::binary_ops::integer_domain_tests::float_segments_preserve_neighbors_and_roundtrip_at_every_bit_offset ... FAILED
+test ffi::binary_ops::integer_domain_tests::float_segments_reject_bad_domains_without_writing_or_allocating ... FAILED
+test ffi::binary_ops::integer_domain_tests::float_segments_reject_nonfinite_and_truncated_reads_without_allocation ... FAILED
+
+failures:
+
+---- ffi::binary_ops::integer_domain_tests::float_segments_preserve_neighbors_and_roundtrip_at_every_bit_offset stdout ----
+
+thread 'ffi::binary_ops::integer_domain_tests::float_segments_preserve_neighbors_and_roundtrip_at_every_bit_offset' (9686124) panicked at crates/nera-runtime/src/ffi/binary_ops.rs:2160:29:
+assertion `left == right` failed: bits=16, offset=0, value=0
+  left: [165, 165, 165, 165, 165, 165, 165, 165, 165, 165, 165, 165, 165, 165, 165, 165]
+ right: [0, 0, 165, 165, 165, 165, 165, 165, 165, 165, 165, 165, 165, 165, 165, 165]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- ffi::binary_ops::integer_domain_tests::float_segments_reject_bad_domains_without_writing_or_allocating stdout ----
+
+thread 'ffi::binary_ops::integer_domain_tests::float_segments_reject_bad_domains_without_writing_or_allocating' (9686125) panicked at crates/nera-runtime/src/ffi/binary_ops.rs:2114:17:
+assertion `left == right` failed
+  left: 5
+ right: 51
+
+---- ffi::binary_ops::integer_domain_tests::float_segments_reject_nonfinite_and_truncated_reads_without_allocation stdout ----
+
+thread 'ffi::binary_ops::integer_domain_tests::float_segments_reject_nonfinite_and_truncated_reads_without_allocation' (9686126) panicked at crates/nera-runtime/src/ffi/binary_ops.rs:2185:17:
+assertion `left == right` failed
+  left: 4317102096
+ right: 5
+
+
+failures:
+    ffi::binary_ops::integer_domain_tests::float_segments_preserve_neighbors_and_roundtrip_at_every_bit_offset
+    ffi::binary_ops::integer_domain_tests::float_segments_reject_bad_domains_without_writing_or_allocating
+    ffi::binary_ops::integer_domain_tests::float_segments_reject_nonfinite_and_truncated_reads_without_allocation
+
+test result: FAILED. 0 passed; 3 failed; 0 ignored; 0 measured; 599 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p nera-runtime --lib`

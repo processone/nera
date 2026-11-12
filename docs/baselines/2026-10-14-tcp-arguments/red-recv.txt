@@ -1,0 +1,3 @@
+Error in process <0.1.0>: error:{badmatch,{ok,<<42>>}}
+Stacktrace (most recent call last):
+  red_recv:main/0 (red_recv.erl, line 9)

@@ -1,0 +1,875 @@
+{
+  "status": "failed",
+  "platform": "macOS-15.7.7-arm64-arm-64bit-Mach-O",
+  "upstream": {
+    "name": "cowlib",
+    "version": "2.20.0",
+    "url": "https://github.com/ninenines/cowlib.git",
+    "commit": "c768a804565ff5b8178ed968a5921e469d6bd7b2"
+  },
+  "nera_sha256": "30cde74972a734c436bf7092d023f3f44624f8f3a2122ef68e98df84797935b1",
+  "runtime_sha256": "39d1fd9049f142c107176505d17ad60a1cebb6b2a497d1f5ff70dc237397802b",
+  "nera_source_commit": "811ce9a57dc19918ca38913e6ba0066a755bb228",
+  "otp_version": "Erlang/OTP 29 [erts-17.0.5] [source] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads:1] [jit] [dtrace]",
+  "source_sha256": {
+    "src/cow_http3.erl": "cb8426277588906b49c78a42bfd8e2d214efd319d5cad6b4627b2cc94242a372",
+    "src/cow_multipart.erl": "2d684ed2229fd9d15d8941ad5cc1abd83a41f8bab0a7705e6093a7e112555d90",
+    "src/cow_http_struct_hd.erl": "bae6afed59d1395ad1234a0138c24736bc7ca8b8aca0425535fd9c06ce28aa84",
+    "src/cow_http2.erl": "edeb6bef50b963312e92021ed2edd029628c51752fa75b527557832912f452d6",
+    "src/cow_http1.erl": "e5851d0ad97a639458416d26f3b9d23ddfd09afe0dda8a356f33627ccc5b377c",
+    "src/cow_cookie.erl": "949f38c2aaa1fd30f690289a024429ea2d8a66e08b6c87a4436e51e568ddf88d",
+    "src/cow_mimetypes.erl": "bbdd5d794a0c970cdd0420109ceaf2aaeb4ec70294a5c8a053737e67e3e3779b",
+    "src/cow_ws.erl": "3d46948104e15194ffbe080a03299dd38e911857a9fc86f025a51ff76dab32c6",
+    "src/cow_hpack.erl": "6c9d5714790d8951fa57b793bb8f6c0f0433f7bbc15f33284e3b289b264bfa4d",
+    "src/cow_date.erl": "6f22428c9b1df2c59abe8b372f6a075c3d1b51ea6653cbf778a5bceeff813504",
+    "src/cow_capsule.erl": "b94fa3ee9242be4812ab631e30b71ff79b24112b538cbf304c735238e0683e80",
+    "src/cow_http2_machine.erl": "5ff9d6c3c520ca26d0a0090cc5d67ba6dc918fe7ee557083754e1d703cc14d3d",
+    "src/cow_http_hd.erl": "af8028340f58b2cf0a7bbaa734d6e1e9c61d48993454119e0df6c6cba6b82c2c",
+    "src/cow_base64url.erl": "3d68bd7d9d03230c99c298688bb9c804fe8ebdcf1ced3e64683de3b72a9436a2",
+    "src/cow_uri_template.erl": "589a363068a9f4bf77e29ef860792205d85541c71d76cd68ff5bd35686aca28b",
+    "src/cow_hpack_common.hrl": "c53242bd29cad93135050d5daf9f73e9b571da56a992dbc49870e7e53c1d164c",
+    "src/cow_uri.erl": "8a8627ec975e5597499385ce481760b751f80888aa7c55e915eedd31481da664",
+    "src/cow_qs.erl": "9d45e09874dd83ed42b02cdc7ce1aff5737f3ed968d7682c8b304ec853b61c91",
+    "src/cow_sse.erl": "180f35d763c003fc9b2304fed9da5244b6aa4497571dd6b73c92451e7e85f5ff",
+    "src/cow_http.erl": "cba1db8e6aace87f3f8772ea778b8088eedf8f7d54d84d767b46fcc02ea0e594",
+    "src/cow_iolists.erl": "ae976127c029af3e6a38dc5f406861a41f102c355d9077b1142abf3bba863df3",
+    "src/cow_http3_machine.erl": "a0e489819c72fb418920dbe2594b4ecbcc8aab72b5b2fdd809b419091ca2ba2d",
+    "src/cow_qpack.erl": "fe9adc05008b3b9e68bdb973b4486593bbaac665fcfb4de4679555a76d9ec99f",
+    "src/cow_mimetypes.erl.src": "b733e1a0defcc6402e4d9443db10334055738467c19a1765dc9c993ecea03612",
+    "src/cow_hpack_dec_huffman_lookup.hrl": "80fb656300ee1288bf34268e88c2b0886760ab6a794eeca60d84a94ae0f11652",
+    "src/cow_http_te.erl": "03676592aef761d7c623f814b324b4e15d4fb21889928b7474bc976c804de47a",
+    "src/cow_link.erl": "bcfec544ae3ca6796fece4c82a0c5061c282864c6e515ed89492238e02682c8c",
+    "src/cow_deflate.erl": "ba3b1bf977f0fda687c12d7195b6f143bae4f7ce26437736077c7b180a1261e8",
+    "include/cow_inline.hrl": "b6734610786a2d10ae82d9b9513e72d7a67396e1c5c1f3d6faa19e6350d580b6",
+    "include/cow_parse.hrl": "a366ad773962acdfea8b90cbc5499e6b3dc9148fb59d0bdd303dbbdae01a0177"
+  },
+  "etf_decoder_sha256": "7070107789f63da6b848eb584bac20950eafabde99386216efbd2d97ebc3db96",
+  "scope": "project-owned differential corpus; not upstream EUnit/PropEr suites",
+  "date": "2026-10-11",
+  "native_executed": 0,
+  "beam_passed": 120,
+  "blocked": 120,
+  "vendored": false,
+  "compiler_build_commit": "9b64f629dbc854014ad351a451145cd55df6a50c",
+  "compiler_build_command": "RUSTC_WRAPPER= CARGO_TARGET_DIR=/private/tmp/nera-thoas-date-target cargo build --release --locked --offline",
+  "compiler_build_log_sha256": "eb1713f43567d967a2dfc98c6ca2b9716f1f3134449f3a47d1b37eadae46debb",
+  "harness_tests_passed": 14,
+  "harness_sha256": {
+    "runner.py": "d12420a5d972f08001a3ffbb37c998af4aadf094a43b51440994aff529db3f37",
+    "test_runner.py": "5f9e9cc21996bf69e5baebfc3c458af9ad1ca2d10e50fea5df7aeb33342d4330",
+    "corpus.json": "b08539b285ec8911f1095ecd4246b8a082f6240acc590eca14a13a7e264c0323",
+    "upstream.json": "0613632ac6c66c12fe7aee90471205697a68a6c0fdac369eea35c55c5c11d5e9"
+  },
+  "full_report": {
+    "path": "/private/tmp/nera-cowlib-validation/report.json",
+    "sha256": "1d81c3f5327c793e242af7ef41458756d938a2916c1aae5176316ada0d94fea2"
+  },
+  "modules": {
+    "cow_qs": {
+      "build_returncode": 1,
+      "total": 29,
+      "beam_passed": 29,
+      "blocked": 29,
+      "passed": 0,
+      "diagnostics": [
+        "error: unresolved function `lists:join/2`"
+      ],
+      "build_log_sha256": "ba995f58dff91354e1735e3f58ea1d4fdfe17ffc1def9cb4b572f7bbc1ad56ae",
+      "groups": {
+        "valid": 8,
+        "boundary": 16,
+        "errors": 5
+      },
+      "cases": [
+        {
+          "id": "qs_simple",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "9dc2afde57cba2185efd5ff3e64cb64cab2fca46b58251dc36792f4fb5fe111e"
+        },
+        {
+          "id": "qs_flag",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "46fd2cc4a9c09cf76ecc05fd7b2fbc03bf020a022b0e3ecef3b5712e457e3a25"
+        },
+        {
+          "id": "qs_duplicate",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "1bf2ba0c32d98093185c800fe95d414eb91a3cbb803c810035ab4c7ff550ac1c"
+        },
+        {
+          "id": "qs_escaped",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "ec51810e7686e6cbeb7dd82c78323ba8cf7636603861ea7f489e09cfd2f1793f"
+        },
+        {
+          "id": "qs_plus",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "822bf246b5061261a5dfda1f3bd15a4dca71ec3b53453058b07658933e2bbe0a"
+        },
+        {
+          "id": "qs_utf8",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "5aad93ae00e9491244025b8d207b1bfba7af861b5e91b387b8ee770e48089979"
+        },
+        {
+          "id": "qs_nul",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "8bd9aac789cd82400d568ee67768597a480d7f564082b63c373965fc44b77c12"
+        },
+        {
+          "id": "qs_empty",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "a0007a2eaea70b10a2a4f1d3ed7aa4f238d1141d420cd67608f16dfe7196fbce"
+        },
+        {
+          "id": "qs_empty_values",
+          "expected": "exception",
+          "status": "blocked",
+          "beam_result_sha256": "5432cbc7aec64e1ec2dd0e4c86d97f707adf981f81dd736d343f5c0da54e62e9"
+        },
+        {
+          "id": "qs_separators",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "d6c553542f7eb117eaa871a36e8ef345f6128dfdb4900480e70589c6f3495093"
+        },
+        {
+          "id": "qs_extra_equal",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "2deb5d81b4ee24adb84168177fab7cf1c1de3b635ad2b81cfef2b5c252c333bd"
+        },
+        {
+          "id": "qs_hex_case",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "8d74f0da042d92189800318b669adf2eabf6384d590c47402b26d6a3fb498c3a"
+        },
+        {
+          "id": "qs_bare_percent",
+          "expected": "exception",
+          "status": "blocked",
+          "beam_result_sha256": "8049fac93f47800094765a66d1f07720334fd1913f00b4df1a15512d288dd1f9"
+        },
+        {
+          "id": "qs_short_percent",
+          "expected": "exception",
+          "status": "blocked",
+          "beam_result_sha256": "8049fac93f47800094765a66d1f07720334fd1913f00b4df1a15512d288dd1f9"
+        },
+        {
+          "id": "qs_bad_hex",
+          "expected": "exception",
+          "status": "blocked",
+          "beam_result_sha256": "31c05b1ac947891f161edf591fa934308cb9b6d61fb97d037343a64752851b86"
+        },
+        {
+          "id": "qs_limit_0",
+          "expected": "exception",
+          "status": "blocked",
+          "beam_result_sha256": "9c0d8d510a4f6eda3bba14bbb4b0c4b8a99d93857f1d8eadef8ad892f1fd4a25"
+        },
+        {
+          "id": "qs_limit_1",
+          "expected": "exception",
+          "status": "blocked",
+          "beam_result_sha256": "9c0d8d510a4f6eda3bba14bbb4b0c4b8a99d93857f1d8eadef8ad892f1fd4a25"
+        },
+        {
+          "id": "qs_limit_2",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "d8c09653f8beebb3c3e41305aac9785d4124f8a51290ab20474333fd100309d5"
+        },
+        {
+          "id": "qs_limit_3",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "d8c09653f8beebb3c3e41305aac9785d4124f8a51290ab20474333fd100309d5"
+        },
+        {
+          "id": "qs_default_limit_99",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "9664977a27a53fabf346fa3daf1c592b85876422b5f53d28a06f7c5c2e4f6f57"
+        },
+        {
+          "id": "qs_default_limit_100",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "0b62a8d516c8f725f04a2f4a92ba060dca0d072b6b57d9cbd7665644bc6bd42d"
+        },
+        {
+          "id": "qs_default_limit_101",
+          "expected": "exception",
+          "status": "blocked",
+          "beam_result_sha256": "9c0d8d510a4f6eda3bba14bbb4b0c4b8a99d93857f1d8eadef8ad892f1fd4a25"
+        },
+        {
+          "id": "qs_build",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "7e5cb8df0fa2d6c0b6b90c8f2a25f8eb3e3884e2a9621190320cf671770c9bc5"
+        },
+        {
+          "id": "qs_build_empty",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "caeb6db3c9105b185a239caf555cdd843a931d03fcf088cb4868a883da933ad3"
+        },
+        {
+          "id": "qs_encode_bytes",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "6332843c583c5676e491d2ef5d7687c81b59554cd1312af25ed905fae2f8fc66"
+        },
+        {
+          "id": "qs_decode_bytes",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "8614b3d1931688d9b7538e98b16af90af474698dacf3f35ad6519e45ea476d5d"
+        },
+        {
+          "id": "qs_decode_bad",
+          "expected": "exception",
+          "status": "blocked",
+          "beam_result_sha256": "494dcc136a58646f8b310b4568ebd40e7f9b20a2cf84919512f7a0d9b73e1185"
+        },
+        {
+          "id": "qs_bad_type",
+          "expected": "exception",
+          "status": "blocked",
+          "beam_result_sha256": "5432cbc7aec64e1ec2dd0e4c86d97f707adf981f81dd736d343f5c0da54e62e9"
+        },
+        {
+          "id": "qs_empty_value",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "34b5a761b83e34296acad026dab9d3d806db9c337d61918c0ebfdfbf544226be"
+        }
+      ]
+    },
+    "cow_cookie": {
+      "build_returncode": 1,
+      "total": 32,
+      "beam_passed": 32,
+      "blocked": 32,
+      "passed": 0,
+      "diagnostics": [
+        "error: lexer error",
+        "error: lexer error",
+        "error: lexer error",
+        "error: lexer error",
+        "error: lexer error",
+        "error: lexer error",
+        "error: lexer error",
+        "error: lexer error"
+      ],
+      "build_log_sha256": "e6c33418bf3e4f39c5d58d3c1077db18bb799b211ecac51dd63fbae0beff69aa",
+      "groups": {
+        "valid": 13,
+        "boundary": 15,
+        "errors": 4
+      },
+      "cases": [
+        {
+          "id": "cookie_simple",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "d8c09653f8beebb3c3e41305aac9785d4124f8a51290ab20474333fd100309d5"
+        },
+        {
+          "id": "cookie_spaces",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "b8ca45411a212d06a8fa97022547688d6972607ecfd39fede3e23d3d5bd00127"
+        },
+        {
+          "id": "cookie_duplicate",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "39a80d9adc2a91a21dd7ca4937dd5383b3bba231a05ba8b59afd3c96b5b6b208"
+        },
+        {
+          "id": "cookie_quoted",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "b28313fb6251cfe85fa06ae5c55dda14a6757059927d50374c44d33430a2e5a3"
+        },
+        {
+          "id": "cookie_equals",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "891aeb98e403011095bbd656f090b45fa1a0623344d2b8590f6a290863906cc0"
+        },
+        {
+          "id": "cookie_empty",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "a0007a2eaea70b10a2a4f1d3ed7aa4f238d1141d420cd67608f16dfe7196fbce"
+        },
+        {
+          "id": "cookie_empty_value",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "8eb70be15521eefb3540458944831161c51ca4f35337b308ed7f3fce1f12b88e"
+        },
+        {
+          "id": "cookie_separator",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "bad053eae3d1f7b2627b71959dd36e4f579c5022b1f095675275e66ae4651c23"
+        },
+        {
+          "id": "cookie_nameless",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "5104896d215ab94489256236b543d37d334cd23ece0eea1a3b65ed9131ed1469"
+        },
+        {
+          "id": "cookie_empty_name",
+          "expected": "exception",
+          "status": "blocked",
+          "beam_result_sha256": "2a50f1943d6ccc55234c9bc04f0d4034c57cba1ad3fc7646a74a39cc3e61a3e3"
+        },
+        {
+          "id": "cookie_newline",
+          "expected": "exception",
+          "status": "blocked",
+          "beam_result_sha256": "2a50f1943d6ccc55234c9bc04f0d4034c57cba1ad3fc7646a74a39cc3e61a3e3"
+        },
+        {
+          "id": "cookie_tab_value",
+          "expected": "exception",
+          "status": "blocked",
+          "beam_result_sha256": "2a50f1943d6ccc55234c9bc04f0d4034c57cba1ad3fc7646a74a39cc3e61a3e3"
+        },
+        {
+          "id": "cookie_limit_0",
+          "expected": "exception",
+          "status": "blocked",
+          "beam_result_sha256": "9c0d8d510a4f6eda3bba14bbb4b0c4b8a99d93857f1d8eadef8ad892f1fd4a25"
+        },
+        {
+          "id": "cookie_limit_1",
+          "expected": "exception",
+          "status": "blocked",
+          "beam_result_sha256": "9c0d8d510a4f6eda3bba14bbb4b0c4b8a99d93857f1d8eadef8ad892f1fd4a25"
+        },
+        {
+          "id": "cookie_limit_2",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "d8c09653f8beebb3c3e41305aac9785d4124f8a51290ab20474333fd100309d5"
+        },
+        {
+          "id": "cookie_limit_3",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "d8c09653f8beebb3c3e41305aac9785d4124f8a51290ab20474333fd100309d5"
+        },
+        {
+          "id": "cookie_default_limit_99",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "9664977a27a53fabf346fa3daf1c592b85876422b5f53d28a06f7c5c2e4f6f57"
+        },
+        {
+          "id": "cookie_default_limit_100",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "0b62a8d516c8f725f04a2f4a92ba060dca0d072b6b57d9cbd7665644bc6bd42d"
+        },
+        {
+          "id": "cookie_default_limit_101",
+          "expected": "exception",
+          "status": "blocked",
+          "beam_result_sha256": "9c0d8d510a4f6eda3bba14bbb4b0c4b8a99d93857f1d8eadef8ad892f1fd4a25"
+        },
+        {
+          "id": "cookie_set_flags",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "68ec731420634b8a7f1dccb5590017b73522d277f49f5b22b5c886c9daff7540"
+        },
+        {
+          "id": "cookie_set_domain",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "a469bdcd250cbf4569f44125d62b7c0219d351c9a997a7d2d2ecf6ede4395e8a"
+        },
+        {
+          "id": "cookie_set_expiry",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "4d884e2818dcb8db419ce1406d4edab01239b0299afa41df569bcd4e2fccc4c8"
+        },
+        {
+          "id": "cookie_set_zero_age",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "510d9c2ee20e5721744a014ecd82b676a17cd40635e3874b25914c035c6ddcfe"
+        },
+        {
+          "id": "cookie_set_negative_age",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "510d9c2ee20e5721744a014ecd82b676a17cd40635e3874b25914c035c6ddcfe"
+        },
+        {
+          "id": "cookie_set_bad_age",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "2b205e0c227fe42313555b69b3ef3c1b243bc9f5a57c8a4c1537530e939f65d6"
+        },
+        {
+          "id": "cookie_set_empty",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "d2c5619fd980fbf5425bf765e562f33531f96e0989b308839ee9f5fcd33880d6"
+        },
+        {
+          "id": "cookie_set_control",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "d2c5619fd980fbf5425bf765e562f33531f96e0989b308839ee9f5fcd33880d6"
+        },
+        {
+          "id": "cookie_set_unknown",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "2b205e0c227fe42313555b69b3ef3c1b243bc9f5a57c8a4c1537530e939f65d6"
+        },
+        {
+          "id": "cookie_build",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "9b28768b4bd896e0b2551bc0a9cb5e79a9667d7085601fa3942f750a4c791d45"
+        },
+        {
+          "id": "cookie_set_build",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "fbdb13d5a04e1073c7565def919023e85eb1daf830be48aab6a6b0eda0683485"
+        },
+        {
+          "id": "cookie_set_delete",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "0eed9da3dba7bdf89d88b130f1f95bd054a3c0f456fe9eec2b55ade6d2d360f1"
+        },
+        {
+          "id": "cookie_set_bad_age_option",
+          "expected": "exception",
+          "status": "blocked",
+          "beam_result_sha256": "ba79d59f8864c0a436737888f628fef5b82367488837cc1ad204116dc1424e34"
+        }
+      ]
+    },
+    "cow_date": {
+      "build_returncode": 1,
+      "total": 26,
+      "beam_passed": 26,
+      "blocked": 26,
+      "passed": 0,
+      "diagnostics": [
+        "error: unresolved function `calendar:day_of_the_week/1`"
+      ],
+      "build_log_sha256": "ca374e23259f8b7bbc0d58c9f66a49ac0e44ff2b28fd2c942fc54c784f59e93b",
+      "groups": {
+        "valid": 3,
+        "boundary": 14,
+        "errors": 9
+      },
+      "cases": [
+        {
+          "id": "date_imf",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "bfba8f9c9fef0de3f4741a85fb00c88cd8e61c307425e012f722c61e2cd948ed"
+        },
+        {
+          "id": "date_rfc850",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "bfba8f9c9fef0de3f4741a85fb00c88cd8e61c307425e012f722c61e2cd948ed"
+        },
+        {
+          "id": "date_asctime",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "bfba8f9c9fef0de3f4741a85fb00c88cd8e61c307425e012f722c61e2cd948ed"
+        },
+        {
+          "id": "date_leap_second",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "a21135428446532fd6d6e69c54975fe2b55d331d49e817d64a3a2ae8bc4b52bb"
+        },
+        {
+          "id": "date_year_50",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "7eba3cdcb1a27bf718bd358a23c57eb229e5bff4ebd32b065b4bfb9d12787536"
+        },
+        {
+          "id": "date_year_51",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "c68353241f4d83edd7d3d005a57052371a76a929126ad6c7940f7ede6025a44c"
+        },
+        {
+          "id": "date_day_zero",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "2056b38bb70a5ac6ae93f72d9f07c06d3ffedc5c7fa94e8c26ced31320cddec3"
+        },
+        {
+          "id": "date_feb_30",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "bb49495e8f98b369e80f3d5e9e11bdd52ac52b0839ed966bb08b172e958d8f79"
+        },
+        {
+          "id": "date_empty",
+          "expected": "exception",
+          "status": "blocked",
+          "beam_result_sha256": "5432cbc7aec64e1ec2dd0e4c86d97f707adf981f81dd736d343f5c0da54e62e9"
+        },
+        {
+          "id": "date_month",
+          "expected": "exception",
+          "status": "blocked",
+          "beam_result_sha256": "5432cbc7aec64e1ec2dd0e4c86d97f707adf981f81dd736d343f5c0da54e62e9"
+        },
+        {
+          "id": "date_day32",
+          "expected": "exception",
+          "status": "blocked",
+          "beam_result_sha256": "aecc13c1c2a46384cc0f11b7954e39466e72558616670f0bc9ee51a786de3ca6"
+        },
+        {
+          "id": "date_hour24",
+          "expected": "exception",
+          "status": "blocked",
+          "beam_result_sha256": "aecc13c1c2a46384cc0f11b7954e39466e72558616670f0bc9ee51a786de3ca6"
+        },
+        {
+          "id": "date_minute60",
+          "expected": "exception",
+          "status": "blocked",
+          "beam_result_sha256": "aecc13c1c2a46384cc0f11b7954e39466e72558616670f0bc9ee51a786de3ca6"
+        },
+        {
+          "id": "date_second61",
+          "expected": "exception",
+          "status": "blocked",
+          "beam_result_sha256": "aecc13c1c2a46384cc0f11b7954e39466e72558616670f0bc9ee51a786de3ca6"
+        },
+        {
+          "id": "date_trailing",
+          "expected": "exception",
+          "status": "blocked",
+          "beam_result_sha256": "5432cbc7aec64e1ec2dd0e4c86d97f707adf981f81dd736d343f5c0da54e62e9"
+        },
+        {
+          "id": "date_timezone",
+          "expected": "exception",
+          "status": "blocked",
+          "beam_result_sha256": "5432cbc7aec64e1ec2dd0e4c86d97f707adf981f81dd736d343f5c0da54e62e9"
+        },
+        {
+          "id": "date_rfc1123_leap",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "51fcdcfe97513076cfbf11f65eda19de5c1e36dad3dc0b742129120c65dd4e3d"
+        },
+        {
+          "id": "date_rfc1123_century",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "00c7d21ac53587ccf993844645852dbe18b6ad86d23519a3306f52b62d6d104e"
+        },
+        {
+          "id": "date_rfc1123_year_end",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "50d190ad2404e1a375b96f035cb4e9a59197dd52263547f722907301c688cc62"
+        },
+        {
+          "id": "date_rfc2109_leap",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "1afab851ef8629a4b90283031dd5d3f011636891ad6bb3e376486d1984561df3"
+        },
+        {
+          "id": "date_rfc2109_century",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "decf0f470f9813da6a24eabd29ba00665f449b099eebfc15f6108aca5ee7e87a"
+        },
+        {
+          "id": "date_rfc2109_year_end",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "1463101220277075d0a9a1db04fb785f36388960cb02fad02be7caf8d02521ba"
+        },
+        {
+          "id": "date_rfc7231_leap",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "51fcdcfe97513076cfbf11f65eda19de5c1e36dad3dc0b742129120c65dd4e3d"
+        },
+        {
+          "id": "date_rfc7231_century",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "00c7d21ac53587ccf993844645852dbe18b6ad86d23519a3306f52b62d6d104e"
+        },
+        {
+          "id": "date_rfc7231_year_end",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "50d190ad2404e1a375b96f035cb4e9a59197dd52263547f722907301c688cc62"
+        },
+        {
+          "id": "date_bad_type",
+          "expected": "exception",
+          "status": "blocked",
+          "beam_result_sha256": "5432cbc7aec64e1ec2dd0e4c86d97f707adf981f81dd736d343f5c0da54e62e9"
+        }
+      ]
+    },
+    "cow_base64url": {
+      "build_returncode": 1,
+      "total": 33,
+      "beam_passed": 33,
+      "blocked": 33,
+      "passed": 0,
+      "diagnostics": [
+        "error: unresolved function `base64:decode/2`",
+        "error: unresolved function `base64:encode/2`"
+      ],
+      "build_log_sha256": "0739203ab7cd216f9979fff883ec50043ad82250408f5bc4ea807e6196a97c2b",
+      "groups": {
+        "boundary": 24,
+        "valid": 4,
+        "errors": 5
+      },
+      "cases": [
+        {
+          "id": "base64url_encode_empty_padded",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "caeb6db3c9105b185a239caf555cdd843a931d03fcf088cb4868a883da933ad3"
+        },
+        {
+          "id": "base64url_roundtrip_empty_padded",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "caeb6db3c9105b185a239caf555cdd843a931d03fcf088cb4868a883da933ad3"
+        },
+        {
+          "id": "base64url_encode_empty_raw",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "caeb6db3c9105b185a239caf555cdd843a931d03fcf088cb4868a883da933ad3"
+        },
+        {
+          "id": "base64url_roundtrip_empty_raw",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "caeb6db3c9105b185a239caf555cdd843a931d03fcf088cb4868a883da933ad3"
+        },
+        {
+          "id": "base64url_encode_one_padded",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "fae321a85aebcf4dca1e1d5d6a2fb007a59c580c4569bb8f59ba890e6839b4d7"
+        },
+        {
+          "id": "base64url_roundtrip_one_padded",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "21d7ad80b27f5d6300119f208819671a34fc2bd3f62b6f9b3d906ab1eede432e"
+        },
+        {
+          "id": "base64url_encode_one_raw",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "5437353ce8a2a767209167e9c7f2e0d50eebd66c7ec925faf13438c1bfc6d74c"
+        },
+        {
+          "id": "base64url_roundtrip_one_raw",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "21d7ad80b27f5d6300119f208819671a34fc2bd3f62b6f9b3d906ab1eede432e"
+        },
+        {
+          "id": "base64url_encode_two_padded",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "0349563174ae9313422a3ccf19e30624a75168c955ee1452aa0fcc5bd9e90c4e"
+        },
+        {
+          "id": "base64url_roundtrip_two_padded",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "581e24e879112abc0e741540e10902c0d93700221c77aa47d86d3fbde7ae358f"
+        },
+        {
+          "id": "base64url_encode_two_raw",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "43b789156677b5fd68af90f0938e78bcfba1fc1c238b61663e4b08d1c23371ea"
+        },
+        {
+          "id": "base64url_roundtrip_two_raw",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "581e24e879112abc0e741540e10902c0d93700221c77aa47d86d3fbde7ae358f"
+        },
+        {
+          "id": "base64url_encode_three_padded",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "fea7728937ff674b789f1808af3899945925384a91d6652de274b00c7db26f59"
+        },
+        {
+          "id": "base64url_roundtrip_three_padded",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "daae94769e14c1d82cf2d9692f08ea8d3aaaad4eed4ea26d07f52d2ca74579af"
+        },
+        {
+          "id": "base64url_encode_three_raw",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "fea7728937ff674b789f1808af3899945925384a91d6652de274b00c7db26f59"
+        },
+        {
+          "id": "base64url_roundtrip_three_raw",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "daae94769e14c1d82cf2d9692f08ea8d3aaaad4eed4ea26d07f52d2ca74579af"
+        },
+        {
+          "id": "base64url_encode_urlsafe_padded",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "faa6fd63c6da8f11332e46fefa31742f39c51fe3b5a3ade9585007e14731ce1a"
+        },
+        {
+          "id": "base64url_roundtrip_urlsafe_padded",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "a8c0f03c331fa55afbb1369220ac5acbc7c16a92b2a0ed336277b1d7b9364482"
+        },
+        {
+          "id": "base64url_encode_urlsafe_raw",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "faa6fd63c6da8f11332e46fefa31742f39c51fe3b5a3ade9585007e14731ce1a"
+        },
+        {
+          "id": "base64url_roundtrip_urlsafe_raw",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "a8c0f03c331fa55afbb1369220ac5acbc7c16a92b2a0ed336277b1d7b9364482"
+        },
+        {
+          "id": "base64url_encode_all_bytes_padded",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "6d1a461aedb10ae7507b988c3c5e9d79e087fc315c806249b5fcba523beadfa7"
+        },
+        {
+          "id": "base64url_roundtrip_all_bytes_padded",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "2336953416781e82003b43377bcf91439639a81923cd29a18a147b4c7ae208ce"
+        },
+        {
+          "id": "base64url_encode_all_bytes_raw",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "450eda7e87e33bd608763d08ebba8d551450e6572559c4cf2c23ff46ff7f1d8e"
+        },
+        {
+          "id": "base64url_roundtrip_all_bytes_raw",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "2336953416781e82003b43377bcf91439639a81923cd29a18a147b4c7ae208ce"
+        },
+        {
+          "id": "base64url_decode_default",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "581e24e879112abc0e741540e10902c0d93700221c77aa47d86d3fbde7ae358f"
+        },
+        {
+          "id": "base64url_decode_url_alphabet",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "a8c0f03c331fa55afbb1369220ac5acbc7c16a92b2a0ed336277b1d7b9364482"
+        },
+        {
+          "id": "base64url_decode_unpadded",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "581e24e879112abc0e741540e10902c0d93700221c77aa47d86d3fbde7ae358f"
+        },
+        {
+          "id": "base64url_bad_char",
+          "expected": "exception",
+          "status": "blocked",
+          "beam_result_sha256": "120d2f7b1de61f16bfd0539575b9d3d858829c93cc13bf48bce9379053104415"
+        },
+        {
+          "id": "base64url_one_sextet",
+          "expected": "exception",
+          "status": "blocked",
+          "beam_result_sha256": "5432cbc7aec64e1ec2dd0e4c86d97f707adf981f81dd736d343f5c0da54e62e9"
+        },
+        {
+          "id": "base64url_missing_padding",
+          "expected": "exception",
+          "status": "blocked",
+          "beam_result_sha256": "f3fd7a953be97c180b9bd0fdeb8a68a4a210e5023cc580383a60c40e98dbbceb"
+        },
+        {
+          "id": "base64url_bad_padding",
+          "expected": "exception",
+          "status": "blocked",
+          "beam_result_sha256": "120d2f7b1de61f16bfd0539575b9d3d858829c93cc13bf48bce9379053104415"
+        },
+        {
+          "id": "base64url_bad_type",
+          "expected": "exception",
+          "status": "blocked",
+          "beam_result_sha256": "5432cbc7aec64e1ec2dd0e4c86d97f707adf981f81dd736d343f5c0da54e62e9"
+        },
+        {
+          "id": "base64url_encode_default",
+          "expected": "return",
+          "status": "blocked",
+          "beam_result_sha256": "f4f7bd1cc2919cdd0373c2cf3f57caa916b39f9376a4aec1c9debf4226581681"
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "Native execution not reached; initial compilation errors may mask further blockers.",
+    "Project-owned corpus only; upstream EUnit/PropEr not executed.",
+    "Positive wall-clock-dependent cookie max_age excluded.",
+    "macOS arm64 only; no Linux verdict."
+  ]
+}

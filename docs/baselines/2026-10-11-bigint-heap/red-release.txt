@@ -1,0 +1,26 @@
+running 2 tests
+test heap::tests::chunk_rejects_wrapping_request_without_advancing ... FAILED
+test heap::tests::gc_rejects_wrapping_word_layout ... FAILED
+
+failures:
+
+---- heap::tests::chunk_rejects_wrapping_request_without_advancing stdout ----
+
+thread 'heap::tests::chunk_rejects_wrapping_request_without_advancing' (39369) panicked at crates/nera-runtime/src/heap.rs:1123:9:
+assertion failed: chunk.alloc_words(usize::MAX).is_none()
+
+---- heap::tests::gc_rejects_wrapping_word_layout stdout ----
+
+thread 'heap::tests::gc_rejects_wrapping_word_layout' (39370) panicked at crates/nera-runtime/src/heap.rs:1132:9:
+assertion failed: std::panic::catch_unwind(std::panic::AssertUnwindSafe(||
+                { copier.alloc_words(usize::MAX / 8 + 1); })).is_err()
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    heap::tests::chunk_rejects_wrapping_request_without_advancing
+    heap::tests::gc_rejects_wrapping_word_layout
+
+test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 474 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p nera-runtime --lib`

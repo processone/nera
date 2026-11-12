@@ -1,0 +1,22 @@
+Running 2 tests (1 threads)
+────────────────────────────────────────────────────────────
+  FAIL  binary_segment_domain                      1.2s  [1/2]
+  FAIL  list_operator_contracts                   931ms  [2/2]
+────────────────────────────────────────────────────────────
+Results: 0 passed, 2 failed (0 compile), 0 skipped / 2 total
+
+Failures:
+  binary_segment_domain: runtime crash, exit=1
+    stderr:
+    Error in process <0.1.0>: error:{badmatch,<<>>}
+    Stacktrace (most recent call last):
+      binary_segment_domain:bad/1 (binary_segment_domain.erl, line 30)
+      lists:foreach/2 (lists.erl, line 61)
+  list_operator_contracts: runtime crash, exit=1
+    stderr:
+    Error in process <0.1.0>: error:{badmatch,[1,2]}
+    Stacktrace (most recent call last):
+      list_operator_contracts:bad/1 (list_operator_contracts.erl, line 31)
+      list_operator_contracts:test/0 (list_operator_contracts.erl, line 4)
+
+SOME TESTS FAILED

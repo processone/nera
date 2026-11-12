@@ -1,0 +1,229 @@
+{
+  "ets": {
+    "samples": [
+      {
+        "pair": 0,
+        "version": "before",
+        "stdout": "set insert 31880\nset overwrite 53373\nset immediate 26733\nset boxed 37981\nset lookup 42639\nset concurrent 75051\nset concurrent_boxed 26793\nordered_set insert 47640\nordered_set overwrite 104285\nordered_set immediate 78637\nordered_set boxed 90641\nordered_set lookup 121185\nordered_set concurrent 73417\nordered_set concurrent_boxed 28648\n"
+      },
+      {
+        "pair": 0,
+        "version": "after",
+        "stdout": "set insert 31730\nset overwrite 46972\nset immediate 24047\nset boxed 40426\nset lookup 41229\nset concurrent 67235\nset concurrent_boxed 28293\nordered_set insert 46147\nordered_set overwrite 103439\nordered_set immediate 76090\nordered_set boxed 88622\nordered_set lookup 117778\nordered_set concurrent 65542\nordered_set concurrent_boxed 28369\n"
+      },
+      {
+        "pair": 1,
+        "version": "after",
+        "stdout": "set insert 35332\nset overwrite 47164\nset immediate 19925\nset boxed 32363\nset lookup 40032\nset concurrent 60346\nset concurrent_boxed 27759\nordered_set insert 47890\nordered_set overwrite 123687\nordered_set immediate 97456\nordered_set boxed 89414\nordered_set lookup 121832\nordered_set concurrent 70656\nordered_set concurrent_boxed 29130\n"
+      },
+      {
+        "pair": 1,
+        "version": "before",
+        "stdout": "set insert 31251\nset overwrite 46828\nset immediate 22559\nset boxed 35190\nset lookup 43206\nset concurrent 64010\nset concurrent_boxed 27962\nordered_set insert 47236\nordered_set overwrite 104388\nordered_set immediate 76571\nordered_set boxed 88191\nordered_set lookup 115204\nordered_set concurrent 70716\nordered_set concurrent_boxed 32204\n"
+      },
+      {
+        "pair": 2,
+        "version": "before",
+        "stdout": "set insert 37213\nset overwrite 51187\nset immediate 22294\nset boxed 35427\nset lookup 41598\nset concurrent 68097\nset concurrent_boxed 31239\nordered_set insert 47206\nordered_set overwrite 104761\nordered_set immediate 76844\nordered_set boxed 95470\nordered_set lookup 112446\nordered_set concurrent 66361\nordered_set concurrent_boxed 32500\n"
+      },
+      {
+        "pair": 2,
+        "version": "after",
+        "stdout": "set insert 33219\nset overwrite 47627\nset immediate 19814\nset boxed 33245\nset lookup 40827\nset concurrent 69051\nset concurrent_boxed 25677\nordered_set insert 49662\nordered_set overwrite 99202\nordered_set immediate 74564\nordered_set boxed 88278\nordered_set lookup 113301\nordered_set concurrent 67909\nordered_set concurrent_boxed 28591\n"
+      },
+      {
+        "pair": 3,
+        "version": "after",
+        "stdout": "set insert 32877\nset overwrite 45978\nset immediate 24281\nset boxed 34324\nset lookup 41520\nset concurrent 60632\nset concurrent_boxed 27694\nordered_set insert 46686\nordered_set overwrite 103743\nordered_set immediate 77997\nordered_set boxed 92275\nordered_set lookup 124489\nordered_set concurrent 78994\nordered_set concurrent_boxed 28829\n"
+      },
+      {
+        "pair": 3,
+        "version": "before",
+        "stdout": "set insert 29608\nset overwrite 48647\nset immediate 21767\nset boxed 38458\nset lookup 44756\nset concurrent 70274\nset concurrent_boxed 29271\nordered_set insert 47004\nordered_set overwrite 102373\nordered_set immediate 76448\nordered_set boxed 87407\nordered_set lookup 113976\nordered_set concurrent 71626\nordered_set concurrent_boxed 32634\n"
+      },
+      {
+        "pair": 4,
+        "version": "before",
+        "stdout": "set insert 37476\nset overwrite 47059\nset immediate 20264\nset boxed 34940\nset lookup 44206\nset concurrent 66805\nset concurrent_boxed 25279\nordered_set insert 46375\nordered_set overwrite 101772\nordered_set immediate 75998\nordered_set boxed 87812\nordered_set lookup 118307\nordered_set concurrent 85432\nordered_set concurrent_boxed 39905\n"
+      },
+      {
+        "pair": 4,
+        "version": "after",
+        "stdout": "set insert 39267\nset overwrite 48961\nset immediate 26393\nset boxed 36352\nset lookup 53668\nset concurrent 68821\nset concurrent_boxed 26260\nordered_set insert 47185\nordered_set overwrite 104615\nordered_set immediate 74931\nordered_set boxed 87986\nordered_set lookup 121287\nordered_set concurrent 81631\nordered_set concurrent_boxed 35619\n"
+      },
+      {
+        "pair": 5,
+        "version": "after",
+        "stdout": "set insert 38084\nset overwrite 51186\nset immediate 25174\nset boxed 40072\nset lookup 55262\nset concurrent 92332\nset concurrent_boxed 54549\nordered_set insert 77623\nordered_set overwrite 479474\nordered_set immediate 90883\nordered_set boxed 92324\nordered_set lookup 118987\nordered_set concurrent 66614\nordered_set concurrent_boxed 29743\n"
+      },
+      {
+        "pair": 5,
+        "version": "before",
+        "stdout": "set insert 36007\nset overwrite 51796\nset immediate 20198\nset boxed 32688\nset lookup 40978\nset concurrent 69118\nset concurrent_boxed 26733\nordered_set insert 48302\nordered_set overwrite 110824\nordered_set immediate 79708\nordered_set boxed 91640\nordered_set lookup 117362\nordered_set concurrent 68051\nordered_set concurrent_boxed 31265\n"
+      },
+      {
+        "pair": 6,
+        "version": "before",
+        "stdout": "set insert 35001\nset overwrite 175883\nset immediate 39202\nset boxed 48024\nset lookup 46992\nset concurrent 76738\nset concurrent_boxed 33969\nordered_set insert 49516\nordered_set overwrite 103006\nordered_set immediate 77854\nordered_set boxed 87806\nordered_set lookup 116487\nordered_set concurrent 84840\nordered_set concurrent_boxed 37689\n"
+      },
+      {
+        "pair": 6,
+        "version": "after",
+        "stdout": "set insert 31849\nset overwrite 50003\nset immediate 19375\nset boxed 32949\nset lookup 39813\nset concurrent 61389\nset concurrent_boxed 27130\nordered_set insert 45808\nordered_set overwrite 103508\nordered_set immediate 82192\nordered_set boxed 141045\nordered_set lookup 130384\nordered_set concurrent 78688\nordered_set concurrent_boxed 27388\n"
+      }
+    ],
+    "medians": {
+      "set insert": {
+        "before": 35001,
+        "after": 33219,
+        "change_percent": -5.09
+      },
+      "set overwrite": {
+        "before": 51187,
+        "after": 47627,
+        "change_percent": -6.95
+      },
+      "set immediate": {
+        "before": 22294,
+        "after": 24047,
+        "change_percent": 7.86
+      },
+      "set boxed": {
+        "before": 35427,
+        "after": 34324,
+        "change_percent": -3.11
+      },
+      "set lookup": {
+        "before": 43206,
+        "after": 41229,
+        "change_percent": -4.58
+      },
+      "set concurrent": {
+        "before": 69118,
+        "after": 67235,
+        "change_percent": -2.72
+      },
+      "set concurrent_boxed": {
+        "before": 27962,
+        "after": 27694,
+        "change_percent": -0.96
+      },
+      "ordered_set insert": {
+        "before": 47236,
+        "after": 47185,
+        "change_percent": -0.11
+      },
+      "ordered_set overwrite": {
+        "before": 104285,
+        "after": 103743,
+        "change_percent": -0.52
+      },
+      "ordered_set immediate": {
+        "before": 76844,
+        "after": 77997,
+        "change_percent": 1.5
+      },
+      "ordered_set boxed": {
+        "before": 88191,
+        "after": 89414,
+        "change_percent": 1.39
+      },
+      "ordered_set lookup": {
+        "before": 116487,
+        "after": 121287,
+        "change_percent": 4.12
+      },
+      "ordered_set concurrent": {
+        "before": 71626,
+        "after": 70656,
+        "change_percent": -1.35
+      },
+      "ordered_set concurrent_boxed": {
+        "before": 32500,
+        "after": 28829,
+        "change_percent": -11.3
+      }
+    }
+  },
+  "binary_send": {
+    "samples": [
+      {
+        "pair": 0,
+        "version": "before",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:70\n"
+      },
+      {
+        "pair": 0,
+        "version": "after",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:45\n"
+      },
+      {
+        "pair": 1,
+        "version": "after",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:27\n"
+      },
+      {
+        "pair": 1,
+        "version": "before",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:29\n"
+      },
+      {
+        "pair": 2,
+        "version": "before",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:29\n"
+      },
+      {
+        "pair": 2,
+        "version": "after",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:30\n"
+      },
+      {
+        "pair": 3,
+        "version": "after",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:30\n"
+      },
+      {
+        "pair": 3,
+        "version": "before",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:75\n"
+      },
+      {
+        "pair": 4,
+        "version": "before",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:46\n"
+      },
+      {
+        "pair": 4,
+        "version": "after",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:28\n"
+      },
+      {
+        "pair": 5,
+        "version": "after",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:41\n"
+      },
+      {
+        "pair": 5,
+        "version": "before",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:23\n"
+      },
+      {
+        "pair": 6,
+        "version": "before",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:35\n"
+      },
+      {
+        "pair": 6,
+        "version": "after",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:40\n"
+      }
+    ],
+    "medians": {
+      "binary_send_ms": {
+        "before": 35,
+        "after": 30,
+        "change_percent": -14.29
+      }
+    }
+  }
+}

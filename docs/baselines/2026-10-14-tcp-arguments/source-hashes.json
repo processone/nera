@@ -1,0 +1,12 @@
+{
+  "crates/nera-runtime/src/ffi/gen_tcp.rs": "fe4d656a560725f2bb350b5d5e00a35b488dea76b04f0e890c0a9a562b0369da",
+  "crates/nera-runtime/src/socket.rs": "9b63575ed065d413bb23779e1136ec69d75922dc5981cbae55b356e1076e2975",
+  "tests/tcp_argument_domain.erl": "a1000e9445584e2ab50dd07489f758f958555d3d34a72bccdb409cbc858cd514",
+  "Cargo.lock": "a210f397cb773d07c39ed4827a9aea44092f56ee7c2a438f708784dfa5769f80",
+  "Cargo.toml": "8d8f30e39479037b8f2cb82dbcc3f4705503423f0a6db6237003281cf25d24b3",
+  "rust-toolchain.toml": "2ad6f15416572b4836585087f1d4abc53b8fa2dbd616f8dacfaa587ed6714228",
+  "docs/baselines/2026-10-14-tcp-arguments/recv_probe.erl": "de75b36268ab9a937b14976eb90d5799f16071b067b34d52c2b02a215be6d2f0",
+  "docs/baselines/2026-10-14-tcp-arguments/measure.py": "6dea38de3bd3391f279a459a74406d888d3dff082bf376904933e3ac57265fc5",
+  "CHANGELOG.md": "330989a75de0fef7f23be32321e6f0f968ea3597c8de16d828ee152a4814f465",
+  "docs/baselines/2026-10-14-tcp-arguments/red_recv.erl": "ab4b8420de097df5dd352921591efed22594536e0f704fa84716c5b55d206554"
+}

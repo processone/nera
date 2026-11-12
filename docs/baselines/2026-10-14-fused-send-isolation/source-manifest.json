@@ -1,0 +1,39 @@
+{
+  "base": "20afa67b6d9454f7d703fa82bb47d35de55cbae3",
+  "source_sha256": {
+    "CHANGELOG.md": "45f3ec66f260700aab212fe16d8e1dd16ebe237b8b2d1757d3649439043dddd4",
+    "crates/nera-runtime/src/ffi/process.rs": "15d5a36017dd956cd5dff751c17fab918151a2cbc9968c8d5b957dd3b1307d0d",
+    "tests/message_tuple_isolation.erl": "5063d1bd6efe32a5e9f64e6c37b5bfb22d316f0a4d9f432c3ca2d51fb244aa88"
+  },
+  "toolchain": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "platform": "macOS arm64",
+  "beam": "OTP 29 / ERTS 17.0.5",
+  "compiler_sha256": "1c8faf5edff33970fac036b0ee51c14303a6364dd5676101ec2c1fb5a88d215f",
+  "runtime_archive_sha256": "1b062093826a13b62ab82f1da7f23df07268eb94341964c66bfc22ea08bcb892",
+  "validation": {
+    "rust_passed": 1912,
+    "rust_failed": 0,
+    "rust_ignored": 1,
+    "native_passed": 333,
+    "native_failed": 0,
+    "native_skipped": 2,
+    "native_schedulers": 1,
+    "beam_native_schedulers": [
+      1,
+      4
+    ],
+    "clippy": "passed",
+    "release_build": "passed"
+  },
+  "evidence_sha256": {
+    "fused-send.ir.txt": "d7810e740cba211aabfbc4001f9d800902abbfcdcb6b3184bc76130649707dfc",
+    "native-1.log": "aa55447d940503591b41187570a7a6f184407d24de4e1f6ceafa02a47717330f",
+    "clippy.log.gz": "2bde8c221db28c78fa0ce06dcf3c296bae71c4591e8372525678567b4fdb29f0",
+    "workspace.log.gz": "5c5189fb2db07cee5575ac8614b8ce9c255f62c4f439b8ffdd4f10e8f8bac1bc",
+    "native-4.log": "aa55447d940503591b41187570a7a6f184407d24de4e1f6ceafa02a47717330f",
+    "README.md": "ac3d432102b622a77ba22d91bef9430d08d34fe1ff73fc568d310b2b05a7febc",
+    "native-suite.log.gz": "8f1cb12e8d54e994286bf2c61be5ee7369c9e3b5f59670755073390636632b80",
+    "red.log.gz": "26b4b2f5c1018bdd4502613a7b55bf42b8074ff322a2fbc82c237d095cdd901a",
+    "beam.log": "aa55447d940503591b41187570a7a6f184407d24de4e1f6ceafa02a47717330f"
+  }
+}

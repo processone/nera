@@ -1,0 +1,34 @@
+series 1 group 1 complete
+series 1 group 2 complete
+series 1 group 3 complete
+series 1 group 4 complete
+series 1 group 5 complete
+series 2 group 1 complete
+series 2 group 2 complete
+series 2 group 3 complete
+series 2 group 4 complete
+series 2 group 5 complete
+series 3 group 1 complete
+series 3 group 2 complete
+series 3 group 3 complete
+series 3 group 4 complete
+series 3 group 5 complete
+i8_write 18813 18794 20775 21341 aligned% -0.1 shifted% 2.72 shift_vs_aligned% 13.55
+i8_read 8670 8955 11543 12472 aligned% 3.29 shifted% 8.05 shift_vs_aligned% 39.27
+i32_write 20317 20162 22796 23740 aligned% -0.76 shifted% 4.14 shift_vs_aligned% 17.75
+i32_read 8824 9283 12393 13343 aligned% 5.2 shifted% 7.67 shift_vs_aligned% 43.74
+i64_write 22031 21950 25660 26297 aligned% -0.37 shifted% 2.48 shift_vs_aligned% 19.8
+i64_read 8944 9277 14052 14876 aligned% 3.72 shifted% 5.86 shift_vs_aligned% 60.35
+i64le_write 21631 21717 26162 27052 aligned% 0.4 shifted% 3.4 shift_vs_aligned% 24.57
+i64le_read 8882 9265 16438 17376 aligned% 4.31 shifted% 5.71 shift_vs_aligned% 87.54
+i13_write 19886 20090 21007 21530 aligned% 1.03 shifted% 2.49 shift_vs_aligned% 7.17
+i13_read 11550 12641 11558 12806 aligned% 9.45 shifted% 10.8 shift_vs_aligned% 1.31
+dynamic32_write 21728 21985 24656 25982 aligned% 1.18 shifted% 5.38 shift_vs_aligned% 18.18
+dynamic32_read 10241 12081 13866 16075 aligned% 17.97 shifted% 15.93 shift_vs_aligned% 33.06
+dynamicprefix32_write 21718 21666 24264 25379 aligned% -0.24 shifted% 4.6 shift_vs_aligned% 17.14
+dynamicprefix32_read 10653 11981 14150 15956 aligned% 12.47 shifted% 12.76 shift_vs_aligned% 33.18
+binary16_write 22129 24118 178358 179170 aligned% 8.99 shifted% 0.46 shift_vs_aligned% 642.89
+binary16_read 21729 22232 52550 52851 aligned% 2.31 shifted% 0.57 shift_vs_aligned% 137.72
+binary256_write 10406 10189 260634 260948 aligned% -2.09 shifted% 0.12 shift_vs_aligned% 2461.08
+binary256_read 25781 25820 57099 57220 aligned% 0.15 shifted% 0.21 shift_vs_aligned% 121.61
+load (5.97265625, 5.2900390625, 5.3134765625) (3.701171875, 4.71875, 5.0888671875)

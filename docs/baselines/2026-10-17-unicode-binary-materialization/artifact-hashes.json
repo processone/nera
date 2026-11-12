@@ -1,0 +1,6 @@
+{
+  "nera-before": "ff2036f3974c0cba2b0c907eaf9c752559bee66f42bf98e301c681c82ced1c91",
+  "libnera_runtime.a": "fdf184a09efc3212d24f66bd22b49b23370a10b739feebf6c5f9dc70361c1bef",
+  "after-runtime/nera": "036e59f940c26f4f0ad9e42c90a0754e357292dc8fa1d29e61c7d58168223e78",
+  "after-runtime/libnera_runtime.a": "b01637d37953317ab8923bdfddf81a491a6d24244f9c966836a422812bc25176"
+}

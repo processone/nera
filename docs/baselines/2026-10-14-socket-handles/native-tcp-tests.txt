@@ -1,0 +1,16 @@
+Running 10 tests (1 threads)
+────────────────────────────────────────────────────────────
+  PASS  tcp_accept_close                          714ms  [1/10]
+  PASS  tcp_accept_concurrent                     766ms  [2/10]
+  PASS  tcp_accept_kill                            1.1s  [3/10]
+  PASS  tcp_active_once                            1.1s  [4/10]
+  PASS  tcp_handle_domain                         906ms  [5/10]
+  PASS  tcp_reactor                                1.2s  [6/10]
+  PASS  tcp_reactor_close_active                  750ms  [7/10]
+  PASS  tcp_reactor_perf                          948ms  [8/10]
+  PASS  tcp_reactor_stress                        962ms  [9/10]
+  PASS  tcp_socket_cleanup                        849ms  [10/10]
+────────────────────────────────────────────────────────────
+Results: 10 passed, 0 failed (0 compile), 0 skipped / 10 total
+
+ALL TESTS PASSED

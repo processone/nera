@@ -1,0 +1,15 @@
+Running 1 tests (1 threads)
+────────────────────────────────────────────────────────────
+  FAIL  tcp_reactor_stress                        30.8s  [1/1]
+────────────────────────────────────────────────────────────
+Results: 0 passed, 1 failed (0 compile), 0 skipped / 1 total
+
+Failures:
+  tcp_reactor_stress: timeout after 30s
+    stderr:
+    Error in process <0.3.0>: error:{timeout_mp_rearm,20}
+    Stacktrace (most recent call last):
+      tcp_reactor_stress:mp_rearm_loop/3 (tcp_reactor_stress.erl, line 180)
+    Error in process <0.5.0>: error:{timeout_mp_rearm,19}
+
+SOME TESTS FAILED

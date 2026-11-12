@@ -1,0 +1,31 @@
+{
+  "base": "676b99b35de387ae3a125d52e1249daa6cb65fc0",
+  "branch": "mr/hibernate-gc-roots",
+  "state": "uncommitted validation snapshot",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "source_sha256": {
+    "CHANGELOG.md": "2ac2fee46163eb0da1d083900fdcf2ea2e0bb300ab1a54ec4e360680d23610f0",
+    "crates/nera-runtime/src/entry.rs": "06ce0d27fd05064daa0583a396fb2ca358968a29ebeb31e9502cd9144d38407d",
+    "crates/nera-runtime/src/ets.rs": "0773c829b69518620822cd0fb99edd3d5c50ef431b015e0430660deeeb3d0afb",
+    "crates/nera-runtime/src/ffi/binary_ops.rs": "10d24a562473c03b2b88e3ddb8eae74913473b7863a6f54937f5316ae8d052a1",
+    "crates/nera-runtime/src/ffi/closure.rs": "fb53d916a36442b64c7fa9e45b0681d10936a215e6b4d1761b854b7f98aa93e3",
+    "crates/nera-runtime/src/ffi/process.rs": "f719e6173623f028cb26d91468e221c3cc7046f1f9ccf14695941574b642c729",
+    "crates/nera-runtime/src/heap.rs": "4ecca64b39e530a389f855ef1c9c20fabe20c6b4242549a03ef4615bde17d805",
+    "crates/nera-runtime/src/process.rs": "f8675296517b67f62c83ec86d6d6520a853d2db995ef3e74000fa2ba68d8dc29",
+    "crates/nera-runtime/src/scheduler.rs": "5afa490f26f1736f8445359e4775b0f171a4726209dfd50d074afafdaf469c79",
+    "crates/nera-runtime/src/term.rs": "75b3807bf65f2e0dc730ee708205cab9e1c385de9413bff861807c9b76b390b2",
+    "tests/hibernate_gc_args.erl": "2a7f73e65a646cfba37dcc2bf7e08259406bf38d3dc120751360e57dee186740",
+    "tests/hibernate_retained_roots.erl": "5c93309ab930defe8dfae217eb82645148da258863c12b813827acf98cb7b3d2",
+    "docs/baselines/2026-10-13-hibernate-gc-roots/probe.rs": "289f0ffb83009c2b330de59177e0af27cab6e2f60f4ace16de2f77ba9ab196bf"
+  },
+  "artifact_sha256": {
+    "/tmp/nera-hibernate-artifacts/before/libnera_runtime.a": "71f2dcbe838e59d11027e23eedbd64daad27dd06ca9d841acab9da5a0a31e5d2",
+    "/tmp/nera-hibernate-artifacts/before/libnera_runtime.rlib": "5ef39e310905e74bac1ec71945882fca857531a80e518e1212b10f043452e409",
+    "/tmp/nera-hibernate-artifacts/before/nera": "ed282ae8be1d0604ec832f169fa96b3adc2cce824a49e2c7a66c0ab1b86916f0",
+    "/tmp/nera-hibernate-artifacts/before/probe": "c2a7954ab142f11ac328a162ab0762623e8c8c04f611386ac619407e487f09d0",
+    "/tmp/nera-hibernate-artifacts/after/libnera_runtime.a": "0c43f0939c588de5947fa3b85a45c316ae373ed80a0ca31f2cf78f4855487240",
+    "/tmp/nera-hibernate-artifacts/after/libnera_runtime.rlib": "40509f1508ef49e1bf278c10cd08805ba28ffdf15854c931d69ae154bb0b565d",
+    "/tmp/nera-hibernate-artifacts/after/nera": "ed282ae8be1d0604ec832f169fa96b3adc2cce824a49e2c7a66c0ab1b86916f0",
+    "/tmp/nera-hibernate-artifacts/after/probe": "1376ef91f2df754bdfc557e86d48ec4e272c7714c4e48234019543085f435a05"
+  }
+}

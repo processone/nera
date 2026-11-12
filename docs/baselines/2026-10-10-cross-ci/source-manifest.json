@@ -1,0 +1,4 @@
+{
+  ".github/workflows/ci.yml": "411fc58f456fd4f1669e25db8c7f84db918853bd6580d293c1925e8f6afe00a6",
+  "scripts/test-cross.sh": "f2e108c4e05d6a1130deabcb16123b405d272b3971faafb64a26a3f408a3de59"
+}

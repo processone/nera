@@ -1,0 +1,22 @@
+   Compiling nera-runtime v0.1.0 (/home/user/.codex/worktrees/binary-match-corrections/nera/crates/nera-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.10s
+     Running unittests src/lib.rs (/home/user/AIProjects/nera/target/binary-match-publication/debug/deps/nera_runtime-27bb0f9fcbc2d668)
+
+running 1 test
+test heap::tests::large_promotion_into_existing_old_gen_has_live_headroom ... FAILED
+
+failures:
+
+---- heap::tests::large_promotion_into_existing_old_gen_has_live_headroom stdout ----
+
+thread 'heap::tests::large_promotion_into_existing_old_gen_has_live_headroom' (5009166) panicked at crates/nera-runtime/src/heap.rs:2729:9:
+a large live promotion needs headroom even with an existing old generation
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    heap::tests::large_promotion_into_existing_old_gen_has_live_headroom
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 545 filtered out; finished in 0.22s
+
+error: test failed, to rerun pass `-p nera-runtime --lib`

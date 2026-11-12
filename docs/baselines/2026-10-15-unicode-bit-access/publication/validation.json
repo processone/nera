@@ -1,0 +1,30 @@
+{
+  "base": "968da9c7c70d35bb2524aa2e1e5b95b17025603d",
+  "tested_commit": "fdbc7d2410a04a2e26c32c48b9d89888a125ba14",
+  "tested_tree": "1d27fe25f868a789b06069f61c78d688be42e0e9",
+  "counts": {
+    "workspace": [
+      1985,
+      0,
+      1
+    ],
+    "release": [
+      639,
+      0,
+      1
+    ]
+  },
+  "native": {
+    "passed": 61,
+    "failed": 0,
+    "skipped": 0
+  },
+  "cowlib_harness": {
+    "passed": 82,
+    "upstream_properties_rerun": false
+  },
+  "unicode_source_hashes": "../source-hashes.json; all match before-rebase measured code",
+  "performance": "Preserved pre-rebase observations; not rerun after PR102 integration",
+  "subsequent_changes": "publication evidence and documentation only",
+  "ci": "paused per CONTRIBUTING.md"
+}

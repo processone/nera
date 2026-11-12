@@ -1,0 +1,44 @@
+[package]
+name = "nera-runtime"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "Lightweight Erlang runtime: processes, scheduler, GC"
+
+[lib]
+crate-type = ["lib", "staticlib"]
+name = "nera_runtime"
+
+[target.'cfg(not(target_env = "msvc"))'.dependencies]
+# jemalloc 5.4.0 includes upstream's build-path whitespace fix. Keep both
+# wrappers at the same revision so they share a single jemalloc-sys instance.
+# Return to registry releases once they include jemalloc 5.4.0.
+tikv-jemallocator = { git = "https://github.com/tikv/jemallocator", rev = "9d6e381a16267eb2ec63e96dc4f33d843f92eb62" }
+tikv-jemalloc-ctl = { git = "https://github.com/tikv/jemallocator", rev = "9d6e381a16267eb2ec63e96dc4f33d843f92eb62", features = ["stats"] }
+
+[dependencies]
+bumpalo = "3.20"
+crossbeam-deque = "0.8"
+crossbeam-queue = "0.3"
+crossbeam-utils = "0.8"
+parking_lot = "0.12"
+num_cpus = "1.16"
+num-bigint = "0.4"
+num-traits = "0.2"
+ryu = "1.0.23"
+mio = { version = "1", features = ["net", "os-poll", "os-ext"] }
+crossbeam-channel = "0.5"
+dashmap = "6"
+libc = "0.2"
+md-5 = "0.10"
+sha1 = "0.10"
+sha2 = "0.10"
+getrandom = "0.2"
+unicode-segmentation = "=1.13.3"
+zlib-rs = { version = "0.6", default-features = false, features = ["rust-allocator"] }
+
+[dev-dependencies]
+proptest = "1"

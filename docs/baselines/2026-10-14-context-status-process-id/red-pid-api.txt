@@ -1,0 +1,17 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.10s
+   Doc-tests nera_runtime
+
+running 1 test
+test crates/nera-runtime/src/term.rs - term::ErlTerm::pid (line 363) - compile fail ... FAILED
+
+failures:
+
+---- crates/nera-runtime/src/term.rs - term::ErlTerm::pid (line 363) stdout ----
+Test compiled successfully, but it's marked `compile_fail`.
+
+failures:
+    crates/nera-runtime/src/term.rs - term::ErlTerm::pid (line 363)
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 36 filtered out; finished in 0.15s
+
+error: doctest failed, to rerun pass `-p nera-runtime --doc`

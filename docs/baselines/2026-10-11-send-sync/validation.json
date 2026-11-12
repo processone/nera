@@ -1,0 +1,75 @@
+{
+  "base_ref": "origin/main",
+  "base": "309548d32e7dfde1de98a3e06f431f6e676ee5c3",
+  "target": "uncommitted worktree on mr/send-sync-invariants",
+  "worktree": "/tmp/nera-send-sync-worktree",
+  "divergence_commits": {
+    "ahead": 0,
+    "behind": 0
+  },
+  "source_sha256": {
+    "crates/nera-runtime/src/ets.rs": "92a16c7bd100eeb62f20e9bfd0c06fedcbcf5d7e8c01b6bb153f0f8eed7be974",
+    "crates/nera-runtime/src/ets_pool.rs": "9793b5b86d0d19a0f4104d4f56c76a8c7a166cda1fe5cbe6a6a06cb7430135ea",
+    "crates/nera-runtime/src/message.rs": "844d796c3f0d8012e9f091c5479da7e723ee19db7033d52ef6f5b1fe98bb49e7",
+    "crates/nera-runtime/src/persistent_term.rs": "675a9951bb985d43aa4c5437cc580240b04c1223bf7d8b65c7b252ec3a5b6b7a",
+    "crates/nera-runtime/src/process.rs": "066ff5c13facf03187b8d62421ecd28d3601a9cb80ae80c3b80eeecdec9d93cf",
+    "docs/ARCHITECTURE.md": "0d221b8f6b81e9a3f10dfb3611bd03e9900621efe0263938fcded3f95e0920b7",
+    "docs/SEND_SYNC.md": "d36e73fe8aefcbabd00954d7232840679274146618b37029f3669941bff66bd2"
+  },
+  "validation_logs": {
+    "tests": {
+      "path": "/tmp/nera-send-sync-tests.log",
+      "sha256": "2d5b09641f16d39319e84b2be95eb2ec1a50c9cdeeb965bea75264dfec9bd3eb"
+    },
+    "runtime-final": {
+      "path": "/tmp/nera-send-sync-runtime-final.log",
+      "sha256": "1ebf0a6ffea7df608011a4559504db8b2b6fae24ac5622d5a8f43e9dc57c7e7b"
+    },
+    "clippy-final": {
+      "path": "/tmp/nera-send-sync-clippy-final.log",
+      "sha256": "8a1d20546f54040aca7683ea18c40364b03131454354fca98e44a63e3f978bdd"
+    },
+    "release": {
+      "path": "/tmp/nera-send-sync-release.log",
+      "sha256": "b287167077baf76a2fc24b977b39e535ca60db39451d7853b4fa73bcbeab1e5f"
+    },
+    "e2e": {
+      "path": "/tmp/nera-send-sync-e2e.log",
+      "sha256": "b22b9733e4dfae6fa2cdd837ae31ee2eee37f00a51d17dda73bd5e836e3910f7"
+    },
+    "thoas-run": {
+      "path": "/tmp/nera-send-sync-thoas-run.log",
+      "sha256": "ebfcaafd0b18da91d887750467173d42525c7032dcfe5b5ad5f8299880abf2be"
+    },
+    "red-context": {
+      "path": "/tmp/nera-send-sync-red-context.log",
+      "sha256": "8b598ab135e54ecb5ee8df1bf9e9d9365632509c377db7fb3a836d9fbcab0be0"
+    },
+    "red-region": {
+      "path": "/tmp/nera-send-sync-red-region.log",
+      "sha256": "f693e68eee4d758f0b2e62d251dcd4259afa39af7c356fad8388a2767f150b74"
+    }
+  },
+  "runtime_archive_sha256": {
+    "before": "dad007c5fb029d598c2bb4060127f538ee3f3d48982635bbcbf0046296f41ff0",
+    "after": "a9196b2809a36d3a082b7c746163883b965e5a5ae6e530aa8da39e95641cdeba"
+  },
+  "results": {
+    "rust_workspace_passed": 1708,
+    "final_runtime_tests_passed": 451,
+    "final_runtime_doctests_passed": 6,
+    "clippy_strict": "passed",
+    "release_workspace": "passed",
+    "erlang_passed": 286,
+    "erlang_failed": 0,
+    "erlang_skipped": 2,
+    "thoas": "11 groups passed; 4 non-tail-recursion warnings in dependency source"
+  },
+  "not_run": [
+    "remote CI",
+    "cross-platform execution",
+    "sanitizers/Miri"
+  ],
+  "publication": "not committed, pushed, or published",
+  "performance": "ETS stable; persistent_term no observed regression; binary throughput inconclusive due to variance, including A/A control"
+}

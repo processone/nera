@@ -1,0 +1,26 @@
+   Compiling nera-runtime v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.47s
+     Running unittests src/lib.rs (/tmp/nera-transfer-target/debug/deps/nera_runtime-27bb0f9fcbc2d668)
+
+running 1 test
+test message::tests::partial_refc_windows_keep_bit_length_through_all_message_paths ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 617 filtered out; finished in 0.00s
+
+     Running tests/exit_signal_contract.rs (/tmp/nera-transfer-target/debug/deps/exit_signal_contract-3858ad16e9a3e84b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/fragment_heap_contract.rs (/tmp/nera-transfer-target/debug/deps/fragment_heap_contract-a6d410d2fc9c10d6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/scheduler_borrow_scope.rs (/tmp/nera-transfer-target/debug/deps/scheduler_borrow_scope-ea7af5f77a2923fd)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s

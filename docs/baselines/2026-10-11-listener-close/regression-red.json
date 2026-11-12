@@ -1,0 +1,5 @@
+{
+  "exit": 1,
+  "stdout": "accept_close_failed: {accept_close_timeout,<0.2.0>}\n",
+  "stderr": ""
+}

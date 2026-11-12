@@ -1,0 +1,4 @@
+    Checking nera-ir v0.1.0 (/home/user/AIProjects/nera/crates/nera-ir)
+   Compiling nera v0.1.0 (/home/user/AIProjects/nera/crates/nera)
+    Checking nera-codegen v0.1.0 (/home/user/AIProjects/nera/crates/nera-codegen)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.82s

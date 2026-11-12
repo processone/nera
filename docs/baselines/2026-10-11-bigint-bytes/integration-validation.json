@@ -1,0 +1,13 @@
+{
+  "base": "f84c0f5bb35984ccdd307a2b7ff191e70efc60f6",
+  "sources": {
+    "crates/nera-runtime/src/bigint.rs": "81c518d788a3ae1c638300a6ae06ac902aa5bc5561a7557cb3ce3e7cc237819f",
+    "CHANGELOG.md": "c5595085faceb449da93394eb9ea1124391342b17b36cfc21e0da5d92906dc79"
+  },
+  "logs": {
+    "nera-bytes-integrated-tests.log": "e42711c893e8b3f032930e46d5c1b3c292a8aa00327a715a7db75c4856b5949f",
+    "nera-bytes-integrated-clippy.log": "17e1dd56cfa2f10b503c4341955c83b0d4af1a0328495f5fcdf6ffe93a48daaf",
+    "nera-bytes-integrated-build.log": "f7c052051c87a2db3ac9d6dfe1137edcbdde01ecfa35ce7b3e85565b877b1a1b",
+    "nera-bytes-integrated-e2e.log": "22644a44a8fa824cc05d1e6772a3ed4fa6b22c18d1a6af4cf4c35d52b3e07884"
+  }
+}

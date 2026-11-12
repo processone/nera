@@ -1,0 +1,26 @@
+   Compiling nera-runtime v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.59s
+   Doc-tests nera_runtime
+
+running 3 tests
+test crates/nera-runtime/src/bif.rs - bif (line 10) - compile fail ... FAILED
+test crates/nera-runtime/src/bif.rs - bif (line 15) - compile fail ... FAILED
+test crates/nera-runtime/src/bif.rs - bif (line 19) - compile fail ... FAILED
+
+failures:
+
+---- crates/nera-runtime/src/bif.rs - bif (line 10) stdout ----
+Test compiled successfully, but it's marked `compile_fail`.
+---- crates/nera-runtime/src/bif.rs - bif (line 15) stdout ----
+Test compiled successfully, but it's marked `compile_fail`.
+---- crates/nera-runtime/src/bif.rs - bif (line 19) stdout ----
+Test compiled successfully, but it's marked `compile_fail`.
+
+failures:
+    crates/nera-runtime/src/bif.rs - bif (line 10)
+    crates/nera-runtime/src/bif.rs - bif (line 15)
+    crates/nera-runtime/src/bif.rs - bif (line 19)
+
+test result: FAILED. 0 passed; 3 failed; 0 ignored; 0 measured; 38 filtered out; finished in 0.47s
+
+error: doctest failed, to rerun pass `-p nera-runtime --doc`

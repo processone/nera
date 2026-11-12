@@ -1,0 +1,127 @@
+0000000100000f3c <std::sys::backtrace::__rust_begin_short_backtrace::<std::thread::lifecycle::spawn_unchecked<nera_socket_before::main::{closure#0}::{closure#0}, ()>::{closure#1}::{closure#0}::{closure#0}, ()>>:
+100000f3c: d100c3ff    	sub	sp, sp, #0x30
+100000f40: a9027bfd    	stp	x29, x30, [sp, #0x20]
+100000f44: 910083fd    	add	x29, sp, #0x20
+100000f48: ad400400    	ldp	q0, q1, [x0]
+100000f4c: ad0007e0    	stp	q0, q1, [sp]
+100000f50: 910003e0    	mov	x0, sp
+100000f54: 94013e9c    	bl	0x1000509c4 <<std::thread::spawnhook::ChildSpawnHooks>::inherit_and_run>
+100000f58: a9427bfd    	ldp	x29, x30, [sp, #0x20]
+100000f5c: 9100c3ff    	add	sp, sp, #0x30
+100000f60: d65f03c0    	ret
+
+0000000100000f64 <std::sys::backtrace::__rust_begin_short_backtrace::<nera_socket_before::main::{closure#0}::{closure#0}, ()>>:
+100000f64: d101c3ff    	sub	sp, sp, #0x70
+100000f68: a9016ffc    	stp	x28, x27, [sp, #0x10]
+100000f6c: a90267fa    	stp	x26, x25, [sp, #0x20]
+100000f70: a9035ff8    	stp	x24, x23, [sp, #0x30]
+100000f74: a90457f6    	stp	x22, x21, [sp, #0x40]
+100000f78: a9054ff4    	stp	x20, x19, [sp, #0x50]
+100000f7c: a9067bfd    	stp	x29, x30, [sp, #0x60]
+100000f80: 910183fd    	add	x29, sp, #0x60
+100000f84: 34000aa0    	cbz	w0, 0x1000010d8 <std::sys::backtrace::__rust_begin_short_backtrace::<nera_socket_before::main::{closure#0}::{closure#0}, ()>+0x174>
+100000f88: 52884808    	mov	w8, #0x4240             ; =16960
+100000f8c: 72a001e8    	movk	w8, #0xf, lsl #16
+100000f90: 1ac00d15    	sdiv	w21, w8, w0
+100000f94: 710006bf    	cmp	w21, #0x1
+100000f98: 540008eb    	b.lt	0x1000010b4 <std::sys::backtrace::__rust_begin_short_backtrace::<nera_socket_before::main::{closure#0}::{closure#0}, ()>+0x150>
+100000f9c: aa0103f3    	mov	x19, x1
+100000fa0: 910023f6    	add	x22, sp, #0x8
+100000fa4: 90000578    	adrp	x24, 0x1000ac000 <dyld_stub_binder+0x1000ac000>
+100000fa8: 928001fb    	mov	x27, #-0x10             ; =-16
+100000fac: 928001bc    	mov	x28, #-0xe              ; =-14
+100000fb0: 910003fa    	mov	x26, sp
+100000fb4: 92800019    	mov	x25, #-0x1              ; =-1
+100000fb8: 90000574    	adrp	x20, 0x1000ac000 <dyld_stub_binder+0x1000ac000>
+100000fbc: 910d0294    	add	x20, x20, #0x340
+100000fc0: 14000003    	b	0x100000fcc <std::sys::backtrace::__rust_begin_short_backtrace::<nera_socket_before::main::{closure#0}::{closure#0}, ()>+0x68>
+100000fc4: 710006b5    	subs	w21, w21, #0x1
+100000fc8: 54000760    	b.eq	0x1000010b4 <std::sys::backtrace::__rust_begin_short_backtrace::<nera_socket_before::main::{closure#0}::{closure#0}, ()>+0x150>
+100000fcc: f90007f3    	str	x19, [sp, #0x8]
+100000fd0: f94007f7    	ldr	x23, [sp, #0x8]
+100000fd4: 90000568    	adrp	x8, 0x1000ac000 <dyld_stub_binder+0x1000ac000>
+100000fd8: f941a108    	ldr	x8, [x8, #0x340]
+100000fdc: d3430d09    	ubfx	x9, x8, #3, #1
+100000fe0: b100451f    	cmn	x8, #0x11
+100000fe4: 1a9f9529    	csinc	w9, w9, wzr, ls
+100000fe8: 360000c9    	tbz	w9, #0x0, 0x100001000 <std::sys::backtrace::__rust_begin_short_backtrace::<nera_socket_before::main::{closure#0}::{closure#0}, ()>+0x9c>
+100000fec: aa1403e0    	mov	x0, x20
+100000ff0: 52800001    	mov	w1, #0x0                ; =0
+100000ff4: 12800003    	mov	w3, #-0x1               ; =-1
+100000ff8: 94020762    	bl	0x100082d80 <<parking_lot::raw_rwlock::RawRwLock>::lock_shared_slow>
+100000ffc: 14000006    	b	0x100001014 <std::sys::backtrace::__rust_begin_short_backtrace::<nera_socket_before::main::{closure#0}::{closure#0}, ()>+0xb0>
+100001000: 91004109    	add	x9, x8, #0x10
+100001004: aa0803ea    	mov	x10, x8
+100001008: c8ea7e89    	casa	x10, x9, [x20]
+10000100c: eb08015f    	cmp	x10, x8
+100001010: 54fffee1    	b.ne	0x100000fec <std::sys::backtrace::__rust_begin_short_backtrace::<nera_socket_before::main::{closure#0}::{closure#0}, ()>+0x88>
+100001014: f941af09    	ldr	x9, [x24, #0x358]
+100001018: 2a1703e8    	mov	w8, w23
+10000101c: eb09011f    	cmp	x8, x9
+100001020: 54000202    	b.hs	0x100001060 <std::sys::backtrace::__rust_begin_short_backtrace::<nera_socket_before::main::{closure#0}::{closure#0}, ()>+0xfc>
+100001024: f0000549    	adrp	x9, 0x1000ac000 <dyld_stub_binder+0x1000ac000>
+100001028: f941a929    	ldr	x9, [x9, #0x350]
+10000102c: 8b081128    	add	x8, x9, x8, lsl #4
+100001030: b9400109    	ldr	w9, [x8]
+100001034: 34000169    	cbz	w9, 0x100001060 <std::sys::backtrace::__rust_begin_short_backtrace::<nera_socket_before::main::{closure#0}::{closure#0}, ()>+0xfc>
+100001038: d360fee9    	lsr	x9, x23, #32
+10000103c: b940050a    	ldr	w10, [x8, #0x4]
+100001040: 6b09015f    	cmp	w10, w9
+100001044: 540000e1    	b.ne	0x100001060 <std::sys::backtrace::__rust_begin_short_backtrace::<nera_socket_before::main::{closure#0}::{closure#0}, ()>+0xfc>
+100001048: f9400509    	ldr	x9, [x8, #0x8]
+10000104c: 5280002a    	mov	w10, #0x1               ; =1
+100001050: f82a0129    	ldadd	x10, x9, [x9]
+100001054: b7f80409    	tbnz	x9, #0x3f, 0x1000010d4 <std::sys::backtrace::__rust_begin_short_backtrace::<nera_socket_before::main::{closure#0}::{closure#0}, ()>+0x170>
+100001058: f9400517    	ldr	x23, [x8, #0x8]
+10000105c: 14000002    	b	0x100001064 <std::sys::backtrace::__rust_begin_short_backtrace::<nera_socket_before::main::{closure#0}::{closure#0}, ()>+0x100>
+100001060: d2800017    	mov	x23, #0x0               ; =0
+100001064: f87b0288    	ldaddl	x27, x8, [x20]
+100001068: 8a1c0108    	and	x8, x8, x28
+10000106c: f100491f    	cmp	x8, #0x12
+100001070: 54000160    	b.eq	0x10000109c <std::sys::backtrace::__rust_begin_short_backtrace::<nera_socket_before::main::{closure#0}::{closure#0}, ()>+0x138>
+100001074: b40001b7    	cbz	x23, 0x1000010a8 <std::sys::backtrace::__rust_begin_short_backtrace::<nera_socket_before::main::{closure#0}::{closure#0}, ()>+0x144>
+100001078: a9006bf7    	stp	x23, x26, [sp]
+10000107c: f94003e8    	ldr	x8, [sp]
+100001080: f8790108    	ldaddl	x25, x8, [x8]
+100001084: f100051f    	cmp	x8, #0x1
+100001088: 54fff9e1    	b.ne	0x100000fc4 <std::sys::backtrace::__rust_begin_short_backtrace::<nera_socket_before::main::{closure#0}::{closure#0}, ()>+0x60>
+10000108c: d50339bf    	dmb	ishld
+100001090: 910003e0    	mov	x0, sp
+100001094: 94000673    	bl	0x100002a60 <<alloc::sync::Arc<nera_runtime::socket::SocketEntry>>::drop_slow>
+100001098: 17ffffcb    	b	0x100000fc4 <std::sys::backtrace::__rust_begin_short_backtrace::<nera_socket_before::main::{closure#0}::{closure#0}, ()>+0x60>
+10000109c: aa1403e0    	mov	x0, x20
+1000010a0: 940208fa    	bl	0x100083488 <<parking_lot::raw_rwlock::RawRwLock>::unlock_shared_slow>
+1000010a4: b5fffeb7    	cbnz	x23, 0x100001078 <std::sys::backtrace::__rust_begin_short_backtrace::<nera_socket_before::main::{closure#0}::{closure#0}, ()>+0x114>
+1000010a8: f0000500    	adrp	x0, 0x1000a4000 <dyld_stub_binder+0x1000a4000>
+1000010ac: 9102e000    	add	x0, x0, #0xb8
+1000010b0: 94022014    	bl	0x100089100 <core::option::unwrap_failed>
+1000010b4: a9467bfd    	ldp	x29, x30, [sp, #0x60]
+1000010b8: a9454ff4    	ldp	x20, x19, [sp, #0x50]
+1000010bc: a94457f6    	ldp	x22, x21, [sp, #0x40]
+1000010c0: a9435ff8    	ldp	x24, x23, [sp, #0x30]
+1000010c4: a94267fa    	ldp	x26, x25, [sp, #0x20]
+1000010c8: a9416ffc    	ldp	x28, x27, [sp, #0x10]
+1000010cc: 9101c3ff    	add	sp, sp, #0x70
+1000010d0: d65f03c0    	ret
+1000010d4: d4200020    	brk	#0x1
+1000010d8: f0000500    	adrp	x0, 0x1000a4000 <dyld_stub_binder+0x1000a4000>
+1000010dc: 91028000    	add	x0, x0, #0xa0
+1000010e0: 940220f4    	bl	0x1000894b0 <core::panicking::panic_const::panic_const_div_by_zero>
+
+00000001000010e4 <std::rt::lang_start::<()>::{closure#0}>:
+1000010e4: a9bf7bfd    	stp	x29, x30, [sp, #-0x10]!
+1000010e8: 910003fd    	mov	x29, sp
+1000010ec: f9400000    	ldr	x0, [x0]
+1000010f0: 97ffff8e    	bl	0x100000f28 <std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>>
+1000010f4: 52800000    	mov	w0, #0x0                ; =0
+1000010f8: a8c17bfd    	ldp	x29, x30, [sp], #0x10
+1000010fc: d65f03c0    	ret
+
+0000000100001100 <<std::rt::lang_start<()>::{closure#0} as core::ops::function::FnOnce<()>>::call_once::{shim:vtable#0}>:
+100001100: a9bf7bfd    	stp	x29, x30, [sp, #-0x10]!
+100001104: 910003fd    	mov	x29, sp
+100001108: f9400000    	ldr	x0, [x0]
+10000110c: 97ffff87    	bl	0x100000f28 <std::sys::backtrace::__rust_begin_short_backtrace::<fn(), ()>>
+100001110: 52800000    	mov	w0, #0x0                ; =0
+100001114: a8c17bfd    	ldp	x29, x30, [sp], #0x10
+100001118: d65f03c0    	ret

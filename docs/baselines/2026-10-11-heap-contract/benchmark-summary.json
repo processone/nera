@@ -1,0 +1,77 @@
+{
+  "set insert": {
+    "before": 33545.0,
+    "after": 33290.0,
+    "change_percent": -0.76
+  },
+  "set overwrite": {
+    "before": 48674.0,
+    "after": 47886.0,
+    "change_percent": -1.62
+  },
+  "set immediate": {
+    "before": 22426.5,
+    "after": 21992.0,
+    "change_percent": -1.94
+  },
+  "set boxed": {
+    "before": 35657.0,
+    "after": 34955.0,
+    "change_percent": -1.97
+  },
+  "set lookup": {
+    "before": 43299.5,
+    "after": 42321.0,
+    "change_percent": -2.26
+  },
+  "set concurrent": {
+    "before": 67914.5,
+    "after": 67752.0,
+    "change_percent": -0.24
+  },
+  "set concurrent_boxed": {
+    "before": 27207.0,
+    "after": 27270.0,
+    "change_percent": 0.23
+  },
+  "ordered_set insert": {
+    "before": 47354.0,
+    "after": 47650.0,
+    "change_percent": 0.63
+  },
+  "ordered_set overwrite": {
+    "before": 103189.0,
+    "after": 103520.5,
+    "change_percent": 0.32
+  },
+  "ordered_set immediate": {
+    "before": 76509.5,
+    "after": 75777.5,
+    "change_percent": -0.96
+  },
+  "ordered_set boxed": {
+    "before": 88345.0,
+    "after": 88132.0,
+    "change_percent": -0.24
+  },
+  "ordered_set lookup": {
+    "before": 115216.5,
+    "after": 115818.5,
+    "change_percent": 0.52
+  },
+  "ordered_set concurrent": {
+    "before": 66284.0,
+    "after": 67796.0,
+    "change_percent": 2.28
+  },
+  "ordered_set concurrent_boxed": {
+    "before": 30799.0,
+    "after": 30803.5,
+    "change_percent": 0.01
+  },
+  "binary_send_ms": {
+    "before": 29.0,
+    "after": 26.0,
+    "change_percent": -10.34
+  }
+}

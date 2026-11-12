@@ -1,0 +1,253 @@
+{
+  "samples_us": {
+    "before": [
+      {
+        "lookup_1": 11098,
+        "lookup_2": 11609,
+        "lookup_4": 20879,
+        "lookup_8": 58227,
+        "reuse": 1342,
+        "fresh": 274,
+        "registration": 50796,
+        "roundtrip": 63419
+      },
+      {
+        "lookup_1": 11240,
+        "lookup_2": 11430,
+        "lookup_4": 11637,
+        "lookup_8": 28429,
+        "reuse": 1370,
+        "fresh": 307,
+        "registration": 36311,
+        "roundtrip": 57099
+      },
+      {
+        "lookup_1": 11421,
+        "lookup_2": 11461,
+        "lookup_4": 14946,
+        "lookup_8": 34922,
+        "reuse": 1353,
+        "fresh": 241,
+        "registration": 40134,
+        "roundtrip": 57072
+      },
+      {
+        "lookup_1": 11068,
+        "lookup_2": 11475,
+        "lookup_4": 16354,
+        "lookup_8": 31907,
+        "reuse": 1356,
+        "fresh": 242,
+        "registration": 37865,
+        "roundtrip": 74156
+      },
+      {
+        "lookup_1": 11087,
+        "lookup_2": 11435,
+        "lookup_4": 12493,
+        "lookup_8": 52817,
+        "reuse": 1355,
+        "fresh": 246,
+        "registration": 37249,
+        "roundtrip": 60252
+      },
+      {
+        "lookup_1": 11130,
+        "lookup_2": 11392,
+        "lookup_4": 16774,
+        "lookup_8": 23746,
+        "reuse": 1411,
+        "fresh": 241,
+        "registration": 38309,
+        "roundtrip": 60736
+      },
+      {
+        "lookup_1": 11122,
+        "lookup_2": 11084,
+        "lookup_4": 11443,
+        "lookup_8": 42124,
+        "reuse": 1357,
+        "fresh": 255,
+        "registration": 43765,
+        "roundtrip": 52708
+      },
+      {
+        "lookup_1": 10924,
+        "lookup_2": 11037,
+        "lookup_4": 11596,
+        "lookup_8": 48632,
+        "reuse": 1368,
+        "fresh": 248,
+        "registration": 37261,
+        "roundtrip": 59130
+      },
+      {
+        "lookup_1": 11248,
+        "lookup_2": 11509,
+        "lookup_4": 11673,
+        "lookup_8": 29106,
+        "reuse": 1368,
+        "fresh": 266,
+        "registration": 37334,
+        "roundtrip": 61551
+      }
+    ],
+    "after": [
+      {
+        "lookup_1": 10948,
+        "lookup_2": 11051,
+        "lookup_4": 11610,
+        "lookup_8": 64050,
+        "reuse": 1251,
+        "fresh": 244,
+        "registration": 38257,
+        "roundtrip": 60666
+      },
+      {
+        "lookup_1": 11377,
+        "lookup_2": 11762,
+        "lookup_4": 15665,
+        "lookup_8": 37581,
+        "reuse": 1233,
+        "fresh": 244,
+        "registration": 37936,
+        "roundtrip": 60431
+      },
+      {
+        "lookup_1": 11176,
+        "lookup_2": 11335,
+        "lookup_4": 11899,
+        "lookup_8": 38878,
+        "reuse": 1269,
+        "fresh": 248,
+        "registration": 38809,
+        "roundtrip": 60464
+      },
+      {
+        "lookup_1": 11124,
+        "lookup_2": 11497,
+        "lookup_4": 16747,
+        "lookup_8": 36947,
+        "reuse": 1263,
+        "fresh": 290,
+        "registration": 37967,
+        "roundtrip": 62324
+      },
+      {
+        "lookup_1": 11090,
+        "lookup_2": 11308,
+        "lookup_4": 12893,
+        "lookup_8": 31082,
+        "reuse": 1206,
+        "fresh": 237,
+        "registration": 39746,
+        "roundtrip": 71005
+      },
+      {
+        "lookup_1": 11099,
+        "lookup_2": 11308,
+        "lookup_4": 14440,
+        "lookup_8": 45922,
+        "reuse": 1254,
+        "fresh": 243,
+        "registration": 37795,
+        "roundtrip": 53410
+      },
+      {
+        "lookup_1": 11134,
+        "lookup_2": 11397,
+        "lookup_4": 17669,
+        "lookup_8": 53151,
+        "reuse": 1240,
+        "fresh": 233,
+        "registration": 52666,
+        "roundtrip": 54332
+      },
+      {
+        "lookup_1": 10928,
+        "lookup_2": 11121,
+        "lookup_4": 11414,
+        "lookup_8": 62679,
+        "reuse": 1238,
+        "fresh": 249,
+        "registration": 50039,
+        "roundtrip": 69200
+      },
+      {
+        "lookup_1": 11348,
+        "lookup_2": 11506,
+        "lookup_4": 12752,
+        "lookup_8": 53222,
+        "reuse": 1282,
+        "fresh": 246,
+        "registration": 40881,
+        "roundtrip": 55395
+      }
+    ]
+  },
+  "medians_us": {
+    "before": {
+      "lookup_1": 11122,
+      "lookup_2": 11435,
+      "lookup_4": 12493,
+      "lookup_8": 34922,
+      "reuse": 1357,
+      "fresh": 248,
+      "registration": 37865,
+      "roundtrip": 60252
+    },
+    "after": {
+      "lookup_1": 11124,
+      "lookup_2": 11335,
+      "lookup_4": 12893,
+      "lookup_8": 45922,
+      "reuse": 1251,
+      "fresh": 244,
+      "registration": 38809,
+      "roundtrip": 60464
+    }
+  },
+  "percent_change": {
+    "lookup_1": 0.01798237727026475,
+    "lookup_2": -0.8745080891998214,
+    "lookup_4": 3.201793004082276,
+    "lookup_8": 31.49876868449688,
+    "reuse": -7.8113485630066375,
+    "fresh": -1.6129032258064502,
+    "registration": 2.4930674765614613,
+    "roundtrip": 0.35185554006504915
+  },
+  "paired_percent_change": {
+    "lookup_1": 0.03661662394727205,
+    "lookup_2": -0.02606655660787327,
+    "lookup_4": 2.4030818148465194,
+    "lookup_8": 26.17747602316969,
+    "reuse": -8.621960206337508,
+    "fresh": -3.658536585365857,
+    "registration": 4.475227892374201,
+    "roundtrip": 3.081126204750695
+  },
+  "start": {
+    "utc": "2026-10-14T16:47:45.255532+00:00",
+    "load": [
+      3.8583984375,
+      4.650390625,
+      3.92578125
+    ]
+  },
+  "end": {
+    "utc": "2026-10-14T16:47:51.822428+00:00",
+    "load": [
+      4.32177734375,
+      4.72607421875,
+      3.9609375
+    ]
+  },
+  "slot_bytes": 16,
+  "binary_hashes": {
+    "/tmp/nera-socket-before": "67a33a3b413816f6b9a16922bc5ac1829047711fb237fd503086dcab3934e792",
+    "/tmp/nera-socket-after": "42ba9d177faa2ce6f1fdcb2acfe7ea5767cf0b3f5ea4bc56538f86b6cc01dc36",
+    "/tmp/nera-socket-native-before": "513656e9d2b3633a237a87d98ea230f3f0bd891d8b44f11ea8f61b1e27240cd6",
+    "/tmp/nera-socket-native-after": "b0df381d2b60ab2b375c727c567d763d6ceae960cbea802ffee2ab060ee2b971"
+  }
+}

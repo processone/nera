@@ -1,0 +1,129 @@
+{
+  "date": "2026-10-12",
+  "scope": "Bound binary matching compiler fix; local macOS arm64 validation",
+  "base_commit": "0bb5269430735d68ef98b8c063170d35e6f272bc",
+  "base_tree": "275d38872156b557ae93150d27faf2a91c1cf50b",
+  "target": "Uncommitted worktree changes on the recorded base; exact production and regression source hashes below",
+  "source_sha256": {
+    "crates/nera-ir/src/pattern.rs": "73e87418140e27b9f1b87ca73a86eb7041ba04c20e2f870e83249d498938c676",
+    "crates/nera-ir/src/lower/pattern_lower.rs": "e27675ce38911cbe9854eb4e1348cda1e8c6402431d93e260f5136b41981fad2",
+    "tests/binary_bound_match.erl": "9af1d4a4c82109823a3f34b0593a0553b01b2c59efba2b03cf95c7aa286a6246"
+  },
+  "nera_sha256": "d96d184ec20d883233e26b884d987b8398e99e8c2abc85db1549f7928325df69",
+  "runtime_sha256": "2fddde0178063e8f830d1d973848834787f951cfe110f3e937b556c3acf6322d",
+  "otp_version": "Erlang/OTP 29 [erts-17.0.5] [source] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads:1] [jit] [dtrace]",
+  "root_cause": "Sized binary extraction received an advanced match context but used a helper for ordinary binaries. Both lowering paths now use BsMaterialize. Bound deferred tails are also materialized before equality without consuming definitions needed by sibling clauses.",
+  "minimal_regression": {
+    "fixture": "tests/binary_bound_match.erl",
+    "input": "<<0,1,1>>",
+    "expected_frame_count": 2,
+    "before_nera": "{badmatch, <<1>>}",
+    "after_beam": "passed",
+    "after_nera": "passed",
+    "additional_cases": [
+      "empty and 1/2/64/65/255 byte frames",
+      "unequal bytes and exact-type errors",
+      "truncated frame",
+      "deferred binary tails",
+      "nested repeated variables",
+      "alternative case clauses"
+    ]
+  },
+  "original_reproducer": {
+    "source": "base64url-gc-evidence.json:separate_observation.project_owned_reproducer",
+    "source_sha256": "5b53ef65e01271b61f58134f5a2c95b622e48e2c1cfd7c8ae2d52f35cdc386f9",
+    "unchanged": true,
+    "frames": 129,
+    "beam_exit": 0,
+    "nera_exit": 0,
+    "beam_stdout": "ok\n",
+    "nera_stdout": "ok\n"
+  },
+  "validation": {
+    "native_regressions": {
+      "passed": 12,
+      "failed": 0
+    },
+    "rust_workspace_serial": {
+      "passed": 1813,
+      "ignored": 1,
+      "failed": 0
+    },
+    "ir_tests": {
+      "passed": 430,
+      "failed": 0
+    },
+    "ir_clippy_all_targets_warnings_denied": "passed",
+    "python_harness_tests": {
+      "passed": 37,
+      "failed": 0
+    }
+  },
+  "cowlib_corpus": {
+    "status": "passed",
+    "upstream": {
+      "name": "cowlib",
+      "version": "2.20.0",
+      "url": "https://github.com/ninenines/cowlib.git",
+      "commit": "c768a804565ff5b8178ed968a5921e469d6bd7b2"
+    },
+    "modules": {
+      "cow_qs": {
+        "passed": 29,
+        "total": 29
+      },
+      "cow_cookie": {
+        "passed": 34,
+        "total": 34
+      },
+      "cow_date": {
+        "passed": 26,
+        "total": 26
+      },
+      "cow_base64url": {
+        "passed": 33,
+        "total": 33
+      }
+    },
+    "total_passed": 122,
+    "comparison_contract": "Existing typed result/exception comparator, including Set-Cookie attribute-order normalization and Max-Age time windows; unchanged",
+    "report_sha256": "04528d548d24f41c5bb34454d5b05365549003ab588260644bead19e71b62bd8",
+    "report_path": "/private/tmp/nera-cowlib-bound-match/report.json",
+    "reproduction": "TZ=Pacific/Honolulu python3 tests/integration/cowlib/runner.py --nera /path/to/rebuilt/nera --work-dir /tmp/nera-cowlib-bound-match"
+  },
+  "logs": {
+    "native": {
+      "sha256": "e5ba3396472e23a3062f17743ae67a11e64d29c7bc5fd0a84a3655264c8e6e76",
+      "path": "/private/tmp/nera-bound-match-native.log"
+    },
+    "beam": {
+      "sha256": "4bb1cd08ddcf50c6c0c105c315e9cf410402936508e77f1ed87820cb84c96f78",
+      "path": "/private/tmp/nera-bound-match/beam-regression.log"
+    },
+    "workspace": {
+      "sha256": "871638b739a49cac309320d84a9c82acb16ea53c22ee47f04190f7b8c1aa0a4f",
+      "path": "/private/tmp/nera-bound-match-workspace-tests.log"
+    },
+    "ir": {
+      "sha256": "6dcb1f674d56c87bc028b6cd0ecc72f47fec48e6ee9d696d9bead6544ac15104",
+      "path": "/private/tmp/nera-bound-match-ir-tests.log"
+    },
+    "clippy": {
+      "sha256": "476a485b670aadfbadd613d203042e9665bbbf64028f0f599ebfb1fa51206f51",
+      "path": "/private/tmp/nera-bound-match-clippy.log"
+    },
+    "minimal_before": {
+      "sha256": "a579e5cb4628d6582ffe8800176d0f62bff45f8dda432ab0d89dc2565e8d46c0",
+      "path": "/private/tmp/nera-bound-match-red.log"
+    },
+    "deferred_tail_before": {
+      "sha256": "8c0b622b03a808d36677e8bb02ab578a88cde28baec676d47782792c99b78b1d",
+      "path": "/private/tmp/nera-bound-match/tail-build.log"
+    }
+  },
+  "limitations": [
+    "No upstream Cowlib source copied into this repository.",
+    "The 1563-input upstream property replay was not rerun for this compiler fix; its earlier GC-fix evidence remains separate.",
+    "Local macOS arm64 results only; remote CI not run for these uncommitted changes."
+  ]
+}

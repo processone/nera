@@ -1,0 +1,23 @@
+    Blocking waiting for file lock on build directory
+   Compiling nera-runtime v0.1.0 (/private/tmp/nera-message-binary/crates/nera-runtime)
+    Finished `release` profile [optimized] target(s) in 1m 32s
+     Running unittests src/lib.rs (/home/user/AIProjects/nera/target/release/deps/nera_runtime-d9d0cab72757adae)
+
+running 1 test
+test term::tests::boxed_header_rejects_oversized_arity ... FAILED
+
+failures:
+
+---- term::tests::boxed_header_rejects_oversized_arity stdout ----
+
+thread 'term::tests::boxed_header_rejects_oversized_arity' (3019312) panicked at crates/nera-runtime/src/term.rs:885:9:
+oversized header arity must not silently truncate
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    term::tests::boxed_header_rejects_oversized_arity
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 492 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p nera-runtime --lib`

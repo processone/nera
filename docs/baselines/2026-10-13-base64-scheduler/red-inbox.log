@@ -1,0 +1,19 @@
+   Compiling nera-runtime v0.1.0 (/home/user/.codex/worktrees/binary-match-corrections/nera/crates/nera-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.62s
+     Running unittests src/lib.rs (/home/user/AIProjects/nera/target/binary-match-publication/debug/deps/nera_runtime-27bb0f9fcbc2d668)
+
+running 1 test
+
+thread 'scheduler::tests::worker_inbox_drain_leaves_time_for_execution' (4205030) panicked at crates/nera-runtime/src/scheduler.rs:1821:9:
+draining a busy inbox must leave a bounded batch for the next turn
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test scheduler::tests::worker_inbox_drain_leaves_time_for_execution ... FAILED
+
+failures:
+
+failures:
+    scheduler::tests::worker_inbox_drain_leaves_time_for_execution
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 517 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p nera-runtime --lib`

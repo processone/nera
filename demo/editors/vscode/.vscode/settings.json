@@ -1,0 +1,7 @@
+{
+  "[erlang]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 4
+  },
+  "nera.path": "${workspaceFolder}/../../../target/release/nera"
+}

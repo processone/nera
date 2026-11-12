@@ -1,0 +1,62 @@
+{
+  "base_ref": "main",
+  "base": "9e2ddcebaf725e6ea649ffcaafa98ccc682986cc",
+  "base_tree": "1572ba044e831da4a0026b4df9a6acc1b6fbfcb1",
+  "target": "working tree (source SHA-256 below)",
+  "origin_main_divergence": {
+    "ahead": 1,
+    "behind": 0
+  },
+  "files": {
+    "CHANGELOG.md": "4f2f96284dacb142505bf1550d4d62652082ba9910824b46e7487f612cdf1dfa",
+    "crates/nera-codegen/src/func_translator/instructions.rs": "65db3226b905009dfd70e6d742e2df387d610ca036cda76beb41f1c44d4bc506",
+    "crates/nera-codegen/src/func_translator/liveness.rs": "01e1522a017962be647a1ef2e3b4823d7c031e8d03939d484fab33ec783a231b",
+    "crates/nera-codegen/src/func_translator/mod.rs": "dbe0f451f20594dd88e32c71dc9ed114d7ce4a99317ecd816ddb8e8a35113c6a",
+    "crates/nera-ir/src/display.rs": "0445dd188c5fc4a7a38b6ffc281b40a54fa665003fb4a3a2d93e1b6ddc2a5588",
+    "crates/nera-ir/src/ir.rs": "6fbfbf5a32030d2fce7601b9762556060de36c3f4ef67c95736fae0a8b656c63",
+    "crates/nera-ir/src/lower/pattern_lower.rs": "c804adebf50d8051903f9872c9d551e3b1fbf67f39b7c4728d85691d61f84d6e",
+    "crates/nera-ir/src/passes/uses.rs": "0b6300edb9bcdffb520c15512ce54ae5ef224cca10d035b93666a5d9b84d4146",
+    "crates/nera-ir/src/pattern.rs": "d99ad4e54b3ef5c4de80279856997545f47db5b887149759d31d2b3d673d4265",
+    "crates/nera-ir/src/verify/operands.rs": "2958da7d4dcff3fefc735bf9cf9e7d7f79917455be6095ee356ca723e7ac516f",
+    "crates/nera-ir/src/verify/tests.rs": "ea3f3edb38d87dcd0732d33fc75748d87c7ba459555a793bd74a6e0e2ff232cb",
+    "crates/nera-runtime/src/ffi/alloc.rs": "bdd31baf9e093c976f8e97ece0cd789349606ef34e14baf282a8a44f60114178",
+    "tests/binary_recursive_bits.erl": "f702283ee979741588aaadfa7436b981ba248f0430b33175c828b4ab71427d45",
+    "tests/binary_match_reuse_alloc.erl": "a153f95ccd2c18dc7fc63b40014da8afc0ebab718a2a1715357c287a4ae7cec5",
+    "Cargo.lock": "a210f397cb773d07c39ed4827a9aea44092f56ee7c2a438f708784dfa5769f80",
+    "rust-toolchain.toml": "2ad6f15416572b4836585087f1d4abc53b8fa2dbd616f8dacfaa587ed6714228",
+    "docs/baselines/2026-10-13-bit-offset/compare.py": "8a417844bfd2444e56e2fb9c68f3d725ac86b2d1540bb67e7f71b829542c16bc"
+  },
+  "artifacts": {
+    "target/release/nera": "ba91bce4f344d72a20a610c400ef633723c3bf4aaa6eea9b2600a317186002fe",
+    "target/release/libnera_runtime.a": "b56e7e06988a7fdb5d17ced1a570db4b78b5b6dd98853fa600f4074bc3ef15cc"
+  },
+  "platform": "Darwin arm64; OTP 29 / ERTS 17.0.5",
+  "checks": {
+    "release": "cargo build --release --locked: pass",
+    "compiler_tests": "cargo test -p nera-ir -p nera-codegen --locked: 511 passed",
+    "allocations": "cargo test -p nera-runtime ffi::alloc::tests --locked: 4 passed",
+    "clippy": "cargo clippy --workspace --all-targets --locked -- -D warnings: pass",
+    "binary": "nera test binary_* -j 1 --timeout 30: 23 passed",
+    "bitstring": "nera test bitstring_* -j 1 --timeout 30: 4 passed",
+    "base64": "nera test base64* -j 1 --timeout 30: 1 passed",
+    "differential": "compare.py: BEAM == Nera; expected ok completion required",
+    "whitespace": "git diff --check: pass"
+  },
+  "omitted": [
+    "full workspace suite",
+    "full Erlang suite",
+    "Linux/Windows/cross-target checks",
+    "independent merge review (no merge requested)"
+  ],
+  "preserved_prior_work": [
+    "crates/nera-runtime/src/ffi/alloc.rs",
+    "tests/binary_match_reuse_alloc.erl",
+    "benchmarks/base64_prototype/",
+    "docs/baselines/2026-10-13-match-context-allocation/"
+  ],
+  "unrelated": [
+    ".claude/",
+    ".lavish/"
+  ],
+  "publication": "none"
+}

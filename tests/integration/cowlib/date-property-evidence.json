@@ -1,0 +1,767 @@
+{
+  "status": "passed",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream",
+        "rev-parse",
+        "HEAD"
+      ],
+      "label": "cowlib-head",
+      "cwd": "/private/tmp/nera-cow-date-property-final",
+      "returncode": 0,
+      "stdout_sha256": "d987cdb63f2e2c1f01ca097d28e28f79bedaa4a0fdaa228c05b29caa265a812d",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/private/tmp/nera-cowlib-main-proper",
+        "rev-parse",
+        "HEAD"
+      ],
+      "label": "proper-head",
+      "cwd": "/private/tmp/nera-cow-date-property-final",
+      "returncode": 0,
+      "stdout_sha256": "6435f6eb1643468f91ea867fe183cfd63a71804d78768c9765b0eedbe6b52e9a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream",
+        "status",
+        "--porcelain",
+        "--untracked-files=all",
+        "--ignored"
+      ],
+      "label": "cowlib-clean",
+      "cwd": "/private/tmp/nera-cow-date-property-final",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/private/tmp/nera-cowlib-main-proper",
+        "diff",
+        "HEAD",
+        "--",
+        "src",
+        "include",
+        "rebar.config"
+      ],
+      "label": "proper-clean",
+      "cwd": "/private/tmp/nera-cow-date-property-final",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "label": "nera-head",
+      "cwd": "/home/user/.codex/worktrees/base64-one-arity/nera",
+      "returncode": 0,
+      "stdout_sha256": "e46635c89705a62b7f4ced30b016b4cbd4fc97e230474ef0e02af227d268a050",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "label": "nera-status",
+      "cwd": "/home/user/.codex/worktrees/base64-one-arity/nera",
+      "returncode": 0,
+      "stdout_sha256": "6ba0bb7106e6628ff3dcaf29e5efe55100b8c6d7a5c44e84de938a46fe786d61",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "erl",
+        "-noshell",
+        "-eval",
+        "io:format(\"~s\",[erlang:system_info(system_version)]),halt()."
+      ],
+      "label": "otp",
+      "cwd": "/private/tmp/nera-cow-date-property-final",
+      "returncode": 0,
+      "stdout_sha256": "0e5d220635638ebbe2981d178553ebd4c9e9036c5a6912e0bf1e00a84df6bbb8",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "erlc",
+        "-DTEST",
+        "+export_all",
+        "+{parse_transform,eunit_autoexport}",
+        "-I",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream/include",
+        "-o",
+        "/private/tmp/nera-cow-date-property-final/beam",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream/src/cow_date.erl",
+        "/private/tmp/nera-cow-date-property-final/beam/date_properties.erl"
+      ],
+      "label": "beam-build",
+      "cwd": "/private/tmp/nera-cow-date-property-final",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "erl",
+        "-noshell",
+        "-pa",
+        "/private/tmp/nera-cow-date-property-final/beam",
+        "-eval",
+        "\n        Gs = [{fixdate,fixdate_gen},{rfc850,rfc850_gen},{asctime,asctime_gen}],\n        Inputs = lists:append([[begin\n            {ok,X} = proper_gen:pick(apply(cow_date,G,[]),1+((I-1) rem 50),{19001,I,J}),\n            {Name,X}\n        end || I <- lists:seq(1,1000)] || {{Name,G},J} <- lists:zip(Gs,lists:seq(1,3))]),\n        ok = file:write_file(\"inputs.etf\",term_to_binary(Inputs)), halt().\n        "
+      ],
+      "label": "generate-first",
+      "cwd": "/private/tmp/nera-cow-date-property-final",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "erl",
+        "-noshell",
+        "-pa",
+        "/private/tmp/nera-cow-date-property-final/beam",
+        "-eval",
+        "\n        Gs = [{fixdate,fixdate_gen},{rfc850,rfc850_gen},{asctime,asctime_gen}],\n        Inputs = lists:append([[begin\n            {ok,X} = proper_gen:pick(apply(cow_date,G,[]),1+((I-1) rem 50),{19001,I,J}),\n            {Name,X}\n        end || I <- lists:seq(1,1000)] || {{Name,G},J} <- lists:zip(Gs,lists:seq(1,3))]),\n        ok = file:write_file(\"inputs.etf\",term_to_binary(Inputs)), halt().\n        "
+      ],
+      "label": "generate-repeat",
+      "cwd": "/private/tmp/nera-cow-date-property-final",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "erl",
+        "-noshell",
+        "-pa",
+        "/private/tmp/nera-cow-date-property-final/beam",
+        "-eval",
+        "date_properties:start(),halt()."
+      ],
+      "label": "beam-replay",
+      "cwd": "/private/tmp/nera-cow-date-property-final",
+      "returncode": 0,
+      "stdout_sha256": "814b99c53b599007898cf2cee05e2bdeb720bbb2689c5196aa616839261dc636",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/private/tmp/nera-base64-one-target/release/nera",
+        "build",
+        "/private/tmp/nera-cow-date-property-final/native/cow_date.erl",
+        "/private/tmp/nera-cow-date-property-final/native/date_properties.erl",
+        "--no-warnings",
+        "-I",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream/include",
+        "-e",
+        "date_properties:start",
+        "-o",
+        "/private/tmp/nera-cow-date-property-final/native/run"
+      ],
+      "label": "native-build",
+      "cwd": "/private/tmp/nera-cow-date-property-final/native",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "075a23a63f0f66ee46545842b186bfc42d934c1405ee551d157dbe0ad0d4e1c8"
+    },
+    {
+      "argv": [
+        "/private/tmp/nera-cow-date-property-final/native/run"
+      ],
+      "label": "native-cumulative-replay",
+      "cwd": "/private/tmp/nera-cow-date-property-final",
+      "returncode": 0,
+      "stdout_sha256": "814b99c53b599007898cf2cee05e2bdeb720bbb2689c5196aa616839261dc636",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "erl",
+        "-noshell",
+        "-pa",
+        "/private/tmp/nera-cow-date-property-final/beam",
+        "-eval",
+        "date_properties:false_control(),halt()."
+      ],
+      "label": "beam-false-control",
+      "cwd": "/private/tmp/nera-cow-date-property-final",
+      "returncode": 0,
+      "stdout_sha256": "ed39fa0f225b2e884326e6f5627fb6b2e101349aae807d46887bc09fcfe17394",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/private/tmp/nera-base64-one-target/release/nera",
+        "build",
+        "/private/tmp/nera-cow-date-property-final/native/false/cow_date.erl",
+        "/private/tmp/nera-cow-date-property-final/native/date_properties.erl",
+        "--no-warnings",
+        "-I",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream/include",
+        "-e",
+        "date_properties:false_control",
+        "-o",
+        "/private/tmp/nera-cow-date-property-final/native/false/run"
+      ],
+      "label": "native-false-build",
+      "cwd": "/private/tmp/nera-cow-date-property-final/native/false",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "075a23a63f0f66ee46545842b186bfc42d934c1405ee551d157dbe0ad0d4e1c8"
+    },
+    {
+      "argv": [
+        "/private/tmp/nera-cow-date-property-final/native/false/run"
+      ],
+      "label": "native-false-control",
+      "cwd": "/private/tmp/nera-cow-date-property-final",
+      "returncode": 0,
+      "stdout_sha256": "ed39fa0f225b2e884326e6f5627fb6b2e101349aae807d46887bc09fcfe17394",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "scope": "Replay original cow_date PropEr instances on BEAM and cumulative Nera.\n\nOriginal sources, adapted copies, generated inputs and executables stay external.\nThis is finite predicate replay, not native PropEr generation or shrinking.\n",
+  "platform": "macOS-15.7.7-arm64-arm-64bit-Mach-O",
+  "samples_per_format": 1000,
+  "seed": "{19001, sample_index, format_index}",
+  "sizes": "1 + ((sample_index - 1) rem 50)",
+  "upstream": {
+    "name": "cowlib",
+    "version": "2.20.0",
+    "url": "https://github.com/ninenines/cowlib.git",
+    "commit": "c768a804565ff5b8178ed968a5921e469d6bd7b2"
+  },
+  "proper_commit": "5640d0715d4b346676267504d8e84398e2a29f75",
+  "original_sha256": "6f22428c9b1df2c59abe8b372f6a075c3d1b51ea6653cbf778a5bceeff813504",
+  "nera_commit": "49b9757bc6c1ffb4b812f6cd838b0428df273a03",
+  "nera_status": "?? tests/integration/cowlib/test_upstream_date.py\n?? tests/integration/cowlib/upstream_date.py",
+  "nera_sha256": "2df88a30ed1bd966255a6496989d08ce69a6bd231209b5633a4e0f0027cf9a23",
+  "runtime_sha256": "54de0528a341cf0aeace06c0801a5efa1c521b25e71dcccae3d6e7cd506f7fa8",
+  "harness_sha256": "720db506f37d64dad326156c2111a4608dc60de0d8704b46e36287c048980881",
+  "proper_beam_sha256": {
+    "proper.beam": "d6acca4cba58d31726e78135e3b2aca82bd683ed0406c4ca6b71c70fe11e032e",
+    "proper_arith.beam": "16fd58d4e4809fabd4c14d1cd3174143a4a1677bd95f61737c36dae87986f441",
+    "proper_array.beam": "4fcf27de81746b8eb79bba310a50a7cd03b549c4e2a268fc3c5d00fb4d156ea2",
+    "proper_dict.beam": "ad1297c533dab0b99bca9e8d8bbb1275727c12c063c1eff5e50ba17cb831cc53",
+    "proper_erlang_abstract_code.beam": "6271a5fb8ce14755a9ab77beefe0faec4e8e4814c5025895c9585049c2967ec4",
+    "proper_fsm.beam": "b346909501150b818624358e19446c9871058e93022a1ac57441ff60d9a812f2",
+    "proper_gb_sets.beam": "67ba5de497bd4c3cc3d23f07fd9e37f53c0e6b653496124e14ebe6ebc75bf908",
+    "proper_gb_trees.beam": "e562f5b3b61393f933c5fcbb34c599c5c8f1d0d344a8229d053e2d3c0ba2d407",
+    "proper_gen.beam": "17645f592fe902904dbfe93d39af4a09be51b719e4b795c0dcd03fbebf2c283e",
+    "proper_gen_next.beam": "e219eaa730a35cab0301ec55edc07230e3b7ddd9c4c7a3d5df9dd1832e34bb16",
+    "proper_orddict.beam": "f20ceaa69cf84eb70ed2515d2a06e7b87e9bd5dfbb299520728b2735b05fdff2",
+    "proper_ordsets.beam": "4193de60814f9c54063bddf8eb8cade76f93a8a4c3c0c835b550fe62ac9203c2",
+    "proper_prop_remover.beam": "3391440dd7a99dc801b8805522dbe6422e11f42b09c8121ea692847ec0790941",
+    "proper_queue.beam": "0bd3df5a31ee41da8637d90f6f773529b506e51f5bd31b6bc2ede2bea87c138e",
+    "proper_sa.beam": "cc186af9719725e0bb579c432b665bc8ea945801fccba987ad9e3115129165f0",
+    "proper_sets.beam": "bd7f341b8ddd85e2f2fa4ad2c295e8dbc5a9db6f7a0e4d1b900448f4a93c1c43",
+    "proper_shrink.beam": "6bd9bc482664b11fc3c1c2c68aedab3e1cb29afb52a350abcd7ab1a8ecb7e39e",
+    "proper_statem.beam": "332919b42efb3ada9c646231936d1f5d04f2525e8eb4b20fd4d7b5e84d62ff73",
+    "proper_symb.beam": "63f4c71f487804535db2943df227697e2044077a640ceba9a33b7b3cced0418d",
+    "proper_target.beam": "aa52fbf245186e89bbf1541651290b8ab0de58d968a752b4864f6db8dc7dd220",
+    "proper_transformer.beam": "e2457608e41f0145d3f078a0331e454e0f3785b12950b4bdb905b7f7fbfd3db3",
+    "proper_types.beam": "322f67dcb76a0061cfecd7626821814eef2b2151a741447721a128bb84a7b2b0",
+    "proper_typeserver.beam": "67263cc888d3629a5a2f0b6430f30743b0c3905a847637fd46f6b683c7e11951",
+    "proper_unicode.beam": "ac7c405910f07d33eb92dab8d56bcc89b378ca0154b3abc15206c325111cd911",
+    "proper_unused_imports_remover.beam": "cc7e851ae725289f9915188bf3b02108cf55b92e8bda493efda1133fb2e562a4",
+    "vararg.beam": "236bf65aca6b7c512080a38c42f19323df0a65cdc2565ca7c3a7a46aeaf53391"
+  },
+  "otp": "Erlang/OTP 29 [erts-17.0.5] [source] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads:1] [jit] [dtrace]",
+  "generation_repeated_identically": true,
+  "expected": 3000,
+  "inputs_sha256": "56548684f5ce603bda39c407ae61b95127a00266d70f10d9810216c225f204d4",
+  "coverage": {
+    "fixdate": {
+      "count": 1000,
+      "years": {
+        "minimum": 1951,
+        "maximum": 2050,
+        "distinct_values": 100
+      },
+      "months": {
+        "minimum": 1,
+        "maximum": 12,
+        "distinct_values": 12
+      },
+      "days": {
+        "minimum": 1,
+        "maximum": 31,
+        "distinct_values": 31
+      },
+      "hours": {
+        "minimum": 0,
+        "maximum": 23,
+        "distinct_values": 24
+      },
+      "minutes": {
+        "minimum": 0,
+        "maximum": 59,
+        "distinct_values": 60
+      },
+      "seconds": {
+        "minimum": 0,
+        "maximum": 60,
+        "distinct_values": 61
+      }
+    },
+    "rfc850": {
+      "count": 1000,
+      "years": {
+        "minimum": 1951,
+        "maximum": 2050,
+        "distinct_values": 100
+      },
+      "months": {
+        "minimum": 1,
+        "maximum": 12,
+        "distinct_values": 12
+      },
+      "days": {
+        "minimum": 1,
+        "maximum": 31,
+        "distinct_values": 31
+      },
+      "hours": {
+        "minimum": 0,
+        "maximum": 23,
+        "distinct_values": 24
+      },
+      "minutes": {
+        "minimum": 0,
+        "maximum": 59,
+        "distinct_values": 60
+      },
+      "seconds": {
+        "minimum": 0,
+        "maximum": 60,
+        "distinct_values": 61
+      }
+    },
+    "asctime": {
+      "count": 1000,
+      "years": {
+        "minimum": 1951,
+        "maximum": 2050,
+        "distinct_values": 100
+      },
+      "months": {
+        "minimum": 1,
+        "maximum": 12,
+        "distinct_values": 12
+      },
+      "days": {
+        "minimum": 1,
+        "maximum": 31,
+        "distinct_values": 31
+      },
+      "hours": {
+        "minimum": 0,
+        "maximum": 23,
+        "distinct_values": 24
+      },
+      "minutes": {
+        "minimum": 0,
+        "maximum": 59,
+        "distinct_values": 60
+      },
+      "seconds": {
+        "minimum": 0,
+        "maximum": 60,
+        "distinct_values": 61
+      }
+    }
+  },
+  "beam": {
+    "passed": 3000,
+    "failed": []
+  },
+  "adapted_sha256": "23f8e176e8bf726e1f21bf98dd9e16debaf0d7e3300a98da854ad57e7d4e1802",
+  "beam_driver_sha256": "37242e2b0e7ba0bb5a02e5238a76a48b85a34c6c4a30d6f7f310bd5e30893c2d",
+  "native_driver_sha256": "f4a98bab3420bda9fd5b72f5bc933e1a35d8915a620e7c30c0999507e0fb4c78",
+  "native": {
+    "passed": 3000,
+    "failed": [],
+    "executable_sha256": "2b79097fdc0ff6e559ca5e46654e584996c9cb7e92609cfcdbfd2a18c153b9ee",
+    "exact_results_equal": true
+  },
+  "beam_false_control_rejected": true,
+  "native_false_control_rejected": true,
+  "native_false_source_sha256": "4e5e57ed06fe8821187e55b62203468d0992c781619124c93954bb7f3540de14",
+  "validation_date": "2026-10-15",
+  "functional_eunit": {
+    "status": "passed",
+    "scope": "Project nera test with external OTP EUnit; Functional tests only; properties are validated separately.",
+    "modules": {
+      "cow_date": {
+        "expected": 7,
+        "inventory": {
+          "http_date_test_": 3,
+          "rfc2109_test_": 2,
+          "rfc7231_test_": 2
+        },
+        "beam": {
+          "returncode": 0,
+          "passed": true
+        },
+        "adapted_sha256": "ff401d72595eca84730076f9661528c24fd51ebefbfb11512ff3100065d67d98",
+        "original_sha256": "6f22428c9b1df2c59abe8b372f6a075c3d1b51ea6653cbf778a5bceeff813504",
+        "removed": [
+          "day_name",
+          "day_name_l",
+          "year",
+          "month",
+          "day",
+          "hour",
+          "minute",
+          "second",
+          "fixdate_gen",
+          "rfc850_gen",
+          "asctime_gen",
+          "prop_http_date",
+          "horse_http_date_fixdate",
+          "horse_http_date_rfc850",
+          "horse_http_date_asctime",
+          "horse_rfc2109_20130101_000000",
+          "horse_rfc2109_20131231_235959",
+          "horse_rfc2109_12340506_070809",
+          "horse_rfc7231_20130101_000000",
+          "horse_rfc7231_20131231_235959",
+          "horse_rfc7231_12340506_070809"
+        ],
+        "native": {
+          "returncode": 0,
+          "passed": true
+        },
+        "runner": "nera test (project EUnit configuration)",
+        "failure_lines": [],
+        "native_passed": 7,
+        "native_failed": 0,
+        "native_skipped": 0
+      }
+    },
+    "commands": [
+      {
+        "argv": [
+          "git",
+          "-C",
+          "/private/tmp/nera-cowlib-main-proper",
+          "rev-parse",
+          "HEAD"
+        ],
+        "cwd": "/private/tmp/nera-cow-date-eunit-property-main",
+        "label": "proper-head",
+        "returncode": 0,
+        "stdout_sha256": "6435f6eb1643468f91ea867fe183cfd63a71804d78768c9765b0eedbe6b52e9a",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "argv": [
+          "git",
+          "-C",
+          "/private/tmp/nera-http2-pattern-surrounding/upstream",
+          "rev-parse",
+          "HEAD"
+        ],
+        "cwd": "/private/tmp/nera-cow-date-eunit-property-main",
+        "label": "cowlib-head",
+        "returncode": 0,
+        "stdout_sha256": "d987cdb63f2e2c1f01ca097d28e28f79bedaa4a0fdaa228c05b29caa265a812d",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "argv": [
+          "git",
+          "-C",
+          "/private/tmp/nera-http2-pattern-surrounding/upstream",
+          "status",
+          "--porcelain",
+          "--untracked-files=all",
+          "--ignored"
+        ],
+        "cwd": "/private/tmp/nera-cow-date-eunit-property-main",
+        "label": "cowlib-clean",
+        "returncode": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "argv": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "cwd": "/home/user/.codex/worktrees/base64-one-arity/nera",
+        "label": "nera-head",
+        "returncode": 0,
+        "stdout_sha256": "e46635c89705a62b7f4ced30b016b4cbd4fc97e230474ef0e02af227d268a050",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "argv": [
+          "git",
+          "status",
+          "--porcelain"
+        ],
+        "cwd": "/home/user/.codex/worktrees/base64-one-arity/nera",
+        "label": "nera-status",
+        "returncode": 0,
+        "stdout_sha256": "6ba0bb7106e6628ff3dcaf29e5efe55100b8c6d7a5c44e84de938a46fe786d61",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "argv": [
+          "erl",
+          "-noshell",
+          "-eval",
+          "io:format(\"~s\",[erlang:system_info(system_version)]),halt()."
+        ],
+        "cwd": "/private/tmp/nera-cow-date-eunit-property-main",
+        "label": "otp",
+        "returncode": 0,
+        "stdout_sha256": "0e5d220635638ebbe2981d178553ebd4c9e9036c5a6912e0bf1e00a84df6bbb8",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "argv": [
+          "erlc",
+          "-DTEST",
+          "+export_all",
+          "+{parse_transform,eunit_autoexport}",
+          "-I",
+          "/private/tmp/nera-http2-pattern-surrounding/upstream/include",
+          "-o",
+          "/private/tmp/nera-cow-date-eunit-property-main/beam",
+          "/private/tmp/nera-http2-pattern-surrounding/upstream/src/cow_date.erl"
+        ],
+        "cwd": "/private/tmp/nera-cow-date-eunit-property-main",
+        "label": "beam-suites",
+        "returncode": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "argv": [
+          "erl",
+          "-noshell",
+          "-pa",
+          "/private/tmp/nera-cow-date-eunit-property-main/beam",
+          "-eval",
+          "io:format(\"COUNT:~w~n\",[length(cow_date:http_date_test_())]),io:format(\"COUNT:~w~n\",[length(cow_date:rfc2109_test_())]),io:format(\"COUNT:~w~n\",[length(cow_date:rfc7231_test_())]),halt()."
+        ],
+        "cwd": "/private/tmp/nera-cow-date-eunit-property-main",
+        "label": "cow_date-inventory",
+        "returncode": 0,
+        "stdout_sha256": "409d0b47733cf01678c39c72577c2c18a3dab135b9e19bfd396b775576293bba",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "argv": [
+          "erl",
+          "-noshell",
+          "-pa",
+          "/private/tmp/nera-cow-date-eunit-property-main/beam",
+          "-eval",
+          "case eunit:test(cow_date,[verbose]) of ok -> io:format(\"NATIVE_EUNIT_OK:cow_date~n\"),halt(); _ -> halt(1) end."
+        ],
+        "cwd": "/private/tmp/nera-cow-date-eunit-property-main",
+        "label": "cow_date-beam",
+        "returncode": 0,
+        "stdout_sha256": "c9bc85100767e8c8bf72533e461c41048d2a489cad74e35b5c33deb5b2d96a49",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "argv": [
+          "/private/tmp/nera-base64-one-target/release/nera",
+          "test",
+          "cow_date",
+          "--verbose",
+          "--no-warnings",
+          "--timeout",
+          "120"
+        ],
+        "cwd": "/private/tmp/nera-cow-date-eunit-property-main/project",
+        "label": "cow_date-native-test",
+        "returncode": 0,
+        "stdout_sha256": "fcde2a6e437cd2512f28e5cebb0cb451a85149af010374fb1a1a6824bb0ffd2a",
+        "stderr_sha256": "075a23a63f0f66ee46545842b186bfc42d934c1405ee551d157dbe0ad0d4e1c8"
+      },
+      {
+        "argv": [
+          "erlc",
+          "-o",
+          "/private/tmp/nera-cow-date-eunit-property-main/beam",
+          "/home/user/.codex/worktrees/base64-one-arity/nera/tests/integration/eunit/eunit_native.erl"
+        ],
+        "cwd": "/private/tmp/nera-cow-date-eunit-property-main",
+        "label": "framework-controls-beam-build",
+        "returncode": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "argv": [
+          "erl",
+          "-noshell",
+          "-pa",
+          "/private/tmp/nera-cow-date-eunit-property-main/beam",
+          "-eval",
+          "eunit_native:test(),eunit:stop(),halt()."
+        ],
+        "cwd": "/private/tmp/nera-cow-date-eunit-property-main",
+        "label": "framework-controls-beam",
+        "returncode": 0,
+        "stdout_sha256": "d632a12e292ec721729d2e6ed9b2041e09bd8c8719d3fdb8fcac27deb9de70db",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "argv": [
+          "/private/tmp/nera-base64-one-target/release/nera",
+          "build",
+          "--no-warnings"
+        ],
+        "cwd": "/private/tmp/nera-cow-date-eunit-property-main/project",
+        "label": "framework-controls-native-build",
+        "returncode": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "075a23a63f0f66ee46545842b186bfc42d934c1405ee551d157dbe0ad0d4e1c8"
+      },
+      {
+        "argv": [
+          "/private/tmp/nera-cow-date-eunit-property-main/project/run"
+        ],
+        "cwd": "/private/tmp/nera-cow-date-eunit-property-main/project",
+        "label": "framework-controls-native",
+        "returncode": 0,
+        "stdout_sha256": "2c435e76143b0038e3f9a3d07b8748a7e6734d418682ea9b6ac40f16372fe12d",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "upstream": {
+      "name": "cowlib",
+      "version": "2.20.0",
+      "url": "https://github.com/ninenines/cowlib.git",
+      "commit": "c768a804565ff5b8178ed968a5921e469d6bd7b2"
+    },
+    "platform": "macOS-15.7.7-arm64-arm-64bit-Mach-O",
+    "harness_sha256": "ea493cfbc3ceb5abff204f81ac098f7c5d6a900e6427d45396531371a8b446e0",
+    "nera_commit": "49b9757bc6c1ffb4b812f6cd838b0428df273a03",
+    "nera_worktree_status": "?? tests/integration/cowlib/test_upstream_date.py\n?? tests/integration/cowlib/upstream_date.py",
+    "nera_sha256": "2df88a30ed1bd966255a6496989d08ce69a6bd231209b5633a4e0f0027cf9a23",
+    "runtime_sha256": "54de0528a341cf0aeace06c0801a5efa1c521b25e71dcccae3d6e7cd506f7fa8",
+    "eunit_path": "/opt/homebrew/Cellar/erlang/29.0.5/lib/erlang/lib/eunit-2.11",
+    "eunit_sources": {
+      "doc/examples/fib.erl": "d03708f1c6ae706f9dab1a530d59fe4be62ab726f632ff6a5a997d815b5fac13",
+      "include/eunit.hrl": "1ec1a665f54a4c3c78ad9d4ccb614ae58d2320b367455b964fbc2eccabf59102",
+      "src/eunit.erl": "b4ca2dc5f9f854ebd33b247d28e6ffe7fbd4d5a2fc50c2eb31f79aa7b108954c",
+      "src/eunit_autoexport.erl": "c7a26b14de6b5b2accc83b6827fac383ce7aa56ac8dd41a4a316eb5bee400e31",
+      "src/eunit_data.erl": "964ada1aa2107f7452d65a434074a42051131f0dbac8f2a3dba15dba98a56651",
+      "src/eunit_internal.hrl": "0e06a96b302003dabc18a44b16831888dcc7bfd47f70981f1880be95ab694718",
+      "src/eunit_lib.erl": "f6e8dcebbf8d478161a926013bcd71832de01b0819d7da9de43a792bc67cfc20",
+      "src/eunit_listener.erl": "9fcd2363fdf04c28ddd369e9cec5b5490623bf38f93a6565266b60ce2472c4a2",
+      "src/eunit_proc.erl": "a53d8c08181f7134d4fa49b1b7deee7dab648f9183bdef6c680b30c6ec164921",
+      "src/eunit_serial.erl": "24ab121bb9b1c11d3de890cb4d09e223cc93392e541479ab79106abe086475bf",
+      "src/eunit_server.erl": "c71f3cfdd3c4344a0ee1cc7fc6cd8126508995e85ce9162271b87bf050044b8b",
+      "src/eunit_striptests.erl": "04aac7db42326448f2b11a9666e73c529b48e38a5efd23223c0f53a64863e5b3",
+      "src/eunit_surefire.erl": "ddeacfb3f678025e6682c50d0349bd5f3273436c7056a08c5e4fce64dffd2432",
+      "src/eunit_test.erl": "6d04cb599f194c6e0230674ab5fea383ac21de4dfe0ef814a2b1c16d4c7f8bcf",
+      "src/eunit_tests.erl": "56e82ffd824553aa8a06fabc49f1da85baa205416aae4af0afcb457927f9b602",
+      "src/eunit_tty.erl": "50a735ad25eec829b6e126bc8b4b52ab9b13da91df4364191fbe00b84841cddf"
+    },
+    "gb_trees_source": "/opt/homebrew/Cellar/erlang/29.0.5/lib/erlang/lib/stdlib-8.0.3/src/gb_trees.erl",
+    "gb_trees_sha256": "890b641fa4e901c4f11bf65288ea12e8a8c0480d3a4867274f699fb4ef9c60a3",
+    "otp": "Erlang/OTP 29 [erts-17.0.5] [source] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads:1] [jit] [dtrace]",
+    "framework_controls": {
+      "fixture_sha256": "8c1719fc9a5f8d41c466c5496aefc36cb04242e6ab11ed7b62d1734296532399",
+      "beam": {
+        "returncode": 0,
+        "passed": true
+      },
+      "native_build_returncode": 0,
+      "executable_sha256": "910a891aa01beecd038736f52df8ad1cb889d099fbff70c68432a0199706ba9c",
+      "native": {
+        "returncode": 0,
+        "passed": true
+      }
+    }
+  },
+  "local_checks": {
+    "release": {
+      "command": [
+        "cargo",
+        "build",
+        "--release",
+        "--locked"
+      ],
+      "passed": true,
+      "log_sha256": "8c0fa79949f7e1f38960aa31d560f26bf7279206889094ac0e8402f79f0c7506"
+    },
+    "harness": {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/integration/cowlib",
+        "-p",
+        "test_*.py"
+      ],
+      "passed": 69,
+      "log_sha256": "bc8b7de3372cc51083a58db2935c3b4a62805488fd7855f6e8c8c525c785d2e5",
+      "test_source_sha256": "8c8a4dc3b1c31db744460580bc12d9d1da37b947f9982301628fa4b1df0f842f"
+    }
+  },
+  "helper_sha256": {
+    "runner.py": "ddcbd9cbaceb6d2666a1134498f6cf9f173cf028c507ed61551821baeee0911f",
+    "upstream_http.py": "3227056439cfd8cb99d7edd836f8a855f31e7720f2a13e5792f790fcc3f2e5d9",
+    "upstream_cookie_date.py": "796e496e293e13229e4f34ab145e125c10232c8ba9d55119d310b154e21c7d29"
+  },
+  "limitations": [
+    "Finite replay of original predicate, not native PropEr generation or shrinking",
+    "Balanced samples from each of the three original generators, rather than a probabilistic mixture",
+    "Individual generated field ranges are covered; tuple combinations are not exhaustive and generators can construct non-calendar dates",
+    "macOS arm64 only",
+    "Other Cowlib modules and broad Rust/native regression suites not rerun",
+    "CI/Release remain manually paused"
+  ],
+  "publication_checks": {
+    "base": "3802e466a24d9c33aaba7b00376f689e393a1db1",
+    "recorded_runtime_validation_base": "49b9757bc6c1ffb4b812f6cd838b0428df273a03",
+    "scope": "Runner, harness and documentation only; recorded 3000-case replay and EUnit results remain bound to 49b9757.",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests/integration/cowlib",
+      "-p",
+      "test_*.py"
+    ],
+    "passed": 69,
+    "returncode": 0,
+    "log_sha256": "dce73798d26cffa23b07e6355772b43843b35d63bcdd37ec5d67dac6be674661",
+    "compiler_runtime_changes_in_pr": false,
+    "runtime_suites_rerun_for_publication": false
+  }
+}

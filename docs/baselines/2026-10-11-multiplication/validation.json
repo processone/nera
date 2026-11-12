@@ -1,0 +1,37 @@
+{
+  "base": "9b64f629dbc854014ad351a451145cd55df6a50c",
+  "branch": "mr/multiplication-overflow",
+  "target": "uncommitted worktree",
+  "sources": {
+    "CHANGELOG.md": "3de18b0746d4dbd816a90ddc23aac3bbae1a0d0503e1ace75d814c1ed0ac756c",
+    "crates/nera-codegen/src/func_translator/ffi_emit.rs": "ce453647f3788a4f597dc3e77408528146a41e95219c646e4029ea0665bd74a1",
+    "crates/nera-codegen/src/func_translator/instructions.rs": "e31bcef2f0848139925b37ff7499c68ecdf7f675c616c3e5bc4a90f68bbef653",
+    "tests/multiplication_overflow.erl": "0e6daba59aaa1307be3299952a79beabaaf6719a2ca384c81e58a90c05344606",
+    "docs/baselines/2026-10-11-multiplication/bench_mul.erl": "023cf67dbcccdf92b440c28b0111c0fccc197ab49819fef1114972aaebc2d8a3",
+    "docs/baselines/2026-10-11-multiplication/measure.py": "63809eafa57ddb2446b4a9c55478aa22f9887895bf128d156514fe1824ebb432"
+  },
+  "logs": {
+    "nera-mul-red.log": "2e228c2bedac2a40ee39fbe4a4347e5182fc3c4272194d3e491404881beade76",
+    "nera-mul-workspace.log": "4f2bde0fbce9c28b4419a6c6a7db45216671d4de9b41b7ca822752ff8d546955",
+    "nera-mul-green.log": "d2419075f7a87925245c3ad7857c0fa8cbf69fade43934806176d0d982b9fcc5",
+    "nera-mul-clippy.log": "37333dd82cf4fc56512f797323ef427dbbf65e32ef2d47a125fac5043b4a706d",
+    "nera-mul-release-build.log": "9e97dc106d4c4dd8304ca5da71b150de52e2f9cd7cdad439b2f34f0154eb8641",
+    "nera-mul-release-e2e.log": "5d7126bdbe7b0abb04dea5fc19d3b888932a20f65079aa6fde75ddc9f6f6b66a",
+    "nera-mul-beam-final.log": "fcbbbd959e844183065469a005c7865efe92966a9e0b33abf22cba5d3ce5dd39",
+    "nera-mul-x86.log": "f269f91df4a144ee0a88cdbd6d66491616ab5bb68e9deff23da84a5eba78f848"
+  },
+  "artifacts": {
+    "before/nera": "2b51b30142874599d7e1d52209353947783f5d934ca1a588812b252868732902",
+    "before/libnera_runtime.a": "548e8713447fde1c8bee38c013fb1812302d48dd3fabe5084cb3b8b1320f4d0b",
+    "before/bench": "9197df973eafd8d23bba586064129ab27be62661d5c470c735f5b493ccb9f7f5",
+    "after/nera": "8385d05c672daa06fa9dc19932a2028906b7c81b63f3ec68226113b3b0105b73",
+    "after/libnera_runtime.a": "548e8713447fde1c8bee38c013fb1812302d48dd3fabe5084cb3b8b1320f4d0b",
+    "after/bench": "2a57b11df2943505d2b9e992870189142baeda20ea722c66aa803486cadc9d8c"
+  },
+  "notes": [
+    "Same release runtime archive before/after",
+    "macOS ARM64 execution; x86-64 object generation only",
+    "Final test adds constant-operand assertion; rerun with release compiler and BEAM",
+    "Busy machine; measurements isolate common signed multiplication path"
+  ]
+}

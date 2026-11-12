@@ -1,0 +1,26 @@
+   Compiling num-traits v0.2.19
+   Compiling num-integer v0.1.46
+   Compiling num-bigint v0.4.6
+   Compiling nera-syntax v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-syntax)
+   Compiling nera-ir v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-ir)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.04s
+     Running unittests src/lib.rs (/tmp/nera-transfer-target/debug/deps/nera_ir-8b8945ec4992cdab)
+
+running 1 test
+test lower::tests::binary_construction_rejects_invalid_units ... FAILED
+
+failures:
+
+---- lower::tests::binary_construction_rejects_invalid_units stdout ----
+
+thread 'lower::tests::binary_construction_rejects_invalid_units' (9009151) panicked at crates/nera-ir/src/lower/tests.rs:1804:9:
+accepted unit 0
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    lower::tests::binary_construction_rejects_invalid_units
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 409 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p nera-ir --lib`

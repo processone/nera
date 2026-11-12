@@ -1,0 +1,29 @@
+{
+  "base": "764bbbad82148a0e61ab5429bde5b9db5bb9f50d",
+  "target": "local worktree mr/binary-segment-list-contracts",
+  "platform": "macOS-15.7.7-arm64-arm-64bit-Mach-O",
+  "workspace-tests.txt": {
+    "passed": 1969,
+    "failed": 0,
+    "ignored": 1
+  },
+  "release-tests.txt": {
+    "passed": 627,
+    "failed": 0,
+    "ignored": 1
+  },
+  "native_distinct": {
+    "passed": 71,
+    "failed": 0,
+    "skipped": 0
+  },
+  "artifacts": {
+    "/tmp/nera-transfer-target/release/nera": "bca0480c1c06dfd60a524fce87f7593d69c58399fcc971a894441c93591095eb",
+    "/tmp/nera-transfer-target/release/libnera_runtime.a": "e9e35fc866cc7bb17ec632a44f0cb7273705afe26e571e7d88b76eb41ee8d093"
+  },
+  "observed_main_tip": "4e14b65",
+  "divergence": {
+    "ahead_commits": 0,
+    "behind_commits": 2
+  }
+}

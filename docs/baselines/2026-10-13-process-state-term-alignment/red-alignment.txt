@@ -1,0 +1,22 @@
+   Compiling nera-runtime v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-runtime)
+    Finished `release` profile [optimized] target(s) in 28.00s
+     Running unittests src/lib.rs (/tmp/nera-transfer-target/release/deps/nera_runtime-d9d0cab72757adae)
+
+running 1 test
+test term::tests::pointer_encoding_rejects_every_misalignment_in_release ... FAILED
+
+failures:
+
+---- term::tests::pointer_encoding_rejects_every_misalignment_in_release stdout ----
+
+thread 'term::tests::pointer_encoding_rejects_every_misalignment_in_release' (4917813) panicked at crates/nera-runtime/src/term.rs:1000:13:
+boxed accepted byte offset 1
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    term::tests::pointer_encoding_rejects_every_misalignment_in_release
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 535 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p nera-runtime --lib`

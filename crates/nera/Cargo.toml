@@ -1,0 +1,40 @@
+[package]
+name = "nera"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "Erlang-to-native compiler CLI"
+
+[[bin]]
+name = "nera"
+path = "src/main.rs"
+
+[dependencies]
+nera-syntax = { path = "../nera-syntax" }
+nera-ir = { path = "../nera-ir" }
+nera-codegen = { path = "../nera-codegen" }
+nera-fmt = { path = "../nera-fmt" }
+clap = { version = "4", features = ["derive"] }
+codespan-reporting = { workspace = true }
+string-interner = "0.17"
+toml = "0.8"
+serde = { version = "1", features = ["derive"] }
+target-lexicon = "0.13.5"
+ureq = { version = "2", features = ["json"] }
+flate2 = "1"
+tar = "0.4"
+sha2 = "0.10"
+serde_json = "1"
+tempfile = "3"
+tower-lsp = "0.20"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "io-std", "time"] }
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
+
+[build-dependencies]
+time = "0.3"
+flate2 = "1"

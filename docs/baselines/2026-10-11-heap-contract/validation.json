@@ -1,0 +1,64 @@
+{
+  "base": "fc3e63f60e48435b9d3cd6cdb0d593a6790230bb",
+  "branch": "mr/heap-ownership-contract",
+  "worktree": "/tmp/nera-heap-contract",
+  "state": "uncommitted",
+  "source_sha256": {
+    "crates/nera-runtime/src/ets.rs": "9fa64c390413c314b69d639f11ac031d6dfc929294343ed1afc195fd50d7d9b4",
+    "crates/nera-runtime/src/heap.rs": "7483de80a97cf5a567683705eefc6cf1cd157e3c87f73b05ec00d3b74b35a734",
+    "crates/nera-runtime/src/message.rs": "d140076c0851d0c80b0029a6cac68e9f5d13c65bc40a497176bb416c51f9ad4f",
+    "crates/nera-runtime/src/term.rs": "26d3640e74f3f6bc57e6ef36da82e0fcefca99300f0898fccd12ffd5b79eaf46",
+    "CHANGELOG.md": "8d8811c49a2eb28dccdfd4079829e2bde25150e841343cbffebb3f79ffa26277",
+    "docs/SEND_SYNC.md": "fff12edc20f75b2b08bc864630d02ef6081cb201c815c53d0cf700ed556575be",
+    "docs/baselines/2026-10-11-ets-ownership/bench_ets_updates.erl": "0eff6e19315d70c209e79aaae5454afd3ee04153fa12be4353ad5cc4df9631ad",
+    "benchmarks/bench_binary_send.erl": "89de9f2e49977375ad37907adfa2397664b9daadad4fc72b59d73b1c6ac1df6d"
+  },
+  "logs": {
+    "release-red": {
+      "path": "/tmp/nera-heap-release-red.log",
+      "sha256": "ac2fb7f7d8b90b50580ed95e5629bbeca6b77e5a1cba8c7fcc050c48c902abc5"
+    },
+    "privacy-red": {
+      "path": "/tmp/nera-heap-privacy-red.log",
+      "sha256": "f6b7b5ba0d3496a3acfeb8f89cc9a3a91a80409cd972004ee0367251e2031a74"
+    },
+    "release-green": {
+      "path": "/tmp/nera-heap-release-green.log",
+      "sha256": "e9492623297fa0fd5438cc094cda540ac7df5856b2635bbec48d777299a20377"
+    },
+    "privacy-green": {
+      "path": "/tmp/nera-heap-privacy-green.log",
+      "sha256": "ae861110a7dce87a67e483b42de15e424478f079b91d26d4a03b9f47bc635bce"
+    },
+    "tests": {
+      "path": "/tmp/nera-heap-tests.log",
+      "sha256": "e4a7de61eed1c3484e9680a2ab90c7a720c66fd86d8d5c8a784e67143f01c4a9"
+    },
+    "clippy": {
+      "path": "/tmp/nera-heap-clippy.log",
+      "sha256": "a1c3c4c2f98c816c34d2670c81aebd9d5f9bbe7627103d5c48376b3b84a56299"
+    },
+    "build": {
+      "path": "/tmp/nera-heap-build.log",
+      "sha256": "b3b7157108b47da9e2765debf3d5f8df8da2767e817237df81eeadaa15b2ef4f"
+    },
+    "e2e": {
+      "path": "/tmp/nera-heap-e2e.log",
+      "sha256": "af253e7e4950d19938202423ed3591817e0dbe5a6c732254f053588c6acdc8e7"
+    },
+    "bench": {
+      "path": "/tmp/nera-heap-bench.log",
+      "sha256": "a57ecc6ae49c5c8f1d652dc0c8bf96f0d9aafeaaf270987a5c80fe6f5b82d388"
+    },
+    "bench-repeat": {
+      "path": "/tmp/nera-heap-bench-repeat.log",
+      "sha256": "49e73b546c03bef4c6827a8e1a9f90cc82b530d1c58dda7aaf8e82d41a7eb4e3"
+    }
+  },
+  "binaries": {
+    "/tmp/nera-heap-before/nera": "4d4d280daf8bbb9c47ef1ee5fd6e9121f2a25403a2ff194e45d21ff8fa1bb42d",
+    "/tmp/nera-heap-before/libnera_runtime.a": "53cf1af8eda359908c8ce2dc1a678761e49d0092263936d14bf9dc350a22ab5d",
+    "/tmp/nera-heap-after/nera": "4d4d280daf8bbb9c47ef1ee5fd6e9121f2a25403a2ff194e45d21ff8fa1bb42d",
+    "/tmp/nera-heap-after/libnera_runtime.a": "d351ce479f4f2a4fdc903545463cc60db702b63f8621b372aad4f442c4bfd169"
+  }
+}

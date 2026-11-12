@@ -1,0 +1,293 @@
+{
+  "upstream": {
+    "name": "cowlib",
+    "version": "2.20.0",
+    "url": "https://github.com/ninenines/cowlib.git",
+    "commit": "c768a804565ff5b8178ed968a5921e469d6bd7b2"
+  },
+  "platform": "macOS-15.7.7-arm64-arm-64bit-Mach-O",
+  "otp_version": "Erlang/OTP 29 [erts-17.0.5] [source] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads:1] [jit] [dtrace]",
+  "nera_sha256": "a66e987f5f0f8ac37262d1b61a225bea64a3b9ed95fcb7c11fe42fda0dbf5d56",
+  "runtime_sha256": "6870361ddad8a9cca2a44bdeaeb3636bab79b6a3cb329418a04917f7be0776f2",
+  "nera_source_commit": "446c5e06a32015ae3ecc678353c7b53b9df32ea0",
+  "date": "2026-10-12",
+  "status": "cow_date passed; cow_cookie blocked",
+  "changed_source_sha256": {
+    "erlang/stdlib/calendar.erl": "8a40ce85a57914c8ee4242b1a0831f2a676a1a44a59eb19078da606a1ca8a043",
+    "tests/calendar_deterministic.erl": "b918ece09f9060e16ec7531ff3ae8a09fe8178f1feffbf9a223f57f34b83f1e2"
+  },
+  "report_sha256": "77ce15142c2b093c324711df78e77c6031d8d147043dcbf2260dffacbe4194cc",
+  "build_log_sha256": "9b4ffaf95504090e8c390e2f19435b2074085ca894388fb0763b13176cb61ef3",
+  "regression": {
+    "BEAM": "passed",
+    "Nera": "passed",
+    "cycle_days": 146097,
+    "beam_date_checksum": 998368685,
+    "large_integer_seconds": "plus/minus 10^20",
+    "negative_control": "Native regression fails to compile before implementation: unresolved calendar function"
+  },
+  "limitations": [
+    "Only the three deterministic calendar APIs are implemented; time APIs remain absent.",
+    "Comparison uses OTP 29.0.5, including its negative-year support.",
+    "cow_date verdict covers the 26-case project corpus, not its upstream suite.",
+    "No native cow_cookie case executed; no upstream sources copied or modified."
+  ],
+  "missing_functions": [
+    "calendar:universal_time/0",
+    "erlang:universaltime/0"
+  ],
+  "modules": {
+    "cow_cookie": {
+      "build_returncode": 1,
+      "passed": 0,
+      "total": 32,
+      "beam_passed": 32,
+      "blocked": 32
+    },
+    "cow_date": {
+      "build_returncode": 0,
+      "passed": 26,
+      "total": 26,
+      "beam_passed": 26,
+      "blocked": 0
+    }
+  },
+  "cases": {
+    "cow_cookie": [
+      {
+        "id": "cookie_simple",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_spaces",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_duplicate",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_quoted",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_equals",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_empty",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_empty_value",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_separator",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_nameless",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_empty_name",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_newline",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_tab_value",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_limit_0",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_limit_1",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_limit_2",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_limit_3",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_default_limit_99",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_default_limit_100",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_default_limit_101",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_flags",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_domain",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_expiry",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_zero_age",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_negative_age",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_bad_age",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_empty",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_control",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_unknown",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_build",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_build",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_delete",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_bad_age_option",
+        "status": "blocked"
+      }
+    ],
+    "cow_date": [
+      {
+        "id": "date_imf",
+        "status": "passed"
+      },
+      {
+        "id": "date_rfc850",
+        "status": "passed"
+      },
+      {
+        "id": "date_asctime",
+        "status": "passed"
+      },
+      {
+        "id": "date_leap_second",
+        "status": "passed"
+      },
+      {
+        "id": "date_year_50",
+        "status": "passed"
+      },
+      {
+        "id": "date_year_51",
+        "status": "passed"
+      },
+      {
+        "id": "date_day_zero",
+        "status": "passed"
+      },
+      {
+        "id": "date_feb_30",
+        "status": "passed"
+      },
+      {
+        "id": "date_empty",
+        "status": "passed"
+      },
+      {
+        "id": "date_month",
+        "status": "passed"
+      },
+      {
+        "id": "date_day32",
+        "status": "passed"
+      },
+      {
+        "id": "date_hour24",
+        "status": "passed"
+      },
+      {
+        "id": "date_minute60",
+        "status": "passed"
+      },
+      {
+        "id": "date_second61",
+        "status": "passed"
+      },
+      {
+        "id": "date_trailing",
+        "status": "passed"
+      },
+      {
+        "id": "date_timezone",
+        "status": "passed"
+      },
+      {
+        "id": "date_rfc1123_leap",
+        "status": "passed"
+      },
+      {
+        "id": "date_rfc1123_century",
+        "status": "passed"
+      },
+      {
+        "id": "date_rfc1123_year_end",
+        "status": "passed"
+      },
+      {
+        "id": "date_rfc2109_leap",
+        "status": "passed"
+      },
+      {
+        "id": "date_rfc2109_century",
+        "status": "passed"
+      },
+      {
+        "id": "date_rfc2109_year_end",
+        "status": "passed"
+      },
+      {
+        "id": "date_rfc7231_leap",
+        "status": "passed"
+      },
+      {
+        "id": "date_rfc7231_century",
+        "status": "passed"
+      },
+      {
+        "id": "date_rfc7231_year_end",
+        "status": "passed"
+      },
+      {
+        "id": "date_bad_type",
+        "status": "passed"
+      }
+    ]
+  }
+}

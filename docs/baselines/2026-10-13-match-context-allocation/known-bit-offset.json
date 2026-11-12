@@ -1,0 +1,15 @@
+{
+  "description": "recursive sub-byte match context loses its bit offset",
+  "input_bits": [
+    1,
+    0,
+    1,
+    1
+  ],
+  "expected_sum": 3,
+  "beam": 3,
+  "original_nera": 4,
+  "fixed_nera": 4,
+  "scope": "pre-existing; not modified by the allocation fix",
+  "source_sha256": "d4b407bc9d288e8d8124edfa71ef6006647331d6dcecc23bea8f63c8043ddb1a"
+}

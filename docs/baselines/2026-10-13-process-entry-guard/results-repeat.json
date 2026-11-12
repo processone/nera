@@ -1,0 +1,178 @@
+{
+  "samples": {
+    "before": [
+      {
+        "lock_transition": 18457,
+        "lock_empty_drain": 21202,
+        "drain_1": 1439,
+        "drain_16": 22466,
+        "exit_scan": 11211,
+        "process_cpu_us": 77684
+      },
+      {
+        "lock_transition": 18383,
+        "lock_empty_drain": 21379,
+        "drain_1": 1432,
+        "drain_16": 22463,
+        "exit_scan": 11092,
+        "process_cpu_us": 77441
+      },
+      {
+        "lock_transition": 18487,
+        "lock_empty_drain": 21347,
+        "drain_1": 1439,
+        "drain_16": 22515,
+        "exit_scan": 11414,
+        "process_cpu_us": 77672
+      },
+      {
+        "lock_transition": 18478,
+        "lock_empty_drain": 21420,
+        "drain_1": 1436,
+        "drain_16": 22420,
+        "exit_scan": 11183,
+        "process_cpu_us": 77841
+      },
+      {
+        "lock_transition": 18322,
+        "lock_empty_drain": 21426,
+        "drain_1": 1426,
+        "drain_16": 22406,
+        "exit_scan": 11116,
+        "process_cpu_us": 77377
+      },
+      {
+        "lock_transition": 18423,
+        "lock_empty_drain": 21351,
+        "drain_1": 1428,
+        "drain_16": 22423,
+        "exit_scan": 11159,
+        "process_cpu_us": 77439
+      },
+      {
+        "lock_transition": 18352,
+        "lock_empty_drain": 21466,
+        "drain_1": 1429,
+        "drain_16": 22399,
+        "exit_scan": 11137,
+        "process_cpu_us": 77326
+      },
+      {
+        "lock_transition": 18333,
+        "lock_empty_drain": 21650,
+        "drain_1": 1459,
+        "drain_16": 22363,
+        "exit_scan": 11119,
+        "process_cpu_us": 77526
+      },
+      {
+        "lock_transition": 18346,
+        "lock_empty_drain": 21285,
+        "drain_1": 1426,
+        "drain_16": 22431,
+        "exit_scan": 11094,
+        "process_cpu_us": 77181
+      }
+    ],
+    "after": [
+      {
+        "lock_transition": 18383,
+        "lock_empty_drain": 21425,
+        "drain_1": 1437,
+        "drain_16": 22493,
+        "exit_scan": 11072,
+        "process_cpu_us": 77394
+      },
+      {
+        "lock_transition": 18462,
+        "lock_empty_drain": 21466,
+        "drain_1": 1472,
+        "drain_16": 22559,
+        "exit_scan": 11125,
+        "process_cpu_us": 77644
+      },
+      {
+        "lock_transition": 18440,
+        "lock_empty_drain": 21197,
+        "drain_1": 1436,
+        "drain_16": 22505,
+        "exit_scan": 11131,
+        "process_cpu_us": 77438
+      },
+      {
+        "lock_transition": 18424,
+        "lock_empty_drain": 21198,
+        "drain_1": 1429,
+        "drain_16": 22472,
+        "exit_scan": 11064,
+        "process_cpu_us": 77274
+      },
+      {
+        "lock_transition": 18225,
+        "lock_empty_drain": 21021,
+        "drain_1": 1455,
+        "drain_16": 22429,
+        "exit_scan": 11083,
+        "process_cpu_us": 76749
+      },
+      {
+        "lock_transition": 18330,
+        "lock_empty_drain": 21149,
+        "drain_1": 1422,
+        "drain_16": 22495,
+        "exit_scan": 11070,
+        "process_cpu_us": 77046
+      },
+      {
+        "lock_transition": 18360,
+        "lock_empty_drain": 21308,
+        "drain_1": 1425,
+        "drain_16": 22457,
+        "exit_scan": 11035,
+        "process_cpu_us": 77202
+      },
+      {
+        "lock_transition": 18394,
+        "lock_empty_drain": 21170,
+        "drain_1": 1414,
+        "drain_16": 22412,
+        "exit_scan": 11038,
+        "process_cpu_us": 76931
+      },
+      {
+        "lock_transition": 18333,
+        "lock_empty_drain": 21251,
+        "drain_1": 1443,
+        "drain_16": 22420,
+        "exit_scan": 11057,
+        "process_cpu_us": 77095
+      }
+    ]
+  },
+  "medians": {
+    "before": {
+      "lock_transition": 18383,
+      "lock_empty_drain": 21379,
+      "drain_1": 1432,
+      "drain_16": 22423,
+      "exit_scan": 11137,
+      "process_cpu_us": 77441
+    },
+    "after": {
+      "lock_transition": 18383,
+      "lock_empty_drain": 21198,
+      "drain_1": 1436,
+      "drain_16": 22472,
+      "exit_scan": 11070,
+      "process_cpu_us": 77202
+    }
+  },
+  "percent_change": {
+    "lock_transition": 0.0,
+    "lock_empty_drain": -0.8466251929463486,
+    "drain_1": 0.27932960893854997,
+    "drain_16": 0.21852562101414286,
+    "exit_scan": -0.6015982760168792,
+    "process_cpu_us": -0.3086220477524826
+  }
+}

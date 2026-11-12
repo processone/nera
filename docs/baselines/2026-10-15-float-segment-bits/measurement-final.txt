@@ -1,0 +1,233 @@
+Completed series 1
+Completed series 2
+Completed series 3
+{
+  "summary": {
+    "f32_write": {
+      "median_us": {
+        "before-aligned": 22038,
+        "after-aligned": 23049,
+        "after-shifted": 24695
+      },
+      "aligned_pct": 4.587530628913705,
+      "shifted_vs_aligned_pct": 7.1413076489218685,
+      "aligned_series_pct": [
+        5.324095177317889,
+        4.195108720220597,
+        4.245947050542664
+      ]
+    },
+    "f32_read": {
+      "median_us": {
+        "before-aligned": 9583,
+        "after-aligned": 10732,
+        "after-shifted": 12263
+      },
+      "aligned_pct": 11.98998226025254,
+      "shifted_vs_aligned_pct": 14.265747297800967,
+      "aligned_series_pct": [
+        12.405699916177703,
+        11.708992506244797,
+        11.94325649316783
+      ]
+    },
+    "f64_write": {
+      "median_us": {
+        "before-aligned": 18963,
+        "after-aligned": 19606,
+        "after-shifted": 22717
+      },
+      "aligned_pct": 3.3908136898170183,
+      "shifted_vs_aligned_pct": 15.867591553606042,
+      "aligned_series_pct": [
+        3.486897717666948,
+        3.370075417963192,
+        2.3984566452891265
+      ]
+    },
+    "f64_read": {
+      "median_us": {
+        "before-aligned": 9235,
+        "after-aligned": 10415,
+        "after-shifted": 11901
+      },
+      "aligned_pct": 12.777476989713055,
+      "shifted_vs_aligned_pct": 14.267882861257796,
+      "aligned_series_pct": [
+        13.59903646118472,
+        11.873579391709054,
+        12.793084819016753
+      ]
+    },
+    "f32le_write": {
+      "median_us": {
+        "before-aligned": 18199,
+        "after-aligned": 18993,
+        "after-shifted": 21285
+      },
+      "aligned_pct": 4.362877081158301,
+      "shifted_vs_aligned_pct": 12.067603854051502,
+      "aligned_series_pct": [
+        4.863641382356199,
+        4.1430847848782815,
+        4.467353951890041
+      ]
+    },
+    "f32le_read": {
+      "median_us": {
+        "before-aligned": 9166,
+        "after-aligned": 10495,
+        "after-shifted": 12621
+      },
+      "aligned_pct": 14.499236308095131,
+      "shifted_vs_aligned_pct": 20.257265364459265,
+      "aligned_series_pct": [
+        14.138761216896478,
+        14.511729405346419,
+        14.543501611170795
+      ]
+    },
+    "f64le_write": {
+      "median_us": {
+        "before-aligned": 19108,
+        "after-aligned": 19915,
+        "after-shifted": 22746
+      },
+      "aligned_pct": 4.2233619426418345,
+      "shifted_vs_aligned_pct": 14.215415515942764,
+      "aligned_series_pct": [
+        3.9649196512971274,
+        5.053622809312053,
+        5.207243039564591
+      ]
+    },
+    "f64le_read": {
+      "median_us": {
+        "before-aligned": 9236,
+        "after-aligned": 10448,
+        "after-shifted": 13470
+      },
+      "aligned_pct": 13.12256388046773,
+      "shifted_vs_aligned_pct": 28.924196018376726,
+      "aligned_series_pct": [
+        12.45262587980509,
+        12.5782768300583,
+        14.277999783993955
+      ]
+    },
+    "f32int_write": {
+      "median_us": {
+        "before-aligned": 18213,
+        "after-aligned": 18858,
+        "after-shifted": 21061
+      },
+      "aligned_pct": 3.541426453632024,
+      "shifted_vs_aligned_pct": 11.68204475554142,
+      "aligned_series_pct": [
+        3.2211882605583497,
+        4.068522483940051,
+        3.361848199204487
+      ]
+    },
+    "f32int_read": {
+      "median_us": {
+        "before-aligned": 9243,
+        "after-aligned": 10565,
+        "after-shifted": 12327
+      },
+      "aligned_pct": 14.30271556853835,
+      "shifted_vs_aligned_pct": 16.677709417889265,
+      "aligned_series_pct": [
+        15.237467018469664,
+        15.290154314279514,
+        13.094469550247467
+      ]
+    },
+    "f64big_write": {
+      "median_us": {
+        "before-aligned": 33881,
+        "after-aligned": 34366,
+        "after-shifted": 37541
+      },
+      "aligned_pct": 1.4314807709335575,
+      "shifted_vs_aligned_pct": 9.238782517604616,
+      "aligned_series_pct": [
+        0.04701319307731655,
+        1.0722347629796847,
+        2.351419669625532
+      ]
+    },
+    "f64big_read": {
+      "median_us": {
+        "before-aligned": 9262,
+        "after-aligned": 10470,
+        "after-shifted": 11949
+      },
+      "aligned_pct": 13.04253940833513,
+      "shifted_vs_aligned_pct": 14.12607449856733,
+      "aligned_series_pct": [
+        13.05756561183713,
+        11.429188722048188,
+        13.114754098360649
+      ]
+    },
+    "f64dynamic_write": {
+      "median_us": {
+        "before-aligned": 21511,
+        "after-aligned": 20475,
+        "after-shifted": 23427
+      },
+      "aligned_pct": -4.816140579238526,
+      "shifted_vs_aligned_pct": 14.41758241758242,
+      "aligned_series_pct": [
+        -4.9932397780782285,
+        -4.28204529535372,
+        -4.132919887073639
+      ]
+    },
+    "f64dynamic_read": {
+      "median_us": {
+        "before-aligned": 10667,
+        "after-aligned": 11628,
+        "after-shifted": 12434
+      },
+      "aligned_pct": 9.009093465829189,
+      "shifted_vs_aligned_pct": 6.93154454764362,
+      "aligned_series_pct": [
+        8.932093547478171,
+        8.847813848752107,
+        9.382022471910112
+      ]
+    }
+  },
+  "half": {
+    "f16_write": {
+      "median_us": {
+        "after-half-aligned": 23226,
+        "after-half-shifted": 24558
+      },
+      "shifted_vs_aligned_pct": 5.734952208731592
+    },
+    "f16_read": {
+      "median_us": {
+        "after-half-aligned": 10836,
+        "after-half-shifted": 11149
+      },
+      "shifted_vs_aligned_pct": 2.8885197489848746
+    },
+    "f16le_write": {
+      "median_us": {
+        "after-half-aligned": 19363,
+        "after-half-shifted": 21118
+      },
+      "shifted_vs_aligned_pct": 9.06367814904716
+    },
+    "f16le_read": {
+      "median_us": {
+        "after-half-aligned": 10526,
+        "after-half-shifted": 12142
+      },
+      "shifted_vs_aligned_pct": 15.352460573817206
+    }
+  }
+}

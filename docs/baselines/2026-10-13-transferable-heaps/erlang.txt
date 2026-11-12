@@ -1,0 +1,22 @@
+Running 16 tests (1 threads)
+────────────────────────────────────────────────────────────
+  PASS  ets_message_passing                       913ms  [1/16]
+  PASS  hibernate_basic                           956ms  [2/16]
+  PASS  hibernate_gc_args                         738ms  [3/16]
+  PASS  hibernate_heap_args                       962ms  [4/16]
+  PASS  hibernate_retained_roots                  866ms  [5/16]
+  PASS  link_basic                                743ms  [6/16]
+  PASS  link_cascade                               1.2s  [7/16]
+  PASS  link_normal                               801ms  [8/16]
+  PASS  message_fragment_paths                     1.2s  [9/16]
+  PASS  monitor_exit_reason                       862ms  [10/16]
+  PASS  process_info                               6.0s  [11/16]
+  PASS  process_info_snapshot_roots               800ms  [12/16]
+  PASS  self_send                                 743ms  [13/16]
+  PASS  spawn_link_basic                           2.8s  [14/16]
+  PASS  spawn_monitor_basic                        1.1s  [15/16]
+  PASS  tcp_active_once                           990ms  [16/16]
+────────────────────────────────────────────────────────────
+Results: 16 passed, 0 failed (0 compile), 0 skipped / 16 total
+
+ALL TESTS PASSED

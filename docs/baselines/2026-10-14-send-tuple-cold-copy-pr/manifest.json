@@ -1,0 +1,133 @@
+{
+  "base": "bc8c3b8a229272351791d5341c02b87063cad070",
+  "base_tree": "2d0c290e6b5bc10f54f61419f5305704d1d2d610",
+  "branch": "mr/send-tuple-cold-copy",
+  "toolchain": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "platform": "Apple M1, 16 GiB, macOS 15.7.7 arm64",
+  "gc": "standard, unchanged",
+  "source_sha256": {
+    "crates/nera-runtime/src/ffi/process.rs": "a0d243aa9a21919d97323c7c6a8b0b8f05ce9e742be93550b1c88b2a1ad26eb1",
+    "CHANGELOG.md": "aa8f62eaf52c88482fcae490ec8d1acd64a598cf391726ea8c2ddb74b287341e"
+  },
+  "compiler_sha256": "b87f3903dd9d244283292eb69d3919b6dbec12c0bf15500df3455670d2a249f2",
+  "before_runtime_sha256": "a99c6a1eee28ac14ae2dde8923659d703a97c245ab85bcf59ad5470646f2d2cf",
+  "after_runtime_sha256": "4b9a64bbf80e7325b6ef3ae1150e55280291b2baf6a3c7d2bdd151a34f771030",
+  "embedded_runtime_sha256": "4b9a64bbf80e7325b6ef3ae1150e55280291b2baf6a3c7d2bdd151a34f771030",
+  "validation": {
+    "release_build": "pass",
+    "clippy": "pass",
+    "rust_passed": 1914,
+    "rust_failed": 0,
+    "rust_ignored": 1,
+    "native_passed": 336,
+    "native_failed": 0,
+    "native_skipped": 2,
+    "beam_stdout_equal_native_schedulers": [
+      1,
+      4
+    ],
+    "embedded_runtime_smoke_schedulers": [
+      1,
+      4
+    ],
+    "cross_object": "x86_64-apple-darwin passed; object only",
+    "native_platforms_not_tested": [
+      "Linux",
+      "Windows",
+      "macOS x86_64"
+    ],
+    "independent_review": "pending before merge",
+    "diff_check": "pass"
+  },
+  "benchmark_runs": 370,
+  "datasets": [
+    "confirmation",
+    "matrix",
+    "complex",
+    "tuple4-confirmation",
+    "quiet-confirmation",
+    "quiet-complex"
+  ],
+  "builds": {
+    "before-native": {
+      "compiler": "b87f3903dd9d244283292eb69d3919b6dbec12c0bf15500df3455670d2a249f2",
+      "runtime": "a99c6a1eee28ac14ae2dde8923659d703a97c245ab85bcf59ad5470646f2d2cf",
+      "source": "35b204ccde92677d3aa0de79f119757a9b25110754997164057c2d89c894f509",
+      "binaries": {
+        "atom": "3702b5c997cd4ccb1497f795d6e4c0a7fa71c4244770965909729cf28281e6f7",
+        "atom_multi": "8ed13e78fc5c200e5c6104832c2be0f1d42c6e4e10148993636925683db23443",
+        "tuple2": "98d53d909d807ee3c563741c3caaad81975658a2fe7e4875a43ab1d096db40fa",
+        "tuple2_multi": "ecd01b04d9644d3ef666f523daa2b1b8f00a154eac36308409341a59680c6bd3",
+        "tuple3": "4eccfe6de6a309c9dfcb3769543cc0e1851c66db9b5f6dfcaac718cc326a3bf6",
+        "tuple3_multi": "0c399c59181cdcfe72c53b201a9fd3bbd1f946fa12ddc7b22275e5c665b41935",
+        "tuple4": "d0e04961557885e78261bed63be8cf42c728b81e499c04ee4d55b69dc5e8c44d",
+        "tuple4_multi": "89afb02c0ad0691b9b41ba30c49336612ab73f50d991ae53df30bf66a8009416"
+      }
+    },
+    "after-native": {
+      "compiler": "b87f3903dd9d244283292eb69d3919b6dbec12c0bf15500df3455670d2a249f2",
+      "runtime": "4b9a64bbf80e7325b6ef3ae1150e55280291b2baf6a3c7d2bdd151a34f771030",
+      "source": "35b204ccde92677d3aa0de79f119757a9b25110754997164057c2d89c894f509",
+      "binaries": {
+        "atom": "5aa664726df8493d61b1f7aef61a624b37330988f6ff8f32b50ed915f76c63de",
+        "atom_multi": "78fa0afab64af00dfd5deb157914be4401aeee308ab583ed517c99c60921a296",
+        "tuple2": "aad0f4906a21dadb037e112822ec5ac08c0d2495af2e90f59b2950a79ecd859c",
+        "tuple2_multi": "9705f936b1af283babdb96c0e0bd8128e83729aec8c9cfb0908e6b1963e1cc8b",
+        "tuple3": "fb1892df2d0dcd852f033a861d981072e84aaf50cc0271979522ba76dad7e613",
+        "tuple3_multi": "08f6211abe0e66d3f8a54e3387f53e1bf4a0d18e22a4e310a37acee8cf6c6c35",
+        "tuple4": "e2e2319c2c7c58a810bae9517b0dd94f0e003fecafd03b538ac43a6c84bdb024",
+        "tuple4_multi": "25e5ed30a857947ca8d6d40b062618047263d92f654bab0889c858355b5566f9"
+      }
+    },
+    "complex-before-native": {
+      "compiler": "b87f3903dd9d244283292eb69d3919b6dbec12c0bf15500df3455670d2a249f2",
+      "runtime": "a99c6a1eee28ac14ae2dde8923659d703a97c245ab85bcf59ad5470646f2d2cf",
+      "source": "70d551652c6f3afcbb4758df100a84e81e3f2438b6a522d0c648fb1e05933d9e",
+      "binaries": {
+        "tuple2": "06c12883221bb695f7f2ceacbc07b93ee6d289adf27c525627fff64ea08e543c",
+        "tuple2_multi": "fb459f06dcea08e2b4a0d727033c8433618fd182c11d1f8631c2cf2a1565731e"
+      }
+    },
+    "complex-after-native": {
+      "compiler": "b87f3903dd9d244283292eb69d3919b6dbec12c0bf15500df3455670d2a249f2",
+      "runtime": "4b9a64bbf80e7325b6ef3ae1150e55280291b2baf6a3c7d2bdd151a34f771030",
+      "source": "70d551652c6f3afcbb4758df100a84e81e3f2438b6a522d0c648fb1e05933d9e",
+      "binaries": {
+        "tuple2": "dc1bf35869732fbad8bc6551dd6e1ef7bf13e9e757229c7265cfb921fa22609a",
+        "tuple2_multi": "6841c2f5ab672090a4dcb88df6ba1feca50576082caa63675d9286ebfa95c407"
+      }
+    }
+  },
+  "evidence_sha256": {
+    "README.md": "6f95ee64a9d737d451eb23f396e10a5552265fd9da618552001ad13ec6bd73b1",
+    "complex-probe/measure.py": "518be848cd9510e4c0826b6dfd39a16879a45f76e13a5b087d9f0e08c0a3dbc4",
+    "complex-probe/small_messages.erl": "70d551652c6f3afcbb4758df100a84e81e3f2438b6a522d0c648fb1e05933d9e",
+    "complex.json.gz": "8d62e53e0bb4bef41fa552b0aab13d910ba9ca5b2a06749435c294172d4cdef6",
+    "confirmation.json.gz": "fec17e27856b21dc4e989e1272a6ca4cbe752006354f6c3dcd9d34627a29988f",
+    "evidence.tar.gz": "cf4179ef50d6d7e9daf69c10be974f939ff6520124a48e624f9b8a8487e73e4b",
+    "matrix.json.gz": "eab8b6b53517a16a28d44babed0f393127aa7e9ef1f521f0995fc6b26db3428c",
+    "measure.py": "b75c7bb3b5f0874ddb2c4b77ce874309229eeb4a2d889d7c223b3adeeb29a012",
+    "quiet-complex.json.gz": "e7de3836356e8a897061f5432c95c7a887d2c92b3699cce26c50a9edf9d4de8f",
+    "quiet-confirmation.json.gz": "172de0652d314bfa2da95f337b63bb695c56bd18eb9c9e58fed60c1708f02885",
+    "small_messages.erl": "35b204ccde92677d3aa0de79f119757a9b25110754997164057c2d89c894f509",
+    "summary.json": "59ca8bc5966ab6e87bd7c1393f7458fea21633667041c0304d35d832dee1f447",
+    "tuple4-confirmation.json.gz": "5304d9f20a6ff5ecd727055c96971c20d1aa8821091bd5d75384b37b647d8915",
+    "validated-sources.json": "5e7de1946f3759344a7df2f52c0151cf5d81b2d479682348eafb145089bec790"
+  },
+  "dataset_files": {
+    "confirmation": "confirmation.json.gz",
+    "matrix": "matrix.json.gz",
+    "complex": "complex.json.gz",
+    "tuple4-confirmation": "tuple4-confirmation.json.gz",
+    "quiet-confirmation": "quiet-confirmation.json.gz",
+    "quiet-complex": "quiet-complex.json.gz"
+  },
+  "dataset_uncompressed_sha256": {
+    "confirmation": "6c5975556108f15cd8c25337af42be6b0f1abf90a3013481f9778e156b9a2a54",
+    "matrix": "127a5541eced555aac26e9a2b3e94f29a8c09d17c65a5f0918b707ce65035717",
+    "complex": "09fd76432d99a168763d7d0171a0bd5d9ad9977e0b0c21943654a110b3ed753d",
+    "tuple4-confirmation": "41db983201a17ce436c69b3083ebe44bac6c72cd9b8956ef522c6290e3099bec",
+    "quiet-confirmation": "9b9a776adc1fcbced32fa11d6058a7a7f515d8d51e79eff960893366bc13265e",
+    "quiet-complex": "494d5efdc4202a00d51f6e33efec6ccb0fd1646411fa6632c2c93fc357329b8a"
+  }
+}

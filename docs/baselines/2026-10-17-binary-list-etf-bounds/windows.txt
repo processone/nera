@@ -1,0 +1,43 @@
+   Compiling nera-runtime v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-runtime)
+warning: unused variable: `worker_notify`
+  --> crates/nera-runtime/src/ffi/gen_tcp.rs:24:13
+   |
+24 |         let worker_notify = std::sync::Arc::clone(&sched.worker_notify);
+   |             ^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_worker_notify`
+   |
+   = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `self_pid`
+   --> crates/nera-runtime/src/ffi/gen_tcp.rs:300:9
+    |
+300 |     let self_pid = if !ctx.is_null() { unsafe { (*ctx).pid } } else { crate::process::ProcessId::new(0) };
+    |         ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_self_pid`
+
+warning: unused variable: `self_pid`
+   --> crates/nera-runtime/src/ffi/gen_tcp.rs:605:9
+    |
+605 |     let self_pid = if !ctx.is_null() { unsafe { (*ctx).pid } } else { crate::process::ProcessId::new(0) };
+    |         ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_self_pid`
+
+warning: unused variable: `need_deregister`
+   --> crates/nera-runtime/src/ffi/gen_tcp.rs:914:9
+    |
+914 |     let need_deregister = if new_packet.is_some() || matches!(new_active, Some(ActiveMode::Passive)) {
+    |         ^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_need_deregister`
+
+warning: unused variable: `was_registered`
+   --> crates/nera-runtime/src/socket.rs:440:9
+    |
+440 |     let was_registered = with_entry_opts(handle, |opts| {
+    |         ^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_was_registered`
+
+warning: function `get_listener` is never used
+   --> crates/nera-runtime/src/socket.rs:598:15
+    |
+598 | pub(crate) fn get_listener(handle: SocketHandle) -> io::Result<Arc<TcpListener>> {
+    |               ^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `nera-runtime` (lib) generated 6 warnings (run `cargo fix --lib -p nera-runtime` to apply 5 suggestions)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.21s

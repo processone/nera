@@ -1,0 +1,1 @@
+Before and after common-0 benchmark IR (including stdlib) is byte-identical; compare nera build probe.erl --emit-ir --no-warnings from common-0 with each compiler. See hashes in artifact-hashes.json.

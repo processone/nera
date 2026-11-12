@@ -1,0 +1,16 @@
+warning: variable 'B' is unused
+   ┌─ /var/folders/yk/hpylg6r976qgbphydj66gt9h0000gn/T/nera-base64-u35q9cui/differential.erl:19:13
+   │
+19 │             B = base64_rust:decode(base64_rust:encode(B,O),O)
+   │             ^
+
+warning: non-tail-recursive call to 'corpus/3'
+   ┌─ /var/folders/yk/hpylg6r976qgbphydj66gt9h0000gn/T/nera-base64-u35q9cui/differential.erl:50:53
+   │
+50 │     case N of 0 -> ok; _ -> lists:foreach(fun(C) -> corpus(N-1,<<B/binary,C>>,Alphabet) end,Alphabet) end.
+   │                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   │
+   = hint: this call is not in tail position and will grow the stack; consider using an accumulator
+
+Linking with runtime: /home/user/AIProjects/nera/target/base64-prototype/release/libnera_runtime.a
+warning: 2 warnings emitted

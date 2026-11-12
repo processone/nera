@@ -1,0 +1,94 @@
+{
+  "samples": {
+    "before": [
+      {
+        "elapsed_us": 92033,
+        "process_cpu_us": 96423
+      },
+      {
+        "elapsed_us": 100870,
+        "process_cpu_us": 102858
+      },
+      {
+        "elapsed_us": 121326,
+        "process_cpu_us": 109808
+      },
+      {
+        "elapsed_us": 89271,
+        "process_cpu_us": 94798
+      },
+      {
+        "elapsed_us": 89413,
+        "process_cpu_us": 94738
+      },
+      {
+        "elapsed_us": 90487,
+        "process_cpu_us": 96396
+      },
+      {
+        "elapsed_us": 95511,
+        "process_cpu_us": 100864
+      },
+      {
+        "elapsed_us": 89833,
+        "process_cpu_us": 95160
+      },
+      {
+        "elapsed_us": 88536,
+        "process_cpu_us": 93829
+      }
+    ],
+    "after": [
+      {
+        "elapsed_us": 89646,
+        "process_cpu_us": 95027
+      },
+      {
+        "elapsed_us": 89306,
+        "process_cpu_us": 94495
+      },
+      {
+        "elapsed_us": 94822,
+        "process_cpu_us": 100325
+      },
+      {
+        "elapsed_us": 92030,
+        "process_cpu_us": 96581
+      },
+      {
+        "elapsed_us": 89185,
+        "process_cpu_us": 94309
+      },
+      {
+        "elapsed_us": 89323,
+        "process_cpu_us": 93356
+      },
+      {
+        "elapsed_us": 92136,
+        "process_cpu_us": 98211
+      },
+      {
+        "elapsed_us": 91575,
+        "process_cpu_us": 96737
+      },
+      {
+        "elapsed_us": 99344,
+        "process_cpu_us": 106435
+      }
+    ]
+  },
+  "medians": {
+    "before": {
+      "elapsed_us": 90487,
+      "process_cpu_us": 96396
+    },
+    "after": {
+      "elapsed_us": 91575,
+      "process_cpu_us": 96581
+    }
+  },
+  "percent_change": {
+    "elapsed_us": 1.2023826627029388,
+    "process_cpu_us": 0.19191667704054893
+  }
+}

@@ -1,0 +1,1254 @@
+{
+  "operations_by_case": {
+    "copy1": 500000,
+    "copy13bits": 500000,
+    "copy16": 500000,
+    "copy256": 50000,
+    "scan256": 10000,
+    "message256": 10000
+  },
+  "warmup_operations": "same as timed operations",
+  "series": 3,
+  "groups_per_series": 5,
+  "scheduler_threads": 1,
+  "offsets": [
+    0,
+    3
+  ],
+  "hashes": {
+    "before-0": "40d502429f1e63d94b97560d87e735077b81f0021426d8e19ad163a5786153b1",
+    "after-0": "741190943926d3d80060a0052b28eddc8e68e43b2ef46f5ddbea39f43876213b",
+    "before-3": "47152f7c7b8b565abf0ac160c2abba0111fca761cba70318231ba8709025e6b5",
+    "after-3": "1d140e68108fa3da91993454b673e4ecfe54d0f7539cb4359da4e54173da141e"
+  },
+  "load_start": [
+    2.83544921875,
+    3.4521484375,
+    3.31103515625
+  ],
+  "observations": [
+    {
+      "series": 0,
+      "group": 0,
+      "executable": "before-0",
+      "load": [
+        2.83544921875,
+        3.4521484375,
+        3.31103515625
+      ],
+      "values_us": {
+        "copy1": 28227,
+        "copy13bits": 33184,
+        "copy16": 24893,
+        "copy256": 9984,
+        "scan256": 46090,
+        "message256": 96583
+      }
+    },
+    {
+      "series": 0,
+      "group": 0,
+      "executable": "after-0",
+      "load": [
+        2.83544921875,
+        3.4521484375,
+        3.31103515625
+      ],
+      "values_us": {
+        "copy1": 29663,
+        "copy13bits": 21942,
+        "copy16": 25669,
+        "copy256": 9812,
+        "scan256": 47030,
+        "message256": 98081
+      }
+    },
+    {
+      "series": 0,
+      "group": 0,
+      "executable": "before-3",
+      "load": [
+        2.83544921875,
+        3.4521484375,
+        3.31103515625
+      ],
+      "values_us": {
+        "copy1": 36039,
+        "copy13bits": 35254,
+        "copy16": 175250,
+        "copy256": 251829,
+        "scan256": 76607,
+        "message256": 96745
+      }
+    },
+    {
+      "series": 0,
+      "group": 0,
+      "executable": "after-3",
+      "load": [
+        2.83544921875,
+        3.4521484375,
+        3.31103515625
+      ],
+      "values_us": {
+        "copy1": 30748,
+        "copy13bits": 23212,
+        "copy16": 44394,
+        "copy256": 48902,
+        "scan256": 78133,
+        "message256": 100269
+      }
+    },
+    {
+      "series": 0,
+      "group": 1,
+      "executable": "before-3",
+      "load": [
+        2.92822265625,
+        3.4609375,
+        3.31494140625
+      ],
+      "values_us": {
+        "copy1": 31585,
+        "copy13bits": 36382,
+        "copy16": 181462,
+        "copy256": 306900,
+        "scan256": 81100,
+        "message256": 103167
+      }
+    },
+    {
+      "series": 0,
+      "group": 1,
+      "executable": "after-0",
+      "load": [
+        2.92822265625,
+        3.4609375,
+        3.31494140625
+      ],
+      "values_us": {
+        "copy1": 21228,
+        "copy13bits": 21791,
+        "copy16": 25403,
+        "copy256": 10105,
+        "scan256": 46725,
+        "message256": 98459
+      }
+    },
+    {
+      "series": 0,
+      "group": 1,
+      "executable": "before-0",
+      "load": [
+        2.92822265625,
+        3.4609375,
+        3.31494140625
+      ],
+      "values_us": {
+        "copy1": 24707,
+        "copy13bits": 33089,
+        "copy16": 24975,
+        "copy256": 9806,
+        "scan256": 45800,
+        "message256": 97181
+      }
+    },
+    {
+      "series": 0,
+      "group": 1,
+      "executable": "after-3",
+      "load": [
+        2.92822265625,
+        3.4609375,
+        3.31494140625
+      ],
+      "values_us": {
+        "copy1": 26856,
+        "copy13bits": 23188,
+        "copy16": 44372,
+        "copy256": 49654,
+        "scan256": 77912,
+        "message256": 97853
+      }
+    },
+    {
+      "series": 0,
+      "group": 2,
+      "executable": "before-3",
+      "load": [
+        2.92822265625,
+        3.4609375,
+        3.31494140625
+      ],
+      "values_us": {
+        "copy1": 32871,
+        "copy13bits": 35186,
+        "copy16": 175337,
+        "copy256": 252883,
+        "scan256": 76509,
+        "message256": 96904
+      }
+    },
+    {
+      "series": 0,
+      "group": 2,
+      "executable": "after-3",
+      "load": [
+        2.93359375,
+        3.453125,
+        3.31298828125
+      ],
+      "values_us": {
+        "copy1": 26710,
+        "copy13bits": 23163,
+        "copy16": 44652,
+        "copy256": 49645,
+        "scan256": 77167,
+        "message256": 97997
+      }
+    },
+    {
+      "series": 0,
+      "group": 2,
+      "executable": "before-0",
+      "load": [
+        2.93359375,
+        3.453125,
+        3.31298828125
+      ],
+      "values_us": {
+        "copy1": 24144,
+        "copy13bits": 33214,
+        "copy16": 24819,
+        "copy256": 9822,
+        "scan256": 46200,
+        "message256": 96435
+      }
+    },
+    {
+      "series": 0,
+      "group": 2,
+      "executable": "after-0",
+      "load": [
+        2.93359375,
+        3.453125,
+        3.31298828125
+      ],
+      "values_us": {
+        "copy1": 24647,
+        "copy13bits": 21172,
+        "copy16": 25568,
+        "copy256": 9756,
+        "scan256": 46928,
+        "message256": 97002
+      }
+    },
+    {
+      "series": 0,
+      "group": 3,
+      "executable": "before-0",
+      "load": [
+        2.93359375,
+        3.453125,
+        3.31298828125
+      ],
+      "values_us": {
+        "copy1": 24385,
+        "copy13bits": 33476,
+        "copy16": 24863,
+        "copy256": 9823,
+        "scan256": 45827,
+        "message256": 97304
+      }
+    },
+    {
+      "series": 0,
+      "group": 3,
+      "executable": "after-3",
+      "load": [
+        2.93359375,
+        3.453125,
+        3.31298828125
+      ],
+      "values_us": {
+        "copy1": 26514,
+        "copy13bits": 23101,
+        "copy16": 44534,
+        "copy256": 49461,
+        "scan256": 77032,
+        "message256": 96553
+      }
+    },
+    {
+      "series": 0,
+      "group": 3,
+      "executable": "before-3",
+      "load": [
+        2.93359375,
+        3.453125,
+        3.31298828125
+      ],
+      "values_us": {
+        "copy1": 32797,
+        "copy13bits": 35211,
+        "copy16": 175655,
+        "copy256": 251813,
+        "scan256": 76689,
+        "message256": 98121
+      }
+    },
+    {
+      "series": 0,
+      "group": 3,
+      "executable": "after-0",
+      "load": [
+        2.93359375,
+        3.453125,
+        3.31298828125
+      ],
+      "values_us": {
+        "copy1": 24400,
+        "copy13bits": 21100,
+        "copy16": 25396,
+        "copy256": 9748,
+        "scan256": 46706,
+        "message256": 96985
+      }
+    },
+    {
+      "series": 0,
+      "group": 4,
+      "executable": "before-0",
+      "load": [
+        2.7783203125,
+        3.412109375,
+        3.29931640625
+      ],
+      "values_us": {
+        "copy1": 23375,
+        "copy13bits": 33104,
+        "copy16": 25319,
+        "copy256": 9921,
+        "scan256": 45816,
+        "message256": 96944
+      }
+    },
+    {
+      "series": 0,
+      "group": 4,
+      "executable": "after-0",
+      "load": [
+        2.7783203125,
+        3.412109375,
+        3.29931640625
+      ],
+      "values_us": {
+        "copy1": 23877,
+        "copy13bits": 21270,
+        "copy16": 26236,
+        "copy256": 9758,
+        "scan256": 48481,
+        "message256": 98349
+      }
+    },
+    {
+      "series": 0,
+      "group": 4,
+      "executable": "before-3",
+      "load": [
+        2.7783203125,
+        3.412109375,
+        3.29931640625
+      ],
+      "values_us": {
+        "copy1": 32888,
+        "copy13bits": 35461,
+        "copy16": 176148,
+        "copy256": 251800,
+        "scan256": 76644,
+        "message256": 97153
+      }
+    },
+    {
+      "series": 0,
+      "group": 4,
+      "executable": "after-3",
+      "load": [
+        2.7783203125,
+        3.412109375,
+        3.29931640625
+      ],
+      "values_us": {
+        "copy1": 26897,
+        "copy13bits": 23086,
+        "copy16": 44400,
+        "copy256": 50143,
+        "scan256": 78163,
+        "message256": 96974
+      }
+    },
+    {
+      "series": 1,
+      "group": 0,
+      "executable": "before-3",
+      "load": [
+        2.7783203125,
+        3.412109375,
+        3.29931640625
+      ],
+      "values_us": {
+        "copy1": 32740,
+        "copy13bits": 35217,
+        "copy16": 175522,
+        "copy256": 251329,
+        "scan256": 77805,
+        "message256": 96987
+      }
+    },
+    {
+      "series": 1,
+      "group": 0,
+      "executable": "after-0",
+      "load": [
+        2.7783203125,
+        3.412109375,
+        3.29931640625
+      ],
+      "values_us": {
+        "copy1": 24778,
+        "copy13bits": 21089,
+        "copy16": 25139,
+        "copy256": 9864,
+        "scan256": 46565,
+        "message256": 97086
+      }
+    },
+    {
+      "series": 1,
+      "group": 0,
+      "executable": "before-0",
+      "load": [
+        2.7958984375,
+        3.40478515625,
+        3.29736328125
+      ],
+      "values_us": {
+        "copy1": 24558,
+        "copy13bits": 33264,
+        "copy16": 24780,
+        "copy256": 9841,
+        "scan256": 46181,
+        "message256": 96981
+      }
+    },
+    {
+      "series": 1,
+      "group": 0,
+      "executable": "after-3",
+      "load": [
+        2.7958984375,
+        3.40478515625,
+        3.29736328125
+      ],
+      "values_us": {
+        "copy1": 27082,
+        "copy13bits": 23103,
+        "copy16": 44331,
+        "copy256": 49402,
+        "scan256": 77473,
+        "message256": 97156
+      }
+    },
+    {
+      "series": 1,
+      "group": 1,
+      "executable": "before-3",
+      "load": [
+        2.7958984375,
+        3.40478515625,
+        3.29736328125
+      ],
+      "values_us": {
+        "copy1": 32777,
+        "copy13bits": 35259,
+        "copy16": 175245,
+        "copy256": 252428,
+        "scan256": 76502,
+        "message256": 97073
+      }
+    },
+    {
+      "series": 1,
+      "group": 1,
+      "executable": "after-3",
+      "load": [
+        2.7958984375,
+        3.40478515625,
+        3.29736328125
+      ],
+      "values_us": {
+        "copy1": 26946,
+        "copy13bits": 23113,
+        "copy16": 44326,
+        "copy256": 48869,
+        "scan256": 77356,
+        "message256": 96816
+      }
+    },
+    {
+      "series": 1,
+      "group": 1,
+      "executable": "before-0",
+      "load": [
+        2.7958984375,
+        3.40478515625,
+        3.29736328125
+      ],
+      "values_us": {
+        "copy1": 24035,
+        "copy13bits": 33338,
+        "copy16": 24793,
+        "copy256": 9949,
+        "scan256": 46296,
+        "message256": 96637
+      }
+    },
+    {
+      "series": 1,
+      "group": 1,
+      "executable": "after-0",
+      "load": [
+        2.7958984375,
+        3.40478515625,
+        3.29736328125
+      ],
+      "values_us": {
+        "copy1": 24046,
+        "copy13bits": 21380,
+        "copy16": 24505,
+        "copy256": 9760,
+        "scan256": 46966,
+        "message256": 97191
+      }
+    },
+    {
+      "series": 1,
+      "group": 2,
+      "executable": "before-0",
+      "load": [
+        2.7958984375,
+        3.40478515625,
+        3.29736328125
+      ],
+      "values_us": {
+        "copy1": 25391,
+        "copy13bits": 33108,
+        "copy16": 24769,
+        "copy256": 9799,
+        "scan256": 45921,
+        "message256": 96624
+      }
+    },
+    {
+      "series": 1,
+      "group": 2,
+      "executable": "after-3",
+      "load": [
+        2.73193359375,
+        3.38134765625,
+        3.28955078125
+      ],
+      "values_us": {
+        "copy1": 26871,
+        "copy13bits": 23155,
+        "copy16": 44337,
+        "copy256": 48952,
+        "scan256": 77114,
+        "message256": 96778
+      }
+    },
+    {
+      "series": 1,
+      "group": 2,
+      "executable": "before-3",
+      "load": [
+        2.73193359375,
+        3.38134765625,
+        3.28955078125
+      ],
+      "values_us": {
+        "copy1": 32768,
+        "copy13bits": 35265,
+        "copy16": 175416,
+        "copy256": 251342,
+        "scan256": 76452,
+        "message256": 96397
+      }
+    },
+    {
+      "series": 1,
+      "group": 2,
+      "executable": "after-0",
+      "load": [
+        2.73193359375,
+        3.38134765625,
+        3.28955078125
+      ],
+      "values_us": {
+        "copy1": 24310,
+        "copy13bits": 21043,
+        "copy16": 24774,
+        "copy256": 9740,
+        "scan256": 46751,
+        "message256": 96963
+      }
+    },
+    {
+      "series": 1,
+      "group": 3,
+      "executable": "before-0",
+      "load": [
+        2.73193359375,
+        3.38134765625,
+        3.28955078125
+      ],
+      "values_us": {
+        "copy1": 24180,
+        "copy13bits": 33072,
+        "copy16": 24937,
+        "copy256": 9830,
+        "scan256": 46246,
+        "message256": 97066
+      }
+    },
+    {
+      "series": 1,
+      "group": 3,
+      "executable": "after-0",
+      "load": [
+        2.73193359375,
+        3.38134765625,
+        3.28955078125
+      ],
+      "values_us": {
+        "copy1": 24557,
+        "copy13bits": 21160,
+        "copy16": 24936,
+        "copy256": 9771,
+        "scan256": 47020,
+        "message256": 97329
+      }
+    },
+    {
+      "series": 1,
+      "group": 3,
+      "executable": "before-3",
+      "load": [
+        2.73193359375,
+        3.38134765625,
+        3.28955078125
+      ],
+      "values_us": {
+        "copy1": 32860,
+        "copy13bits": 35236,
+        "copy16": 175450,
+        "copy256": 251449,
+        "scan256": 76219,
+        "message256": 96731
+      }
+    },
+    {
+      "series": 1,
+      "group": 3,
+      "executable": "after-3",
+      "load": [
+        2.7529296875,
+        3.375,
+        3.28759765625
+      ],
+      "values_us": {
+        "copy1": 26910,
+        "copy13bits": 23078,
+        "copy16": 44337,
+        "copy256": 49479,
+        "scan256": 77691,
+        "message256": 96609
+      }
+    },
+    {
+      "series": 1,
+      "group": 4,
+      "executable": "before-3",
+      "load": [
+        2.7529296875,
+        3.375,
+        3.28759765625
+      ],
+      "values_us": {
+        "copy1": 32880,
+        "copy13bits": 35212,
+        "copy16": 175413,
+        "copy256": 251798,
+        "scan256": 76365,
+        "message256": 97101
+      }
+    },
+    {
+      "series": 1,
+      "group": 4,
+      "executable": "after-0",
+      "load": [
+        2.7529296875,
+        3.375,
+        3.28759765625
+      ],
+      "values_us": {
+        "copy1": 24415,
+        "copy13bits": 21074,
+        "copy16": 25263,
+        "copy256": 9739,
+        "scan256": 46734,
+        "message256": 96964
+      }
+    },
+    {
+      "series": 1,
+      "group": 4,
+      "executable": "before-0",
+      "load": [
+        2.7529296875,
+        3.375,
+        3.28759765625
+      ],
+      "values_us": {
+        "copy1": 24474,
+        "copy13bits": 33111,
+        "copy16": 24814,
+        "copy256": 9813,
+        "scan256": 45837,
+        "message256": 96568
+      }
+    },
+    {
+      "series": 1,
+      "group": 4,
+      "executable": "after-3",
+      "load": [
+        2.7529296875,
+        3.375,
+        3.28759765625
+      ],
+      "values_us": {
+        "copy1": 27021,
+        "copy13bits": 23137,
+        "copy16": 44364,
+        "copy256": 49514,
+        "scan256": 76998,
+        "message256": 96968
+      }
+    },
+    {
+      "series": 2,
+      "group": 0,
+      "executable": "before-3",
+      "load": [
+        2.7529296875,
+        3.375,
+        3.28759765625
+      ],
+      "values_us": {
+        "copy1": 32756,
+        "copy13bits": 35166,
+        "copy16": 176467,
+        "copy256": 251253,
+        "scan256": 76342,
+        "message256": 96616
+      }
+    },
+    {
+      "series": 2,
+      "group": 0,
+      "executable": "after-3",
+      "load": [
+        2.7724609375,
+        3.36865234375,
+        3.28564453125
+      ],
+      "values_us": {
+        "copy1": 26862,
+        "copy13bits": 23086,
+        "copy16": 44447,
+        "copy256": 49336,
+        "scan256": 77134,
+        "message256": 97390
+      }
+    },
+    {
+      "series": 2,
+      "group": 0,
+      "executable": "before-0",
+      "load": [
+        2.7724609375,
+        3.36865234375,
+        3.28564453125
+      ],
+      "values_us": {
+        "copy1": 24517,
+        "copy13bits": 33159,
+        "copy16": 24860,
+        "copy256": 9871,
+        "scan256": 45924,
+        "message256": 96416
+      }
+    },
+    {
+      "series": 2,
+      "group": 0,
+      "executable": "after-0",
+      "load": [
+        2.7724609375,
+        3.36865234375,
+        3.28564453125
+      ],
+      "values_us": {
+        "copy1": 24136,
+        "copy13bits": 21050,
+        "copy16": 25804,
+        "copy256": 9901,
+        "scan256": 46589,
+        "message256": 97025
+      }
+    },
+    {
+      "series": 2,
+      "group": 1,
+      "executable": "before-0",
+      "load": [
+        2.7724609375,
+        3.36865234375,
+        3.28564453125
+      ],
+      "values_us": {
+        "copy1": 23771,
+        "copy13bits": 33126,
+        "copy16": 25135,
+        "copy256": 9782,
+        "scan256": 46154,
+        "message256": 97075
+      }
+    },
+    {
+      "series": 2,
+      "group": 1,
+      "executable": "after-3",
+      "load": [
+        2.7724609375,
+        3.36865234375,
+        3.28564453125
+      ],
+      "values_us": {
+        "copy1": 27292,
+        "copy13bits": 23189,
+        "copy16": 44379,
+        "copy256": 48900,
+        "scan256": 77320,
+        "message256": 97363
+      }
+    },
+    {
+      "series": 2,
+      "group": 1,
+      "executable": "before-3",
+      "load": [
+        2.7724609375,
+        3.36865234375,
+        3.28564453125
+      ],
+      "values_us": {
+        "copy1": 32843,
+        "copy13bits": 35211,
+        "copy16": 175526,
+        "copy256": 251528,
+        "scan256": 76904,
+        "message256": 98299
+      }
+    },
+    {
+      "series": 2,
+      "group": 1,
+      "executable": "after-0",
+      "load": [
+        2.7724609375,
+        3.36865234375,
+        3.28564453125
+      ],
+      "values_us": {
+        "copy1": 24603,
+        "copy13bits": 21069,
+        "copy16": 25412,
+        "copy256": 9766,
+        "scan256": 46680,
+        "message256": 97063
+      }
+    },
+    {
+      "series": 2,
+      "group": 2,
+      "executable": "before-0",
+      "load": [
+        2.79052734375,
+        3.3623046875,
+        3.28369140625
+      ],
+      "values_us": {
+        "copy1": 24333,
+        "copy13bits": 33385,
+        "copy16": 25160,
+        "copy256": 10000,
+        "scan256": 46081,
+        "message256": 96883
+      }
+    },
+    {
+      "series": 2,
+      "group": 2,
+      "executable": "after-0",
+      "load": [
+        2.79052734375,
+        3.3623046875,
+        3.28369140625
+      ],
+      "values_us": {
+        "copy1": 23879,
+        "copy13bits": 21182,
+        "copy16": 25209,
+        "copy256": 9730,
+        "scan256": 46598,
+        "message256": 96849
+      }
+    },
+    {
+      "series": 2,
+      "group": 2,
+      "executable": "before-3",
+      "load": [
+        2.79052734375,
+        3.3623046875,
+        3.28369140625
+      ],
+      "values_us": {
+        "copy1": 32840,
+        "copy13bits": 35270,
+        "copy16": 175516,
+        "copy256": 251690,
+        "scan256": 76488,
+        "message256": 96959
+      }
+    },
+    {
+      "series": 2,
+      "group": 2,
+      "executable": "after-3",
+      "load": [
+        2.79052734375,
+        3.3623046875,
+        3.28369140625
+      ],
+      "values_us": {
+        "copy1": 26577,
+        "copy13bits": 23105,
+        "copy16": 44387,
+        "copy256": 49020,
+        "scan256": 76884,
+        "message256": 96849
+      }
+    },
+    {
+      "series": 2,
+      "group": 3,
+      "executable": "before-3",
+      "load": [
+        2.79052734375,
+        3.3623046875,
+        3.28369140625
+      ],
+      "values_us": {
+        "copy1": 32855,
+        "copy13bits": 35244,
+        "copy16": 175419,
+        "copy256": 251414,
+        "scan256": 76467,
+        "message256": 97677
+      }
+    },
+    {
+      "series": 2,
+      "group": 3,
+      "executable": "after-0",
+      "load": [
+        2.79052734375,
+        3.3623046875,
+        3.28369140625
+      ],
+      "values_us": {
+        "copy1": 24515,
+        "copy13bits": 21102,
+        "copy16": 25557,
+        "copy256": 9771,
+        "scan256": 46810,
+        "message256": 97041
+      }
+    },
+    {
+      "series": 2,
+      "group": 3,
+      "executable": "before-0",
+      "load": [
+        2.72705078125,
+        3.33935546875,
+        3.27587890625
+      ],
+      "values_us": {
+        "copy1": 24400,
+        "copy13bits": 33134,
+        "copy16": 24817,
+        "copy256": 9831,
+        "scan256": 46655,
+        "message256": 97098
+      }
+    },
+    {
+      "series": 2,
+      "group": 3,
+      "executable": "after-3",
+      "load": [
+        2.72705078125,
+        3.33935546875,
+        3.27587890625
+      ],
+      "values_us": {
+        "copy1": 26903,
+        "copy13bits": 23309,
+        "copy16": 44378,
+        "copy256": 49034,
+        "scan256": 78305,
+        "message256": 97377
+      }
+    },
+    {
+      "series": 2,
+      "group": 4,
+      "executable": "before-3",
+      "load": [
+        2.72705078125,
+        3.33935546875,
+        3.27587890625
+      ],
+      "values_us": {
+        "copy1": 32794,
+        "copy13bits": 35248,
+        "copy16": 175272,
+        "copy256": 251298,
+        "scan256": 76530,
+        "message256": 96860
+      }
+    },
+    {
+      "series": 2,
+      "group": 4,
+      "executable": "after-3",
+      "load": [
+        2.72705078125,
+        3.33935546875,
+        3.27587890625
+      ],
+      "values_us": {
+        "copy1": 26588,
+        "copy13bits": 23120,
+        "copy16": 44477,
+        "copy256": 49302,
+        "scan256": 77417,
+        "message256": 96475
+      }
+    },
+    {
+      "series": 2,
+      "group": 4,
+      "executable": "before-0",
+      "load": [
+        2.72705078125,
+        3.33935546875,
+        3.27587890625
+      ],
+      "values_us": {
+        "copy1": 24104,
+        "copy13bits": 33110,
+        "copy16": 24791,
+        "copy256": 9814,
+        "scan256": 45792,
+        "message256": 97318
+      }
+    },
+    {
+      "series": 2,
+      "group": 4,
+      "executable": "after-0",
+      "load": [
+        2.72705078125,
+        3.33935546875,
+        3.27587890625
+      ],
+      "values_us": {
+        "copy1": 24186,
+        "copy13bits": 21276,
+        "copy16": 25437,
+        "copy256": 9725,
+        "scan256": 46901,
+        "message256": 97384
+      }
+    }
+  ],
+  "load_end": [
+    2.72705078125,
+    3.33935546875,
+    3.27587890625
+  ],
+  "medians_us": {
+    "before-0": {
+      "copy1": 24385,
+      "copy13bits": 33134,
+      "copy16": 24860,
+      "copy256": 9830,
+      "scan256": 46081,
+      "message256": 96944
+    },
+    "after-0": {
+      "copy1": 24400,
+      "copy13bits": 21160,
+      "copy16": 25403,
+      "copy256": 9760,
+      "scan256": 46751,
+      "message256": 97063
+    },
+    "before-3": {
+      "copy1": 32840,
+      "copy13bits": 35244,
+      "copy16": 175450,
+      "copy256": 251690,
+      "scan256": 76509,
+      "message256": 96987
+    },
+    "after-3": {
+      "copy1": 26897,
+      "copy13bits": 23120,
+      "copy16": 44379,
+      "copy256": 49336,
+      "scan256": 77356,
+      "message256": 96974
+    }
+  },
+  "series_medians_us": {
+    "0": {
+      "before-0": {
+        "copy1": 24385,
+        "copy13bits": 33184,
+        "copy16": 24893,
+        "copy256": 9823,
+        "scan256": 45827,
+        "message256": 96944
+      },
+      "after-0": {
+        "copy1": 24400,
+        "copy13bits": 21270,
+        "copy16": 25568,
+        "copy256": 9758,
+        "scan256": 46928,
+        "message256": 98081
+      },
+      "before-3": {
+        "copy1": 32871,
+        "copy13bits": 35254,
+        "copy16": 175655,
+        "copy256": 251829,
+        "scan256": 76644,
+        "message256": 97153
+      },
+      "after-3": {
+        "copy1": 26856,
+        "copy13bits": 23163,
+        "copy16": 44400,
+        "copy256": 49645,
+        "scan256": 77912,
+        "message256": 97853
+      }
+    },
+    "1": {
+      "before-0": {
+        "copy1": 24474,
+        "copy13bits": 33111,
+        "copy16": 24793,
+        "copy256": 9830,
+        "scan256": 46181,
+        "message256": 96637
+      },
+      "after-0": {
+        "copy1": 24415,
+        "copy13bits": 21089,
+        "copy16": 24936,
+        "copy256": 9760,
+        "scan256": 46751,
+        "message256": 97086
+      },
+      "before-3": {
+        "copy1": 32777,
+        "copy13bits": 35236,
+        "copy16": 175416,
+        "copy256": 251449,
+        "scan256": 76452,
+        "message256": 96987
+      },
+      "after-3": {
+        "copy1": 26946,
+        "copy13bits": 23113,
+        "copy16": 44337,
+        "copy256": 49402,
+        "scan256": 77356,
+        "message256": 96816
+      }
+    },
+    "2": {
+      "before-0": {
+        "copy1": 24333,
+        "copy13bits": 33134,
+        "copy16": 24860,
+        "copy256": 9831,
+        "scan256": 46081,
+        "message256": 97075
+      },
+      "after-0": {
+        "copy1": 24186,
+        "copy13bits": 21102,
+        "copy16": 25437,
+        "copy256": 9766,
+        "scan256": 46680,
+        "message256": 97041
+      },
+      "before-3": {
+        "copy1": 32840,
+        "copy13bits": 35244,
+        "copy16": 175516,
+        "copy256": 251414,
+        "scan256": 76488,
+        "message256": 96959
+      },
+      "after-3": {
+        "copy1": 26862,
+        "copy13bits": 23120,
+        "copy16": 44387,
+        "copy256": 49034,
+        "scan256": 77320,
+        "message256": 97363
+      }
+    }
+  }
+}

@@ -1,0 +1,82 @@
+[
+  {
+    "name": "cranelift-assembler-x64",
+    "before": "0.129.1",
+    "after": "0.129.2"
+  },
+  {
+    "name": "cranelift-assembler-x64-meta",
+    "before": "0.129.1",
+    "after": "0.129.2"
+  },
+  {
+    "name": "cranelift-bforest",
+    "before": "0.129.1",
+    "after": "0.129.2"
+  },
+  {
+    "name": "cranelift-bitset",
+    "before": "0.129.1",
+    "after": "0.129.2"
+  },
+  {
+    "name": "cranelift-codegen",
+    "before": "0.129.1",
+    "after": "0.129.2"
+  },
+  {
+    "name": "cranelift-codegen-meta",
+    "before": "0.129.1",
+    "after": "0.129.2"
+  },
+  {
+    "name": "cranelift-codegen-shared",
+    "before": "0.129.1",
+    "after": "0.129.2"
+  },
+  {
+    "name": "cranelift-control",
+    "before": "0.129.1",
+    "after": "0.129.2"
+  },
+  {
+    "name": "cranelift-entity",
+    "before": "0.129.1",
+    "after": "0.129.2"
+  },
+  {
+    "name": "cranelift-frontend",
+    "before": "0.129.1",
+    "after": "0.129.2"
+  },
+  {
+    "name": "cranelift-isle",
+    "before": "0.129.1",
+    "after": "0.129.2"
+  },
+  {
+    "name": "cranelift-module",
+    "before": "0.129.1",
+    "after": "0.129.2"
+  },
+  {
+    "name": "cranelift-native",
+    "before": "0.129.1",
+    "after": "0.129.2"
+  },
+  {
+    "name": "cranelift-object",
+    "before": "0.129.1",
+    "after": "0.129.2"
+  },
+  {
+    "name": "cranelift-srcgen",
+    "before": "0.129.1",
+    "after": "0.129.2"
+  },
+  {
+    "name": "wasmtime-internal-core",
+    "before": "42.0.1",
+    "after": "42.0.2"
+  }
+]

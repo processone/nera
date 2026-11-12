@@ -1,0 +1,7 @@
+before:
+message 56
+heap_fragment 272
+
+after:
+message 56
+heap_fragment 272

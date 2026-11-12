@@ -1,0 +1,32 @@
+{
+  "base_ref": "main",
+  "base": "9e2ddcebaf725e6ea649ffcaafa98ccc682986cc",
+  "target": "working-tree: benchmarks/base64_prototype only (untracked, not committed)",
+  "production_diff_empty": true,
+  "checks": [
+    "release timing build",
+    "release instrumented build",
+    "3 focused runtime tests",
+    "differential suite in both builds",
+    "existing Base64 options suite via wrapper",
+    "benchmark checksums",
+    "cargo clippy --locked -p nera-runtime --lib -- -D warnings",
+    "rustfmt --check (skip_children)",
+    "Python syntax",
+    "scoped whitespace",
+    "git diff --check",
+    "git diff --cached --check"
+  ],
+  "omissions": [
+    "full workspace tests",
+    "cross-platform",
+    "concurrent scheduler latency",
+    "production integration"
+  ],
+  "publication": "none",
+  "base_tree": "1572ba044e831da4a0026b4df9a6acc1b6fbfcb1",
+  "divergence_from_origin_main": {
+    "ahead": 1,
+    "behind": 0
+  }
+}

@@ -1,0 +1,308 @@
+{
+  "samples": {
+    "before": [
+      {
+        "microseconds": {
+          "set insert": 30033,
+          "set overwrite": 43754,
+          "set immediate": 35042,
+          "set boxed": 35974,
+          "set lookup": 40766,
+          "set concurrent": 117104,
+          "set concurrent_boxed": 32834,
+          "ordered_set insert": 47193,
+          "ordered_set overwrite": 118620,
+          "ordered_set immediate": 190144,
+          "ordered_set boxed": 191797,
+          "ordered_set lookup": 112104,
+          "ordered_set concurrent": 140177,
+          "ordered_set concurrent_boxed": 38312
+        },
+        "stdout": "set insert 30033\nset overwrite 43754\nset immediate 35042\nset boxed 35974\nset lookup 40766\nset concurrent 117104\nset concurrent_boxed 32834\nordered_set insert 47193\nordered_set overwrite 118620\nordered_set immediate 190144\nordered_set boxed 191797\nordered_set lookup 112104\nordered_set concurrent 140177\nordered_set concurrent_boxed 38312\n"
+      },
+      {
+        "microseconds": {
+          "set insert": 29329,
+          "set overwrite": 46669,
+          "set immediate": 35570,
+          "set boxed": 35947,
+          "set lookup": 38794,
+          "set concurrent": 118068,
+          "set concurrent_boxed": 32353,
+          "ordered_set insert": 45807,
+          "ordered_set overwrite": 118494,
+          "ordered_set immediate": 190698,
+          "ordered_set boxed": 194400,
+          "ordered_set lookup": 114712,
+          "ordered_set concurrent": 138237,
+          "ordered_set concurrent_boxed": 38720
+        },
+        "stdout": "set insert 29329\nset overwrite 46669\nset immediate 35570\nset boxed 35947\nset lookup 38794\nset concurrent 118068\nset concurrent_boxed 32353\nordered_set insert 45807\nordered_set overwrite 118494\nordered_set immediate 190698\nordered_set boxed 194400\nordered_set lookup 114712\nordered_set concurrent 138237\nordered_set concurrent_boxed 38720\n"
+      },
+      {
+        "microseconds": {
+          "set insert": 29450,
+          "set overwrite": 45352,
+          "set immediate": 36302,
+          "set boxed": 35836,
+          "set lookup": 39587,
+          "set concurrent": 113264,
+          "set concurrent_boxed": 31378,
+          "ordered_set insert": 44178,
+          "ordered_set overwrite": 118344,
+          "ordered_set immediate": 191984,
+          "ordered_set boxed": 191980,
+          "ordered_set lookup": 112452,
+          "ordered_set concurrent": 142141,
+          "ordered_set concurrent_boxed": 37756
+        },
+        "stdout": "set insert 29450\nset overwrite 45352\nset immediate 36302\nset boxed 35836\nset lookup 39587\nset concurrent 113264\nset concurrent_boxed 31378\nordered_set insert 44178\nordered_set overwrite 118344\nordered_set immediate 191984\nordered_set boxed 191980\nordered_set lookup 112452\nordered_set concurrent 142141\nordered_set concurrent_boxed 37756\n"
+      },
+      {
+        "microseconds": {
+          "set insert": 36157,
+          "set overwrite": 44868,
+          "set immediate": 35824,
+          "set boxed": 36335,
+          "set lookup": 44597,
+          "set concurrent": 124293,
+          "set concurrent_boxed": 32617,
+          "ordered_set insert": 46130,
+          "ordered_set overwrite": 118060,
+          "ordered_set immediate": 191144,
+          "ordered_set boxed": 190925,
+          "ordered_set lookup": 113330,
+          "ordered_set concurrent": 137362,
+          "ordered_set concurrent_boxed": 37336
+        },
+        "stdout": "set insert 36157\nset overwrite 44868\nset immediate 35824\nset boxed 36335\nset lookup 44597\nset concurrent 124293\nset concurrent_boxed 32617\nordered_set insert 46130\nordered_set overwrite 118060\nordered_set immediate 191144\nordered_set boxed 190925\nordered_set lookup 113330\nordered_set concurrent 137362\nordered_set concurrent_boxed 37336\n"
+      },
+      {
+        "microseconds": {
+          "set insert": 36097,
+          "set overwrite": 48330,
+          "set immediate": 38826,
+          "set boxed": 40642,
+          "set lookup": 43398,
+          "set concurrent": 115000,
+          "set concurrent_boxed": 33896,
+          "ordered_set insert": 48486,
+          "ordered_set overwrite": 119021,
+          "ordered_set immediate": 190387,
+          "ordered_set boxed": 190893,
+          "ordered_set lookup": 112402,
+          "ordered_set concurrent": 142332,
+          "ordered_set concurrent_boxed": 37742
+        },
+        "stdout": "set insert 36097\nset overwrite 48330\nset immediate 38826\nset boxed 40642\nset lookup 43398\nset concurrent 115000\nset concurrent_boxed 33896\nordered_set insert 48486\nordered_set overwrite 119021\nordered_set immediate 190387\nordered_set boxed 190893\nordered_set lookup 112402\nordered_set concurrent 142332\nordered_set concurrent_boxed 37742\n"
+      },
+      {
+        "microseconds": {
+          "set insert": 29452,
+          "set overwrite": 52751,
+          "set immediate": 35888,
+          "set boxed": 35741,
+          "set lookup": 39641,
+          "set concurrent": 113200,
+          "set concurrent_boxed": 32974,
+          "ordered_set insert": 47690,
+          "ordered_set overwrite": 121387,
+          "ordered_set immediate": 191420,
+          "ordered_set boxed": 192152,
+          "ordered_set lookup": 112010,
+          "ordered_set concurrent": 137591,
+          "ordered_set concurrent_boxed": 39073
+        },
+        "stdout": "set insert 29452\nset overwrite 52751\nset immediate 35888\nset boxed 35741\nset lookup 39641\nset concurrent 113200\nset concurrent_boxed 32974\nordered_set insert 47690\nordered_set overwrite 121387\nordered_set immediate 191420\nordered_set boxed 192152\nordered_set lookup 112010\nordered_set concurrent 137591\nordered_set concurrent_boxed 39073\n"
+      },
+      {
+        "microseconds": {
+          "set insert": 29768,
+          "set overwrite": 47089,
+          "set immediate": 35787,
+          "set boxed": 35966,
+          "set lookup": 39207,
+          "set concurrent": 114912,
+          "set concurrent_boxed": 32550,
+          "ordered_set insert": 46072,
+          "ordered_set overwrite": 118562,
+          "ordered_set immediate": 192412,
+          "ordered_set boxed": 191709,
+          "ordered_set lookup": 113905,
+          "ordered_set concurrent": 149366,
+          "ordered_set concurrent_boxed": 40148
+        },
+        "stdout": "set insert 29768\nset overwrite 47089\nset immediate 35787\nset boxed 35966\nset lookup 39207\nset concurrent 114912\nset concurrent_boxed 32550\nordered_set insert 46072\nordered_set overwrite 118562\nordered_set immediate 192412\nordered_set boxed 191709\nordered_set lookup 113905\nordered_set concurrent 149366\nordered_set concurrent_boxed 40148\n"
+      }
+    ],
+    "after": [
+      {
+        "microseconds": {
+          "set insert": 31801,
+          "set overwrite": 45222,
+          "set immediate": 18968,
+          "set boxed": 31364,
+          "set lookup": 38229,
+          "set concurrent": 58968,
+          "set concurrent_boxed": 26333,
+          "ordered_set insert": 45997,
+          "ordered_set overwrite": 96657,
+          "ordered_set immediate": 72780,
+          "ordered_set boxed": 84260,
+          "ordered_set lookup": 108424,
+          "ordered_set concurrent": 63312,
+          "ordered_set concurrent_boxed": 31299
+        },
+        "stdout": "set insert 31801\nset overwrite 45222\nset immediate 18968\nset boxed 31364\nset lookup 38229\nset concurrent 58968\nset concurrent_boxed 26333\nordered_set insert 45997\nordered_set overwrite 96657\nordered_set immediate 72780\nordered_set boxed 84260\nordered_set lookup 108424\nordered_set concurrent 63312\nordered_set concurrent_boxed 31299\n"
+      },
+      {
+        "microseconds": {
+          "set insert": 28704,
+          "set overwrite": 44782,
+          "set immediate": 20141,
+          "set boxed": 33341,
+          "set lookup": 38508,
+          "set concurrent": 58856,
+          "set concurrent_boxed": 26215,
+          "ordered_set insert": 46748,
+          "ordered_set overwrite": 97806,
+          "ordered_set immediate": 72658,
+          "ordered_set boxed": 84663,
+          "ordered_set lookup": 108228,
+          "ordered_set concurrent": 63939,
+          "ordered_set concurrent_boxed": 29803
+        },
+        "stdout": "set insert 28704\nset overwrite 44782\nset immediate 20141\nset boxed 33341\nset lookup 38508\nset concurrent 58856\nset concurrent_boxed 26215\nordered_set insert 46748\nordered_set overwrite 97806\nordered_set immediate 72658\nordered_set boxed 84663\nordered_set lookup 108228\nordered_set concurrent 63939\nordered_set concurrent_boxed 29803\n"
+      },
+      {
+        "microseconds": {
+          "set insert": 29650,
+          "set overwrite": 44161,
+          "set immediate": 19092,
+          "set boxed": 31825,
+          "set lookup": 39026,
+          "set concurrent": 58223,
+          "set concurrent_boxed": 26912,
+          "ordered_set insert": 46044,
+          "ordered_set overwrite": 100341,
+          "ordered_set immediate": 76298,
+          "ordered_set boxed": 89433,
+          "ordered_set lookup": 113588,
+          "ordered_set concurrent": 66721,
+          "ordered_set concurrent_boxed": 31673
+        },
+        "stdout": "set insert 29650\nset overwrite 44161\nset immediate 19092\nset boxed 31825\nset lookup 39026\nset concurrent 58223\nset concurrent_boxed 26912\nordered_set insert 46044\nordered_set overwrite 100341\nordered_set immediate 76298\nordered_set boxed 89433\nordered_set lookup 113588\nordered_set concurrent 66721\nordered_set concurrent_boxed 31673\n"
+      },
+      {
+        "microseconds": {
+          "set insert": 35263,
+          "set overwrite": 51308,
+          "set immediate": 23407,
+          "set boxed": 37052,
+          "set lookup": 44139,
+          "set concurrent": 66808,
+          "set concurrent_boxed": 25766,
+          "ordered_set insert": 47467,
+          "ordered_set overwrite": 98884,
+          "ordered_set immediate": 72826,
+          "ordered_set boxed": 85390,
+          "ordered_set lookup": 109945,
+          "ordered_set concurrent": 64280,
+          "ordered_set concurrent_boxed": 30766
+        },
+        "stdout": "set insert 35263\nset overwrite 51308\nset immediate 23407\nset boxed 37052\nset lookup 44139\nset concurrent 66808\nset concurrent_boxed 25766\nordered_set insert 47467\nordered_set overwrite 98884\nordered_set immediate 72826\nordered_set boxed 85390\nordered_set lookup 109945\nordered_set concurrent 64280\nordered_set concurrent_boxed 30766\n"
+      },
+      {
+        "microseconds": {
+          "set insert": 28727,
+          "set overwrite": 45608,
+          "set immediate": 20175,
+          "set boxed": 32374,
+          "set lookup": 39541,
+          "set concurrent": 61888,
+          "set concurrent_boxed": 27144,
+          "ordered_set insert": 45196,
+          "ordered_set overwrite": 99580,
+          "ordered_set immediate": 75763,
+          "ordered_set boxed": 87352,
+          "ordered_set lookup": 114761,
+          "ordered_set concurrent": 62573,
+          "ordered_set concurrent_boxed": 30447
+        },
+        "stdout": "set insert 28727\nset overwrite 45608\nset immediate 20175\nset boxed 32374\nset lookup 39541\nset concurrent 61888\nset concurrent_boxed 27144\nordered_set insert 45196\nordered_set overwrite 99580\nordered_set immediate 75763\nordered_set boxed 87352\nordered_set lookup 114761\nordered_set concurrent 62573\nordered_set concurrent_boxed 30447\n"
+      },
+      {
+        "microseconds": {
+          "set insert": 28891,
+          "set overwrite": 43881,
+          "set immediate": 19074,
+          "set boxed": 32034,
+          "set lookup": 40734,
+          "set concurrent": 59214,
+          "set concurrent_boxed": 27135,
+          "ordered_set insert": 46131,
+          "ordered_set overwrite": 97542,
+          "ordered_set immediate": 72873,
+          "ordered_set boxed": 86980,
+          "ordered_set lookup": 115135,
+          "ordered_set concurrent": 64424,
+          "ordered_set concurrent_boxed": 30033
+        },
+        "stdout": "set insert 28891\nset overwrite 43881\nset immediate 19074\nset boxed 32034\nset lookup 40734\nset concurrent 59214\nset concurrent_boxed 27135\nordered_set insert 46131\nordered_set overwrite 97542\nordered_set immediate 72873\nordered_set boxed 86980\nordered_set lookup 115135\nordered_set concurrent 64424\nordered_set concurrent_boxed 30033\n"
+      },
+      {
+        "microseconds": {
+          "set insert": 31980,
+          "set overwrite": 49067,
+          "set immediate": 24436,
+          "set boxed": 35712,
+          "set lookup": 40281,
+          "set concurrent": 57647,
+          "set concurrent_boxed": 26964,
+          "ordered_set insert": 45377,
+          "ordered_set overwrite": 98353,
+          "ordered_set immediate": 72922,
+          "ordered_set boxed": 86009,
+          "ordered_set lookup": 114060,
+          "ordered_set concurrent": 62839,
+          "ordered_set concurrent_boxed": 31229
+        },
+        "stdout": "set insert 31980\nset overwrite 49067\nset immediate 24436\nset boxed 35712\nset lookup 40281\nset concurrent 57647\nset concurrent_boxed 26964\nordered_set insert 45377\nordered_set overwrite 98353\nordered_set immediate 72922\nordered_set boxed 86009\nordered_set lookup 114060\nordered_set concurrent 62839\nordered_set concurrent_boxed 31229\n"
+      }
+    ]
+  },
+  "medians_us": {
+    "before": {
+      "set insert": 29768,
+      "set overwrite": 46669,
+      "set immediate": 35824,
+      "set boxed": 35966,
+      "set lookup": 39641,
+      "set concurrent": 115000,
+      "set concurrent_boxed": 32617,
+      "ordered_set insert": 46130,
+      "ordered_set overwrite": 118562,
+      "ordered_set immediate": 191144,
+      "ordered_set boxed": 191797,
+      "ordered_set lookup": 112452,
+      "ordered_set concurrent": 140177,
+      "ordered_set concurrent_boxed": 38312
+    },
+    "after": {
+      "set insert": 29650,
+      "set overwrite": 45222,
+      "set immediate": 20141,
+      "set boxed": 32374,
+      "set lookup": 39541,
+      "set concurrent": 58968,
+      "set concurrent_boxed": 26912,
+      "ordered_set insert": 46044,
+      "ordered_set overwrite": 98353,
+      "ordered_set immediate": 72873,
+      "ordered_set boxed": 86009,
+      "ordered_set lookup": 113588,
+      "ordered_set concurrent": 63939,
+      "ordered_set concurrent_boxed": 30766
+    }
+  }
+}

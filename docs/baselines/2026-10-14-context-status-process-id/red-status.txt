@@ -1,0 +1,19 @@
+   Compiling nera-runtime v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.53s
+   Doc-tests nera_runtime
+
+running 2 tests
+test crates/nera-runtime/src/process.rs - process::ProcessContext (line 752) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::ProcessContext (line 742) - compile fail ... FAILED
+
+failures:
+
+---- crates/nera-runtime/src/process.rs - process::ProcessContext (line 742) stdout ----
+Test compiled successfully, but it's marked `compile_fail`.
+
+failures:
+    crates/nera-runtime/src/process.rs - process::ProcessContext (line 742)
+
+test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 35 filtered out; finished in 0.21s
+
+error: doctest failed, to rerun pass `-p nera-runtime --doc`

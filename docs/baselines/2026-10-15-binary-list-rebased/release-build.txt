@@ -1,0 +1,7 @@
+   Compiling nera-syntax v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-syntax)
+   Compiling nera-runtime v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-runtime)
+   Compiling nera v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera)
+   Compiling nera-ir v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-ir)
+   Compiling nera-fmt v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-fmt)
+   Compiling nera-codegen v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-codegen)
+    Finished `release` profile [optimized] target(s) in 2m 09s

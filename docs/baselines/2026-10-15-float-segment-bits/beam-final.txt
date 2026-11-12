@@ -1,0 +1,21 @@
+tests/binary_float_bits.erl:11:18: Warning: a term is constructed, but never used
+%   11|     caught = try <<(id(invalid)):64/float>>, error(continued)
+%     |                  ^
+
+tests/binary_float_bits.erl:13:18: Warning: a term is constructed, but never used
+%   13|     caught = try <<1.0:(id(24))/float>>, error(continued)
+%     |                  ^
+
+=ERROR REPORT==== 15-Oct-2026::21:35:56.543273 ===
+Error in process <0.82.0> with exit value:
+{badarg,
+    [{binary_float_bits,put,4,
+         [{file,"tests/binary_float_bits.erl"},
+          {line,69},
+          {error_info,
+              #{cause => {2,float,type,invalid},
+                function => format_bs_fail,module => erl_erts_errors}}]},
+     {binary_float_bits,'-test/0-fun-6-',0,
+         [{file,"tests/binary_float_bits.erl"},{line,15}]}]}
+
+float contracts passed

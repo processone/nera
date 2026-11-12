@@ -1,0 +1,12 @@
+{
+  "base_ref": "origin/main",
+  "base": "fa0d77e3f150d47f010d1f905c772ccfb54289d5",
+  "target": "uncommitted working tree on mr/tcp-rearm-timeout",
+  "sha256": {
+    "crates/nera-runtime/src/reactor.rs": "6fdb995819f0e28e3ffa0357d6a3331b94d6216500168699d810b62d0a76aad3",
+    "tests/tcp_accept_concurrent.erl": "31ad59b224d06f8659b4b1cf3a8ed96acf6fcb288264538bb24956d2f5533bd9",
+    "tests/tcp_reactor_stress.erl": "17a81cec655f8fe3a7c25e05f3a801931c063c71a5da7ab47390aab62730f663",
+    "Cargo.lock": "2b23030c542224604bc14c0b2b0bceff36dcde82391ab8ebe6a7d7b575802e3e",
+    "rust-toolchain.toml": "2ad6f15416572b4836585087f1d4abc53b8fa2dbd616f8dacfaa587ed6714228"
+  }
+}

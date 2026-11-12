@@ -1,0 +1,31 @@
+   Compiling nera-runtime v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.58s
+     Running unittests src/lib.rs (/tmp/nera-transfer-target/debug/deps/nera_runtime-27bb0f9fcbc2d668)
+
+running 2 tests
+test ffi::compare::numeric_order_tests::numeric_order_preserves_integer_precision ... FAILED
+test ets::tests::numeric_order_key_equality_matches_order ... FAILED
+
+failures:
+
+---- ffi::compare::numeric_order_tests::numeric_order_preserves_integer_precision stdout ----
+
+thread 'ffi::compare::numeric_order_tests::numeric_order_preserves_integer_precision' (6948737) panicked at crates/nera-runtime/src/ffi/compare.rs:363:13:
+assertion `left == right` failed
+  left: 0
+ right: 1
+
+---- ets::tests::numeric_order_key_equality_matches_order stdout ----
+
+thread 'ets::tests::numeric_order_key_equality_matches_order' (6948736) panicked at crates/nera-runtime/src/ets.rs:2196:13:
+ordered key equality must agree with cmp
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    ets::tests::numeric_order_key_equality_matches_order
+    ffi::compare::numeric_order_tests::numeric_order_preserves_integer_precision
+
+test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 555 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p nera-runtime --lib`

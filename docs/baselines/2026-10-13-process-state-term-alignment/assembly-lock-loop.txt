@@ -1,0 +1,54 @@
+ARM64 release lock/transition loop: identical before and after after normalizing
+code addresses and external call relocations. Includes acquire/release and the
+slow lock/unlock paths; this is not a comparison of the entire runtime.
+
+casab	w8, w22, [x23]
+cmp	w8, #0x0
+b.ne	LOOP+0x18c
+str	x26, [sp, #0x600]
+ldr	x9, [sp, #0x600]
+sub	x8, x9, #0x7
+cmp	x9, #0x6
+csel	x8, x8, x27, hi
+cmp	x8, #0x1
+b.gt	LOOP+0x11c
+cbnz	x8, LOOP+0x140
+mov	w9, #0x0                ; =0
+strb	wzr, [sp, #0x478]
+str	x28, [sp, #0x98]
+b	LOOP+0x164
+cmp	x8, #0x2
+b.ne	LOOP+0x154
+strb	w8, [sp, #0x478]
+str	x9, [sp, #0x98]
+ldur	q0, [x24, #0x8]
+str	q0, [x25]
+cmp	x9, #0x6
+csel	w9, w20, w8, eq
+b	LOOP+0x164
+mov	w8, #0x1                ; =1
+strb	w8, [sp, #0x478]
+str	x28, [sp, #0x98]
+mov	w9, #0x1                ; =1
+b	LOOP+0x164
+mov	w8, #0x3                ; =3
+strb	w8, [sp, #0x478]
+str	x28, [sp, #0x98]
+mov	w9, #0x3                ; =3
+add	x10, x23, #0x500
+stlr	w9, [x10]
+strb	w8, [sp, #0x600]
+mov	w8, #0x1                ; =1
+caslb	w8, wzr, [x23]
+cmp	w8, #0x1
+b.ne	LOOP+0x198
+subs	w21, w21, #0x1
+b.ne	LOOP+0xdc
+b	LOOP+0x1a4
+add	x0, sp, #0x80
+bl	<<parking_lot::raw_mutex::RawMutex>::lock_slow>
+b	LOOP+0xec
+add	x0, sp, #0x80
+bl	<<parking_lot::raw_mutex::RawMutex>::unlock_slow>
+b	LOOP+0x180
+mov	w0, #0x8                ; =8

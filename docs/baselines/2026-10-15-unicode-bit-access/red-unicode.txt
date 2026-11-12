@@ -1,0 +1,20 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.20s
+     Running unittests src/lib.rs (/tmp/nera-transfer-target/debug/deps/nera_runtime-27bb0f9fcbc2d668)
+
+running 1 test
+test ffi::binary_ops::integer_domain_tests::unicode_rejects_truncation_and_invalid_scalars_without_writing ...
+thread 'ffi::binary_ops::integer_domain_tests::unicode_rejects_truncation_and_invalid_scalars_without_writing' (9379791) panicked at crates/nera-runtime/src/ffi/binary_ops.rs:2134:17:
+assertion `left == right` failed: kind=8, value=SmallInt(4294967361)
+  left: 5
+ right: 51
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+
+failures:
+
+failures:
+    ffi::binary_ops::integer_domain_tests::unicode_rejects_truncation_and_invalid_scalars_without_writing
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 597 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p nera-runtime --lib`

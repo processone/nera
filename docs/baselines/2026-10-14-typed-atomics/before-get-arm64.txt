@@ -1,0 +1,74 @@
+
+/tmp/nera-atomics-before-1:	file format mach-o arm64
+
+Disassembly of section __TEXT,__text:
+
+000000010014be04 <_nera_rt_atomics_get>:
+10014be04: a9be4ff4    	stp	x20, x19, [sp, #-0x20]!
+10014be08: a9017bfd    	stp	x29, x30, [sp, #0x10]
+10014be0c: 910043fd    	add	x29, sp, #0x10
+10014be10: aa0003f3    	mov	x19, x0
+10014be14: f240083f    	tst	x1, #0x7
+10014be18: 540002c1    	b.ne	0x10014be70 <_nera_rt_atomics_get+0x6c>
+10014be1c: 9240f828    	and	x8, x1, #0x7fffffffffffffff
+10014be20: b4000288    	cbz	x8, 0x10014be70 <_nera_rt_atomics_get+0x6c>
+10014be24: 927dec28    	and	x8, x1, #0x7ffffffffffffff8
+10014be28: f9400109    	ldr	x9, [x8]
+10014be2c: 92400d29    	and	x9, x9, #0xf
+10014be30: f1001d3f    	cmp	x9, #0x7
+10014be34: 540001e1    	b.ne	0x10014be70 <_nera_rt_atomics_get+0x6c>
+10014be38: f9400508    	ldr	x8, [x8, #0x8]
+10014be3c: b40002c8    	cbz	x8, 0x10014be94 <_nera_rt_atomics_get+0x90>
+10014be40: 92400849    	and	x9, x2, #0x7
+10014be44: f100093f    	cmp	x9, #0x2
+10014be48: 540002e1    	b.ne	0x10014bea4 <_nera_rt_atomics_get+0xa0>
+10014be4c: 9343fc49    	asr	x9, x2, #3
+10014be50: f100013f    	cmp	x9, #0x0
+10014be54: 5400028d    	b.le	0x10014bea4 <_nera_rt_atomics_get+0xa0>
+10014be58: f9400d0a    	ldr	x10, [x8, #0x18]
+10014be5c: eb0a013f    	cmp	x9, x10
+10014be60: 54000289    	b.ls	0x10014beb0 <_nera_rt_atomics_get+0xac>
+10014be64: aa1303e0    	mov	x0, x19
+10014be68: 97ffe177    	bl	0x100144444 <__RNvNtNtCsjjbGdudWbYv_12nera_runtime3ffi7helpers23capture_exception_trace>
+10014be6c: 14000003    	b	0x10014be78 <_nera_rt_atomics_get+0x74>
+10014be70: aa1303e0    	mov	x0, x19
+10014be74: 97ffe174    	bl	0x100144444 <__RNvNtNtCsjjbGdudWbYv_12nera_runtime3ffi7helpers23capture_exception_trace>
+10014be78: b40000f3    	cbz	x19, 0x10014be94 <_nera_rt_atomics_get+0x90>
+10014be7c: 52800068    	mov	w8, #0x3                ; =3
+10014be80: b9001268    	str	w8, [x19, #0x10]
+10014be84: 52800668    	mov	w8, #0x33               ; =51
+10014be88: f9000e68    	str	x8, [x19, #0x18]
+10014be8c: 52800028    	mov	w8, #0x1                ; =1
+10014be90: b9003e68    	str	w8, [x19, #0x3c]
+10014be94: 528000a0    	mov	w0, #0x5                ; =5
+10014be98: a9417bfd    	ldp	x29, x30, [sp, #0x10]
+10014be9c: a8c24ff4    	ldp	x20, x19, [sp], #0x20
+10014bea0: d65f03c0    	ret
+10014bea4: aa1303e0    	mov	x0, x19
+10014bea8: 97ffe167    	bl	0x100144444 <__RNvNtNtCsjjbGdudWbYv_12nera_runtime3ffi7helpers23capture_exception_trace>
+10014beac: 17fffff3    	b	0x10014be78 <_nera_rt_atomics_get+0x74>
+10014beb0: d1000520    	sub	x0, x9, #0x1
+10014beb4: f9400901    	ldr	x1, [x8, #0x10]
+10014beb8: eb01001f    	cmp	x0, x1
+10014bebc: 54000222    	b.hs	0x10014bf00 <_nera_rt_atomics_get+0xfc>
+10014bec0: f9400508    	ldr	x8, [x8, #0x8]
+10014bec4: f8607908    	ldr	x8, [x8, x0, lsl #3]
+10014bec8: d2e20009    	mov	x9, #0x1000000000000000 ; =1152921504606846976
+10014becc: 8b090109    	add	x9, x8, x9
+10014bed0: d37dfd29    	lsr	x9, x9, #61
+10014bed4: b5000089    	cbnz	x9, 0x10014bee4 <_nera_rt_atomics_get+0xe0>
+10014bed8: 52800049    	mov	w9, #0x2                ; =2
+10014bedc: aa080d20    	orr	x0, x9, x8, lsl #3
+10014bee0: 17ffffee    	b	0x10014be98 <_nera_rt_atomics_get+0x94>
+10014bee4: b0000620    	adrp	x0, 0x100210000 <___nera_func_arities+0xa74>
+10014bee8: 91028400    	add	x0, x0, #0xa1
+10014beec: b0000862    	adrp	x2, 0x100258000 <_writev+0x100258000>
+10014bef0: 91272042    	add	x2, x2, #0x9c8
+10014bef4: 52800541    	mov	w1, #0x2a               ; =42
+10014bef8: 94030236    	bl	0x10020c7d0 <__RNvNtCsjIpoRzUjyHQ_4core6option13expect_failed>
+10014befc: 14000004    	b	0x10014bf0c <_nera_rt_atomics_get+0x108>
+10014bf00: b0000882    	adrp	x2, 0x10025c000 <_writev+0x10025c000>
+10014bf04: 91180042    	add	x2, x2, #0x600
+10014bf08: 9403027c    	bl	0x10020c8f8 <__RNvNtCsjIpoRzUjyHQ_4core9panicking18panic_bounds_check>
+10014bf0c: d4200020    	brk	#0x1
+10014bf10: 940302c3    	bl	0x10020ca1c <__RNvNtCsjIpoRzUjyHQ_4core9panicking19panic_cannot_unwind>

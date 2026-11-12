@@ -1,0 +1,6 @@
+[project]
+name = "vscode_demo"
+entry = "main:start"
+output = "vscode_demo"
+src = ["src"]
+include = ["include"]

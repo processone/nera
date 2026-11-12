@@ -1,0 +1,319 @@
+{
+  "upstream": {
+    "name": "cowlib",
+    "version": "2.20.0",
+    "url": "https://github.com/ninenines/cowlib.git",
+    "commit": "c768a804565ff5b8178ed968a5921e469d6bd7b2"
+  },
+  "platform": "macOS-15.7.7-arm64-arm-64bit-Mach-O",
+  "otp_version": "Erlang/OTP 29 [erts-17.0.5] [source] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads:1] [jit] [dtrace]",
+  "nera_sha256": "6e18be2f2226d04392c3ed6849b51664702824adf49afdb90856722943f8871c",
+  "runtime_sha256": "6870361ddad8a9cca2a44bdeaeb3636bab79b6a3cb329418a04917f7be0776f2",
+  "nera_source_commit": "71ef107f33eabd3f0bb355e8f9a80e7c6bcc184b",
+  "date": "2026-10-12",
+  "status": "cow_cookie blocked; cow_qs passed",
+  "changed_source_sha256": {
+    "Cargo.lock": "5e12a54c1bd06d82a435d2e150773a077fa4f1e4c17023f25aef843c61a0797a",
+    "crates/nera-runtime/Cargo.toml": "cb08e4a916f1766a9e73093a74ff4730870b0c33a02a2961a06222d8c2d96d64",
+    "crates/nera-ir/src/bif_table.rs": "b0c396e8006a961877a099567153789ab63694cc35aebab9026a838b7f130303",
+    "crates/nera-runtime/src/ffi/apply.rs": "c1f53d706aef4b0ea0aa2b40324933e788914b372c396bef4c799f89e249b80d",
+    "crates/nera-runtime/src/ffi/mod.rs": "ac6aa0e963c1f15a371b77ca1256f7e67a226aba8d116fdfc7daa0285c5887f0",
+    "crates/nera-runtime/src/ffi/string_ops.rs": "3a2c27ff4a2d2d30f1d3443754b24223414900b461cbe3430929eae4973a4e26",
+    "tests/string_trim.erl": "76d0de7a904c8572269114f429d7320830da05ef60662cec395d385d67ec824b"
+  },
+  "report_sha256": "e2acd1039a1587cf410d41a6478250ecad7ce4653552e2947366e15e3312c720",
+  "build_log_sha256": "4c419bc073f252fdbae93cf09168a8bb9215c48cc02df89291243ce77e83ddc0",
+  "regression": {
+    "BEAM": "passed",
+    "Nera": "passed",
+    "workspace_passed": 1801,
+    "workspace_ignored": 1,
+    "test_threads": 1,
+    "clippy": "passed",
+    "negative_control": "Native fixture fails to compile before implementation: unresolved string:trim/3"
+  },
+  "unicode_dependency": {
+    "name": "unicode-segmentation",
+    "version": "1.13.3",
+    "unicode": "17.0.0"
+  },
+  "limitations": [
+    "Mixed/nested chardata may be normalized to a flat codepoint list; tests compare text content for such inputs.",
+    "Malformed UTF-8 is eagerly rejected, unlike some OTP optimized paths that can preserve invalid bytes.",
+    "Only trim/3 is implemented, not trim/1, trim/2 or the full string module.",
+    "No cow_cookie native case executed; no upstream sources modified or copied into repository."
+  ],
+  "missing_functions": [
+    "calendar:datetime_to_gregorian_seconds/1",
+    "calendar:day_of_the_week/1",
+    "calendar:gregorian_seconds_to_datetime/1",
+    "calendar:universal_time/0",
+    "erlang:universaltime/0"
+  ],
+  "modules": {
+    "cow_cookie": {
+      "build_returncode": 1,
+      "passed": 0,
+      "total": 32,
+      "beam_passed": 32,
+      "blocked": 32
+    },
+    "cow_qs": {
+      "build_returncode": 0,
+      "passed": 29,
+      "total": 29,
+      "beam_passed": 29,
+      "blocked": 0
+    }
+  },
+  "cases": {
+    "cow_cookie": [
+      {
+        "id": "cookie_simple",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_spaces",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_duplicate",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_quoted",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_equals",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_empty",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_empty_value",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_separator",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_nameless",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_empty_name",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_newline",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_tab_value",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_limit_0",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_limit_1",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_limit_2",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_limit_3",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_default_limit_99",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_default_limit_100",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_default_limit_101",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_flags",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_domain",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_expiry",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_zero_age",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_negative_age",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_bad_age",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_empty",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_control",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_unknown",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_build",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_build",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_delete",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_bad_age_option",
+        "status": "blocked"
+      }
+    ],
+    "cow_qs": [
+      {
+        "id": "qs_simple",
+        "status": "passed"
+      },
+      {
+        "id": "qs_flag",
+        "status": "passed"
+      },
+      {
+        "id": "qs_duplicate",
+        "status": "passed"
+      },
+      {
+        "id": "qs_escaped",
+        "status": "passed"
+      },
+      {
+        "id": "qs_plus",
+        "status": "passed"
+      },
+      {
+        "id": "qs_utf8",
+        "status": "passed"
+      },
+      {
+        "id": "qs_nul",
+        "status": "passed"
+      },
+      {
+        "id": "qs_empty",
+        "status": "passed"
+      },
+      {
+        "id": "qs_empty_values",
+        "status": "passed"
+      },
+      {
+        "id": "qs_separators",
+        "status": "passed"
+      },
+      {
+        "id": "qs_extra_equal",
+        "status": "passed"
+      },
+      {
+        "id": "qs_hex_case",
+        "status": "passed"
+      },
+      {
+        "id": "qs_bare_percent",
+        "status": "passed"
+      },
+      {
+        "id": "qs_short_percent",
+        "status": "passed"
+      },
+      {
+        "id": "qs_bad_hex",
+        "status": "passed"
+      },
+      {
+        "id": "qs_limit_0",
+        "status": "passed"
+      },
+      {
+        "id": "qs_limit_1",
+        "status": "passed"
+      },
+      {
+        "id": "qs_limit_2",
+        "status": "passed"
+      },
+      {
+        "id": "qs_limit_3",
+        "status": "passed"
+      },
+      {
+        "id": "qs_default_limit_99",
+        "status": "passed"
+      },
+      {
+        "id": "qs_default_limit_100",
+        "status": "passed"
+      },
+      {
+        "id": "qs_default_limit_101",
+        "status": "passed"
+      },
+      {
+        "id": "qs_build",
+        "status": "passed"
+      },
+      {
+        "id": "qs_build_empty",
+        "status": "passed"
+      },
+      {
+        "id": "qs_encode_bytes",
+        "status": "passed"
+      },
+      {
+        "id": "qs_decode_bytes",
+        "status": "passed"
+      },
+      {
+        "id": "qs_decode_bad",
+        "status": "passed"
+      },
+      {
+        "id": "qs_bad_type",
+        "status": "passed"
+      },
+      {
+        "id": "qs_empty_value",
+        "status": "passed"
+      }
+    ]
+  }
+}

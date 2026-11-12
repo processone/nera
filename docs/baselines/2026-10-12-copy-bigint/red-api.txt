@@ -1,0 +1,19 @@
+   Compiling nera-runtime v0.1.0 (/private/tmp/nera-copy-bigint/crates/nera-runtime)
+   Compiling unicode-segmentation v1.13.3
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.07s
+   Doc-tests nera_runtime
+
+running 1 test
+test crates/nera-runtime/src/message.rs - message::deep_copy_term (line 371) - compile fail ... FAILED
+
+failures:
+
+---- crates/nera-runtime/src/message.rs - message::deep_copy_term (line 371) stdout ----
+Test compiled successfully, but it's marked `compile_fail`.
+
+failures:
+    crates/nera-runtime/src/message.rs - message::deep_copy_term (line 371)
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.23s
+
+error: doctest failed, to rerun pass `-p nera-runtime --doc`

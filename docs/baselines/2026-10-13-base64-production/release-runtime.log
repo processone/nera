@@ -1,0 +1,8 @@
+   Compiling smallvec v1.15.1
+   Compiling hashbrown v0.14.5
+   Compiling nera-runtime v0.1.0 (/home/user/.codex/worktrees/binary-match-corrections/nera/crates/nera-runtime)
+   Compiling bumpalo v3.20.2
+   Compiling parking_lot_core v0.9.12
+   Compiling parking_lot v0.12.5
+   Compiling dashmap v6.1.0
+    Finished `release` profile [optimized] target(s) in 11.05s

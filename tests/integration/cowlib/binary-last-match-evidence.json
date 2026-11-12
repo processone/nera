@@ -1,0 +1,309 @@
+{
+  "upstream": {
+    "name": "cowlib",
+    "version": "2.20.0",
+    "url": "https://github.com/ninenines/cowlib.git",
+    "commit": "c768a804565ff5b8178ed968a5921e469d6bd7b2"
+  },
+  "platform": "macOS-15.7.7-arm64-arm-64bit-Mach-O",
+  "otp_version": "Erlang/OTP 29 [erts-17.0.5] [source] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads:1] [jit] [dtrace]",
+  "nera_sha256": "3fe72f71580216554a1d973d278851dc3511796e99fede44dc765bf455575196",
+  "runtime_sha256": "f2257ccfa1b7644bff79db6d2d738d964c26c1570194c56c2136f8b9c6ba745a",
+  "nera_source_commit": "b97bf446625f25e27456cb08871d5941b2376c1e",
+  "date": "2026-10-12",
+  "status": "cow_cookie blocked; cow_qs passed",
+  "changed_source_sha256": {
+    "crates/nera-ir/src/bif_table.rs": "262ca0ce420823229b7b4a0f943e181e33694ffef3f85008f0c929a797df9c7b",
+    "crates/nera-runtime/src/ffi/apply.rs": "f686fbc7a8b444191511ebfb337a5b39ff2e842b4731b20e4912ac1261eca3e9",
+    "crates/nera-runtime/src/ffi/binary_ops.rs": "961d4d0457bada7ff5f13a35e38a068c1db34ec123c88fc85866a2671dfc87fc",
+    "tests/binary_last_match.erl": "4887c70130d4838a5682c69789930f2c6af5d7ff8ae2b2982eb6c2a3f1e63ff3"
+  },
+  "report_sha256": "8f97990147b5436234089aea5ef229bff06e9f9d0d8c176d67ede1bddecf719e",
+  "build_log_sha256": "c1c10c8fe7f637668e5bc37995755d66526fceab8212f6ea38c9e51c7952333f",
+  "regression": {
+    "BEAM": "passed",
+    "Nera": "passed",
+    "workspace_passed": 1799,
+    "workspace_ignored": 1,
+    "test_threads": 1,
+    "clippy": "passed"
+  },
+  "limitations": [
+    "Compiled binary patterns and binary:compile_pattern/1 are not supported.",
+    "No cow_cookie native case executed; no upstream sources modified or copied into repository."
+  ],
+  "missing_functions": [
+    "calendar:datetime_to_gregorian_seconds/1",
+    "calendar:day_of_the_week/1",
+    "calendar:gregorian_seconds_to_datetime/1",
+    "calendar:universal_time/0",
+    "erlang:universaltime/0",
+    "string:trim/3"
+  ],
+  "modules": {
+    "cow_cookie": {
+      "build_returncode": 1,
+      "passed": 0,
+      "total": 32,
+      "beam_passed": 32,
+      "blocked": 32
+    },
+    "cow_qs": {
+      "build_returncode": 0,
+      "passed": 29,
+      "total": 29,
+      "beam_passed": 29,
+      "blocked": 0
+    }
+  },
+  "cases": {
+    "cow_cookie": [
+      {
+        "id": "cookie_simple",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_spaces",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_duplicate",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_quoted",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_equals",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_empty",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_empty_value",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_separator",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_nameless",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_empty_name",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_newline",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_tab_value",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_limit_0",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_limit_1",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_limit_2",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_limit_3",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_default_limit_99",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_default_limit_100",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_default_limit_101",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_flags",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_domain",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_expiry",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_zero_age",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_negative_age",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_bad_age",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_empty",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_control",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_unknown",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_build",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_build",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_delete",
+        "status": "blocked"
+      },
+      {
+        "id": "cookie_set_bad_age_option",
+        "status": "blocked"
+      }
+    ],
+    "cow_qs": [
+      {
+        "id": "qs_simple",
+        "status": "passed"
+      },
+      {
+        "id": "qs_flag",
+        "status": "passed"
+      },
+      {
+        "id": "qs_duplicate",
+        "status": "passed"
+      },
+      {
+        "id": "qs_escaped",
+        "status": "passed"
+      },
+      {
+        "id": "qs_plus",
+        "status": "passed"
+      },
+      {
+        "id": "qs_utf8",
+        "status": "passed"
+      },
+      {
+        "id": "qs_nul",
+        "status": "passed"
+      },
+      {
+        "id": "qs_empty",
+        "status": "passed"
+      },
+      {
+        "id": "qs_empty_values",
+        "status": "passed"
+      },
+      {
+        "id": "qs_separators",
+        "status": "passed"
+      },
+      {
+        "id": "qs_extra_equal",
+        "status": "passed"
+      },
+      {
+        "id": "qs_hex_case",
+        "status": "passed"
+      },
+      {
+        "id": "qs_bare_percent",
+        "status": "passed"
+      },
+      {
+        "id": "qs_short_percent",
+        "status": "passed"
+      },
+      {
+        "id": "qs_bad_hex",
+        "status": "passed"
+      },
+      {
+        "id": "qs_limit_0",
+        "status": "passed"
+      },
+      {
+        "id": "qs_limit_1",
+        "status": "passed"
+      },
+      {
+        "id": "qs_limit_2",
+        "status": "passed"
+      },
+      {
+        "id": "qs_limit_3",
+        "status": "passed"
+      },
+      {
+        "id": "qs_default_limit_99",
+        "status": "passed"
+      },
+      {
+        "id": "qs_default_limit_100",
+        "status": "passed"
+      },
+      {
+        "id": "qs_default_limit_101",
+        "status": "passed"
+      },
+      {
+        "id": "qs_build",
+        "status": "passed"
+      },
+      {
+        "id": "qs_build_empty",
+        "status": "passed"
+      },
+      {
+        "id": "qs_encode_bytes",
+        "status": "passed"
+      },
+      {
+        "id": "qs_decode_bytes",
+        "status": "passed"
+      },
+      {
+        "id": "qs_decode_bad",
+        "status": "passed"
+      },
+      {
+        "id": "qs_bad_type",
+        "status": "passed"
+      },
+      {
+        "id": "qs_empty_value",
+        "status": "passed"
+      }
+    ]
+  }
+}

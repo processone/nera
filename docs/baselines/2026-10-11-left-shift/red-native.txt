@@ -1,0 +1,21 @@
+Running 2 tests (2 threads)
+────────────────────────────────────────────────────────────
+  FAIL  bsl_constant_overflow                      4.6s  [1/2]
+  FAIL  bsl_overflow                               4.8s  [2/2]
+────────────────────────────────────────────────────────────
+Results: 0 passed, 2 failed (0 compile), 0 skipped / 2 total
+
+Failures:
+  bsl_constant_overflow: runtime crash, exit=1
+    stderr:
+    Error in process <0.1.0>: error:{badmatch,-9223372036854775808}
+    Stacktrace (most recent call last):
+      bsl_constant_overflow:test/0 (bsl_constant_overflow.erl, line 5)
+  bsl_overflow: runtime crash, exit=1
+    stderr:
+    Error in process <0.1.0>: error:{badmatch,0}
+    Stacktrace (most recent call last):
+      bsl_overflow:__lambda_0/1 (bsl_overflow.erl, line 8)
+      lists:foreach/2 (lists.erl, line 61)
+
+SOME TESTS FAILED

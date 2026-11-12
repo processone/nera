@@ -1,0 +1,14 @@
+Running 1 tests (1 threads)
+────────────────────────────────────────────────────────────
+  FAIL  base64_native_decode                      809ms  [1/1]
+────────────────────────────────────────────────────────────
+Results: 0 passed, 1 failed (0 compile), 0 skipped / 1 total
+
+Failures:
+  base64_native_decode: runtime crash, exit=1
+    stderr:
+    Error in process <0.1.0>: error:{badmatch,{error,undef}}
+    Stacktrace (most recent call last):
+      base64_native_decode:test/0 (base64_native_decode.erl, line 6)
+
+SOME TESTS FAILED

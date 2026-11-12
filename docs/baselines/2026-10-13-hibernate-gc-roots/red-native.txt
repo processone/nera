@@ -1,0 +1,14 @@
+Running 1 tests (1 threads)
+────────────────────────────────────────────────────────────
+  FAIL  hibernate_retained_roots                  10.6s  [1/1]
+────────────────────────────────────────────────────────────
+Results: 0 passed, 1 failed (0 compile), 0 skipped / 1 total
+
+Failures:
+  hibernate_retained_roots: timeout after 10s
+    stderr:
+    Error in process <0.1.0>: error:hibernate_retained_roots_timeout
+    Stacktrace (most recent call last):
+      hibernate_retained_roots:test/0 (hibernate_retained_roots.erl, line 17)
+
+SOME TESTS FAILED

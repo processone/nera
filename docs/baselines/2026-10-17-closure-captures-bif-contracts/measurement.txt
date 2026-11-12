@@ -1,0 +1,25 @@
+series 1 group 1 complete
+series 1 group 2 complete
+series 1 group 3 complete
+series 1 group 4 complete
+series 1 group 5 complete
+series 2 group 1 complete
+series 2 group 2 complete
+series 2 group 3 complete
+series 2 group 4 complete
+series 2 group 5 complete
+series 3 group 1 complete
+series 3 group 2 complete
+series 3 group 3 complete
+series 3 group 4 complete
+series 3 group 5 complete
+plain16 8743 8754 8738 8747 cohort0% 0.13 cohort3% 0.1
+plain256 2919 2923 2920 2929 cohort0% 0.14 cohort3% 0.31
+length1 8575 8585 8585 8578 cohort0% 0.12 cohort3% -0.08
+length32 8336 8371 8340 8347 cohort0% 0.42 cohort3% 0.08
+tuple_ops 13970 13942 13943 13941 cohort0% -0.2 cohort3% -0.01
+string_atom 27044 26994 27639 27071 cohort0% -0.18 cohort3% -2.06
+scan256 55893 61726 92755 91639 cohort0% 10.44 cohort3% -1.2
+after-capture-0 {'capture16': 19369, 'capture256': 91483}
+after-capture-3 {'capture16': 38180, 'capture256': 137430}
+load (6.67822265625, 7.47216796875, 6.1201171875) (9.14013671875, 8.1025390625, 6.4091796875)

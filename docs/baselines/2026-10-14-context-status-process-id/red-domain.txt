@@ -1,0 +1,22 @@
+   Compiling nera-runtime v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-runtime)
+    Finished `release` profile [optimized] target(s) in 30.45s
+     Running unittests src/lib.rs (/tmp/nera-transfer-target/release/deps/nera_runtime-d9d0cab72757adae)
+
+running 1 test
+test term::tests::process_id_domain_rejects_reserved_or_truncated_bits ... FAILED
+
+failures:
+
+---- term::tests::process_id_domain_rejects_reserved_or_truncated_bits stdout ----
+
+thread 'term::tests::process_id_domain_rejects_reserved_or_truncated_bits' (7149580) panicked at crates/nera-runtime/src/term.rs:1010:13:
+assertion failed: std::panic::catch_unwind(|| ErlTerm::pid(value)).is_err()
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    term::tests::process_id_domain_rejects_reserved_or_truncated_bits
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 560 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p nera-runtime --lib`

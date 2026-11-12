@@ -1,0 +1,26 @@
+[package]
+name = "nera-fmt-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2021"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+
+[dependencies.nera-fmt]
+path = ".."
+
+[dependencies.nera-syntax]
+path = "../../nera-syntax"
+
+# Prevent this from interfacing with the workspace
+[workspace]
+members = ["."]
+
+[[bin]]
+name = "fuzz_format"
+path = "fuzz_targets/fuzz_format.rs"
+doc = false

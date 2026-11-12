@@ -1,0 +1,240 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main, "mr/**"]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  test:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Linux x86_64
+            os: ubuntu-latest
+            rust: "1.99.0"
+          - name: macOS arm64
+            os: macos-latest
+            rust: "1.99.0"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.rust }}
+          components: clippy
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-rust-1.99.0-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Build
+        run: cargo build --release --locked
+
+      - name: Clippy (workspace and tests)
+        run: cargo clippy --workspace --all-targets --locked -- -D warnings
+
+      - name: Unit tests
+        run: cargo test --locked
+
+      - name: End-to-end tests
+        # Keep timing-sensitive reactor checks isolated, as in the shell runner.
+        run: ./target/release/nera test -j 1 --timeout 30
+
+      - name: Integration tests (thoas JSON library)
+        run: |
+          cd tests/integration/thoas
+          ${{ github.workspace }}/target/release/nera deps get
+          ${{ github.workspace }}/target/release/nera build -o thoas_test
+          ./thoas_test
+
+      - name: Test Cowlib differential harness
+        run: python3 -m unittest discover -s tests/integration/cowlib -p 'test_*.py'
+
+      - name: Test Thoas validation harnesses
+        run: |
+          python3 -m unittest discover -s tests/integration/thoas/differential -p test_runner.py
+          python3 -m unittest discover -s tests/integration/thoas/upstream -p test_run.py
+          python3 -m unittest discover -s tests/integration/thoas/eunit -p 'test_*.py'
+
+      - name: Install BEAM reference (Linux)
+        if: runner.os == 'Linux'
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: '29.0.5'
+          rebar3-version: '3.27.0'
+
+      - name: Compare all 122 Cowlib cases on BEAM and Nera (Linux)
+        if: runner.os == 'Linux'
+        timeout-minutes: 15
+        run: |
+          python3 tests/integration/cowlib/runner.py \
+            --nera "$GITHUB_WORKSPACE/target/release/nera" \
+            --work-dir "$RUNNER_TEMP/cowlib-differential"
+
+      - name: Preserve Cowlib differential evidence
+        if: always() && runner.os == 'Linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: cowlib-differential-linux
+          path: |
+            ${{ runner.temp }}/cowlib-differential/report.json
+            ${{ runner.temp }}/cowlib-differential/*.stdout
+            ${{ runner.temp }}/cowlib-differential/*.stderr
+
+      - name: Build pinned PropEr reference (Linux)
+        if: runner.os == 'Linux'
+        timeout-minutes: 10
+        run: |
+          set -euo pipefail
+          proper_commit=$(python3 -c 'import sys; sys.path.insert(0, "tests/integration/cowlib"); from upstream_cookie_date import PROPER_COMMIT; print(PROPER_COMMIT)')
+          git init "$RUNNER_TEMP/cowlib-proper"
+          git -C "$RUNNER_TEMP/cowlib-proper" remote add origin https://github.com/proper-testing/proper.git
+          git -C "$RUNNER_TEMP/cowlib-proper" fetch --depth 1 origin "$proper_commit"
+          git -C "$RUNNER_TEMP/cowlib-proper" checkout --detach FETCH_HEAD
+          cd "$RUNNER_TEMP/cowlib-proper"
+          rebar3 compile 2>&1 | tee "$RUNNER_TEMP/cowlib-proper-build.log"
+
+      - name: Replay Base64url properties cumulatively on BEAM and Nera (Linux)
+        if: runner.os == 'Linux'
+        timeout-minutes: 20
+        # The runner requires cumulative success even when isolated inputs pass.
+        # Keep isolated runs and false-property controls for diagnostic evidence.
+        run: |
+          python3 tests/integration/cowlib/upstream_base64url.py \
+            --upstream "$RUNNER_TEMP/cowlib-differential/upstream" \
+            --proper "$RUNNER_TEMP/cowlib-proper" \
+            --nera "$GITHUB_WORKSPACE/target/release/nera" \
+            --work-dir "$RUNNER_TEMP/cowlib-base64url-properties"
+
+      - name: Preserve Base64url property evidence
+        if: always() && runner.os == 'Linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: cowlib-base64url-properties-linux
+          path: |
+            ${{ runner.temp }}/cowlib-proper-build.log
+            ${{ runner.temp }}/cowlib-base64url-properties/report.json
+            ${{ runner.temp }}/cowlib-base64url-properties/inputs.bin
+            ${{ runner.temp }}/cowlib-base64url-properties/*.stdout
+            ${{ runner.temp }}/cowlib-base64url-properties/*.stderr
+
+      - name: Compare Thoas on BEAM and Nera (Linux)
+        if: runner.os == 'Linux'
+        run: python3 tests/integration/thoas/differential/runner.py
+
+      - name: Compare Thoas memory sharing (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          python3 tests/integration/thoas/memory/run.py \
+            --nera "$GITHUB_WORKSPACE/target/release/nera" \
+            --work-dir "$RUNNER_TEMP/thoas-memory"
+
+      - name: Check OTP headers and assertions (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          python3 tests/integration/thoas/eunit/run_probes.py \
+            --nera "$GITHUB_WORKSPACE/target/release/nera" \
+            --work-dir "$RUNNER_TEMP/thoas-otp"
+
+      - name: Validate all native Thoas assertion bodies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          python3 tests/integration/thoas/eunit/run_assertions.py \
+            --upstream "$RUNNER_TEMP/thoas-memory/upstream" \
+            --nera "$GITHUB_WORKSPACE/target/release/nera" \
+            --work-dir "$RUNNER_TEMP/thoas-assertions"
+
+      - name: Preserve native Thoas validation evidence
+        if: always() && runner.os == 'Linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: thoas-native-linux
+          path: |
+            ${{ runner.temp }}/thoas-memory/report.json
+            ${{ runner.temp }}/thoas-memory/*.stdout
+            ${{ runner.temp }}/thoas-memory/*.stderr
+            ${{ runner.temp }}/thoas-otp/report.json
+            ${{ runner.temp }}/thoas-otp/*.stdout
+            ${{ runner.temp }}/thoas-otp/*.stderr
+            ${{ runner.temp }}/thoas-assertions/report.json
+            ${{ runner.temp }}/thoas-assertions/*.stdout
+            ${{ runner.temp }}/thoas-assertions/*.stderr
+
+      - name: Preserve Thoas differential evidence
+        if: always() && runner.os == 'Linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: thoas-differential-linux
+          path: |
+            target/thoas-differential/report.json
+            target/thoas-differential/*.stdout
+            target/thoas-differential/*.stderr
+            target/thoas-differential/beam.json
+            target/thoas-differential/nera.json
+            target/thoas-differential/build/thoas_differential.erl
+
+      - name: Integration tests (poolboy worker pool)
+        # Known-failing target: blocked on ETS and supervisor extensions.
+        # Kept in CI as a roadmap signal — flip to required once green.
+        continue-on-error: true
+        run: |
+          cd tests/integration/poolboy
+          ${{ github.workspace }}/target/release/nera deps get
+          ${{ github.workspace }}/target/release/nera build -o poolboy_test
+          ./poolboy_test
+
+  cross-compile:
+    name: Cross-compile ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            target: x86_64-apple-darwin
+          - os: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: "1.99.0"
+          targets: ${{ matrix.target }}
+
+      - name: Install cross-compilation tools (Linux aarch64)
+        if: matrix.target == 'aarch64-unknown-linux-gnu'
+        run: sudo apt-get update && sudo apt-get install -y gcc-aarch64-linux-gnu
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-rust-1.99.0-cross-${{ matrix.target }}-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Build compiler (host)
+        run: cargo build --release --locked -p nera
+
+      - name: Build runtime (target)
+        run: cargo build --release --locked -p nera-runtime --target ${{ matrix.target }}
+
+      - name: Cross-compile isolated test program and verify object format
+        run: bash scripts/test-cross.sh "$GITHUB_WORKSPACE/target/release/nera" "${{ matrix.target }}"

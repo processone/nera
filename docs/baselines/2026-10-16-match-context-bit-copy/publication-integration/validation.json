@@ -1,0 +1,27 @@
+{
+  "base": "a3c1e841e3948cfe0165ac50e8fab0f1f1c84bfc",
+  "target": "PR #108, mr/match-context-bit-copy after rebase onto main #107",
+  "source_manifest_sha256": "9b7ae1f8dfe07717b61f8aa78f9a7a46753c8c1de8f10f342bacc650d649c8f2",
+  "checks": {
+    "release_build": 0,
+    "clippy": 0,
+    "workspace": {
+      "exit_code": 0,
+      "passed": 2008,
+      "ignored": 1
+    },
+    "runtime_release": {
+      "exit_code": 0,
+      "passed": 661,
+      "ignored": 1
+    },
+    "native": {
+      "exit_code": 0,
+      "passed": 94
+    },
+    "intel_runtime_check": 0,
+    "windows_runtime_check": 0
+  },
+  "otp": "Prior OTP29 evidence retained: fixture source hash unchanged.",
+  "performance": "Original timings preserved; no measurements rerun after main reactor integration."
+}

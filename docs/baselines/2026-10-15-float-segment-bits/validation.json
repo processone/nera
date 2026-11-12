@@ -1,0 +1,50 @@
+{
+  "base": "6047d3f4bab742b198cdc64dd3e1a7cf86d5ad65",
+  "branch": "mr/float-segment-bit-access",
+  "target": "uncommitted worktree, bound by source-hashes.json",
+  "platform": "Apple M1 / macOS 15.7.7 ARM64",
+  "toolchain": "Rust 1.99.0; unchanged Cargo.lock",
+  "otp_reference": "29",
+  "tests": {
+    "workspace": [
+      1991,
+      0,
+      1
+    ],
+    "release": [
+      645,
+      0,
+      1
+    ]
+  },
+  "native_passed": 62,
+  "native_failed": 0,
+  "existing_ignored": 1,
+  "cross_checks": [
+    "x86_64-apple-darwin",
+    "x86_64-pc-windows-msvc (6 existing fallback warnings)"
+  ],
+  "compiler_sha256": "4d9c61ce0e7248d341e44f1a14c821804cab3b3f4389679468cd978af3bd482a",
+  "executables": {
+    "before-aligned": "d502e422af8afbd8e87309bb9c8c69370b5e26768df1e1bb0688673ee2ff743a",
+    "after-aligned": "794ed32c3684e79192889d080ed212bf3301acf4b99bf67dad7eaaddb23e506a",
+    "after-shifted": "12124b4f396a6f22ed497b9b182a919a81ff825e74f11f1e347cfb2374b7cca7",
+    "after-half-aligned": "b1782023277fc8c0686b8863d9741bf22734a9bf904e8bef9dd8b590813906c3",
+    "after-half-shifted": "e53e8989efd0ae840c9718570cb010f353067fe0b6289c2ab3e99bd8fb75f8f2"
+  },
+  "benchmark_counts": {
+    "series": 3,
+    "observations_per_case_and_executable": 27,
+    "warmup_operations": 500000,
+    "timed_operations": 500000
+  },
+  "limitations": [
+    "native subset only",
+    "no actual Linux/Windows execution or archives",
+    "no upstream Cowlib/PropEr runs",
+    "active host and other workspace activity",
+    "short timings and binary layout confound small deltas",
+    "no correct legacy baseline for shifted access or binary16"
+  ],
+  "ci": "paused per CONTRIBUTING.md"
+}

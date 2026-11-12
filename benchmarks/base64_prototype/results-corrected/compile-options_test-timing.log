@@ -1,0 +1,14 @@
+warning: variable 'All' is unused
+   ┌─ /var/folders/yk/hpylg6r976qgbphydj66gt9h0000gn/T/nera-base64-01cut7mr/options_test.erl:29:9
+   │
+29 │         All = base64_rust:decode(base64_rust:encode(All, Opts), Opts)
+   │         ^^^
+
+warning: variable 'Raw' is unused
+   ┌─ /var/folders/yk/hpylg6r976qgbphydj66gt9h0000gn/T/nera-base64-01cut7mr/options_test.erl:35:13
+   │
+35 │             Raw = base64_rust:decode(base64_rust:encode(Raw, Opts), Opts)
+   │             ^^^
+
+Linking with runtime: /home/user/AIProjects/nera/target/base64-prototype/release/libnera_runtime.a
+warning: 2 warnings emitted

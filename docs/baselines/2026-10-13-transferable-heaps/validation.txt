@@ -1,0 +1,45 @@
+Target: worktree /tmp/nera-transferable-heap-fragments
+Branch: mr/transferable-heap-fragments
+Base/ref: origin/main 79e2bd1eddf5e18589c601b657702ac01f7174e4
+Divergence HEAD...origin/main: 0/0
+Cargo.lock unchanged; no commit, staging, push or PR.
+Final production sources and Rust tests validated; subsequent edits only documentation and native fixture (tested separately).
+
+workspace:
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 14.96s
+test result: ok. 287 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.71s
+test result: ok. 80 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+test result: ok. 121 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+test result: ok. 92 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.37s
+test result: ok. 405 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.79s
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 24.89s
+test result: ok. 505 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 1.96s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.15s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
+test result: ok. 300 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.71s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+release runtime:
+    Finished `release` profile [optimized] target(s) in 34.43s
+test result: ok. 505 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.24s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.26s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.18s
+
+clippy:
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 11.15s
+
+release build:
+    Finished `release` profile [optimized] target(s) in 2m 16s
+
+Native: 16 passed, 0 failed, 0 skipped.
+Whitespace: git diff --check passed.
+Omitted: full native suite, independent review, non-mio platform execution, Linux/Windows/32-bit, Miri/sanitizers/remote CI. See README.md for scope.

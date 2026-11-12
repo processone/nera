@@ -1,0 +1,606 @@
+{
+  "ets_boxed": {
+    "samples": {
+      "before": [
+        {
+          "metrics_ms": {
+            "insert": 83,
+            "lookup": 67,
+            "update_counter": 13,
+            "overwrite": 62,
+            "iterate": 55,
+            "delete": 47,
+            "conc_counter": 32
+          },
+          "stdout": "ETS Benchmark (200000 entries)\n  insert:         83 ms\n  lookup:         67 ms\n  update_counter: 13 ms  (200000 ops)\n  overwrite:      62 ms\n  iterate:        55 ms  (200001 keys)\n  delete:         47 ms\n  conc_counter:   32 ms  (4 procs, result=200000)\n"
+        },
+        {
+          "metrics_ms": {
+            "insert": 70,
+            "lookup": 70,
+            "update_counter": 16,
+            "overwrite": 76,
+            "iterate": 46,
+            "delete": 54,
+            "conc_counter": 37
+          },
+          "stdout": "ETS Benchmark (200000 entries)\n  insert:         70 ms\n  lookup:         70 ms\n  update_counter: 16 ms  (200000 ops)\n  overwrite:      76 ms\n  iterate:        46 ms  (200001 keys)\n  delete:         54 ms\n  conc_counter:   37 ms  (4 procs, result=200000)\n"
+        },
+        {
+          "metrics_ms": {
+            "insert": 62,
+            "lookup": 56,
+            "update_counter": 13,
+            "overwrite": 63,
+            "iterate": 58,
+            "delete": 46,
+            "conc_counter": 29
+          },
+          "stdout": "ETS Benchmark (200000 entries)\n  insert:         62 ms\n  lookup:         56 ms\n  update_counter: 13 ms  (200000 ops)\n  overwrite:      63 ms\n  iterate:        58 ms  (200001 keys)\n  delete:         46 ms\n  conc_counter:   29 ms  (4 procs, result=200000)\n"
+        },
+        {
+          "metrics_ms": {
+            "insert": 71,
+            "lookup": 63,
+            "update_counter": 13,
+            "overwrite": 71,
+            "iterate": 53,
+            "delete": 62,
+            "conc_counter": 51
+          },
+          "stdout": "ETS Benchmark (200000 entries)\n  insert:         71 ms\n  lookup:         63 ms\n  update_counter: 13 ms  (200000 ops)\n  overwrite:      71 ms\n  iterate:        53 ms  (200001 keys)\n  delete:         62 ms\n  conc_counter:   51 ms  (4 procs, result=200000)\n"
+        },
+        {
+          "metrics_ms": {
+            "insert": 92,
+            "lookup": 67,
+            "update_counter": 19,
+            "overwrite": 73,
+            "iterate": 47,
+            "delete": 51,
+            "conc_counter": 55
+          },
+          "stdout": "ETS Benchmark (200000 entries)\n  insert:         92 ms\n  lookup:         67 ms\n  update_counter: 19 ms  (200000 ops)\n  overwrite:      73 ms\n  iterate:        47 ms  (200001 keys)\n  delete:         51 ms\n  conc_counter:   55 ms  (4 procs, result=200000)\n"
+        },
+        {
+          "metrics_ms": {
+            "insert": 78,
+            "lookup": 59,
+            "update_counter": 14,
+            "overwrite": 80,
+            "iterate": 46,
+            "delete": 55,
+            "conc_counter": 44
+          },
+          "stdout": "ETS Benchmark (200000 entries)\n  insert:         78 ms\n  lookup:         59 ms\n  update_counter: 14 ms  (200000 ops)\n  overwrite:      80 ms\n  iterate:        46 ms  (200001 keys)\n  delete:         55 ms\n  conc_counter:   44 ms  (4 procs, result=200000)\n"
+        },
+        {
+          "metrics_ms": {
+            "insert": 72,
+            "lookup": 54,
+            "update_counter": 13,
+            "overwrite": 60,
+            "iterate": 49,
+            "delete": 51,
+            "conc_counter": 57
+          },
+          "stdout": "ETS Benchmark (200000 entries)\n  insert:         72 ms\n  lookup:         54 ms\n  update_counter: 13 ms  (200000 ops)\n  overwrite:      60 ms\n  iterate:        49 ms  (200001 keys)\n  delete:         51 ms\n  conc_counter:   57 ms  (4 procs, result=200000)\n"
+        },
+        {
+          "metrics_ms": {
+            "insert": 61,
+            "lookup": 55,
+            "update_counter": 12,
+            "overwrite": 61,
+            "iterate": 43,
+            "delete": 47,
+            "conc_counter": 40
+          },
+          "stdout": "ETS Benchmark (200000 entries)\n  insert:         61 ms\n  lookup:         55 ms\n  update_counter: 12 ms  (200000 ops)\n  overwrite:      61 ms\n  iterate:        43 ms  (200001 keys)\n  delete:         47 ms\n  conc_counter:   40 ms  (4 procs, result=200000)\n"
+        },
+        {
+          "metrics_ms": {
+            "insert": 64,
+            "lookup": 55,
+            "update_counter": 14,
+            "overwrite": 71,
+            "iterate": 48,
+            "delete": 64,
+            "conc_counter": 43
+          },
+          "stdout": "ETS Benchmark (200000 entries)\n  insert:         64 ms\n  lookup:         55 ms\n  update_counter: 14 ms  (200000 ops)\n  overwrite:      71 ms\n  iterate:        48 ms  (200001 keys)\n  delete:         64 ms\n  conc_counter:   43 ms  (4 procs, result=200000)\n"
+        }
+      ],
+      "after": [
+        {
+          "metrics_ms": {
+            "insert": 64,
+            "lookup": 51,
+            "update_counter": 13,
+            "overwrite": 63,
+            "iterate": 42,
+            "delete": 42,
+            "conc_counter": 34
+          },
+          "stdout": "ETS Benchmark (200000 entries)\n  insert:         64 ms\n  lookup:         51 ms\n  update_counter: 13 ms  (200000 ops)\n  overwrite:      63 ms\n  iterate:        42 ms  (200001 keys)\n  delete:         42 ms\n  conc_counter:   34 ms  (4 procs, result=200000)\n"
+        },
+        {
+          "metrics_ms": {
+            "insert": 62,
+            "lookup": 54,
+            "update_counter": 14,
+            "overwrite": 63,
+            "iterate": 43,
+            "delete": 46,
+            "conc_counter": 34
+          },
+          "stdout": "ETS Benchmark (200000 entries)\n  insert:         62 ms\n  lookup:         54 ms\n  update_counter: 14 ms  (200000 ops)\n  overwrite:      63 ms\n  iterate:        43 ms  (200001 keys)\n  delete:         46 ms\n  conc_counter:   34 ms  (4 procs, result=200000)\n"
+        },
+        {
+          "metrics_ms": {
+            "insert": 62,
+            "lookup": 58,
+            "update_counter": 13,
+            "overwrite": 57,
+            "iterate": 39,
+            "delete": 54,
+            "conc_counter": 30
+          },
+          "stdout": "ETS Benchmark (200000 entries)\n  insert:         62 ms\n  lookup:         58 ms\n  update_counter: 13 ms  (200000 ops)\n  overwrite:      57 ms\n  iterate:        39 ms  (200001 keys)\n  delete:         54 ms\n  conc_counter:   30 ms  (4 procs, result=200000)\n"
+        },
+        {
+          "metrics_ms": {
+            "insert": 62,
+            "lookup": 54,
+            "update_counter": 13,
+            "overwrite": 74,
+            "iterate": 43,
+            "delete": 48,
+            "conc_counter": 38
+          },
+          "stdout": "ETS Benchmark (200000 entries)\n  insert:         62 ms\n  lookup:         54 ms\n  update_counter: 13 ms  (200000 ops)\n  overwrite:      74 ms\n  iterate:        43 ms  (200001 keys)\n  delete:         48 ms\n  conc_counter:   38 ms  (4 procs, result=200000)\n"
+        },
+        {
+          "metrics_ms": {
+            "insert": 81,
+            "lookup": 64,
+            "update_counter": 17,
+            "overwrite": 90,
+            "iterate": 50,
+            "delete": 66,
+            "conc_counter": 36
+          },
+          "stdout": "ETS Benchmark (200000 entries)\n  insert:         81 ms\n  lookup:         64 ms\n  update_counter: 17 ms  (200000 ops)\n  overwrite:      90 ms\n  iterate:        50 ms  (200001 keys)\n  delete:         66 ms\n  conc_counter:   36 ms  (4 procs, result=200000)\n"
+        },
+        {
+          "metrics_ms": {
+            "insert": 75,
+            "lookup": 65,
+            "update_counter": 14,
+            "overwrite": 66,
+            "iterate": 55,
+            "delete": 61,
+            "conc_counter": 40
+          },
+          "stdout": "ETS Benchmark (200000 entries)\n  insert:         75 ms\n  lookup:         65 ms\n  update_counter: 14 ms  (200000 ops)\n  overwrite:      66 ms\n  iterate:        55 ms  (200001 keys)\n  delete:         61 ms\n  conc_counter:   40 ms  (4 procs, result=200000)\n"
+        },
+        {
+          "metrics_ms": {
+            "insert": 80,
+            "lookup": 58,
+            "update_counter": 13,
+            "overwrite": 62,
+            "iterate": 39,
+            "delete": 57,
+            "conc_counter": 51
+          },
+          "stdout": "ETS Benchmark (200000 entries)\n  insert:         80 ms\n  lookup:         58 ms\n  update_counter: 13 ms  (200000 ops)\n  overwrite:      62 ms\n  iterate:        39 ms  (200001 keys)\n  delete:         57 ms\n  conc_counter:   51 ms  (4 procs, result=200000)\n"
+        },
+        {
+          "metrics_ms": {
+            "insert": 71,
+            "lookup": 63,
+            "update_counter": 15,
+            "overwrite": 70,
+            "iterate": 69,
+            "delete": 82,
+            "conc_counter": 41
+          },
+          "stdout": "ETS Benchmark (200000 entries)\n  insert:         71 ms\n  lookup:         63 ms\n  update_counter: 15 ms  (200000 ops)\n  overwrite:      70 ms\n  iterate:        69 ms  (200001 keys)\n  delete:         82 ms\n  conc_counter:   41 ms  (4 procs, result=200000)\n"
+        },
+        {
+          "metrics_ms": {
+            "insert": 92,
+            "lookup": 61,
+            "update_counter": 13,
+            "overwrite": 76,
+            "iterate": 48,
+            "delete": 57,
+            "conc_counter": 43
+          },
+          "stdout": "ETS Benchmark (200000 entries)\n  insert:         92 ms\n  lookup:         61 ms\n  update_counter: 13 ms  (200000 ops)\n  overwrite:      76 ms\n  iterate:        48 ms  (200001 keys)\n  delete:         57 ms\n  conc_counter:   43 ms  (4 procs, result=200000)\n"
+        }
+      ]
+    },
+    "medians_ms": {
+      "before": {
+        "insert": 71,
+        "lookup": 59,
+        "update_counter": 13,
+        "overwrite": 71,
+        "iterate": 48,
+        "delete": 51,
+        "conc_counter": 43
+      },
+      "after": {
+        "insert": 71,
+        "lookup": 58,
+        "update_counter": 13,
+        "overwrite": 66,
+        "iterate": 43,
+        "delete": 57,
+        "conc_counter": 38
+      }
+    },
+    "median_total_ms": {
+      "before": 359,
+      "after": 360
+    }
+  },
+  "persistent_term": {
+    "samples": {
+      "before": [
+        {
+          "metrics_ms": {
+            "put": 145,
+            "get": 236,
+            "overwrite": 87,
+            "get/2 (default)": 93,
+            "conc_get": 156,
+            "erase": 237
+          },
+          "stdout": "persistent_term Benchmark (200000 entries)\n  put:            145 ms\n  get:            236 ms\n  overwrite:      87 ms\n  get/2 (default):93 ms\n  conc_get:       156 ms  (4 procs)\n  erase:          237 ms\n"
+        },
+        {
+          "metrics_ms": {
+            "put": 66,
+            "get": 55,
+            "overwrite": 53,
+            "get/2 (default)": 82,
+            "conc_get": 29,
+            "erase": 51
+          },
+          "stdout": "persistent_term Benchmark (200000 entries)\n  put:            66 ms\n  get:            55 ms\n  overwrite:      53 ms\n  get/2 (default):82 ms\n  conc_get:       29 ms  (4 procs)\n  erase:          51 ms\n"
+        },
+        {
+          "metrics_ms": {
+            "put": 79,
+            "get": 59,
+            "overwrite": 59,
+            "get/2 (default)": 95,
+            "conc_get": 22,
+            "erase": 55
+          },
+          "stdout": "persistent_term Benchmark (200000 entries)\n  put:            79 ms\n  get:            59 ms\n  overwrite:      59 ms\n  get/2 (default):95 ms\n  conc_get:       22 ms  (4 procs)\n  erase:          55 ms\n"
+        },
+        {
+          "metrics_ms": {
+            "put": 75,
+            "get": 60,
+            "overwrite": 62,
+            "get/2 (default)": 95,
+            "conc_get": 33,
+            "erase": 58
+          },
+          "stdout": "persistent_term Benchmark (200000 entries)\n  put:            75 ms\n  get:            60 ms\n  overwrite:      62 ms\n  get/2 (default):95 ms\n  conc_get:       33 ms  (4 procs)\n  erase:          58 ms\n"
+        },
+        {
+          "metrics_ms": {
+            "put": 80,
+            "get": 59,
+            "overwrite": 64,
+            "get/2 (default)": 101,
+            "conc_get": 31,
+            "erase": 54
+          },
+          "stdout": "persistent_term Benchmark (200000 entries)\n  put:            80 ms\n  get:            59 ms\n  overwrite:      64 ms\n  get/2 (default):101 ms\n  conc_get:       31 ms  (4 procs)\n  erase:          54 ms\n"
+        },
+        {
+          "metrics_ms": {
+            "put": 79,
+            "get": 68,
+            "overwrite": 62,
+            "get/2 (default)": 94,
+            "conc_get": 28,
+            "erase": 60
+          },
+          "stdout": "persistent_term Benchmark (200000 entries)\n  put:            79 ms\n  get:            68 ms\n  overwrite:      62 ms\n  get/2 (default):94 ms\n  conc_get:       28 ms  (4 procs)\n  erase:          60 ms\n"
+        },
+        {
+          "metrics_ms": {
+            "put": 70,
+            "get": 59,
+            "overwrite": 59,
+            "get/2 (default)": 89,
+            "conc_get": 29,
+            "erase": 48
+          },
+          "stdout": "persistent_term Benchmark (200000 entries)\n  put:            70 ms\n  get:            59 ms\n  overwrite:      59 ms\n  get/2 (default):89 ms\n  conc_get:       29 ms  (4 procs)\n  erase:          48 ms\n"
+        },
+        {
+          "metrics_ms": {
+            "put": 64,
+            "get": 53,
+            "overwrite": 53,
+            "get/2 (default)": 88,
+            "conc_get": 22,
+            "erase": 94
+          },
+          "stdout": "persistent_term Benchmark (200000 entries)\n  put:            64 ms\n  get:            53 ms\n  overwrite:      53 ms\n  get/2 (default):88 ms\n  conc_get:       22 ms  (4 procs)\n  erase:          94 ms\n"
+        },
+        {
+          "metrics_ms": {
+            "put": 65,
+            "get": 89,
+            "overwrite": 70,
+            "get/2 (default)": 83,
+            "conc_get": 31,
+            "erase": 49
+          },
+          "stdout": "persistent_term Benchmark (200000 entries)\n  put:            65 ms\n  get:            89 ms\n  overwrite:      70 ms\n  get/2 (default):83 ms\n  conc_get:       31 ms  (4 procs)\n  erase:          49 ms\n"
+        }
+      ],
+      "after": [
+        {
+          "metrics_ms": {
+            "put": 75,
+            "get": 66,
+            "overwrite": 54,
+            "get/2 (default)": 81,
+            "conc_get": 22,
+            "erase": 52
+          },
+          "stdout": "persistent_term Benchmark (200000 entries)\n  put:            75 ms\n  get:            66 ms\n  overwrite:      54 ms\n  get/2 (default):81 ms\n  conc_get:       22 ms  (4 procs)\n  erase:          52 ms\n"
+        },
+        {
+          "metrics_ms": {
+            "put": 67,
+            "get": 53,
+            "overwrite": 54,
+            "get/2 (default)": 81,
+            "conc_get": 22,
+            "erase": 48
+          },
+          "stdout": "persistent_term Benchmark (200000 entries)\n  put:            67 ms\n  get:            53 ms\n  overwrite:      54 ms\n  get/2 (default):81 ms\n  conc_get:       22 ms  (4 procs)\n  erase:          48 ms\n"
+        },
+        {
+          "metrics_ms": {
+            "put": 76,
+            "get": 61,
+            "overwrite": 70,
+            "get/2 (default)": 106,
+            "conc_get": 38,
+            "erase": 71
+          },
+          "stdout": "persistent_term Benchmark (200000 entries)\n  put:            76 ms\n  get:            61 ms\n  overwrite:      70 ms\n  get/2 (default):106 ms\n  conc_get:       38 ms  (4 procs)\n  erase:          71 ms\n"
+        },
+        {
+          "metrics_ms": {
+            "put": 86,
+            "get": 59,
+            "overwrite": 60,
+            "get/2 (default)": 94,
+            "conc_get": 33,
+            "erase": 64
+          },
+          "stdout": "persistent_term Benchmark (200000 entries)\n  put:            86 ms\n  get:            59 ms\n  overwrite:      60 ms\n  get/2 (default):94 ms\n  conc_get:       33 ms  (4 procs)\n  erase:          64 ms\n"
+        },
+        {
+          "metrics_ms": {
+            "put": 80,
+            "get": 83,
+            "overwrite": 86,
+            "get/2 (default)": 143,
+            "conc_get": 40,
+            "erase": 75
+          },
+          "stdout": "persistent_term Benchmark (200000 entries)\n  put:            80 ms\n  get:            83 ms\n  overwrite:      86 ms\n  get/2 (default):143 ms\n  conc_get:       40 ms  (4 procs)\n  erase:          75 ms\n"
+        },
+        {
+          "metrics_ms": {
+            "put": 82,
+            "get": 70,
+            "overwrite": 65,
+            "get/2 (default)": 101,
+            "conc_get": 27,
+            "erase": 55
+          },
+          "stdout": "persistent_term Benchmark (200000 entries)\n  put:            82 ms\n  get:            70 ms\n  overwrite:      65 ms\n  get/2 (default):101 ms\n  conc_get:       27 ms  (4 procs)\n  erase:          55 ms\n"
+        },
+        {
+          "metrics_ms": {
+            "put": 62,
+            "get": 53,
+            "overwrite": 52,
+            "get/2 (default)": 84,
+            "conc_get": 25,
+            "erase": 55
+          },
+          "stdout": "persistent_term Benchmark (200000 entries)\n  put:            62 ms\n  get:            53 ms\n  overwrite:      52 ms\n  get/2 (default):84 ms\n  conc_get:       25 ms  (4 procs)\n  erase:          55 ms\n"
+        },
+        {
+          "metrics_ms": {
+            "put": 70,
+            "get": 56,
+            "overwrite": 58,
+            "get/2 (default)": 84,
+            "conc_get": 24,
+            "erase": 49
+          },
+          "stdout": "persistent_term Benchmark (200000 entries)\n  put:            70 ms\n  get:            56 ms\n  overwrite:      58 ms\n  get/2 (default):84 ms\n  conc_get:       24 ms  (4 procs)\n  erase:          49 ms\n"
+        },
+        {
+          "metrics_ms": {
+            "put": 67,
+            "get": 56,
+            "overwrite": 52,
+            "get/2 (default)": 80,
+            "conc_get": 22,
+            "erase": 50
+          },
+          "stdout": "persistent_term Benchmark (200000 entries)\n  put:            67 ms\n  get:            56 ms\n  overwrite:      52 ms\n  get/2 (default):80 ms\n  conc_get:       22 ms  (4 procs)\n  erase:          50 ms\n"
+        }
+      ]
+    },
+    "medians_ms": {
+      "before": {
+        "put": 75,
+        "get": 59,
+        "overwrite": 62,
+        "get/2 (default)": 93,
+        "conc_get": 29,
+        "erase": 55
+      },
+      "after": {
+        "put": 75,
+        "get": 59,
+        "overwrite": 58,
+        "get/2 (default)": 84,
+        "conc_get": 25,
+        "erase": 55
+      }
+    },
+    "median_total_ms": {
+      "before": 383,
+      "after": 350
+    }
+  },
+  "binary_send": {
+    "samples": {
+      "before": [
+        {
+          "metrics_ms": {
+            "time_ms": 1038
+          },
+          "stdout": "bench_binary_send: 2000000 messages of 10240 bytes\ntime_ms:1038\n"
+        },
+        {
+          "metrics_ms": {
+            "time_ms": 1032
+          },
+          "stdout": "bench_binary_send: 2000000 messages of 10240 bytes\ntime_ms:1032\n"
+        },
+        {
+          "metrics_ms": {
+            "time_ms": 1095
+          },
+          "stdout": "bench_binary_send: 2000000 messages of 10240 bytes\ntime_ms:1095\n"
+        },
+        {
+          "metrics_ms": {
+            "time_ms": 885
+          },
+          "stdout": "bench_binary_send: 2000000 messages of 10240 bytes\ntime_ms:885\n"
+        },
+        {
+          "metrics_ms": {
+            "time_ms": 1103
+          },
+          "stdout": "bench_binary_send: 2000000 messages of 10240 bytes\ntime_ms:1103\n"
+        },
+        {
+          "metrics_ms": {
+            "time_ms": 2341
+          },
+          "stdout": "bench_binary_send: 2000000 messages of 10240 bytes\ntime_ms:2341\n"
+        },
+        {
+          "metrics_ms": {
+            "time_ms": 1368
+          },
+          "stdout": "bench_binary_send: 2000000 messages of 10240 bytes\ntime_ms:1368\n"
+        },
+        {
+          "metrics_ms": {
+            "time_ms": 1482
+          },
+          "stdout": "bench_binary_send: 2000000 messages of 10240 bytes\ntime_ms:1482\n"
+        },
+        {
+          "metrics_ms": {
+            "time_ms": 625
+          },
+          "stdout": "bench_binary_send: 2000000 messages of 10240 bytes\ntime_ms:625\n"
+        }
+      ],
+      "after": [
+        {
+          "metrics_ms": {
+            "time_ms": 1247
+          },
+          "stdout": "bench_binary_send: 2000000 messages of 10240 bytes\ntime_ms:1247\n"
+        },
+        {
+          "metrics_ms": {
+            "time_ms": 1079
+          },
+          "stdout": "bench_binary_send: 2000000 messages of 10240 bytes\ntime_ms:1079\n"
+        },
+        {
+          "metrics_ms": {
+            "time_ms": 908
+          },
+          "stdout": "bench_binary_send: 2000000 messages of 10240 bytes\ntime_ms:908\n"
+        },
+        {
+          "metrics_ms": {
+            "time_ms": 910
+          },
+          "stdout": "bench_binary_send: 2000000 messages of 10240 bytes\ntime_ms:910\n"
+        },
+        {
+          "metrics_ms": {
+            "time_ms": 1278
+          },
+          "stdout": "bench_binary_send: 2000000 messages of 10240 bytes\ntime_ms:1278\n"
+        },
+        {
+          "metrics_ms": {
+            "time_ms": 2105
+          },
+          "stdout": "bench_binary_send: 2000000 messages of 10240 bytes\ntime_ms:2105\n"
+        },
+        {
+          "metrics_ms": {
+            "time_ms": 2220
+          },
+          "stdout": "bench_binary_send: 2000000 messages of 10240 bytes\ntime_ms:2220\n"
+        },
+        {
+          "metrics_ms": {
+            "time_ms": 672
+          },
+          "stdout": "bench_binary_send: 2000000 messages of 10240 bytes\ntime_ms:672\n"
+        },
+        {
+          "metrics_ms": {
+            "time_ms": 1438
+          },
+          "stdout": "bench_binary_send: 2000000 messages of 10240 bytes\ntime_ms:1438\n"
+        }
+      ]
+    },
+    "medians_ms": {
+      "before": {
+        "time_ms": 1095
+      },
+      "after": {
+        "time_ms": 1247
+      }
+    },
+    "median_total_ms": {
+      "before": 1095,
+      "after": 1247
+    }
+  }
+}

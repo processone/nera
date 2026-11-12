@@ -1,0 +1,25 @@
+workspace-tests-final:
+test result: ok. 286 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.17s
+test result: ok. 80 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+test result: ok. 121 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+test result: ok. 92 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.26s
+    warnings::tests::deprecated_attribute_parsed
+    warnings::tests::deprecated_call_has_correct_code
+    warnings::tests::deprecated_call_warns
+    warnings::tests::deprecated_fun_ref_warns
+    warnings::tests::deprecated_multiple_functions
+test result: FAILED. 364 passed; 5 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+test result: ok. 436 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.53s
+test result: ok. 289 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+erlang-suite:
+Results: 285 passed, 0 failed (0 compile), 2 skipped / 287 total
+installed-archive:
+installed library: installed preview ok
+embedded library: installed preview ok

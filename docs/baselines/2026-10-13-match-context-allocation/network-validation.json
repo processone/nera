@@ -1,0 +1,27 @@
+{
+  "workspace-tests-network-enabled": {
+    "exit_code": 0,
+    "command": [
+      "cargo",
+      "test",
+      "--workspace",
+      "--locked",
+      "--no-fail-fast"
+    ],
+    "reason": "Restricted attempt failed on local socket bind with EPERM; rerun with local-network permission passed."
+  },
+  "erlang-tcp-network-enabled": {
+    "exit_code": 0,
+    "command": [
+      "./target/release/nera",
+      "test",
+      "tcp_*",
+      "-j",
+      "1",
+      "--timeout",
+      "30"
+    ],
+    "passed": 9,
+    "reason": "Only TCP tests failed with {error,eacces} in the restricted full suite; all nine pass with local-network permission."
+  }
+}

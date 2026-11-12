@@ -1,0 +1,101 @@
+{
+  "date": "2026-10-11",
+  "status": "include_resolution_and_macro_arities_fixed_native_eunit_still_blocked",
+  "base_commit": "41efccd04e022fc95b0a8c8aa381a14af28cb5ff",
+  "target": "uncommitted preprocessing changes",
+  "platform": "macOS arm64",
+  "otp": "29.0.5",
+  "upstream": {
+    "url": "https://github.com/lpil/thoas.git",
+    "version": "1.2.1",
+    "commit": "7cdcec7e52b80d2869900893b2acf47199d84190",
+    "dependencies": []
+  },
+  "source_sha256": {
+    "crates/nera-syntax/src/preproc.rs": "41f75bf7dca99a16835ba204587782c78dd3313419812a282f0dd1ed29f4c5c2",
+    "tests/macro_arities.erl": "dd968e21efdd6f884e7d0cf2343f87cab542913b3678c0103ebcbab5d596efa9",
+    "tests/integration/thoas/eunit/header_probe.erl": "18bdfb0abfb2d1052a7da783006f1b7cbc9f8be93c846ab02fa4db510fd8b822"
+  },
+  "compiler_sha256": "331343efbc2fc235146d708e8e64c84d984d7ae2fb35194b4aab431504d5345a",
+  "runtime_sha256": "1c3e358153fe7f529e943d172781a6fc812d2e24ff6405a66aa49dd2fbbf491a",
+  "compiler_profile": "debug",
+  "runtime_profile": "release (unchanged from memory validation)",
+  "checks": {
+    "workspace": {
+      "passed": 1782,
+      "failed": 0,
+      "ignored": 1,
+      "log": "/private/tmp/nera-eunit-workspace.log"
+    },
+    "syntax_final": {
+      "passed": 293,
+      "log": "/private/tmp/nera-eunit-syntax-final.log"
+    },
+    "clippy": {
+      "status": "passed",
+      "log": "/private/tmp/nera-eunit-clippy.log"
+    },
+    "erlang": {
+      "passed": 2,
+      "log": "/private/tmp/nera-eunit-erlang.log"
+    },
+    "header_probe": {
+      "beam": "EUNIT_HEADERS_OK",
+      "nera": "EUNIT_HEADERS_OK"
+    },
+    "direct_thoas_eunit": {
+      "compile_exit": 1,
+      "native_assertions_executed": 0,
+      "diagnostic": "undefined macro: ?",
+      "cause": "Unsupported ??Expression macro argument stringification"
+    }
+  },
+  "limitations": [
+    "Full upstream suite and 80-case corpus not rerun.",
+    "Header smoke is not EUnit framework execution.",
+    "Final syntax-only rerun follows a strengthened undef test and comment change; implementation unchanged since workspace/native validation."
+  ],
+  "commands": [
+    "RUSTC_WRAPPER= CARGO_TARGET_DIR=/private/tmp/nera-thoas-date-target cargo test --workspace --locked --offline --no-fail-fast",
+    "RUSTC_WRAPPER= CARGO_TARGET_DIR=/private/tmp/nera-thoas-date-target cargo clippy --workspace --all-targets --locked --offline -- -D warnings",
+    "/private/tmp/nera-eunit-validation/compiler/nera test 'macro*' 'include*' --no-warnings"
+  ],
+  "direct_build": {
+    "cwd": "/private/tmp/nera-eunit-validation",
+    "argv": [
+      "/private/tmp/nera-eunit-validation/compiler/nera",
+      "build",
+      "/private/tmp/nera-thoas-final-validation/upstream/src/thoas.erl",
+      "/private/tmp/nera-thoas-final-validation/upstream/src/thoas_decode.erl",
+      "/private/tmp/nera-thoas-final-validation/upstream/src/thoas_encode.erl",
+      "/private/tmp/nera-thoas-final-validation/upstream/test/thoas_encode_test.erl",
+      "-e",
+      "thoas_encode_test:test",
+      "-o",
+      "direct"
+    ]
+  },
+  "logs_sha256": {
+    "/private/tmp/nera-eunit-validation/direct.stderr": "267fba265d65ecdfe8fea28ec8b27610fd6eefe0c6345aeafe09043e1b6cdcc7",
+    "/private/tmp/nera-eunit-validation/header-run.stdout": "3d31824d97353607d43fcae290aa3fbf4c8c860e27720bac066bca8783a1ddaa",
+    "/private/tmp/nera-eunit-validation/beam-header.stdout": "3d31824d97353607d43fcae290aa3fbf4c8c860e27720bac066bca8783a1ddaa",
+    "/private/tmp/nera-eunit-workspace.log": "9e31c9f11f9bd9340e2a878f74fe04c7aa35ef49cfe6ded2335a9c1161bdc9ca",
+    "/private/tmp/nera-eunit-clippy.log": "96953b791ff76fc1a6b17d7cc4a46ecb0bbca093601bb7523c0fe2e388484540",
+    "/private/tmp/nera-eunit-syntax-final.log": "2680c9daf24a6b95b18045cbb0f3390e4bae489767ef360466bfc79cb5841f0d",
+    "/private/tmp/nera-eunit-erlang.log": "e3223324f84c0dc425489a1b03bc91a2d1227fd647c209910c5c45d65b324b70"
+  },
+  "publication": {
+    "base_ref": "origin/mr/thoas-binary-sharing",
+    "base_commit": "41efccd04e022fc95b0a8c8aa381a14af28cb5ff",
+    "base_tree": "2e13b58375d85b3881f9fd600f9996daa7d10c52",
+    "branch": "mr/eunit-nested-includes",
+    "depends_on_pr": 22,
+    "workspace_passed": 1782,
+    "workspace_ignored": 1,
+    "clippy": "passed",
+    "logs_sha256": {
+      "/private/tmp/nera-eunit-pr-workspace.log": "8023d8a44a4a2691e6e567db5b4cfb26ccf5ec11c7cc61f28504b2bddf6110a5",
+      "/private/tmp/nera-eunit-pr-clippy.log": "56621c7ec4a8295c8724bdcdd248c2714e0fe28c7e3745900b59d40248ba0140"
+    }
+  }
+}

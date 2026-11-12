@@ -1,0 +1,318 @@
+{
+  "validation_date": "2026-10-15",
+  "status": "passed",
+  "scope": "Original cow_base64url properties with real native PropEr generation; padding and no-padding round trips",
+  "candidate": {
+    "base_commit": "68247b9ebb8a33a17f0e36c2e85d1d2cadce8764",
+    "compiler_runtime_stdlib_changed": false,
+    "source_snapshot_sha256": "36e61df4f739d4e6756b663683403fc6c2f476f5373cb1a54fb1cb2f5cca1ac7",
+    "nera_sha256": "fb6441414d6588d47e925af0213ecb134f857c8014b7074fc83ea13ac9430700",
+    "runtime_sha256": "e326c26a0813e3207e21357afef00a0ea31b6fa82a9365b9d5944fb583c1c0e0",
+    "runner_sha256": "da7d7f293ab843a615fcd9e1c58e3f4872cc3a850cbce3402a03057ce560583b",
+    "scenario_sha256": "c60253a4961322734e9f5fba0b1bc3b55f5e2c9c01035926889fb7b3bfedee95",
+    "preparation_helper_sha256": "02689434aec0c0505b3cd2fb9ec4cea631f8e5bc3b8b27944adc08ca95e6dcb2",
+    "shared_generation_sha256": "734d8062cf04d3ebc384405e7b3180ee967a4de8720905c1be4a7b122a628f02",
+    "etf_decoder_sha256": "7070107789f63da6b848eb584bac20950eafabde99386216efbd2d97ebc3db96"
+  },
+  "platform": "macOS-15.7.7-arm64-arm-64bit-Mach-O",
+  "reference_build_otp": "29.0.5",
+  "dependencies": {
+    "cowlib": {
+      "name": "cowlib",
+      "version": "2.20.0",
+      "url": "https://github.com/ninenines/cowlib.git",
+      "commit": "c768a804565ff5b8178ed968a5921e469d6bd7b2"
+    },
+    "proper_commit": "5640d0715d4b346676267504d8e84398e2a29f75",
+    "otp_rand_ordsets_revision": "05737d130706c7189a8e6750d9c2252d2cc7987e",
+    "cowlib_source_sha256": "3d68bd7d9d03230c99c298688bb9c804fe8ebdcf1ced3e64683de3b72a9436a2",
+    "cowlib_prepared_sha256": "a6e38af06ec6cd918ae527846cc194b28434cb3ea09cb20468c6bfb48137161a",
+    "otp_rand_sha256": "7f956b3658f5b2054fe5809b7db1221e76109339a27ca728184d5a90fc679b0d",
+    "otp_ordsets_sha256": "064acc495f9a5ddf0c1bdc9d97fa7d1b1b975b10076495dbce4babf73900f17d"
+  },
+  "source_preparation": {
+    "method": "Original Cowlib module: erlc -P -DTEST with original PropEr parse transforms, then test-entry exports only; same listing compiled by BEAM and Nera",
+    "generator_and_predicate": "Original forall generator and predicate retained; predicate wrapped only to record inputs/encodings before original execution",
+    "third_party_sources_and_generated_data": "External only; no vendored source or generated input corpus"
+  },
+  "outcomes": {
+    "beam_passed": true,
+    "native_passed": true,
+    "traces_match": true,
+    "trace_sha256": {
+      "beam": "68d788a3ad6fd339ba1ebfe9c193046c1b8adf787f430ab3485ccc2d22821b7e",
+      "native": "68d788a3ad6fd339ba1ebfe9c193046c1b8adf787f430ab3485ccc2d22821b7e"
+    }
+  },
+  "properties": [
+    "prop_identity",
+    "prop_identity_no_padding"
+  ],
+  "seeds": [
+    [
+      101,
+      202,
+      303
+    ],
+    [
+      7,
+      11,
+      13
+    ],
+    [
+      999,
+      1001,
+      2027
+    ]
+  ],
+  "size_options": {
+    "start_size": 0,
+    "max_size": 256
+  },
+  "summary": {
+    "samples_per_property_seed_repetition": 1000,
+    "repetitions": 2,
+    "trials_per_engine": 12000,
+    "false_shrinking_controls_per_engine": 12,
+    "false_and_true_replays_per_engine": 24,
+    "coverage": [
+      {
+        "property": "prop_identity",
+        "seed": [
+          101,
+          202,
+          303
+        ],
+        "count": 1000,
+        "length_min": 0,
+        "length_max": 252,
+        "length_residues": [
+          0,
+          1,
+          2
+        ],
+        "byte_values": 256,
+        "false_initial_length": 10,
+        "false_shrink_invocations": 11
+      },
+      {
+        "property": "prop_identity",
+        "seed": [
+          7,
+          11,
+          13
+        ],
+        "count": 1000,
+        "length_min": 0,
+        "length_max": 248,
+        "length_residues": [
+          0,
+          1,
+          2
+        ],
+        "byte_values": 256,
+        "false_initial_length": 12,
+        "false_shrink_invocations": 11
+      },
+      {
+        "property": "prop_identity",
+        "seed": [
+          999,
+          1001,
+          2027
+        ],
+        "count": 1000,
+        "length_min": 0,
+        "length_max": 243,
+        "length_residues": [
+          0,
+          1,
+          2
+        ],
+        "byte_values": 256,
+        "false_initial_length": 7,
+        "false_shrink_invocations": 10
+      },
+      {
+        "property": "prop_identity_no_padding",
+        "seed": [
+          101,
+          202,
+          303
+        ],
+        "count": 1000,
+        "length_min": 0,
+        "length_max": 252,
+        "length_residues": [
+          0,
+          1,
+          2
+        ],
+        "byte_values": 256,
+        "false_initial_length": 10,
+        "false_shrink_invocations": 11
+      },
+      {
+        "property": "prop_identity_no_padding",
+        "seed": [
+          7,
+          11,
+          13
+        ],
+        "count": 1000,
+        "length_min": 0,
+        "length_max": 248,
+        "length_residues": [
+          0,
+          1,
+          2
+        ],
+        "byte_values": 256,
+        "false_initial_length": 12,
+        "false_shrink_invocations": 11
+      },
+      {
+        "property": "prop_identity_no_padding",
+        "seed": [
+          999,
+          1001,
+          2027
+        ],
+        "count": 1000,
+        "length_min": 0,
+        "length_max": 243,
+        "length_residues": [
+          0,
+          1,
+          2
+        ],
+        "byte_values": 256,
+        "false_initial_length": 7,
+        "false_shrink_invocations": 10
+      }
+    ]
+  },
+  "traces": [
+    {
+      "property": "prop_identity",
+      "seed": [
+        101,
+        202,
+        303
+      ],
+      "sample_trace_sha256": "b0b7f9c7086c2fd15fc5d745c9da8d0600b493502031db279b400fd747a31cbf",
+      "false_shrink_trace_sha256": "888de4a751d8e8f23c2b185069792f6ddc0db0d61281820774de946f87d9a1c1",
+      "false_counterexample_hex": [
+        ""
+      ]
+    },
+    {
+      "property": "prop_identity",
+      "seed": [
+        7,
+        11,
+        13
+      ],
+      "sample_trace_sha256": "23dcb8786578a132175155d8dab330d36f365fc297bae5bdb6d0b9afba3e77a3",
+      "false_shrink_trace_sha256": "0784545d412e41f2cc921475c13bc7f10ce6204ed2b51fe60c753a553847842a",
+      "false_counterexample_hex": [
+        ""
+      ]
+    },
+    {
+      "property": "prop_identity",
+      "seed": [
+        999,
+        1001,
+        2027
+      ],
+      "sample_trace_sha256": "3abaf47d6d1663a57054e15851a78887677913108540ef7b562ce30ebcf3af76",
+      "false_shrink_trace_sha256": "863ce3e6502399ed5c9aaf78fc2bfbd8d9d31b586cfd8794ec718e104b899cec",
+      "false_counterexample_hex": [
+        ""
+      ]
+    },
+    {
+      "property": "prop_identity_no_padding",
+      "seed": [
+        101,
+        202,
+        303
+      ],
+      "sample_trace_sha256": "b0b7f9c7086c2fd15fc5d745c9da8d0600b493502031db279b400fd747a31cbf",
+      "false_shrink_trace_sha256": "888de4a751d8e8f23c2b185069792f6ddc0db0d61281820774de946f87d9a1c1",
+      "false_counterexample_hex": [
+        ""
+      ]
+    },
+    {
+      "property": "prop_identity_no_padding",
+      "seed": [
+        7,
+        11,
+        13
+      ],
+      "sample_trace_sha256": "23dcb8786578a132175155d8dab330d36f365fc297bae5bdb6d0b9afba3e77a3",
+      "false_shrink_trace_sha256": "0784545d412e41f2cc921475c13bc7f10ce6204ed2b51fe60c753a553847842a",
+      "false_counterexample_hex": [
+        ""
+      ]
+    },
+    {
+      "property": "prop_identity_no_padding",
+      "seed": [
+        999,
+        1001,
+        2027
+      ],
+      "sample_trace_sha256": "3abaf47d6d1663a57054e15851a78887677913108540ef7b562ce30ebcf3af76",
+      "false_shrink_trace_sha256": "863ce3e6502399ed5c9aaf78fc2bfbd8d9d31b586cfd8794ec718e104b899cec",
+      "false_counterexample_hex": [
+        ""
+      ]
+    }
+  ],
+  "controls": {
+    "rfc7515_test": "Original upstream assertion passes unchanged on both engines",
+    "false_quickchecks": "Original generator/predicate, followed by deliberate false result; reduce from nonempty binary to [<<>>]",
+    "replays": "Each false property rejects [<<>>]; corresponding original accepts [<<>>]",
+    "reproducibility": "Full results including generation/encoding/shrink traces asserted identical across two cumulative repetitions per seed and property",
+    "independent_oracle": "Python standard-library urlsafe_b64encode, with/without padding, for every generated input",
+    "input_sharing": "None between engines; same pinned generator/seed, native generation on Nera",
+    "independence_limit": "3,000 seeded positions per property repeated twice; both properties also share input streams because generator and seed are identical"
+  },
+  "regression": {
+    "cowlib_harness_tests": 73,
+    "proper_harness_tests": 6,
+    "test_file_sha256": "bba5aea3f8cd512a733a5f0b9d9bae71a0976738ee115c58fd5837a778c00ad8",
+    "protocol_red": "Acceptance test failed at assertTrue while completion validator was unimplemented; passed after full validator implementation",
+    "release_build": "cargo build --release --locked passed on merged main; no compiler/runtime/stdlib edits",
+    "existing_scenarios": {
+      "seeded_native_generation": {
+        "status": "passed",
+        "beam_passed": true,
+        "native_passed": true,
+        "report_path": "/private/tmp/nera-cow-base64url-proper-generation-regression/report.json",
+        "report_sha256": "166430e7d52f3362cfd122286f9440d5980e0e3ee91afa7a55f28dd5a45397f4"
+      },
+      "literal_true_false": {
+        "status": "passed",
+        "beam_passed": true,
+        "native_passed": true,
+        "report_path": "/private/tmp/nera-cow-base64url-proper-smoke-regression/report.json",
+        "report_sha256": "df4cb119ee715c38156ed86f52bcec22e4c3f99758384693c3cd252e1139c6a1"
+      }
+    }
+  },
+  "limits": [
+    "Finite seeded trials, observed lengths 0..252, no exhaustive binary or full Cowlib/PropEr claim.",
+    "Only cow_base64url properties/RFC test executed here; native date/HTTP properties remain unvalidated.",
+    "Explicit build-time BEAM preparation and defer_undefined=true remain required; native executable runs without BEAM.",
+    "Only macOS arm64; no new cross-platform, full Rust or full Erlang suite run for these Python harness/documentation changes.",
+    "OTP 28/29 rand zipped generators remain unsupported."
+  ],
+  "full_external_report": {
+    "path": "/private/tmp/nera-cow-base64url-native-proper-final/report.json",
+    "sha256": "88f9189bc9c071dd4d3b5f47775bd93fd71d527e4952957acfd5ee8be66e0359"
+  }
+}

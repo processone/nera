@@ -1,0 +1,22 @@
+{
+  "x86_64-apple-darwin": {
+    "command": [
+      "bash",
+      "scripts/test-cross.sh",
+      "target/rust199-baseline/release/nera",
+      "x86_64-apple-darwin"
+    ],
+    "exit": 0,
+    "object": "hello.o: Mach-O 64-bit object x86_64"
+  },
+  "aarch64-unknown-linux-gnu": {
+    "command": [
+      "bash",
+      "scripts/test-cross.sh",
+      "target/rust199-baseline/release/nera",
+      "aarch64-unknown-linux-gnu"
+    ],
+    "exit": 0,
+    "object": "hello.o: ELF 64-bit LSB relocatable, ARM aarch64, version 1 (SYSV), not stripped"
+  }
+}

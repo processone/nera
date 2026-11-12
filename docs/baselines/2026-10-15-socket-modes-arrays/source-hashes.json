@@ -1,0 +1,20 @@
+{
+  "Cargo.lock": "a210f397cb773d07c39ed4827a9aea44092f56ee7c2a438f708784dfa5769f80",
+  "Cargo.toml": "8d8f30e39479037b8f2cb82dbcc3f4705503423f0a6db6237003281cf25d24b3",
+  "rust-toolchain.toml": "2ad6f15416572b4836585087f1d4abc53b8fa2dbd616f8dacfaa587ed6714228",
+  "tests/atomic_array_bounds.erl": "fccd8d7ad1542ed7a2d2c43a3b2d20a154c513e5ac4ed57c8676fd16739ed9f9",
+  "crates/nera-runtime/src/atomics_module.rs": "d6cc5b8c139e95c2e143def6290e522f221fa9ea9bf370d8957cfee27fd8114a",
+  "crates/nera-runtime/src/counters.rs": "7b8f278b3dd7e78a0392d65365843adad63e3c131e8750eb6bce5784e2afb5c3",
+  "crates/nera-runtime/src/ffi/atomics.rs": "bb06384be8f6d4f6ba5503bf5143521ed6b4b5360b2b5ec7b7704a06f004045d",
+  "crates/nera-runtime/src/ffi/counters.rs": "fe6650285a9a6590627c0ffbaa6851d95f28617343352d928cdde6457db2c70c",
+  "crates/nera-runtime/src/ffi/gen_tcp.rs": "80fb81db6c46d3fcc2c9b4b9a1925d61ff75b8911d4b4ecf11b421d1e83bf0ca",
+  "crates/nera-runtime/src/process.rs": "cfadea14e396d72239e9791cfd14d60aefbe36e6a32bbc85bdd3267d13cb0892",
+  "crates/nera-runtime/src/reactor.rs": "6d3f27477fd323c9326ac73691b99f8ab50cc8e2480fef0cd0762769ef455b1b",
+  "crates/nera-runtime/src/resource.rs": "27da29fdb99556b1cb055b327c7544ec7fdac4eb764fb88136665701f4c6d7f3",
+  "crates/nera-runtime/src/socket.rs": "a91f96abfed150e19ed45535bf9882c3019692aafef3a7af1202cc894ce2b872",
+  "docs/baselines/2026-10-15-socket-modes-arrays/atomic_probe.erl": "2ea4d06cebee2cb31536a947bae4a392cf4ca7d90f014be431cf8e388fef93ec",
+  "docs/baselines/2026-10-15-socket-modes-arrays/modes_probe.erl": "aa8e0314f07b10413187a2b253ae251ba4f1290fa421f2263cf8c6f5d52e2f90",
+  "docs/baselines/2026-10-15-socket-modes-arrays/recv_probe.erl": "de75b36268ab9a937b14976eb90d5799f16071b067b34d52c2b02a215be6d2f0",
+  "docs/baselines/2026-10-15-socket-modes-arrays/measure.py": "c96323ad784d4d88daf78aaaf0c30a9960e779d3cff350cf029d8cb46abe053e",
+  "CHANGELOG.md": "3568d1c08accd1895ee562f52c9d938f48737e4f09ae4df0410c77779991ae5f"
+}

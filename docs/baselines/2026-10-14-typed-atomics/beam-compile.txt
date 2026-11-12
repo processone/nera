@@ -1,0 +1,5 @@
+tests/atomics_integer_domain.erl:41:36: Warning: 'catch ...' is deprecated; please use 'try ... catch ... end' instead.
+Compile directive 'nowarn_deprecated_catch' can be used to suppress
+warnings in selected modules.
+%   41| bad(F) -> {'EXIT', {badarg, _}} = (catch F()), ok.
+%     |                                    ^

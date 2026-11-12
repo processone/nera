@@ -1,0 +1,44 @@
+{
+  "resume_exception_probe": {
+    "expected": "before\nafter\n",
+    "beam": {
+      "exit": 0,
+      "stdout": "before\nafter\n",
+      "stderr": ""
+    },
+    "native": {
+      "exit": 0,
+      "stdout": "before\nafter\n",
+      "stderr": ""
+    },
+    "pass": true
+  },
+  "late_reply_probe": {
+    "expected": "no_late_reply\n",
+    "beam": {
+      "exit": 0,
+      "stdout": "no_late_reply\n",
+      "stderr": ""
+    },
+    "native": {
+      "exit": 0,
+      "stdout": "late_reply\n",
+      "stderr": ""
+    },
+    "pass": false
+  },
+  "formatter_guard_probe": {
+    "original_beam": {
+      "exit": 0,
+      "stdout": "matched\n",
+      "stderr": ""
+    },
+    "formatted_beam": {
+      "exit": 0,
+      "stdout": "matched\n",
+      "stderr": ""
+    },
+    "formatted_source": "%% Run on BEAM before and after `nera fmt --stdout`.\n%% The unformatted program must print matched.\n-module(formatter_guard_probe).\n-export([start/0]).\n\nstart() -> io:format(\"~p~n\", [classify(2, 1)]).\n\nclassify(A, B) when not (A < B) -> matched;\nclassify(_, _) -> fallback.\n",
+    "pass": true
+  }
+}

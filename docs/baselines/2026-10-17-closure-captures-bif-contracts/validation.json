@@ -1,0 +1,36 @@
+{
+  "base_ref": "origin/main",
+  "base": "699180ea51c106eca29750d5d0d0b5a5338cf5d4",
+  "target": "uncommitted worktree mr/closure-captures-bif-contracts",
+  "source_manifest_sha256": "bd0d59726ec103ae0ec08037b45cdc16e44678eb146e526f863e49a5129759b5",
+  "checks": {
+    "release_build": 0,
+    "workspace": {
+      "exit": 0,
+      "passed": 2013,
+      "ignored": 1
+    },
+    "runtime_release": {
+      "exit": 0,
+      "passed": 664,
+      "ignored": 1
+    },
+    "clippy": 0,
+    "intel_runtime_check": 0,
+    "windows_runtime_check": 0,
+    "otp29": 0,
+    "native": {
+      "broad_exit": 1,
+      "broad_passed": 156,
+      "external_skipped": 2,
+      "fixture_compile_failure": "unsupported GC BIF in test only; corrected by allocation pressure",
+      "corrected_fixture_exit": 0,
+      "distinct_validated": 157
+    },
+    "performance_campaign": 0,
+    "long_scan_followup": 0,
+    "final_source_manifest_matches": true,
+    "whitespace": 0
+  },
+  "publication": "Not requested; no stage, commit, push or PR."
+}

@@ -1,0 +1,9 @@
+{
+  "Cargo.lock": "a210f397cb773d07c39ed4827a9aea44092f56ee7c2a438f708784dfa5769f80",
+  "rust-toolchain.toml": "2ad6f15416572b4836585087f1d4abc53b8fa2dbd616f8dacfaa587ed6714228",
+  "crates/nera-runtime/src/bif.rs": "5cc4f2f5381734111f58219fab900d0624ebbdf844f15d6b45bfdd02d822981c",
+  "crates/nera-runtime/src/ffi/binary_ops.rs": "30797125328142d46d3b36bbc3d094ab023241c2cefa451a1a6fad191cfa8d8e",
+  "tests/binary_to_list_domain.erl": "1c9c4013cd365eb8a471ebe392ddbacba40895ea6b72be1dfa001f0df7656016",
+  "tests/etf_container_bounds.erl": "9b861a4dc7ae697d15fa0af4dc2ef308e82bca90d19184b8ed26efec967540c6",
+  "tests/README.md": "841ded74e65161ede06a8a13e643cfe2dfcb926e608f11b921400e0b33ed5923"
+}

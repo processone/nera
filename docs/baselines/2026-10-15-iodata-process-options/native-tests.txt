@@ -1,0 +1,27 @@
+Running 21 tests (1 threads)
+────────────────────────────────────────────────────────────
+  PASS  bif_binary_conv                           984ms  [1/21]
+  PASS  file_io                                   975ms  [2/21]
+  PASS  iolist_size                               947ms  [3/21]
+  PASS  process_flag_basic                        893ms  [4/21]
+  PASS  process_flag_fullsweep                    887ms  [5/21]
+  PASS  spawn_link_basic                           3.0s  [6/21]
+  PASS  spawn_monitor_basic                        1.2s  [7/21]
+  PASS  spawn_opt_basic                            1.3s  [8/21]
+  PASS  spawn_options_domain                       1.1s  [9/21]
+  PASS  tcp_accept_close                           1.2s  [10/21]
+  PASS  tcp_accept_concurrent                      1.1s  [11/21]
+  PASS  tcp_accept_kill                            1.4s  [12/21]
+  PASS  tcp_active_once                            1.2s  [13/21]
+  PASS  tcp_argument_domain                        1.0s  [14/21]
+  PASS  tcp_handle_domain                         878ms  [15/21]
+  PASS  tcp_iodata_domain                         914ms  [16/21]
+  PASS  tcp_reactor                                1.2s  [17/21]
+  PASS  tcp_reactor_close_active                  750ms  [18/21]
+  PASS  tcp_reactor_perf                          860ms  [19/21]
+  PASS  tcp_reactor_stress                        992ms  [20/21]
+  PASS  tcp_socket_cleanup                        859ms  [21/21]
+────────────────────────────────────────────────────────────
+Results: 21 passed, 0 failed (0 compile), 0 skipped / 21 total
+
+ALL TESTS PASSED

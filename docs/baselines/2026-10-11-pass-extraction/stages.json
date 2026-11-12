@@ -1,0 +1,86 @@
+{
+  "stages": [
+    {
+      "stage": "yield",
+      "test_counts": [
+        392,
+        5,
+        20,
+        0
+      ],
+      "all_20_snapshots_match_baseline": true
+    },
+    {
+      "stage": "fusion",
+      "test_counts": [
+        392,
+        5,
+        20,
+        0
+      ],
+      "all_20_snapshots_match_baseline": true
+    },
+    {
+      "stage": "match-contexts",
+      "test_counts": [
+        392,
+        5,
+        20,
+        0
+      ],
+      "all_20_snapshots_match_baseline": true
+    },
+    {
+      "stage": "constants",
+      "test_counts": [
+        392,
+        5,
+        20,
+        0
+      ],
+      "all_20_snapshots_match_baseline": true
+    },
+    {
+      "stage": "dead-code",
+      "test_counts": [
+        392,
+        5,
+        20,
+        0
+      ],
+      "all_20_snapshots_match_baseline": true
+    },
+    {
+      "stage": "pipeline",
+      "test_counts": [
+        392,
+        6,
+        20,
+        0
+      ],
+      "all_20_snapshots_match_baseline": true
+    }
+  ],
+  "snapshot_sha256": {
+    "tests__selective_receive.erl": "ca9be39737d1da0a57fc54ba5e4b44f17572e8cac1d4741b1f55cc9833ce7ec6",
+    "tests__map_exact_update.erl": "33ce1a58afa239a1ffc1232787a6b76356aabe1007fbf362c2c63db8fc5be2eb",
+    "tests__receive_after.erl": "654570d17a4fc9feb759f09291e0286dad87ec8f04e7dca293dc02a833f5bc29",
+    "tests__tco_trampoline_exception.erl": "2cfd0b1e7ff15f07923833d86e6da1ffacc465c328e9e67b371a8c1c526110af",
+    "tests__bool_ops.erl": "48734aa17518f8087f14451e89a6c1a7642ed8941e70c52f891f2fe5154adebb",
+    "tests__multi_clause_binary_rest.erl": "77d27efee51e944636e066d8bbaed90174e2b0ff249a8d6a74a08f59f4702170",
+    "tests__try_of.erl": "4806c548f8ad79d3589731b3ce14d8f65bb2620374e3aad387c7b5cd87d8fcba",
+    "tests__match_alias_chain.erl": "77ad39b98702e7818029eac79dd9e315494673bd0cead85013a290dafc0c93ff",
+    "tests__catch_expr.erl": "d01bbc0267797aba0591bc7e8a45156e703da8f62e8ca6de00d09da1e341145d",
+    "erlang__stdlib__lists.erl": "2c66411f96c12a64a3a86f3a73061c90ca7032df296a6863adc46c6d500585e6",
+    "tests__guard_tricky.erl": "8a2bf9e30b14144b44ddd8dc9ca90bccee47b4769f82528695e44c56ef574ff0",
+    "tests__control_flow.erl": "233a2f818922b4349954cbffd336ae532f44b9db12f5a2ec958e3a25cfa8ffb2",
+    "tests__fun_nested.erl": "b892fb249bc60cd069c1a77f849a0f0becdab6c946dd4e54264d4c04d7a0f8a7",
+    "tests__tco_closure_tail.erl": "247a4f121b8cc4c465143cc7a2f98eb49fc4a8d950b733b4218ba7a94c275735",
+    "tests__binary_utf.erl": "317f6fddf2a8d53e52f3573dc36b07b00ec2ecf2dc66d37fbd371561913583ac",
+    "tests__include_record.erl": "bd8581ce96f4f320031cea9b10a8d246e2f864bf8f455a29a3167d5d637d18ea",
+    "tests__lc_nested.erl": "d915df1ab21bd6bde03a08f4db61c929280bef19ce0e09a55842062e7c21cb96",
+    "tests__exception_basic.erl": "233f3bbc8a3eff2e831368ba5a73a20dfa2a0a54358aad2df816e2b1bdeb5569",
+    "erlang__stdlib__gen_server.erl": "a5109b41ee03fb697e00b17dd09cf4af33d4d5cf4f24f8fbbe59e6bab2dfda36",
+    "tests__resume_exception.erl": "eaf0cd6b0c8dc4a686a180b07421dccda7011eab092b9d97a9cbc0141bd83f97"
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "base": "9e2ddcebaf725e6ea649ffcaafa98ccc682986cc",
+  "workspace": "/var/folders/yk/hpylg6r976qgbphydj66gt9h0000gn/T/nera-match-allocation-htghqd2s",
+  "compiler": "52816cd33b8cbf0a9ba78b2732707ceec8eebc49328f4974f3241fd44822fb60",
+  "variants": {
+    "before-timing": {
+      "runtime": "f1a74b2622748a35234432448c8f479d0893517240905094653dc793d1e97fa7",
+      "alloc_source": "dbe52cb4cf7b19e02f06ddb658474a0b5055844ba96825b32845f8c5043a53ed",
+      "heap_source": "a563f7844082276bad80163949964a366c7ecd08a6574c3232527d5a2388b8e7",
+      "metrics_source": "eb96644726c89141a4b2e2d04fbfed0c7d39e3c6af026072b171e1aa1f97b6be",
+      "lib_source": "9e26114a87b56ceec4d9baa3a8eddbfdede552376b02aafe0cf3bfdbe8bb1137",
+      "probe": "d35220fb906d42e93d2253633767d9eaf90f542b1b261c032d232f50810053bf",
+      "differential": "524015797fae986a66d9b78028a08165153f2b6d93d69e7eed8524bb7c33316d",
+      "options_test": "428bb8a5b5b4a4aff9cc0c0e2fbdbdad3b0116b0e3c53424d48ae94a0868221c",
+      "reuse_test": "e4e9503ba8ea1728a8457f8ef4973d99deb554a2b289c1256019738ef7dae759"
+    },
+    "after-timing": {
+      "runtime": "aaeaa765682503b80fa24a14492909f35d9c02ebf1132d22cc12bbd60a9c3b20",
+      "alloc_source": "bdd31baf9e093c976f8e97ece0cd789349606ef34e14baf282a8a44f60114178",
+      "heap_source": "a563f7844082276bad80163949964a366c7ecd08a6574c3232527d5a2388b8e7",
+      "metrics_source": "eb96644726c89141a4b2e2d04fbfed0c7d39e3c6af026072b171e1aa1f97b6be",
+      "lib_source": "9e26114a87b56ceec4d9baa3a8eddbfdede552376b02aafe0cf3bfdbe8bb1137",
+      "probe": "0c6379b48f3a4dace085f422defbe28745b4a1c3487dfcb70696ce4c606ff71f",
+      "differential": "f8b1adcc8ac382c524ea5f84b6a052c725653da9605d7689b68d7e9a83e673d0",
+      "options_test": "e0e021e90200f6db787df72a0125d52911f03186591378d44e7cece6743f83e1",
+      "reuse_test": "c5638263f8e321ce51d2751329cde94c73352dffbe5d2bc1410fe7c6499c5940"
+    },
+    "before-allocations": {
+      "runtime": "60a39ec6e8d9a00522016c4d36909b3d9c0439cb734af0d006c8949c86d1b3ad",
+      "alloc_source": "dbe52cb4cf7b19e02f06ddb658474a0b5055844ba96825b32845f8c5043a53ed",
+      "heap_source": "d2070977bdb11d5fcbfacfbe9949ad4ce0bd7972d3082c0910db07dea65e7ccc",
+      "metrics_source": "72615d40fe4d86c76fe398f1c4ac6fb85693d5afc5d741d5ec62defe3c96771e",
+      "lib_source": "d7cacba0a18565b2f7a8e6c8bb94d56e596bd48a2dc74f828d1c3af3062e66a7",
+      "probe": "938b094201791ba32880776a471b9adfffacb24baaefd8c594143a6fc3a9cccb",
+      "differential": "a85480794a306ce28e6dbb83ed434266c4e2e95bd7cc6eb8da7b7c059b5542ad",
+      "options_test": "d24bd9f48e3a9fa2a1b6a64fc1b9100d27042b1e258a873f22a57a47a7ccd10b",
+      "reuse_test": "e095d62590c397e28a412c08377c1294818feab5cc02de6a841e932d112bc652"
+    },
+    "after-allocations": {
+      "runtime": "25d1e18afe678a6153ae8982649e769b66b2224d49a82acd6ad62cec08124249",
+      "alloc_source": "bdd31baf9e093c976f8e97ece0cd789349606ef34e14baf282a8a44f60114178",
+      "heap_source": "d2070977bdb11d5fcbfacfbe9949ad4ce0bd7972d3082c0910db07dea65e7ccc",
+      "metrics_source": "72615d40fe4d86c76fe398f1c4ac6fb85693d5afc5d741d5ec62defe3c96771e",
+      "lib_source": "d7cacba0a18565b2f7a8e6c8bb94d56e596bd48a2dc74f828d1c3af3062e66a7",
+      "probe": "4cc28841537e187b02613d112b60dc76777335b50d755b673df26a68a80618e6",
+      "differential": "b982ea45992cd3ec4bb1e52e2334b597bfe757930d6989270803dcd86e8ef819",
+      "options_test": "89be6e398bc75e246bb94ba763f808cfd4fa7af4279d3f537217db7b44bf93fd",
+      "reuse_test": "1dd836247ffea1e8bf5a064a2cdf20b29ea591dca4473da7ed5fd8561cf94e52"
+    }
+  },
+  "sources": {
+    "measure.py": "7d2236f508e3b74e3a0fe76abff1c9d1c56fba7b03d8c371ad8bc60c1d73f330",
+    "probe.erl": "bb8dfed5861595ad090425e4ddcdc6539819ba154c85183309b274f2fc929139",
+    "bit_offset_probe.erl": "d4b407bc9d288e8d8124edfa71ef6006647331d6dcecc23bea8f63c8043ddb1a"
+  }
+}

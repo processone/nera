@@ -1,0 +1,4 @@
+   Compiling nera-runtime v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-runtime)
+   Compiling nera v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera)
+    Checking nera-codegen v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-codegen)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.50s

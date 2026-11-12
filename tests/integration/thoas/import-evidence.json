@@ -1,0 +1,84 @@
+{
+  "date": "2026-10-11",
+  "base_ref": "origin/main",
+  "base_commit": "26a303fcd4f6c7b0254d3a67325ddf176e26ba2c",
+  "head_commit": "7c454856c88175fed552ea49b7f7c135505282ab",
+  "head_tree": "36f7d21ba6da63cd5bfe080eb2625ecb4ad0ad58",
+  "target": "uncommitted import changes over HEAD; final source hashes below",
+  "divergence_from_local_origin_main": {
+    "ahead": 1,
+    "behind": 0
+  },
+  "platform": "macOS arm64",
+  "otp": "29.0.5",
+  "upstream": {
+    "url": "https://github.com/lpil/thoas.git",
+    "version": "1.2.1",
+    "commit": "7cdcec7e52b80d2869900893b2acf47199d84190",
+    "source_modified": false,
+    "vendored": false
+  },
+  "source_sha256": {
+    "crates/nera-ir/src/lower/closure.rs": "e0e88fcc02bbd1fa0c4b6bcd506a7d0196d588523c4aa7db0ad36f297366648f",
+    "crates/nera-ir/src/lower/expr.rs": "be8be8c8b559d245728429c460a938fcc1deaae7212b09cb3af8d99608cbce78",
+    "crates/nera-ir/src/lower/mod.rs": "0a2f584ec7437e71d016f67476483c88071f55b0284f9f39d6ff4f0d9c454fba",
+    "crates/nera-ir/src/lower/tests.rs": "969d632b4ccc35c4c7cfb18848ceb636b8837e741ff0951400d98dc03c517885",
+    "crates/nera-ir/src/warnings/illegal_guards.rs": "f722758fd08bdfe346df26163efe008cefd5f8d2536e96b76afa0a3614981c09",
+    "crates/nera-ir/src/warnings/mod.rs": "ea20279a39679623952a41c5a6a1cc8a2f9c8cdf850ab66ec9bb8c45c0c8eedf",
+    "crates/nera-ir/src/warnings/tests.rs": "6ff22f5b860a5e5828feee05c69c5c84540627c85ac2db72c02548fb70d3fcb5",
+    "crates/nera-ir/src/warnings/undefined_functions.rs": "6a78b278ba2a43294209846a52b4e77578fc69b16d834299da1eb2e2b46b97e8",
+    "crates/nera-syntax/src/ast.rs": "6fc6792f19832ad5495be5fb0a3f13b3e3b73ec275c8c770fafd1327b5371a48",
+    "crates/nera-syntax/src/parser.rs": "abadfa62ed0f0726fd5de934b9acdb8456117f9518b96ca39cace6e98adde80d",
+    "tests/import_functions.erl": "51fd547c7b0a23e6642b30859251d92197931230ed133bf9ac5b024e3d480763",
+    "tests/integration/thoas/eunit/import_probe.erl": "4fc0ff8ee52e547e273e092308824ff99b816985d537a6197f6cd9c9af0c9d4c"
+  },
+  "compiler_sha256": "66f26f3aa9132b994d533a76d5cd8e400d14b457a84fdb9f87a0c1e8fac98cca",
+  "runtime_sha256": "1c3e358153fe7f529e943d172781a6fc812d2e24ff6405a66aa49dd2fbbf491a",
+  "compiler_profile": "debug",
+  "runtime_profile": "release (unchanged)",
+  "checks": {
+    "workspace": {
+      "passed": 1791,
+      "failed": 0,
+      "ignored": 1
+    },
+    "clippy": "passed",
+    "native_regressions": {
+      "passed": 2,
+      "tests": [
+        "import_functions",
+        "macro_stringify"
+      ]
+    },
+    "direct_import_probe": {
+      "beam": "THOAS_IMPORTS_OK",
+      "nera": "THOAS_IMPORTS_OK"
+    },
+    "direct_upstream_eunit": {
+      "compile_exit": 1,
+      "blocker": "undefined variable: 'Expected' at thoas_encode_test.erl:35:23",
+      "native_eunit_tests_executed": 0
+    },
+    "isolated_nested_closure": {
+      "beam": "CAPTURE_OK",
+      "nera": "compile failure: undefined variable Expected"
+    },
+    "differential_corpus": {
+      "status": "passed",
+      "groups": {
+        "boundary": 14,
+        "errors": 30,
+        "options": 6,
+        "valid": 30
+      },
+      "cases": 80,
+      "report_sha256": "f1400c3eb86951d5d248965b915492c5149e68a7952dd0d626e1446671e5b17a"
+    }
+  },
+  "limitations": [
+    "Full native EUnit remains blocked; autoexport transform and runner unvalidated.",
+    "Full ExUnit suite not rerun.",
+    "Validation performed on macOS arm64 only."
+  ],
+  "logs_directory": "/private/tmp/nera-import-validation"
+}

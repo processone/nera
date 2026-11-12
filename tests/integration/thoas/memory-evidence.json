@@ -1,0 +1,214 @@
+{
+  "status": "passed",
+  "commands": [
+    {
+      "label": "revision",
+      "argv": [
+        "git",
+        "-C",
+        "/private/tmp/nera-memory-validation/upstream",
+        "rev-parse",
+        "HEAD"
+      ]
+    },
+    {
+      "label": "clean",
+      "argv": [
+        "git",
+        "-C",
+        "/private/tmp/nera-memory-validation/upstream",
+        "status",
+        "--porcelain",
+        "--ignored",
+        "--untracked-files=all"
+      ]
+    },
+    {
+      "label": "otp",
+      "argv": [
+        "erl",
+        "-noshell",
+        "-eval",
+        "io:format(\"~s\", [erlang:system_info(system_version)]), halt()."
+      ]
+    },
+    {
+      "label": "version",
+      "argv": [
+        "/private/tmp/nera-memory-validation/compiler/nera",
+        "--version"
+      ]
+    },
+    {
+      "label": "beam-build",
+      "argv": [
+        "erlc",
+        "-o",
+        "/private/tmp/nera-memory-validation/build",
+        "/private/tmp/nera-memory-validation/upstream/src/thoas.erl",
+        "/private/tmp/nera-memory-validation/upstream/src/thoas_decode.erl",
+        "/private/tmp/nera-memory-validation/upstream/src/thoas_encode.erl",
+        "/home/user/AIProjects/nera/tests/integration/thoas/memory/thoas_memory.erl",
+        "/home/user/AIProjects/nera/tests/binary_referenced_byte_size.erl"
+      ]
+    },
+    {
+      "label": "nera-build",
+      "argv": [
+        "/private/tmp/nera-memory-validation/compiler/nera",
+        "build",
+        "/private/tmp/nera-memory-validation/upstream/src/thoas.erl",
+        "/private/tmp/nera-memory-validation/upstream/src/thoas_decode.erl",
+        "/private/tmp/nera-memory-validation/upstream/src/thoas_encode.erl",
+        "/home/user/AIProjects/nera/tests/integration/thoas/memory/thoas_memory.erl",
+        "-e",
+        "thoas_memory:start",
+        "-o",
+        "/private/tmp/nera-memory-validation/build/native"
+      ]
+    },
+    {
+      "label": "regression-build",
+      "argv": [
+        "/private/tmp/nera-memory-validation/compiler/nera",
+        "build",
+        "/home/user/AIProjects/nera/tests/binary_referenced_byte_size.erl",
+        "-e",
+        "binary_referenced_byte_size:test",
+        "-o",
+        "/private/tmp/nera-memory-validation/build/regression"
+      ]
+    },
+    {
+      "label": "beam",
+      "argv": [
+        "erl",
+        "-noshell",
+        "-pa",
+        "/private/tmp/nera-memory-validation/build",
+        "-eval",
+        "thoas_memory:start(), halt()."
+      ]
+    },
+    {
+      "label": "nera",
+      "argv": [
+        "/private/tmp/nera-memory-validation/build/native"
+      ]
+    },
+    {
+      "label": "beam-regression",
+      "argv": [
+        "erl",
+        "-noshell",
+        "-pa",
+        "/private/tmp/nera-memory-validation/build",
+        "-eval",
+        "binary_referenced_byte_size:test(), halt()."
+      ]
+    },
+    {
+      "label": "nera-regression",
+      "argv": [
+        "/private/tmp/nera-memory-validation/build/regression"
+      ]
+    }
+  ],
+  "upstream": {
+    "url": "https://github.com/lpil/thoas.git",
+    "version": "1.2.1",
+    "commit": "7cdcec7e52b80d2869900893b2acf47199d84190",
+    "dependencies": []
+  },
+  "nera_sha256": "789e1be9d2ee7e3892830416085b1afc42d2648fca673dd07c521a2d9571371f",
+  "runtime_sha256": "1c3e358153fe7f529e943d172781a6fc812d2e24ff6405a66aa49dd2fbbf491a",
+  "driver_sha256": "b325383d2448a21cb13c0ff84852db73075e14f108d1fc11a13fbf4d37e62bf4",
+  "runner_sha256": "169eaf3b7e6437480659b40bc8b50dd5c91944685e316aedfe3277300684e91d",
+  "source_sha256": {
+    "thoas.erl": "35ccc17f0676f85d368667f247bdf874ee2db2570d83ea96827caeab0cf8f4d8",
+    "thoas_decode.erl": "da543716802b34b2274c0dce170f87c29aa48f3a4c7784eff39422668f6ddb7e",
+    "thoas_encode.erl": "659484e603cea83d9aacb3a1faadb361b2033c25e44267e81e901195d51f8b38"
+  },
+  "otp_version": "Erlang/OTP 29 [erts-17.0.5] [source] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads:1] [jit] [dtrace]",
+  "nera_version": "nera 0.1.0",
+  "memory_cases": 4,
+  "observations": [
+    "THOAS_MEMORY:reference:210:210:210",
+    "THOAS_MEMORY:copy:210:101:102",
+    "THOAS_MEMORY:keys_copy:210:101:210",
+    "THOAS_MEMORY:strings_copy:210:210:102",
+    "THOAS_MEMORY_DONE:4"
+  ],
+  "regression": "passed on both engines",
+  "date": "2026-10-11",
+  "platform": "macOS-15.7.7-arm64-arm-64bit-Mach-O",
+  "base_commit": "0e9e53352341c64c67b2009b5e424dc5c8f011e3",
+  "base_tree": "70f551e56044ed0f921d8f592e0ac9430c2022cd",
+  "target": "Uncommitted memory-sharing changes over base_commit",
+  "compiler_profile": "debug",
+  "runtime_profile": "release",
+  "nera_source_sha256": {
+    "crates/nera-ir/src/bif_table.rs": "3a5505a2b1ac644fbe4989f77b28881b80311eb3ce3ff027c8e31cf6be23fa32",
+    "crates/nera-runtime/src/ffi/apply.rs": "b9f718b62f137bde06a70ef744318eae39441f4e01c139b8a53daa102113fea6",
+    "crates/nera-runtime/src/ffi/binary_ops.rs": "08b3d74b114abce4e8f0dba9b03b2b6e52baf967302c95901405f4b66b331f4f",
+    "tests/binary_referenced_byte_size.erl": "9dd4c386bc4b00dce368ea1eab3158072a0332b0031438b5fe3c11762121b9c3",
+    "tests/integration/thoas/memory/run.py": "169eaf3b7e6437480659b40bc8b50dd5c91944685e316aedfe3277300684e91d",
+    "tests/integration/thoas/memory/thoas_memory.erl": "b325383d2448a21cb13c0ff84852db73075e14f108d1fc11a13fbf4d37e62bf4",
+    "Cargo.lock": "1db3d1eb4c4998be8dfa9ab55c14c25f5893d730403c96a308a6444589a77455"
+  },
+  "checks": {
+    "workspace": {
+      "command": "RUSTC_WRAPPER= CARGO_TARGET_DIR=/private/tmp/nera-thoas-date-target cargo test --workspace --locked --offline --no-fail-fast",
+      "passed": 1779,
+      "failed": 0,
+      "ignored": 1,
+      "log": "/private/tmp/nera-memory-workspace.log",
+      "log_sha256": "eca1e6a3569ee65dccfcccb4b5ed373ead2b1bcb712fcac1cf0bd9edb41a33f2"
+    },
+    "clippy": {
+      "command": "RUSTC_WRAPPER= CARGO_TARGET_DIR=/private/tmp/nera-thoas-date-target cargo clippy --workspace --all-targets --locked --offline -- -D warnings",
+      "status": "passed",
+      "log": "/private/tmp/nera-memory-clippy.log",
+      "log_sha256": "437804a313717a93f877a3a5a344b20667d9b00825941b55d9624f2828235926"
+    },
+    "erlang": {
+      "command": "/private/tmp/nera-memory-validation/compiler/nera test 'binary_*' 'phash2_refc_binary' --no-warnings",
+      "passed": 19,
+      "failed": 0,
+      "log": "/private/tmp/nera-memory-erlang-tests.log",
+      "log_sha256": "1409bd74161f71fa025e99724edf2cbf10dce05051ab58405c28b2b393223e3c"
+    },
+    "corpus": {
+      "status": "passed",
+      "cases": 80,
+      "groups": {
+        "boundary": 14,
+        "errors": 30,
+        "options": 6,
+        "valid": 30
+      },
+      "command": "python3 tests/integration/thoas/differential/runner.py --nera /private/tmp/nera-memory-validation/compiler/nera --work-dir /private/tmp/nera-memory-corpus --offline",
+      "report": "/private/tmp/nera-memory-corpus/report.json",
+      "report_sha256": "205abd5ee5d55d06ea21ece874c8bfac372585041a1ab2874b5a19f78b3affd0",
+      "corpus_sha256": "fc72894cbffa986e0609516b38ee854a6f58666889d0ace310a305db6630b4c7"
+    },
+    "harness_unit_tests": {
+      "differential": 14,
+      "upstream": 9,
+      "status": "passed"
+    }
+  },
+  "limitations": [
+    "Full upstream suite and full Erlang suite not rerun for this change.",
+    "Native EUnit include resolution remains blocked.",
+    "Original ExUnit memory assertions through ETF cannot observe native sharing; this is a separate direct probe.",
+    "Local macOS arm64 result; no Linux execution claim."
+  ],
+  "publication": {
+    "base_ref": "origin/main",
+    "base_commit": "8e09179dba5dfc903f7d8ea0c35f61f1dfe23c5e",
+    "base_tree": "70f551e56044ed0f921d8f592e0ac9430c2022cd",
+    "branch": "mr/thoas-binary-sharing",
+    "verification": "Publication base has the same tree as the original validation base; source and log hashes rechecked before publication. No implementation changes since validation."
+  }
+}

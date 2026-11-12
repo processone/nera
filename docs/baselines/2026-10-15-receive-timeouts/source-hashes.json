@@ -1,0 +1,19 @@
+{
+  "Cargo.lock": "a210f397cb773d07c39ed4827a9aea44092f56ee7c2a438f708784dfa5769f80",
+  "Cargo.toml": "8d8f30e39479037b8f2cb82dbcc3f4705503423f0a6db6237003281cf25d24b3",
+  "rust-toolchain.toml": "2ad6f15416572b4836585087f1d4abc53b8fa2dbd616f8dacfaa587ed6714228",
+  "crates/nera-runtime/src/atom_table.rs": "f7456e6b5109fd780830ae6943a912f31cba5ed40761cf3bde3603421d4f97c9",
+  "crates/nera-ir/src/lower/expr.rs": "53f36cf75e29f82800bea41b2c794def1c1a92741fe0309754e826099078c33c",
+  "crates/nera-codegen/src/func_translator/instructions.rs": "d3ef23d75abba2a8fbc1de05175131b198f384156c4a84dc6930bbd81e5a74db",
+  "crates/nera-codegen/src/func_translator/ffi_emit.rs": "2d8341976e9603d75c589519a670694c0bcfde467b1fe53348b4094e56e64a5f",
+  "crates/nera-runtime/src/ffi/receive.rs": "1e76a1f4d51cd582c2d6e06b662567ada1bf485c9c82fb99d3f3603094014597",
+  "crates/nera-runtime/src/ffi/gen_tcp.rs": "63a2f3b93b05a43b669ecbe96a17b11b7d6443264397b3728f293323861242de",
+  "crates/nera-runtime/src/ffi/io_format.rs": "18ba91335025f80ee13e577b3c6dc7d5c1e1af7f014475d276186d1e74d9d986",
+  "crates/nera-runtime/src/ffi/exception.rs": "41675551c88b93a09a640c70dec9bcafbe1d541b61d0c92cedc942225195be78",
+  "tests/receive_timeout_domain.erl": "cac2a6b3a7a6a5616d451e8d7d98f7c069627109e22b0e7ea8d516992251f0f1",
+  "tests/receive_infinity.erl": "e3a4e835c9d18a0845a17852152f18f15143b5c67c79a0384a93172e3433989b",
+  "docs/baselines/2026-10-15-receive-timeouts/receive_probe.erl": "43914705dd1b1067e603d7260d2c94d9603bb8645c6617e6e5b996024f5d1ee9",
+  "docs/baselines/2026-10-15-receive-timeouts/modes_probe.erl": "aa8e0314f07b10413187a2b253ae251ba4f1290fa421f2263cf8c6f5d52e2f90",
+  "docs/baselines/2026-10-15-receive-timeouts/measure.py": "4d98022b02fc6bca48fe4d282a255edf29e7475bb9fdc2f219d330ff927708c1",
+  "CHANGELOG.md": "b2848e3be00ca8cb5e1c8c186e52ea138b853058a3fc00b86995cd0b0449356c"
+}

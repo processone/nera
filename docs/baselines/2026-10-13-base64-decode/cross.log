@@ -1,0 +1,160 @@
+OTP root: /opt/homebrew/Cellar/erlang/29.0.5/lib/erlang
+Application registry: 35 apps
+stdlib: using 11 embedded modules
+Checking 12 source files
+Parsing <stdlib>/application.erl...
+  Preprocessed (226 tokens)
+  Parsed module with 7 functions
+Parsing <stdlib>/base64.erl...
+  Preprocessed (938 tokens)
+  Parsed module with 9 functions
+Parsing <stdlib>/calendar.erl...
+  Preprocessed (600 tokens)
+  Parsed module with 12 functions
+Parsing <stdlib>/gen_server.erl...
+  Preprocessed (926 tokens)
+  Parsed module with 13 functions
+Parsing <stdlib>/lists.erl...
+  Preprocessed (3085 tokens)
+  Parsed module with 65 functions
+Parsing <stdlib>/maps.erl...
+  Preprocessed (1011 tokens)
+  Parsed module with 22 functions
+Parsing <stdlib>/proc_lib.erl...
+  Preprocessed (525 tokens)
+  Parsed module with 8 functions
+Parsing <stdlib>/proplists.erl...
+  Preprocessed (426 tokens)
+  Parsed module with 7 functions
+Parsing <stdlib>/queue.erl...
+  Preprocessed (4819 tokens)
+  Parsed module with 50 functions
+Parsing <stdlib>/supervisor.erl...
+  Preprocessed (1123 tokens)
+  Parsed module with 12 functions
+Parsing <stdlib>/timer.erl...
+  Preprocessed (404 tokens)
+  Parsed module with 11 functions
+Parsing hello.erl...
+  Preprocessed (44 tokens)
+  Parsed module with 1 functions
+  Lowered to 7 IR functions
+  Lowered to 9 IR functions
+  Lowered to 12 IR functions
+  Lowered to 15 IR functions
+  Lowered to 66 IR functions
+  Lowered to 25 IR functions
+  Lowered to 12 IR functions
+  Lowered to 7 IR functions
+  Lowered to 50 IR functions
+  Lowered to 14 IR functions
+  Lowered to 12 IR functions
+  Lowered to 1 IR functions
+Cross-compiling for x86_64-apple-darwin
+Compiling module 0 to application.o...
+Compiling module 28 to base64.o...
+Compiling module 78 to calendar.o...
+Compiling module 110 to gen_server.o...
+Compiling module 58 to lists.o...
+Compiling module 36 to maps.o...
+Compiling module 299 to proc_lib.o...
+Compiling module 310 to proplists.o...
+Compiling module 322 to queue.o...
+Compiling module 381 to supervisor.o...
+Compiling module 433 to timer.o...
+Compiling module 453 to hello.o...
+Object files written:
+  application.o
+  base64.o
+  calendar.o
+  gen_server.o
+  lists.o
+  maps.o
+  proc_lib.o
+  proplists.o
+  queue.o
+  supervisor.o
+  timer.o
+  hello.o
+  __nera_metadata.o
+hello.o: Mach-O 64-bit object x86_64
+OTP root: /opt/homebrew/Cellar/erlang/29.0.5/lib/erlang
+Application registry: 35 apps
+stdlib: using 11 embedded modules
+Checking 12 source files
+Parsing <stdlib>/application.erl...
+  Preprocessed (226 tokens)
+  Parsed module with 7 functions
+Parsing <stdlib>/base64.erl...
+  Preprocessed (938 tokens)
+  Parsed module with 9 functions
+Parsing <stdlib>/calendar.erl...
+  Preprocessed (600 tokens)
+  Parsed module with 12 functions
+Parsing <stdlib>/gen_server.erl...
+  Preprocessed (926 tokens)
+  Parsed module with 13 functions
+Parsing <stdlib>/lists.erl...
+  Preprocessed (3085 tokens)
+  Parsed module with 65 functions
+Parsing <stdlib>/maps.erl...
+  Preprocessed (1011 tokens)
+  Parsed module with 22 functions
+Parsing <stdlib>/proc_lib.erl...
+  Preprocessed (525 tokens)
+  Parsed module with 8 functions
+Parsing <stdlib>/proplists.erl...
+  Preprocessed (426 tokens)
+  Parsed module with 7 functions
+Parsing <stdlib>/queue.erl...
+  Preprocessed (4819 tokens)
+  Parsed module with 50 functions
+Parsing <stdlib>/supervisor.erl...
+  Preprocessed (1123 tokens)
+  Parsed module with 12 functions
+Parsing <stdlib>/timer.erl...
+  Preprocessed (404 tokens)
+  Parsed module with 11 functions
+Parsing hello.erl...
+  Preprocessed (44 tokens)
+  Parsed module with 1 functions
+  Lowered to 7 IR functions
+  Lowered to 9 IR functions
+  Lowered to 12 IR functions
+  Lowered to 15 IR functions
+  Lowered to 66 IR functions
+  Lowered to 25 IR functions
+  Lowered to 12 IR functions
+  Lowered to 7 IR functions
+  Lowered to 50 IR functions
+  Lowered to 14 IR functions
+  Lowered to 12 IR functions
+  Lowered to 1 IR functions
+Cross-compiling for aarch64-unknown-linux-gnu
+Compiling module 0 to application.o...
+Compiling module 28 to base64.o...
+Compiling module 78 to calendar.o...
+Compiling module 110 to gen_server.o...
+Compiling module 58 to lists.o...
+Compiling module 36 to maps.o...
+Compiling module 299 to proc_lib.o...
+Compiling module 310 to proplists.o...
+Compiling module 322 to queue.o...
+Compiling module 381 to supervisor.o...
+Compiling module 433 to timer.o...
+Compiling module 453 to hello.o...
+Object files written:
+  application.o
+  base64.o
+  calendar.o
+  gen_server.o
+  lists.o
+  maps.o
+  proc_lib.o
+  proplists.o
+  queue.o
+  supervisor.o
+  timer.o
+  hello.o
+  __nera_metadata.o
+hello.o: ELF 64-bit LSB relocatable, ARM aarch64, version 1 (SYSV), not stripped

@@ -1,0 +1,145 @@
+   Compiling nera-runtime v0.1.0 (/tmp/nera-pr85-windows-main/crates/nera-runtime)
+error[E0433]: cannot find `unix` in `os`
+   --> crates/nera-runtime/src/process.rs:432:22
+    |
+432 |         use std::os::unix::io::AsRawFd;
+    |                      ^^^^ could not find `unix` in `os`
+
+error[E0433]: cannot find `reactor` in the crate root
+   --> crates/nera-runtime/src/process.rs:583:39
+    |
+583 |         if let Some(reactor) = crate::reactor::global_reactor() {
+    |                                       ^^^^^^^ could not find `reactor` in the crate root
+    |
+note: found an item that was configured out
+   --> crates/nera-runtime/src/lib.rs:64:9
+    |
+ 63 | #[cfg(mio_supported)]
+    |       ------------- the item is gated here
+ 64 | pub mod reactor;
+    |         ^^^^^^^
+
+error[E0433]: cannot find `reactor` in the crate root
+   --> crates/nera-runtime/src/process.rs:584:41
+    |
+584 |             reactor.send_command(crate::reactor::ReactorCommand::RearmActive { stream_handle });
+    |                                         ^^^^^^^ could not find `reactor` in the crate root
+    |
+note: found an item that was configured out
+   --> crates/nera-runtime/src/lib.rs:64:9
+    |
+ 63 | #[cfg(mio_supported)]
+    |       ------------- the item is gated here
+ 64 | pub mod reactor;
+    |         ^^^^^^^
+
+error[E0425]: cannot find function `peek_recv_fd` in module `crate::socket`
+   --> crates/nera-runtime/src/process.rs:457:34
+    |
+457 |             match crate::socket::peek_recv_fd(fd, &mut peek_buf) {
+    |                                  ^^^^^^^^^^^^ not found in `crate::socket`
+    |
+note: found an item that was configured out
+   --> crates/nera-runtime/src/socket.rs:545:15
+    |
+544 | #[cfg(mio_supported)]
+    |       ------------- the item is gated here
+545 | pub(crate) fn peek_recv_fd(fd: std::os::unix::io::RawFd, buf: &mut [u8]) -> io::Result<usize> {
+    |               ^^^^^^^^^^^^
+
+error[E0425]: cannot find function `consume_exact_fd` in module `crate::socket`
+   --> crates/nera-runtime/src/process.rs:468:48
+    |
+468 |                         let _ = crate::socket::consume_exact_fd(fd, &mut tmp);
+    |                                                ^^^^^^^^^^^^^^^^ not found in `crate::socket`
+    |
+note: found an item that was configured out
+   --> crates/nera-runtime/src/socket.rs:588:15
+    |
+587 | #[cfg(mio_supported)]
+    |       ------------- the item is gated here
+588 | pub(crate) fn consume_exact_fd(
+    |               ^^^^^^^^^^^^^^^^
+
+error[E0425]: cannot find function `consume_exact_fd` in module `crate::socket`
+   --> crates/nera-runtime/src/process.rs:500:48
+    |
+500 |                         let _ = crate::socket::consume_exact_fd(fd, &mut tmp);
+    |                                                ^^^^^^^^^^^^^^^^ not found in `crate::socket`
+    |
+note: found an item that was configured out
+   --> crates/nera-runtime/src/socket.rs:588:15
+    |
+587 | #[cfg(mio_supported)]
+    |       ------------- the item is gated here
+588 | pub(crate) fn consume_exact_fd(
+    |               ^^^^^^^^^^^^^^^^
+
+error[E0425]: cannot find function `consume_fd` in module `crate::socket`
+   --> crates/nera-runtime/src/process.rs:543:34
+    |
+543 |             match crate::socket::consume_fd(fd, &mut buf) {
+    |                                  ^^^^^^^^^^ not found in `crate::socket`
+    |
+note: found an item that was configured out
+   --> crates/nera-runtime/src/socket.rs:565:15
+    |
+564 | #[cfg(mio_supported)]
+    |       ------------- the item is gated here
+565 | pub(crate) fn consume_fd(
+    |               ^^^^^^^^^^
+
+error[E0599]: no method named `as_raw_fd` found for struct `Arc<TcpStream>` in the current scope
+   --> crates/nera-runtime/src/process.rs:433:16
+    |
+433 |         stream.as_raw_fd()
+    |                ^^^^^^^^^
+    |
+help: there is a method `as_ref` with a similar name
+    |
+433 -         stream.as_raw_fd()
+433 +         stream.as_ref()
+    |
+
+warning: unused variable: `worker_notify`
+  --> crates/nera-runtime/src/ffi/gen_tcp.rs:23:13
+   |
+23 |         let worker_notify = std::sync::Arc::clone(&sched.worker_notify);
+   |             ^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_worker_notify`
+   |
+   = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `self_pid`
+   --> crates/nera-runtime/src/ffi/gen_tcp.rs:261:9
+    |
+261 |     let self_pid = if !ctx.is_null() { unsafe { (*ctx).pid } } else { 0 };
+    |         ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_self_pid`
+
+warning: unused variable: `self_pid`
+   --> crates/nera-runtime/src/ffi/gen_tcp.rs:316:9
+    |
+316 |     let self_pid = if !ctx.is_null() { unsafe { (*ctx).pid } } else { 0 };
+    |         ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_self_pid`
+
+warning: unused variable: `self_pid`
+   --> crates/nera-runtime/src/ffi/gen_tcp.rs:651:9
+    |
+651 |     let self_pid = if !ctx.is_null() { unsafe { (*ctx).pid } } else { 0 };
+    |         ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_self_pid`
+
+warning: unused variable: `need_deregister`
+   --> crates/nera-runtime/src/ffi/gen_tcp.rs:956:9
+    |
+956 |     let need_deregister = if new_packet.is_some() || matches!(new_active, Some(0)) {
+    |         ^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_need_deregister`
+
+warning: unused variable: `was_registered`
+   --> crates/nera-runtime/src/socket.rs:365:9
+    |
+365 |     let was_registered = with_entry_opts(handle, |opts| {
+    |         ^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_was_registered`
+
+Some errors have detailed explanations: E0425, E0433, E0599.
+For more information about an error, try `rustc --explain E0425`.
+warning: `nera-runtime` (lib) generated 6 warnings
+error: could not compile `nera-runtime` (lib) due to 8 previous errors; 6 warnings emitted

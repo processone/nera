@@ -1,0 +1,108 @@
+{
+  "date": "2026-10-16",
+  "status": "passed",
+  "scope": "mio reactor queued/in-flight active TCP registration liveness",
+  "base_commit": "663aa0b41c789f1a3b90cedb74d75bfb71434e29",
+  "platform": "macOS-15.7.7-arm64-arm-64bit-Mach-O",
+  "rust_toolchain": "[toolchain]\nchannel = \"1.99.0\"\nprofile = \"minimal\"\ncomponents = [\"rustfmt\", \"clippy\"]\n",
+  "source_snapshot_sha256": "145cc05cd42295b3af3a3b1d0797c50ceaf897f1133fe66b82cc36912371b659",
+  "source_file_count": 203,
+  "changed_source_sha256": {
+    "crates/nera-runtime/src/reactor.rs": "8758eea5215b6d1026c7c10df7466552538c2a6a17c2ada292be32743aae5687"
+  },
+  "runtime_diff_sha256": "9d3804a9494d47855b8617e20088cd810073ef594bf65857fba7ff084d9f7717",
+  "compiler_sha256": "99801127681fbd2431f30a66fc28fbe38d0baef708644148c02e94a3c207c41b",
+  "runtime_sha256": "b1bb5af0e88a6ec05d84920293cbd5056bb270a17d1872a7fe288d52e4798d03",
+  "root_cause": "has_pending counted only live registrations; queued or dequeued-in-flight RegisterActive commands had no liveness ownership",
+  "fix": "Registration-only RAII guards increment shared per-handle pending count before enqueue and survive dequeue/handling. Release after live registration publication or on failure/discard/receiver disconnect. Read handoff count before live count with Acquire; guard completion uses Release.",
+  "deterministic_tests": {
+    "names": [
+      "active_registration_is_pending_until_published",
+      "active_registration_failures_release_pending_work",
+      "active_registration_clones_keep_each_command_alive"
+    ],
+    "isolation": "Separate test subprocess owns socket registry/global counters. No reactor thread runs. Lifecycle checkpoints are advanced manually; actual drain loop is observed after dequeue, before handler publication. One real loopback fd supplies successful poll registration, without peer data.",
+    "red": "All three tests fail at intended queued/in-flight ownership assertions on original main, not setup/compile errors.",
+    "early_release_counter_verification": "Temporarily drop the registration guard immediately after dequeue in the final processing loop; the success test fails at its in-flight assertion. Source restored in finally before final checks.",
+    "green": "All three pass on final source; include registration reuse, live handoff/deregistration, missing socket, ordinary registration discard, cleanup without wake source, 100 failed sends, independent clone/command lifetimes, shutdown with queued registration."
+  },
+  "checks": {
+    "release": "passed: cargo build --release --locked",
+    "clippy": "passed: cargo clippy --workspace --all-targets --locked -- -D warnings",
+    "rust": {
+      "passed": 2000,
+      "failed": 0,
+      "ignored": 1
+    },
+    "native_focused": {
+      "passed": 26,
+      "failed": 0,
+      "skipped": 0,
+      "command": "nera test 'tcp_*' '*receive*' 'timer_*' send_after_keeps_alive start_timer_keeps_alive -j 1 --timeout 30",
+      "validation_base_commit": "99a16f0db82e51b867faf04498da2204265d2785",
+      "note": "Earlier focused run; all tests also included in final full native suite."
+    },
+    "logs": {
+      "red": {
+        "path": "/private/tmp/nera-active-registration-red.log",
+        "sha256": "d5c455cdb02e355366f3fd6a5d91bfb51aa779363deb621c5a4dbdb3698579a1"
+      },
+      "early-release-red": {
+        "path": "/private/tmp/nera-active-registration-early-release-red.log",
+        "sha256": "0f3fd015116ee0f42ca3c5a043141b469bd3aa0b45d3b4c5571c9a1c96236ae8"
+      },
+      "green": {
+        "path": "/private/tmp/nera-active-registration-green.log",
+        "sha256": "6f737c65d97bfa90357c81c027821e9559b04e49bb64d424c51e1a6b8e0fb0cd"
+      },
+      "release": {
+        "path": "/private/tmp/nera-active-registration-release.log",
+        "sha256": "9aee3b1b8ba8c888b64cc446b209eaaa80c513166a6d88961b5e6c38c75f97f0"
+      },
+      "clippy": {
+        "path": "/private/tmp/nera-active-registration-clippy.log",
+        "sha256": "7f1b3b62a2b3b100463c8f25e3a8a291f3988c36214df417dd151be8ba1f1acc"
+      },
+      "rust": {
+        "path": "/private/tmp/nera-active-registration-rust.log",
+        "sha256": "0a5a1a82f84b86e452d9a83ab2ebd15657848baef208aa1f26eeeb68c2846a10"
+      },
+      "native": {
+        "path": "/private/tmp/nera-active-registration-native.log",
+        "sha256": "78923650c668518415f95e17a2d3ae3c88dca0c8a6bfdeed35c07bda55ef5f81"
+      },
+      "publication_release": {
+        "path": "/private/tmp/nera-active-registration-publication-release.log",
+        "sha256": "fa00a42d2b9a70405e9e91b51f4b4758f5cd3d6c7eb5b73a596fadb6f96d647d"
+      },
+      "publication_clippy": {
+        "path": "/private/tmp/nera-active-registration-publication-clippy.log",
+        "sha256": "6cedfc718074ba523e82431f27470a72ce9bf43e025c2e33b9176541f2efe125"
+      },
+      "publication_rust": {
+        "path": "/private/tmp/nera-active-registration-publication-rust.log",
+        "sha256": "9734aeccaa6ec14bf640bdd0129d875dde9469672fcb42e67c029e1f1313b3de"
+      },
+      "publication_native": {
+        "path": "/private/tmp/nera-active-registration-publication-native.log",
+        "sha256": "d2768d6dd1f5fe014750e9163a92f317eae5e06c08f84dba98ba2c0bdf07a268"
+      }
+    },
+    "native_full": {
+      "passed": 380,
+      "failed": 0,
+      "compile_errors": 0,
+      "skipped": 2,
+      "total": 382,
+      "command": "nera test -j 1 --timeout 30"
+    }
+  },
+  "limits": [
+    "Local macOS arm64 only; no new Linux/Windows/runtime cross-platform verdict. Non-mio active-reader fallback unchanged.",
+    "Cowlib/EUnit suites not rerun for this internal reactor change; full native Erlang suite passed on final integration source. Two existing Onecached integration skips remain.",
+    "Existing relative TCP performance/stress regression passes, but no new before/after throughput or absolute latency measurement.",
+    "Only registration ownership is corrected; not a claim that all reactor/scheduler concurrency paths have been audited.",
+    "CI/Release remain manually suspended; no workflows enabled or changed."
+  ],
+  "original_validation_base_commit": "99a16f0db82e51b867faf04498da2204265d2785"
+}

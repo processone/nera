@@ -1,0 +1,31 @@
+   Compiling nera-runtime v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-runtime)
+warning: unnecessary `unsafe` block
+    --> crates/nera-runtime/src/scheduler.rs:1179:40
+     |
+1179 |             if let Some(exit_reason) = unsafe { crate::process::process_exit_signals(&mut proc) } {
+     |                                        ^^^^^^ unnecessary `unsafe` block
+     |
+     = note: `#[warn(unused_unsafe)]` (part of `#[warn(unused)]`) on by default
+
+warning: `nera-runtime` (lib) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.01s
+     Running tests/exit_signal_contract.rs (/tmp/nera-transfer-target/debug/deps/exit_signal_contract-3858ad16e9a3e84b)
+
+running 1 test
+test raw_exit_scan_requires_an_unsafe_call ... FAILED
+
+failures:
+
+---- raw_exit_scan_requires_an_unsafe_call stdout ----
+
+thread 'raw_exit_scan_requires_an_unsafe_call' (4707247) panicked at crates/nera-runtime/tests/exit_signal_contract.rs:67:5:
+safe raw EXIT traversal was accepted
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    raw_exit_scan_requires_an_unsafe_call
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+error: test failed, to rerun pass `-p nera-runtime --test exit_signal_contract`

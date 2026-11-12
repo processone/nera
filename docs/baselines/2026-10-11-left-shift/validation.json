@@ -1,0 +1,39 @@
+{
+  "base": "bb20f3b46d6a41eb6c494fce846d1f6738d7ce7b",
+  "branch": "mr/left-shift-overflow",
+  "target": "uncommitted worktree",
+  "sources": {
+    "CHANGELOG.md": "28f605479b7152a876c12e454e3ddb979c080d3ff04245a457555d5b61906131",
+    "crates/nera-codegen/src/func_translator/ffi_emit.rs": "5d39634abd189078d36d34292977f8639402b1fe4a27f417643c4b3beb38e599",
+    "crates/nera-ir/src/passes/constant_folding.rs": "a76905b28a36412729ba2af6b675c7aafe15baa415443284db540c2797f9db0f",
+    "tests/bsl_constant_overflow.erl": "4703bfe50584af3549df58154ec37985509faee80dd0a8ea75284aca83b9162a",
+    "tests/bsl_overflow.erl": "4cfd64586e8edea43e52d4a271115e3d7b2e09dc17609eb114756fcf842bc5e0",
+    "docs/baselines/2026-10-11-left-shift/bench_bsl.erl": "183dbe014d4f0b8e1155acc2075dfb270bbcbc5890e414c80da95792a57fbb17",
+    "docs/baselines/2026-10-11-left-shift/measure.py": "37c76e1d8d71682c6bdb59a8c6625024e7733c37573db542602f8321ad098d11"
+  },
+  "logs": {
+    "nera-shift-red-ir.log": "315eb07c6702ebb47e519ed6512ba40123218a8148838d0c41886127fcfec7a5",
+    "nera-shift-red-e2e.log": "3e53b3d610e606c3a28c200f002c869925e70945a06a98cae3aeb76a574d150d",
+    "nera-shift-workspace.log": "10bfecf8f5702994786cabd2052deeffb9f390a4f34f6786e4fe97f8b8886623",
+    "nera-shift-final-ir.log": "4f3524974b86998f447ef618897963e275b03c51681e9e04b7cab76aa3aa6df3",
+    "nera-shift-green-e2e.log": "b9ccde76e4616b3ebeb698bc456640b21dbd611be6e4b5fa9b47ac0a6ed36b17",
+    "nera-shift-release-e2e.log": "592a8419c85ad824a4fd70afbac57696aff6c41bc05cdc975976c6aa3b346ded",
+    "nera-shift-beam-final.log": "ea0c4fc4fde875c8f09edca6d978f330de4de2f4f2efab5ef1c6fbee824c9a64",
+    "nera-shift-clippy-final.log": "149f4a1ef517b497da8dadf3314a4f3b90dbfeab5b5d7246466a58ccc544d43e",
+    "nera-shift-release-build.log": "3abff28c8d9e0b39194e031a40c52b8727c6f7ca453cccc5e44ca5f691417292"
+  },
+  "artifacts": {
+    "before/nera": "32b0cc84e4ea3ec23935f62312a649d182dffc7c5c59467059341ea968c3d5cf",
+    "before/libnera_runtime.a": "1c3e358153fe7f529e943d172781a6fc812d2e24ff6405a66aa49dd2fbbf491a",
+    "before/bench": "4f24566c4404d7aeef5b96243280f15b49742b4c9c9b156f83b2de1ba456c575",
+    "after/nera": "3c5fca1bd00d5bd18551b2881c995c686f7905b96c6340ad81a763bae0556a95",
+    "after/libnera_runtime.a": "1c3e358153fe7f529e943d172781a6fc812d2e24ff6405a66aa49dd2fbbf491a",
+    "after/bench": "9b6468dd21c82c8e390c237fa1f6440294e609bb098850c2a33bcb5093db3973"
+  },
+  "limits": [
+    "macOS ARM64 only",
+    "Busy machine; benchmarks measure a fast-path loop rather than application throughput",
+    "Separate multiplication overflow documented, not changed",
+    "Final IR test table tightened after workspace run; focused IR test and Clippy rerun"
+  ]
+}

@@ -1,0 +1,183 @@
+{
+  "platform": "macOS-15.7.7-arm64-arm-64bit-Mach-O",
+  "scope": "Deterministic instances of original properties: real PropEr replay on BEAM, external closure adapter on Nera; no native PropEr claim.",
+  "properties": [
+    "prop_identity",
+    "prop_identity_no_padding"
+  ],
+  "upstream": {
+    "name": "cowlib",
+    "version": "2.20.0",
+    "url": "https://github.com/ninenines/cowlib.git",
+    "commit": "c768a804565ff5b8178ed968a5921e469d6bd7b2"
+  },
+  "proper_commit": "5640d0715d4b346676267504d8e84398e2a29f75",
+  "source_sha256": "3d68bd7d9d03230c99c298688bb9c804fe8ebdcf1ced3e64683de3b72a9436a2",
+  "nera_sha256": "4dd12d2ca2e47c3401dc2d2904b02f1fac2e564f9bd56a23bb25ff12c4fdef64",
+  "runtime_sha256": "2fddde0178063e8f830d1d973848834787f951cfe110f3e937b556c3acf6322d",
+  "harness_sha256": "0d87b512ca87e817c2b6f7c992b4e283eb036a7b588696561bc7f727ef9a51f9",
+  "nera_source_commit": "7efc0ea0603fb4a861650c9386bca199fd1e0537",
+  "otp_version": "Erlang/OTP 29 [erts-17.0.5] [source] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads:1] [jit] [dtrace]",
+  "adapted_sha256": "dd128c418d64640f32dbd224c0bb63b66e324b89b2d2eacc3d6f99585949ef23",
+  "proper_beam_sha256": {
+    "vararg.beam": "88572417be3443a675640d9629b23c74bb87c464b909bc357a57be6524637257",
+    "proper_gen.beam": "c03cefa0ae37e38dd758c88c7184f30592396e2eb56c16b1130a84273780e4d5",
+    "proper_unicode.beam": "6f9475aeaee1919e188b158a7703ccf164c67995be1476659b48820741b7e2eb",
+    "proper_typeserver.beam": "257e966dc8c5c5417c153c833a83a846e671d861a3730e63e438e2236474536e",
+    "proper_unused_imports_remover.beam": "fd27c8c801c10ea825c5d3377b9e6d4b9b6a68d9594ca627e6053c91774fc358",
+    "proper_dict.beam": "d9985828dea8f9cb64f455b4c2ba448a4d4eb5c82479ac6d6a48c8e1a8720799",
+    "proper_arith.beam": "51a72e4fe3b7ae5f0c00bd1b02b7e3536251d7676eb710b5fbcb56721a6d82d5",
+    "proper_queue.beam": "92db6e00a1d7830fc13f1170317cda2ed73df1283b4b1d911cba892e5546694b",
+    "proper_symb.beam": "f1d508beb033d6835df29acbd2494a5b672c83c90321c9af191307a94e26b8cc",
+    "proper.beam": "1ca7be7a2de55829123caadef34f0203de249ea26a1420ece1a2b0025b7bbb8a",
+    "proper_transformer.beam": "c10e678b3647ded71672c17335ef474178b1e1750cfac1964a8e05bac08ee0c2",
+    "proper_sa.beam": "67a467ab6164ce859adef492247d06bbb6114ee752a764a3a6e58ca864b23671",
+    "proper_orddict.beam": "07f047b946a9c5007cd0580980b8e3cd2eb3025991231a36f7334fbc4c7a1632",
+    "proper_ordsets.beam": "c922ba8ddd78bf4265861c0b7e82c2b5e7591c8cfdd89fa75accee17993dd6fc",
+    "proper_statem.beam": "c2a6b69cf8a8ed68c33aa60c72b99b8ce7f1d05d04cb1112e767f21a7cb3a02f",
+    "proper_erlang_abstract_code.beam": "a571d08a06fa6e011e3e277cc1daee2fc30adb43ebb0756bc9b65b1f718287f6",
+    "proper_shrink.beam": "df315a082b8947c1ad92c2fc2b30cd4168ed542a94cbf7f29776601d13e4f8ce",
+    "proper_target.beam": "230ffdb9e492b883c36cf40816ea9ce24553688416d052d51c3e6910210a9c73",
+    "proper_fsm.beam": "abefe8d626dc51c246f9327105ef18553612a854b025d4f2a644c3178f15e5ba",
+    "proper_sets.beam": "73f7355ec1f09e9231e90baa3fb2bc44fd77f3f21da0a717e588cef6085f93c4",
+    "proper_gb_sets.beam": "d9ae3cfc9d73e5736230ec2cf98b9fcd58fc58da55d2d77857e6d2d48e1d69da",
+    "proper_prop_remover.beam": "b666fbc0acb501cfd616d6a41e86b7e43ba36280c8e8d9c8f5ddcc1d6f31c166",
+    "proper_types.beam": "8e4bd563b6a1810f4dd82ee17d0ad5d80eac407648469b3d2f490f200557e8ad",
+    "proper_gen_next.beam": "b1284494ecaa1ab272626e6c55b745abb73403a2c19019c0769074fca5e42826",
+    "proper_gb_trees.beam": "12c9d4d799df3a7c03a3f74bc540d2e2e030944f2ef2760b62474bc033cf7412",
+    "proper_array.beam": "1b0de271c29b20fa2b4a79a81d0bbfaddec87ba2e3d8f29f4c7b39e2d82bdd89"
+  },
+  "executable_sha256": "46f56c2cd4ed9a606cdae5b0c9b978b6a93b33a2a44e1864ff56b33fc7bc3f77",
+  "beam": {
+    "cases": 1563,
+    "passed_per_property": {
+      "prop_identity": 1563,
+      "prop_identity_no_padding": 1563
+    },
+    "passed_encodings": 1563,
+    "rfc7515_test": "passed",
+    "failures": [],
+    "returncode": 0,
+    "output_sha256": "e3c9d6b395ab5c88addd68a83f379279f4704759d0b0333f3a89f6aa8f9f0de0",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "nera": {
+    "cases": 1563,
+    "passed_per_property": {
+      "prop_identity": 1563,
+      "prop_identity_no_padding": 1563
+    },
+    "passed_encodings": 1563,
+    "rfc7515_test": "passed",
+    "failures": [],
+    "returncode": 0,
+    "output_sha256": "e3c9d6b395ab5c88addd68a83f379279f4704759d0b0333f3a89f6aa8f9f0de0",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "nera_isolated": {
+    "cases": 1563,
+    "passed_per_property": {
+      "prop_identity": 1563,
+      "prop_identity_no_padding": 1563
+    },
+    "passed_encodings": 1563,
+    "rfc7515_test": "passed",
+    "failures": []
+  },
+  "negative_controls": {
+    "prop_identity-negative-beam": {
+      "returncode": 0,
+      "false_property_rejected": true
+    },
+    "prop_identity-negative-nera": {
+      "returncode": 0,
+      "false_property_rejected": true
+    },
+    "prop_identity_no_padding-negative-beam": {
+      "returncode": 0,
+      "false_property_rejected": true
+    },
+    "prop_identity_no_padding-negative-nera": {
+      "returncode": 0,
+      "false_property_rejected": true
+    }
+  },
+  "date": "2026-10-12",
+  "status": "passed",
+  "runner_exit_code": 0,
+  "root_cause": "Minor GC skips old container contents but previously swept binary backing stores using only pointers encountered during that partial traversal. Backing storage referenced by a live old match context could be freed and reused.",
+  "fix": "Track backing stores promoted to old generation. Preserve them across minor collections and recompute the set on major collection; unreachable young stores remain reclaimable.",
+  "base_tree": "25b97834b18497373e439562005d3b59e55e54c8",
+  "changed_source_sha256": {
+    "crates/nera-runtime/src/heap.rs": "a563f7844082276bad80163949964a366c7ecd08a6574c3232527d5a2388b8e7"
+  },
+  "corpus": {
+    "seed": "nera-cow-base64url-v1",
+    "algorithm": "SHAKE-256 plus explicit byte/boundary patterns; framed with uint32 big-endian lengths",
+    "count": 1563,
+    "sha256": "0ea75031528097cb037ca7295e2a7ae416521d1e2c6a9b67e4e3c18d9e533ced"
+  },
+  "report_sha256": "f999c9e445b7fc735d2f678bb1ae2345a0f3b62b053875cc7b8d4028c41cf903",
+  "build_command": "RUSTC_WRAPPER= CARGO_TARGET_DIR=/private/tmp/nera-main-cowlib-target cargo build --release --locked --offline",
+  "run_command": "python3 tests/integration/cowlib/upstream_base64url.py --upstream /private/tmp/nera-cowlib-validation/upstream --proper /private/tmp/nera-cowlib-proper --nera /private/tmp/nera-main-cowlib-target/release/nera --work-dir /private/tmp/nera-base64url-gc-fixed",
+  "build_log_sha256": "5ff0c5c71a54b2e073204ab8446e2cf3a0c024ad6798fd6e1be5f0432a82df8c",
+  "cowlib_corpus": {
+    "status": "passed",
+    "report_sha256": "e073b1c03842adb4a266affafe64a772d0bb0aed5933b538e15c3865df6fb21f",
+    "modules": {
+      "cow_qs": {
+        "passed": 29,
+        "total": 29,
+        "beam_passed": 29,
+        "blocked": 0
+      },
+      "cow_cookie": {
+        "passed": 34,
+        "total": 34,
+        "beam_passed": 34,
+        "blocked": 0
+      },
+      "cow_date": {
+        "passed": 26,
+        "total": 26,
+        "beam_passed": 26,
+        "blocked": 0
+      },
+      "cow_base64url": {
+        "passed": 33,
+        "total": 33,
+        "beam_passed": 33,
+        "blocked": 0
+      }
+    },
+    "scope": "Existing 122-case comparison contract unchanged, including Set-Cookie attribute order and positive Max-Age time windows."
+  },
+  "checks": {
+    "minimal_regression": "minor_gc_preserves_binary_behind_old_match_context fails before the fix with live binary backing was freed; passes after.",
+    "lifecycle_regression": "minor_gc_retains_nested_old_binaries_but_sweeps_young_garbage covers nested map/list/tuple storage, young garbage, retention across minor GC, and final release on major GC.",
+    "rust_workspace": "1813 passed, 1 ignored; serial, locked, offline",
+    "clippy": "nera-runtime all targets, -D warnings: passed",
+    "harness_tests": "37 passed",
+    "native_regressions": "base64_options, binary_refc, binary_referenced_byte_size, binary_rest_multi_use, closure_gc: passed"
+  },
+  "test_logs_sha256": {
+    "nera-cumulative-red.log": "ee0083697a5d1a72bda0870fa9df35b996a60c810f0616e998c3549da146d89a",
+    "nera-cumulative-green.log": "f9169726e41721e0e72926260a062e9862c5fbdc2d85973e7a5cb6791b780287",
+    "nera-cumulative-workspace-tests.log": "e1775ccf198836a91855a35e89c2d244e54838a1459bfd8ab4b025f6a64c9a78",
+    "nera-cumulative-clippy.log": "14e31ccddf8b532d3e459e73725be95b597a9a8181ec4caa45670f76c621f31d",
+    "nera-cumulative-native-final.log": "0aa053b5fec08b001e5a133456b91bb4b434f15f0e065925b017fb9563776a9f"
+  },
+  "separate_observation": {
+    "scope": "Existing-variable binary matching, not fixed or claimed by this GC change.",
+    "description": "During reduction, B = binary:copy(<<N>>, N) fails with badmatch in this generated-frame loop, while true = B =:= binary:copy(<<N>>, N) succeeds. The original upstream properties use equality. The same match form failed before and after the GC fix. Root cause not established.",
+    "project_owned_reproducer": "%% EXPECT: ok\n%% Keep the unread binary behind a match context across allocating calls.\n-module(binary_gc_retention).\n-export([test/0]).\n\ntest() ->\n    Frames = iolist_to_binary([<<N:32, (binary:copy(<<N>>, N))/binary>>\n                              || N <- lists:seq(0, 128)]),\n    129 = consume(Frames, 0),\n    io:format(\"ok~n\").\n\nconsume(<<>>, Count) -> Count;\nconsume(<<N:32, B:N/binary, Rest/binary>>, Count) ->\n    B = binary:copy(<<N>>, N),\n    Encoded = base64:encode(B, #{mode => urlsafe}),\n    B = base64:decode(Encoded, #{mode => urlsafe}),\n    consume(Rest, Count + 1).\n",
+    "fixed_runtime_stderr": "Error in process <0.1.0>: error:{badmatch,<<1>>}\nStacktrace (most recent call last):\n  binary_gc_retention:consume/2 (binary_gc_retention.erl, line 14)\n  binary_gc_retention:test/0 (binary_gc_retention.erl, line 9)\n",
+    "note": "The exploratory Erlang fixture was not committed: its final equality form also passed with the old runtime and was not a regression detector for this bug. The minimal Rust ownership test is the RED/GREEN regression."
+  },
+  "limitations": [
+    "Local macOS arm64 / OTP 29.0.5 only; no remote Linux verdict for this fix yet.",
+    "Nera executes original predicates through the external macro adapter, not native PropEr generation or shrinking.",
+    "Old-generation backing stores may remain until major GC, matching the lifetime of their untraversed descriptors. No performance benchmark was run.",
+    "No claim for all Cowlib modules; separate existing-variable binary matching observation remains open."
+  ]
+}

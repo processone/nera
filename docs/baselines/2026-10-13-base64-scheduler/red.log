@@ -1,0 +1,29 @@
+   Compiling nera-runtime v0.1.0 (/home/user/.codex/worktrees/binary-match-corrections/nera/crates/nera-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.30s
+     Running unittests src/lib.rs (/home/user/AIProjects/nera/target/binary-match-publication/debug/deps/nera_runtime-27bb0f9fcbc2d668)
+
+running 3 tests
+
+thread 'scheduler::tests::single_worker_global_queue_progresses_while_local_process_yields' (4195251) panicked at crates/nera-runtime/src/scheduler.rs:1804:9:
+global work waited 128 local slices
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test scheduler::tests::single_worker_global_queue_progresses_while_local_process_yields ... FAILED
+
+thread 'ffi::base64::tests::single_worker_observer_runs_during_large_native_encoding' (4195249) panicked at crates/nera-runtime/src/ffi/base64.rs:267:9:
+observer did not run between native chunks: progress=0
+test ffi::base64::tests::single_worker_observer_runs_during_large_native_encoding ... FAILED
+
+thread 'ffi::base64::tests::single_worker_repeated_small_encodes_share_cpu' (4195250) panicked at crates/nera-runtime/src/ffi/base64.rs:231:9:
+one slice encoded 64 near-threshold binaries
+test ffi::base64::tests::single_worker_repeated_small_encodes_share_cpu ... FAILED
+
+failures:
+
+failures:
+    ffi::base64::tests::single_worker_observer_runs_during_large_native_encoding
+    ffi::base64::tests::single_worker_repeated_small_encodes_share_cpu
+    scheduler::tests::single_worker_global_queue_progresses_while_local_process_yields
+
+test result: FAILED. 0 passed; 3 failed; 0 ignored; 0 measured; 513 filtered out; finished in 0.18s
+
+error: test failed, to rerun pass `-p nera-runtime --lib`

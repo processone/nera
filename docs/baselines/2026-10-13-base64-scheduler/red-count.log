@@ -1,0 +1,20 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+     Running unittests src/lib.rs (/home/user/AIProjects/nera/target/binary-match-publication/debug/deps/nera_runtime-27bb0f9fcbc2d668)
+
+running 1 test
+
+thread 'entry::scheduler_count_tests::explicit_single_scheduler_and_invalid_counts' (4205057) panicked at crates/nera-runtime/src/entry.rs:220:9:
+assertion `left == right` failed
+  left: Ok(16)
+ right: Ok(1)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test entry::scheduler_count_tests::explicit_single_scheduler_and_invalid_counts ... FAILED
+
+failures:
+
+failures:
+    entry::scheduler_count_tests::explicit_single_scheduler_and_invalid_counts
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 517 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p nera-runtime --lib`

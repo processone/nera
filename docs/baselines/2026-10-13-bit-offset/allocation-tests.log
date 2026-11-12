@@ -1,0 +1,11 @@
+   Compiling nera-runtime v0.1.0 (/home/user/AIProjects/nera/crates/nera-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.54s
+     Running unittests src/lib.rs (target/debug/deps/nera_runtime-27bb0f9fcbc2d668)
+
+running 4 tests
+test ffi::alloc::tests::failed_match_start_preserves_inline_capacity ... ok
+test ffi::alloc::tests::tuple_adapters_accept_empty_null_array_and_publish_region ... ok
+test ffi::alloc::tests::fresh_binary_match_replenishes_exhausted_inline_capacity ... ok
+test ffi::alloc::tests::reused_match_context_does_not_reserve_another_inline_region ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 493 filtered out; finished in 0.00s

@@ -1,0 +1,19 @@
+{
+  "main": "e7395286cf1c2aaf79f5b0f2f7ba93cc11913b86",
+  "passed": 503,
+  "failed": 0,
+  "ignored": 1,
+  "sources": {
+    "CHANGELOG.md": "b2bff3431774b2f5c2df0d05fec15edd4811efaa214f5eaf1149648bbd88f81a",
+    "crates/nera-runtime/src/process.rs": "a0462ff9df8f65c13cdc4f0ca6ab07de4606e2269cd1f3b00c7c27619faaa2cf"
+  },
+  "logs": {
+    "nera-mailbox-merge-release.log": "4b9ab339e1f940fe6fdd438ba68ecae5c833bad559ddc06e200be86197a82463",
+    "nera-mailbox-merge-clippy.log": "9308911f7f794ccb2b124752597b94206a52e9d93d6deba66f1dece22edda13d"
+  },
+  "notes": [
+    "Both changelog entries and both regression tests retained",
+    "Final diff against main is the original mailbox capacity correction",
+    "Original performance samples predate integration of PR 49; not rerun"
+  ]
+}

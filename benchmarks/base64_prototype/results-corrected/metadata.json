@@ -1,0 +1,10 @@
+{
+  "base_head": "9e2ddcebaf725e6ea649ffcaafa98ccc682986cc",
+  "input_status": " M CHANGELOG.md\n M crates/nera-codegen/src/func_translator/instructions.rs\n M crates/nera-codegen/src/func_translator/liveness.rs\n M crates/nera-codegen/src/func_translator/mod.rs\n M crates/nera-ir/src/display.rs\n M crates/nera-ir/src/ir.rs\n M crates/nera-ir/src/lower/pattern_lower.rs\n M crates/nera-ir/src/passes/uses.rs\n M crates/nera-ir/src/pattern.rs\n M crates/nera-ir/src/verify/operands.rs\n M crates/nera-ir/src/verify/tests.rs\n M crates/nera-runtime/src/ffi/alloc.rs\n?? .claude/\n?? .lavish/\n?? benchmarks/base64_prototype/\n?? docs/baselines/2026-10-13-bit-offset/\n?? docs/baselines/2026-10-13-match-context-allocation/\n?? tests/binary_match_reuse_alloc.erl\n?? tests/binary_recursive_bits.erl\n",
+  "platform": "macOS-15.7.7-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "workspace": "/var/folders/yk/hpylg6r976qgbphydj66gt9h0000gn/T/nera-base64-01cut7mr",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "scheduler_threads": 1,
+  "timing_instrumented": false
+}

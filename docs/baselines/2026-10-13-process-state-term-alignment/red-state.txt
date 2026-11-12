@@ -1,0 +1,29 @@
+   Compiling nera-runtime v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.79s
+   Doc-tests nera_runtime
+
+running 6 tests
+test crates/nera-runtime/src/process.rs - process::ProcessEntry (line 104) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::ProcessEntry (line 94) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::ProcessEntry (line 110) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::ProcessEntry (line 119) - compile fail ... FAILED
+test crates/nera-runtime/src/process.rs - process::ProcessEntry (line 125) - compile fail ... FAILED
+test crates/nera-runtime/src/process.rs - process::ProcessEntry (line 131) - compile fail ... FAILED
+
+failures:
+
+---- crates/nera-runtime/src/process.rs - process::ProcessEntry (line 119) stdout ----
+Test compiled successfully, but it's marked `compile_fail`.
+---- crates/nera-runtime/src/process.rs - process::ProcessEntry (line 125) stdout ----
+Test compiled successfully, but it's marked `compile_fail`.
+---- crates/nera-runtime/src/process.rs - process::ProcessEntry (line 131) stdout ----
+Test compiled successfully, but it's marked `compile_fail`.
+
+failures:
+    crates/nera-runtime/src/process.rs - process::ProcessEntry (line 119)
+    crates/nera-runtime/src/process.rs - process::ProcessEntry (line 125)
+    crates/nera-runtime/src/process.rs - process::ProcessEntry (line 131)
+
+test result: FAILED. 3 passed; 3 failed; 0 ignored; 0 measured; 26 filtered out; finished in 0.29s
+
+error: doctest failed, to rerun pass `-p nera-runtime --doc`

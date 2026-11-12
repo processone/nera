@@ -1,0 +1,15 @@
+Running 1 tests (1 threads)
+────────────────────────────────────────────────────────────
+  FAIL  bsl_overflow                               6.6s  [1/1]
+────────────────────────────────────────────────────────────
+Results: 0 passed, 1 failed (0 compile), 0 skipped / 1 total
+
+Failures:
+  bsl_overflow: runtime crash, exit=1
+    stdout:
+    mismatch -1152921504606846976 4 expected 0 actual -18446744073709551616
+
+    stderr:
+    Error in process <0.1.0>: error:{badmatch,-18446744073709551616}
+
+SOME TESTS FAILED

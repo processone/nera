@@ -1,0 +1,14 @@
+Running 1 tests (1 threads)
+────────────────────────────────────────────────────────────
+  FAIL  binary_recursive_bits                     959ms  [1/1]
+────────────────────────────────────────────────────────────
+Results: 0 passed, 1 failed (0 compile), 0 skipped / 1 total
+
+Failures:
+  binary_recursive_bits: runtime crash, exit=1
+    stderr:
+    Error in process <0.1.0>: error:{badmatch,4}
+    Stacktrace (most recent call last):
+      binary_recursive_bits:test/0 (binary_recursive_bits.erl, line 6)
+
+SOME TESTS FAILED

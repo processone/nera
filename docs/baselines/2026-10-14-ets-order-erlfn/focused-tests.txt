@@ -1,0 +1,12 @@
+   Compiling nera-runtime v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.91s
+     Running unittests src/lib.rs (/tmp/nera-transfer-target/debug/deps/nera_runtime-27bb0f9fcbc2d668)
+
+running 5 tests
+test ets::tests::numeric_order_key_equality_matches_order ... ok
+test ffi::compare::numeric_order_tests::numeric_order_handles_boundaries_and_fractional_values ... ok
+test ffi::compare::numeric_order_tests::numeric_order_preserves_integer_precision ... ok
+test ffi::compare::numeric_order_tests::numeric_order_is_transitive_across_representations ... ok
+test ffi::compare::numeric_order_tests::numeric_order_compares_large_float_mantissas_exactly ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 555 filtered out; finished in 0.00s

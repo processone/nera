@@ -1,0 +1,20 @@
+<scheme name="ErlangDark" version="1" parent_scheme="Darcula">
+    <attributes>
+        <option name="ERLANG_FUNCTION">
+            <value>
+                <option name="FOREGROUND" value="56A8F5"/>
+            </value>
+        </option>
+        <option name="ERLANG_TYPE">
+            <value>
+                <option name="FOREGROUND" value="2BBAC5"/>
+            </value>
+        </option>
+        <option name="ERLANG_BOUND_VARIABLE">
+            <value>
+                <option name="FOREGROUND" value="C77DBB"/>
+                <option name="FONT_TYPE" value="2"/>
+            </value>
+        </option>
+    </attributes>
+</scheme>

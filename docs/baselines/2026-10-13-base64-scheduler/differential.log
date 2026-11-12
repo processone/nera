@@ -1,0 +1,3 @@
+BEAM == Nera: base64_options: ok
+BEAM == Nera: base64_large_encode: ok
+Frozen Erlang == production: exhaustive value/error corpus: ok

@@ -1,0 +1,5 @@
+{
+  "01-exception-resumption.patch": "d8403bbf368acd38072b5cf2b211753d2963f2ca3ad8783b12ae00c02bea7702",
+  "02-formatter-grouping.patch": "9aeae13a66f73c724e7e543a68d522d250bc697fd0eaa547ef0b0f383860a48c",
+  "03-distribution.patch": "17c015e2b4955b42c80733eef410866472b232b899f379caf6c264a39c8aae80"
+}

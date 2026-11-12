@@ -1,0 +1,22 @@
+{
+  "beam_compile": {
+    "exit": 0,
+    "stdout": "",
+    "stderr": "$REPO/tests/resume_exception.erl:6:26: Warning: 'catch ...' is deprecated; please use 'try ... catch ... end' instead.\nCompile directive 'nowarn_deprecated_catch' can be used to suppress\nwarnings in selected modules.\n%    6|     {'EXIT', timeout} = (catch delayed(exit)),\n%     |                          ^\n\n$REPO/tests/resume_exception.erl:7:15: Warning: 'catch ...' is deprecated; please use 'try ... catch ... end' instead.\nCompile directive 'nowarn_deprecated_catch' can be used to suppress\nwarnings in selected modules.\n%    7|     thrown = (catch delayed(throw)),\n%     |               ^\n\n$REPO/tests/resume_exception.erl:8:31: Warning: 'catch ...' is deprecated; please use 'try ... catch ... end' instead.\nCompile directive 'nowarn_deprecated_catch' can be used to suppress\nwarnings in selected modules.\n%    8|     {'EXIT', {bad, Trace}} = (catch outer(error)),\n%     |                               ^\n\n$REPO/tests/resume_exception.erl:18:27: Warning: 'catch ...' is deprecated; please use 'try ... catch ... end' instead.\nCompile directive 'nowarn_deprecated_catch' can be used to suppress\nwarnings in selected modules.\n%   18|     {'EXIT', awakened} = (catch message_exit()),\n%     |                           ^\n\n"
+  },
+  "beam_run": {
+    "exit": 0,
+    "stdout": "resume exceptions ok\n",
+    "stderr": ""
+  },
+  "original_compile": {
+    "exit": 0,
+    "stdout": "",
+    "stderr": "Linking with runtime: /private/var/folders/yk/hpylg6r976qgbphydj66gt9h0000gn/T/nera-exception-reference-o_053vqs/libnera_runtime.a\n"
+  },
+  "original_run": {
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+}

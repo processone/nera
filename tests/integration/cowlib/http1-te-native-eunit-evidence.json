@@ -1,0 +1,833 @@
+{
+  "status": "passed",
+  "scope": "Project nera test with external OTP EUnit; Functional tests only; properties are validated separately.",
+  "modules": {
+    "cow_http1": {
+      "expected": 39,
+      "inventory": {
+        "parse_request_line_test_": 3,
+        "parse_request_line_error_test_": 9,
+        "parse_status_line_test_": 4,
+        "parse_status_line_error_test_": 11,
+        "parse_headers_test_": 3,
+        "parse_headers_error_test_": 7,
+        "parse_version_test": 1,
+        "version_test": 1
+      },
+      "beam": {
+        "returncode": 0,
+        "passed": true
+      },
+      "adapted_sha256": "45226569f70e5e9c4998da9522e175bce642fd9ceafc97cbd953d36df01a6d8d",
+      "original_sha256": "e5851d0ad97a639458416d26f3b9d23ddfd09afe0dda8a356f33627ccc5b377c",
+      "removed": [
+        "horse_parse_request_line_get_path",
+        "horse_parse_status_line_200",
+        "horse_parse_status_line_404",
+        "horse_parse_status_line_500",
+        "horse_parse_status_line_other",
+        "horse_parse_headers"
+      ],
+      "native": {
+        "returncode": 0,
+        "passed": true
+      },
+      "runner": "nera test (project EUnit configuration)",
+      "failure_lines": [],
+      "native_passed": 39,
+      "native_failed": 0,
+      "native_skipped": 0
+    },
+    "cow_http_te": {
+      "expected": 10,
+      "inventory": {
+        "stream_identity_test": 1,
+        "stream_identity_parts_test": 1,
+        "stream_chunked_identity_test": 1,
+        "stream_chunked_one_pass_test": 1,
+        "stream_chunked_n_passes_test": 1,
+        "stream_chunked_dripfeed_test": 1,
+        "stream_chunked_dripfeed2_test": 1,
+        "stream_chunked_error_test_": 3
+      },
+      "beam": {
+        "returncode": 0,
+        "passed": true
+      },
+      "adapted_sha256": "8372002a33a0fd434afa7b89b2f761302b63e70962836d5bde8653cecbda137f",
+      "original_sha256": "03676592aef761d7c623f814b324b4e15d4fb21889928b7474bc976c804de47a",
+      "removed": [
+        "horse_stream_identity",
+        "horse_stream_identity_dripfeed",
+        "horse_stream_chunked",
+        "horse_stream_chunked_dripfeed"
+      ],
+      "native": {
+        "returncode": 0,
+        "passed": true
+      },
+      "runner": "nera test (project EUnit configuration)",
+      "failure_lines": [],
+      "native_passed": 10,
+      "native_failed": 0,
+      "native_skipped": 0
+    }
+  },
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/private/tmp/nera-cowlib-main-proper",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/private/tmp/nera-cow-http1-te-pr",
+      "label": "proper-head",
+      "returncode": 0,
+      "stdout_sha256": "6435f6eb1643468f91ea867fe183cfd63a71804d78768c9765b0eedbe6b52e9a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/private/tmp/nera-cow-http1-te-pr",
+      "label": "cowlib-head",
+      "returncode": 0,
+      "stdout_sha256": "d987cdb63f2e2c1f01ca097d28e28f79bedaa4a0fdaa228c05b29caa265a812d",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream",
+        "status",
+        "--porcelain",
+        "--untracked-files=all",
+        "--ignored"
+      ],
+      "cwd": "/private/tmp/nera-cow-http1-te-pr",
+      "label": "cowlib-clean",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "ls-files",
+        "--",
+        "crates",
+        "erlang",
+        "Cargo.toml",
+        "Cargo.lock",
+        "rust-toolchain.toml"
+      ],
+      "cwd": "/home/user/.codex/worktrees/base64-one-arity/nera",
+      "label": "nera-source-files",
+      "returncode": 0,
+      "stdout_sha256": "563aaace88efd519d421309766364f41fa57b1eeea4a63b3f613fcb8dc7723ea",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/user/.codex/worktrees/base64-one-arity/nera",
+      "label": "nera-head",
+      "returncode": 0,
+      "stdout_sha256": "73467fddf59eaeabe1d5ca7e4b7d26cf6f199e2ed0c5d1e238191d5ccf4250db",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "cwd": "/home/user/.codex/worktrees/base64-one-arity/nera",
+      "label": "nera-status",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "erl",
+        "-noshell",
+        "-eval",
+        "io:format(\"~s\",[erlang:system_info(system_version)]),halt()."
+      ],
+      "cwd": "/private/tmp/nera-cow-http1-te-pr",
+      "label": "otp",
+      "returncode": 0,
+      "stdout_sha256": "0e5d220635638ebbe2981d178553ebd4c9e9036c5a6912e0bf1e00a84df6bbb8",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "erlc",
+        "-I",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream/include",
+        "-o",
+        "/private/tmp/nera-cow-http1-te-pr/beam",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream/src/cow_cookie.erl",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream/src/cow_date.erl",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream/src/cow_http.erl",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream/src/cow_http2.erl",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream/src/cow_http_hd.erl",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream/src/cow_http_struct_hd.erl",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream/src/cow_link.erl"
+      ],
+      "cwd": "/private/tmp/nera-cow-http1-te-pr",
+      "label": "beam-dependencies",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "erlc",
+        "-DTEST",
+        "+export_all",
+        "+{parse_transform,eunit_autoexport}",
+        "-I",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream/include",
+        "-o",
+        "/private/tmp/nera-cow-http1-te-pr/beam",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream/src/cow_http1.erl",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream/src/cow_http_te.erl"
+      ],
+      "cwd": "/private/tmp/nera-cow-http1-te-pr",
+      "label": "beam-suites",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "erl",
+        "-noshell",
+        "-pa",
+        "/private/tmp/nera-cow-http1-te-pr/beam",
+        "-eval",
+        "io:format(\"COUNT:~w~n\",[length(cow_http1:parse_request_line_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http1:parse_request_line_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http1:parse_status_line_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http1:parse_status_line_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http1:parse_headers_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http1:parse_headers_error_test_())]),io:format(\"COUNT:~w~n\",[1]),io:format(\"COUNT:~w~n\",[1]),halt()."
+      ],
+      "cwd": "/private/tmp/nera-cow-http1-te-pr",
+      "label": "cow_http1-inventory",
+      "returncode": 0,
+      "stdout_sha256": "e181b89266f59b1791cd054c5b983a2200e5f7440a9767a28c04754595dde9b0",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "erl",
+        "-noshell",
+        "-pa",
+        "/private/tmp/nera-cow-http1-te-pr/beam",
+        "-eval",
+        "case eunit:test(cow_http1,[verbose]) of ok -> io:format(\"NATIVE_EUNIT_OK:cow_http1~n\"),halt(); _ -> halt(1) end."
+      ],
+      "cwd": "/private/tmp/nera-cow-http1-te-pr",
+      "label": "cow_http1-beam",
+      "returncode": 0,
+      "stdout_sha256": "90279194b102c1494f78737cb3217e922987442b119db2c6dc06405f03735e29",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "erl",
+        "-noshell",
+        "-pa",
+        "/private/tmp/nera-cow-http1-te-pr/beam",
+        "-eval",
+        "io:format(\"COUNT:~w~n\",[1]),io:format(\"COUNT:~w~n\",[1]),io:format(\"COUNT:~w~n\",[1]),io:format(\"COUNT:~w~n\",[1]),io:format(\"COUNT:~w~n\",[1]),io:format(\"COUNT:~w~n\",[1]),io:format(\"COUNT:~w~n\",[1]),io:format(\"COUNT:~w~n\",[length(cow_http_te:stream_chunked_error_test_())]),halt()."
+      ],
+      "cwd": "/private/tmp/nera-cow-http1-te-pr",
+      "label": "cow_http_te-inventory",
+      "returncode": 0,
+      "stdout_sha256": "44771e59cea9992d151537e962df37f2a4f6042f0b95f21eda18a30b2451910e",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "erl",
+        "-noshell",
+        "-pa",
+        "/private/tmp/nera-cow-http1-te-pr/beam",
+        "-eval",
+        "case eunit:test(cow_http_te,[verbose]) of ok -> io:format(\"NATIVE_EUNIT_OK:cow_http_te~n\"),halt(); _ -> halt(1) end."
+      ],
+      "cwd": "/private/tmp/nera-cow-http1-te-pr",
+      "label": "cow_http_te-beam",
+      "returncode": 0,
+      "stdout_sha256": "ff9c47d6cf2c87245a20c3dad54684ed0ee9b550c5008c43d0aa465392c71b20",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/private/tmp/nera-base64-one-target/release/nera",
+        "test",
+        "cow_http1",
+        "--verbose",
+        "--no-warnings",
+        "--timeout",
+        "120"
+      ],
+      "cwd": "/private/tmp/nera-cow-http1-te-pr/project",
+      "label": "cow_http1-native-test",
+      "returncode": 0,
+      "stdout_sha256": "fe29ef3f760dcea709e9e0c8d3de2b3e6d018ea875508fb7df54e8624d73ac42",
+      "stderr_sha256": "075a23a63f0f66ee46545842b186bfc42d934c1405ee551d157dbe0ad0d4e1c8"
+    },
+    {
+      "argv": [
+        "/private/tmp/nera-base64-one-target/release/nera",
+        "test",
+        "cow_http_te",
+        "--verbose",
+        "--no-warnings",
+        "--timeout",
+        "120"
+      ],
+      "cwd": "/private/tmp/nera-cow-http1-te-pr/project",
+      "label": "cow_http_te-native-test",
+      "returncode": 0,
+      "stdout_sha256": "c46feab833b23c9a125c527bac35028d328bf1d622ce1fc8208905c4d9dfaa31",
+      "stderr_sha256": "075a23a63f0f66ee46545842b186bfc42d934c1405ee551d157dbe0ad0d4e1c8"
+    },
+    {
+      "argv": [
+        "erlc",
+        "-o",
+        "/private/tmp/nera-cow-http1-te-pr/beam",
+        "/home/user/.codex/worktrees/base64-one-arity/nera/tests/integration/eunit/eunit_native.erl"
+      ],
+      "cwd": "/private/tmp/nera-cow-http1-te-pr",
+      "label": "framework-controls-beam-build",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "erl",
+        "-noshell",
+        "-pa",
+        "/private/tmp/nera-cow-http1-te-pr/beam",
+        "-eval",
+        "eunit_native:test(),eunit:stop(),halt()."
+      ],
+      "cwd": "/private/tmp/nera-cow-http1-te-pr",
+      "label": "framework-controls-beam",
+      "returncode": 0,
+      "stdout_sha256": "d632a12e292ec721729d2e6ed9b2041e09bd8c8719d3fdb8fcac27deb9de70db",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/private/tmp/nera-base64-one-target/release/nera",
+        "build",
+        "--no-warnings"
+      ],
+      "cwd": "/private/tmp/nera-cow-http1-te-pr/project",
+      "label": "framework-controls-native-build",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "075a23a63f0f66ee46545842b186bfc42d934c1405ee551d157dbe0ad0d4e1c8"
+    },
+    {
+      "argv": [
+        "/private/tmp/nera-cow-http1-te-pr/project/run"
+      ],
+      "cwd": "/private/tmp/nera-cow-http1-te-pr/project",
+      "label": "framework-controls-native",
+      "returncode": 0,
+      "stdout_sha256": "2c435e76143b0038e3f9a3d07b8748a7e6734d418682ea9b6ac40f16372fe12d",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "upstream": {
+    "name": "cowlib",
+    "version": "2.20.0",
+    "url": "https://github.com/ninenines/cowlib.git",
+    "commit": "c768a804565ff5b8178ed968a5921e469d6bd7b2"
+  },
+  "harness_sources": {
+    "native_eunit.py": "731f6032059e34f4c1ea5e055328b8d275f1cfbc785d327e1bdad46eade5aee2",
+    "upstream_http.py": "df0950c719265668a49e81870e6c6754748325de1de494f28308678fc506064b",
+    "upstream_cookie_date.py": "796e496e293e13229e4f34ab145e125c10232c8ba9d55119d310b154e21c7d29",
+    "runner.py": "ddcbd9cbaceb6d2666a1134498f6cf9f173cf028c507ed61551821baeee0911f",
+    "upstream.json": "0613632ac6c66c12fe7aee90471205697a68a6c0fdac369eea35c55c5c11d5e9"
+  },
+  "cowlib_sources": {
+    "src/cow_base64url.erl": "3d68bd7d9d03230c99c298688bb9c804fe8ebdcf1ced3e64683de3b72a9436a2",
+    "src/cow_capsule.erl": "b94fa3ee9242be4812ab631e30b71ff79b24112b538cbf304c735238e0683e80",
+    "src/cow_cookie.erl": "949f38c2aaa1fd30f690289a024429ea2d8a66e08b6c87a4436e51e568ddf88d",
+    "src/cow_date.erl": "6f22428c9b1df2c59abe8b372f6a075c3d1b51ea6653cbf778a5bceeff813504",
+    "src/cow_deflate.erl": "ba3b1bf977f0fda687c12d7195b6f143bae4f7ce26437736077c7b180a1261e8",
+    "src/cow_hpack.erl": "6c9d5714790d8951fa57b793bb8f6c0f0433f7bbc15f33284e3b289b264bfa4d",
+    "src/cow_hpack_common.hrl": "c53242bd29cad93135050d5daf9f73e9b571da56a992dbc49870e7e53c1d164c",
+    "src/cow_hpack_dec_huffman_lookup.hrl": "80fb656300ee1288bf34268e88c2b0886760ab6a794eeca60d84a94ae0f11652",
+    "src/cow_http.erl": "cba1db8e6aace87f3f8772ea778b8088eedf8f7d54d84d767b46fcc02ea0e594",
+    "src/cow_http1.erl": "e5851d0ad97a639458416d26f3b9d23ddfd09afe0dda8a356f33627ccc5b377c",
+    "src/cow_http2.erl": "edeb6bef50b963312e92021ed2edd029628c51752fa75b527557832912f452d6",
+    "src/cow_http2_machine.erl": "5ff9d6c3c520ca26d0a0090cc5d67ba6dc918fe7ee557083754e1d703cc14d3d",
+    "src/cow_http3.erl": "cb8426277588906b49c78a42bfd8e2d214efd319d5cad6b4627b2cc94242a372",
+    "src/cow_http3_machine.erl": "a0e489819c72fb418920dbe2594b4ecbcc8aab72b5b2fdd809b419091ca2ba2d",
+    "src/cow_http_hd.erl": "af8028340f58b2cf0a7bbaa734d6e1e9c61d48993454119e0df6c6cba6b82c2c",
+    "src/cow_http_struct_hd.erl": "bae6afed59d1395ad1234a0138c24736bc7ca8b8aca0425535fd9c06ce28aa84",
+    "src/cow_http_te.erl": "03676592aef761d7c623f814b324b4e15d4fb21889928b7474bc976c804de47a",
+    "src/cow_iolists.erl": "ae976127c029af3e6a38dc5f406861a41f102c355d9077b1142abf3bba863df3",
+    "src/cow_link.erl": "bcfec544ae3ca6796fece4c82a0c5061c282864c6e515ed89492238e02682c8c",
+    "src/cow_mimetypes.erl": "bbdd5d794a0c970cdd0420109ceaf2aaeb4ec70294a5c8a053737e67e3e3779b",
+    "src/cow_multipart.erl": "2d684ed2229fd9d15d8941ad5cc1abd83a41f8bab0a7705e6093a7e112555d90",
+    "src/cow_qpack.erl": "fe9adc05008b3b9e68bdb973b4486593bbaac665fcfb4de4679555a76d9ec99f",
+    "src/cow_qs.erl": "9d45e09874dd83ed42b02cdc7ce1aff5737f3ed968d7682c8b304ec853b61c91",
+    "src/cow_sse.erl": "180f35d763c003fc9b2304fed9da5244b6aa4497571dd6b73c92451e7e85f5ff",
+    "src/cow_uri.erl": "8a8627ec975e5597499385ce481760b751f80888aa7c55e915eedd31481da664",
+    "src/cow_uri_template.erl": "589a363068a9f4bf77e29ef860792205d85541c71d76cd68ff5bd35686aca28b",
+    "src/cow_ws.erl": "3d46948104e15194ffbe080a03299dd38e911857a9fc86f025a51ff76dab32c6",
+    "include/cow_inline.hrl": "b6734610786a2d10ae82d9b9513e72d7a67396e1c5c1f3d6faa19e6350d580b6",
+    "include/cow_parse.hrl": "a366ad773962acdfea8b90cbc5499e6b3dc9148fb59d0bdd303dbbdae01a0177"
+  },
+  "nera_sources": {
+    "Cargo.lock": "a210f397cb773d07c39ed4827a9aea44092f56ee7c2a438f708784dfa5769f80",
+    "Cargo.toml": "8d8f30e39479037b8f2cb82dbcc3f4705503423f0a6db6237003281cf25d24b3",
+    "crates/nera-codegen/Cargo.toml": "028355984a306c91ff431d97c47c4aae192e90071dbcd6ff39da46e8c10f7901",
+    "crates/nera-codegen/src/builtins.rs": "daf7d8cd2996bd29bdb3523f7bfa7eb29f0d2f4767cf7cacb3650174df8c5d53",
+    "crates/nera-codegen/src/compiler.rs": "958779302f92d86730322f8760661ce3d9fb8581228736e12619eceb9ca8a650",
+    "crates/nera-codegen/src/func_translator/atoms.rs": "75af250f73230d6fa0222062ca232aefdf3611aaaa4ad441885dd2349c2d5304",
+    "crates/nera-codegen/src/func_translator/calls.rs": "c16c42d31d6dcf2718d1a9cb5119a63b1e989b529b211fe4366b89f28720f32d",
+    "crates/nera-codegen/src/func_translator/constants.rs": "67a7a643f2d0e9f44638466e9ae8fb9ba6366b0e73213e711c53bf0a99dd03c4",
+    "crates/nera-codegen/src/func_translator/ffi_emit.rs": "d8f3c222ef6a3aa1e1a6fe2f73f6c208821ae355243836637803a2b484eb1f52",
+    "crates/nera-codegen/src/func_translator/instructions.rs": "f378bfdac283b33d6080fb5ce2709bf180e5d034eff63d218e0c6e8a3b3d5057",
+    "crates/nera-codegen/src/func_translator/liveness.rs": "01e1522a017962be647a1ef2e3b4823d7c031e8d03939d484fab33ec783a231b",
+    "crates/nera-codegen/src/func_translator/mod.rs": "6b44207043afc97463dc8c0e1ce9777b53bea1f189cf8b1d5082a47a7c76c71d",
+    "crates/nera-codegen/src/func_translator/resume.rs": "e81ca774b11e72e734a8c7b66c14a981803fc2eef7aae8f5729d3f216a865db8",
+    "crates/nera-codegen/src/func_translator/signatures.rs": "66c527e41aef470c19b195a67df6d3ea5e2164be9dc4201a5716f674486ac729",
+    "crates/nera-codegen/src/func_translator/terminators.rs": "60d59fbd658ae657d20c3669b59f47e7433ac526920aa22fe53e3e5d046fa4c4",
+    "crates/nera-codegen/src/func_translator/tests.rs": "54ddc05e561e02c4d420e4b5d9b931434a32ae9b3aa670f404fb7d0fc8f48859",
+    "crates/nera-codegen/src/lib.rs": "2eefb129a00b0ba8a45dad5fa8579e10e7ae6dbb7dde38d69a6313f883fb78d4",
+    "crates/nera-codegen/src/linker.rs": "f4801b80b1bfdcdcd5e28e07404b6daf0caf935fb87a93fa4c8cc662aef4a6e1",
+    "crates/nera-codegen/src/term_layout.rs": "b8a9b5caf3ed2bef1363eb3eb4d8c012ac4dbde64b13f0aed14deed90737413d",
+    "crates/nera-fmt/Cargo.toml": "ac83bfd787372b5479a8e0f62099c262396233003fec82a17becd046a1575115",
+    "crates/nera-fmt/fuzz/Cargo.toml": "5c2539fe5aeb3ef70951f57278fa1b78cc68cb3f2948f3ef0bc3e513400d3f8b",
+    "crates/nera-fmt/fuzz/fuzz_targets/fuzz_format.rs": "4179307a26b8bdb6f6c3c0c46db6b43f4faac04d4c1adc86f55c2bd925f7a533",
+    "crates/nera-fmt/src/comment.rs": "5be0c973d65c358f2bf89aef08fb1290b7dc4eb15075db57aa583def9d2f264e",
+    "crates/nera-fmt/src/config.rs": "ffe73226a32981f696ef3e29ee468fcdf84eaa54952b99054c1c65a67d1b6a7e",
+    "crates/nera-fmt/src/doc.rs": "cc5933d6d5b9f1003b933a85d450aecc16b8d821c518b8fff672822b27fdeed5",
+    "crates/nera-fmt/src/format.rs": "2bea7c1606aaa4ff2a67a7123a5a8de46eae01deb69a77a048712c303cd5d8bb",
+    "crates/nera-fmt/src/lib.rs": "1782d04797e87fcfad3a77f65689e7d3f6c454aea0b8b934dbf9eeec9e1143c0",
+    "crates/nera-fmt/src/spec_format.rs": "a085d854c6db345509b2a8373f8ff645746cd32d666a9a2283ab0040f33e5e2c",
+    "crates/nera-fmt/tests/fixtures/input.erl": "faf5cd70f093e48e9d912e706642a7c8e97b690f75fda154d580292ecb9d9a8c",
+    "crates/nera-fmt/tests/fixtures/preprocessor.erl": "c3b97e7c9cb046a7d4c0b1c592583bb01ab4a8a0d1bbab6f3c3c26acc80177e1",
+    "crates/nera-fmt/tests/fixtures/records_maps.erl": "9c79d9e0dc0cfc1d9281db138cb352a83db542a8e545b7ea0f49262bf0a8ac65",
+    "crates/nera-fmt/tests/integration.rs": "3ab1ec68aeaf0fee1da3a9fe7d8975d9366987c3d13a39d4fa7a2e09104ce6a5",
+    "crates/nera-fmt/tests/operator_precedence.rs": "6234c653c3d9b95f63f15a99c4e599bdf4a126406084f6bb9cdf4d65ab1233d0",
+    "crates/nera-fmt/tests/proptest_format.rs": "b6fb19cb53f8b59d9c7dc3f43555b1715f57cd4f592b8f497f5bffe183328d34",
+    "crates/nera-ir/Cargo.toml": "6aa58c52d2ed46e6bdfbbbd58b8637c02011025c619e1b0e5596b59d0e0dc0cf",
+    "crates/nera-ir/src/bif_table.rs": "93de75e8404f436bc4cdf9488e0ba0a9982957d2114d7e8ab97dc187142b71aa",
+    "crates/nera-ir/src/display.rs": "0445dd188c5fc4a7a38b6ffc281b40a54fa665003fb4a3a2d93e1b6ddc2a5588",
+    "crates/nera-ir/src/ir.rs": "033a7163521c2eb4c90b8c6a8474d15426737dae2ce0323788473c54b695ddf4",
+    "crates/nera-ir/src/lib.rs": "9a55b38799e10d9dfb4c6857ffbd1810782f7279e2b9874911cef9aca6f2d0c6",
+    "crates/nera-ir/src/lower/closure.rs": "ec8dcc06628e8ad6920ef84f564077aad878b0efff2af7ddff11044b7ecc613a",
+    "crates/nera-ir/src/lower/exception.rs": "4e5b14eaf6d66443b9908a81c32afe20fe1cae58f1e5066e0792591c2028ed48",
+    "crates/nera-ir/src/lower/expr.rs": "d4a053b874bbfa1176b0a27cf5038ce13e2bcd34be653b651cbffd41c2b4dd79",
+    "crates/nera-ir/src/lower/list_comp.rs": "1118c48cf81d59af98fbe31893d8078f5cf5c8bcdeedbe3f1c99178b7944f09a",
+    "crates/nera-ir/src/lower/mod.rs": "80987d8a7a4f468ecffeb0d7a90cba1f2794cb397dad2a1955a5839717194a1a",
+    "crates/nera-ir/src/lower/pattern_lower.rs": "c804adebf50d8051903f9872c9d551e3b1fbf67f39b7c4728d85691d61f84d6e",
+    "crates/nera-ir/src/lower/record.rs": "16c53f0d8c2471a4a231734606510e6fc5252fd2908391a1f97e63a7faac9403",
+    "crates/nera-ir/src/lower/tests.rs": "64fec0abb93f5bc515444ba1354b2b20b198df748ec4148728d2aaeba6330b8d",
+    "crates/nera-ir/src/passes/constant_folding.rs": "a76905b28a36412729ba2af6b675c7aafe15baa415443284db540c2797f9db0f",
+    "crates/nera-ir/src/passes/dead_code.rs": "5ba01e3ca326500f9560e89df79113dfb047e9f71adb1ef73920ecd869f2b1d8",
+    "crates/nera-ir/src/passes/match_contexts.rs": "daf6966a9dcc6f974394f28cf07ec112b046011d972466ede5c0c8126c9cbee2",
+    "crates/nera-ir/src/passes/mod.rs": "3ef1604bc9975ea5fc734777bbf7ae5c6bdfee6498c4c9f5e9cfa3bd60b27d30",
+    "crates/nera-ir/src/passes/tests.rs": "48b637f4052122aa0b24eb85e3f73c5b79de0ce7ed1a01e2903764c606faecbc",
+    "crates/nera-ir/src/passes/tuple_send.rs": "9bf7b42ed7bfb3f23f04694599364235ff48e8e7589e5f1446f5e1035148a32d",
+    "crates/nera-ir/src/passes/uses.rs": "0b6300edb9bcdffb520c15512ce54ae5ef224cca10d035b93666a5d9b84d4146",
+    "crates/nera-ir/src/passes/yield_checks.rs": "e74795abf7cec3097a082e576ad47f3be9c21b92f9ff9ca9e54825b151aa546f",
+    "crates/nera-ir/src/pattern.rs": "3959b2a6b435936793bc30db53eb4513e25d885839b567b27954dc15b5b2f7ab",
+    "crates/nera-ir/src/validate.rs": "09fb66428fd47f5281da1726f75124561f4280646d9f160121c78f70ddc8235c",
+    "crates/nera-ir/src/verify.rs": "fe0c1ea9622e2cb450b5c474a44874ecca1765f6f275348edc4c3be5a3b7511a",
+    "crates/nera-ir/src/verify/operands.rs": "2958da7d4dcff3fefc735bf9cf9e7d7f79917455be6095ee356ca723e7ac516f",
+    "crates/nera-ir/src/verify/tests.rs": "1ab60a2468ca76ff60aaeb96e7b18c1669916e01bacc37df807205bfaec2ad90",
+    "crates/nera-ir/src/warnings/ast_walkers.rs": "6755cfbc49597b7b5bd14458338b9288c774f240b7d89f8252780d6b88ab1311",
+    "crates/nera-ir/src/warnings/behaviour_callbacks.rs": "fdfb684d86e23ac4dfbcd32f72baaac1c040974077d264385373f0e806d71393",
+    "crates/nera-ir/src/warnings/binary_segments.rs": "9de13aa9d25aca840892af53ba443c612737f87baff356a8ca7282dd056ea3fa",
+    "crates/nera-ir/src/warnings/deprecated.rs": "c249f5d171e683d02229c71b5408732dd949cecb6764145cba2333bd3e26961b",
+    "crates/nera-ir/src/warnings/duplicate_functions.rs": "e682d793c72c197fd78d5c6214b9b24ab8e5b4636681c1e1248d4b6039bd0879",
+    "crates/nera-ir/src/warnings/duplicate_records.rs": "376eb3724644bfa32f47b784e40c92b1a901df4d60f21aeb034cfbe0bb05d787",
+    "crates/nera-ir/src/warnings/exported_vars.rs": "11cd9754a3d822d9ad7a3f0fadd46e1e9780fd5b04866a69653f9c23b76bdf67",
+    "crates/nera-ir/src/warnings/format_strings.rs": "66535ae91fb39f115945b1921f985ee22b9183ba9dea9c5080a4c2b511ae786d",
+    "crates/nera-ir/src/warnings/illegal_guards.rs": "55573d70e3095c69e3b77cf554777cf23db2d95e419f7163a18f846c5a472b4e",
+    "crates/nera-ir/src/warnings/illegal_map_construction.rs": "bf0527eaba06e0507dc01a79645891be181ee0a5b9fd6f8b57b4ad479bcc5d88",
+    "crates/nera-ir/src/warnings/match_underscore_var.rs": "78ed9185a2e11e875799180b43ddf6b16553d8619326f8d2d6fbe1711406582d",
+    "crates/nera-ir/src/warnings/mod.rs": "ea20279a39679623952a41c5a6a1cc8a2f9c8cdf850ab66ec9bb8c45c0c8eedf",
+    "crates/nera-ir/src/warnings/non_tail_recursion.rs": "d46418b8839a016f2bdc764d5d67931d582311fab8cd966079627246d04f04a2",
+    "crates/nera-ir/src/warnings/pragmas.rs": "1ea9ee6d9b66cf674004319cef604c3187633a835e9a90524ab3aaf7c81948d2",
+    "crates/nera-ir/src/warnings/shadowed.rs": "7509fcb9d0cc95fe93d5067dc74b75720eea69e94da7ac861716b3d4d7d63341",
+    "crates/nera-ir/src/warnings/tests.rs": "6ff22f5b860a5e5828feee05c69c5c84540627c85ac2db72c02548fb70d3fcb5",
+    "crates/nera-ir/src/warnings/unbound_vars.rs": "5a2cdc1d7d613daea734531f95543c763594dd49073797b41345c906bcc9f9e6",
+    "crates/nera-ir/src/warnings/undefined_exports.rs": "4eab6e9fefc06751f2a540b4995970ca76dc7054e070742bbf74b88539648950",
+    "crates/nera-ir/src/warnings/undefined_functions.rs": "abc690147cc4f12abb22f26a1acc5ee2debcf93b511ee15f9a65927fcb07018b",
+    "crates/nera-ir/src/warnings/undefined_record_fields.rs": "de3e33233625c4f2c730656b896a04ff40e744f5e415c0d99f33f6386e522389",
+    "crates/nera-ir/src/warnings/unreachable.rs": "6389af3c9be72da94055f0f5414d59a8e39605011b1209c8b4563f401bbaa2fb",
+    "crates/nera-ir/src/warnings/unsafe_vars.rs": "c54f1a04d43af9f64c34802c0e304c9c465cb9b6754cd4621fdf757ef4c874aa",
+    "crates/nera-ir/src/warnings/unused_funcs.rs": "97003c137641072abab487c92b3c9d12cc4ddbec17a6560507aef75295c49b96",
+    "crates/nera-ir/src/warnings/unused_macros.rs": "5e7102b8261335987509cceaeff7a247a970ec02cccb6656090a15331f016cfc",
+    "crates/nera-ir/src/warnings/unused_records.rs": "164efe2e444642311ce616d8751d8046d038ffbde8c1bd199cbc323fa597e229",
+    "crates/nera-ir/src/warnings/unused_types.rs": "98215c57f38e31978c5b2de7c76fe1adc372ac65e14297eb5b5e09cacdc8bb73",
+    "crates/nera-ir/src/warnings/unused_vars.rs": "d90a2cb517ebadb3c3d9dd0dd7a50c8df0a7c19c3b646518f6e7d55909887fd0",
+    "crates/nera-ir/tests/passes.rs": "06e8e6799219c7e5b8a750e4d41e4d558dae7b49952d95fa9a85dcef421e6e9f",
+    "crates/nera-ir/tests/verify_lowered.rs": "59298c587b3d7fa06695bc1a9dc6f92a5efbd8e24c915fab6ff06231dd9ddff7",
+    "crates/nera-runtime/Cargo.toml": "cb08e4a916f1766a9e73093a74ff4730870b0c33a02a2961a06222d8c2d96d64",
+    "crates/nera-runtime/build.rs": "70bc8df834965dbc3d82ac0c6cd294206cada466daadea22e7d8a8e41156aef4",
+    "crates/nera-runtime/src/atom_table.rs": "f7456e6b5109fd780830ae6943a912f31cba5ed40761cf3bde3603421d4f97c9",
+    "crates/nera-runtime/src/atomics_module.rs": "d6cc5b8c139e95c2e143def6290e522f221fa9ea9bf370d8957cfee27fd8114a",
+    "crates/nera-runtime/src/base64.rs": "2fccc36a7c1ea1c6e8cb24c6383c6773dd48e0a5033af8687e56ddbd981db040",
+    "crates/nera-runtime/src/bif.rs": "2d923300aac916efe0e7dc9d33236e7d025b7ebb8dde0488374ea70b24b445cd",
+    "crates/nera-runtime/src/bigint.rs": "d66cec53ce2348d15ad94ceaa14b148e03b855d1f286fd13fa698f6f4df4dbfa",
+    "crates/nera-runtime/src/binary.rs": "e6daee198a94e21461c561ba0758522f772625560d4a981d61ee488093e191bb",
+    "crates/nera-runtime/src/counters.rs": "7b8f278b3dd7e78a0392d65365843adad63e3c131e8750eb6bce5784e2afb5c3",
+    "crates/nera-runtime/src/entry.rs": "52e91918b836b817a30bba8be4877492735b6319e94667c9adf9de4d9f5d2c02",
+    "crates/nera-runtime/src/ets.rs": "b7a8e7a6c69c16ee4c3896891ee0284e6a09bdb9c61ad84aa189a3d17b3ed0ad",
+    "crates/nera-runtime/src/ets_pool.rs": "b52152801601182b721905b7f39ed6c8fe892504a3a1fdbc2911b68657bc834c",
+    "crates/nera-runtime/src/ffi/alloc.rs": "b92be7846ee65aca261995a511adc3027660c7020417bab24d2a886d00167619",
+    "crates/nera-runtime/src/ffi/apply.rs": "226b7d7c723a82e3393881fa409c79d54af081e108d22aee088064824e3273da",
+    "crates/nera-runtime/src/ffi/arith.rs": "85b3db23974d402f7e606e507cc576dceee14f03ac46610ebbb64538b1e66f7d",
+    "crates/nera-runtime/src/ffi/atomics.rs": "bb06384be8f6d4f6ba5503bf5143521ed6b4b5360b2b5ec7b7704a06f004045d",
+    "crates/nera-runtime/src/ffi/base64.rs": "e69275aff22f4f2eb3e491f22d26af33b407f759246b124df5f7062e0bed75ab",
+    "crates/nera-runtime/src/ffi/base64_list.rs": "9a740899dcf52a67da79d730c7e4694d5d87eb091fd82d91c3378e8f812b1512",
+    "crates/nera-runtime/src/ffi/binary_ops.rs": "df737a0f7a1526d4137b1fe210aafaf1ceebba4e211f03920b36435ae790e955",
+    "crates/nera-runtime/src/ffi/binary_ops/bit_window.rs": "2495884825186a3f40f432655e4c98a883a4985432b19154f5b09aebcc5d8950",
+    "crates/nera-runtime/src/ffi/binary_ops/float_segment.rs": "cad18eff277e4025a4d8cc7de77930e89a5bbad4d887cdd0b55e80e643e6b9dd",
+    "crates/nera-runtime/src/ffi/closure.rs": "a6dd6ea3effc196b62f548107dc0d97bf0e3882f6209c7f010ceba4b167f8779",
+    "crates/nera-runtime/src/ffi/compare.rs": "20f85878dc619649d6bd000049a30715f7f21d8ad256ed3343542210302b1f6e",
+    "crates/nera-runtime/src/ffi/convert.rs": "0c9f4245e53ee1efa2bdb29f9ebc66e0b47ff962307b58d93905e6f3a39c06d9",
+    "crates/nera-runtime/src/ffi/counters.rs": "fe6650285a9a6590627c0ffbaa6851d95f28617343352d928cdde6457db2c70c",
+    "crates/nera-runtime/src/ffi/ets.rs": "46ce4c5f3042e2b7cc9d1965ca66aed1ff8a7d3a606bf612188be076ee6f24c4",
+    "crates/nera-runtime/src/ffi/exception.rs": "41675551c88b93a09a640c70dec9bcafbe1d541b61d0c92cedc942225195be78",
+    "crates/nera-runtime/src/ffi/file_io.rs": "a1476ccd7b42c79990883a2308a02ffa91c38ba1dd08ed1069a1b966de2dbda7",
+    "crates/nera-runtime/src/ffi/gen_tcp.rs": "63a2f3b93b05a43b669ecbe96a17b11b7d6443264397b3728f293323861242de",
+    "crates/nera-runtime/src/ffi/helpers.rs": "b16c8f010ca85c335329737933932e6733b2a487f44b5f821f373d6f81c82542",
+    "crates/nera-runtime/src/ffi/io_format.rs": "18ba91335025f80ee13e577b3c6dc7d5c1e1af7f014475d276186d1e74d9d986",
+    "crates/nera-runtime/src/ffi/list_ops.rs": "ff4fdfee172e83b7b40aadb6405bd88e22e4a0f8c765ec1ab743da812b140744",
+    "crates/nera-runtime/src/ffi/map_ops.rs": "5db471955a140d584de6e5e8ebdf3a6de9c716442ff9a03ceceb3b7cf433e7f5",
+    "crates/nera-runtime/src/ffi/misc.rs": "11c57c87544da46ceba53b5d974ce13efb250a82e4673237de47f023683ddfc5",
+    "crates/nera-runtime/src/ffi/mod.rs": "b67c66bd254ba639c8ff1e09675675a8f7426ebe3d00b2d59c0179af5db7b743",
+    "crates/nera-runtime/src/ffi/native_work.rs": "40803afc6dd18693b6f6eb06bf8a893408b48a120c8f405aff6c2c3dade2b6ab",
+    "crates/nera-runtime/src/ffi/persistent_term.rs": "0d8feba6cab7440cbf6d98fa271f342cacdcc97195082305853f45fd6e2e0e33",
+    "crates/nera-runtime/src/ffi/process.rs": "17dd2a8ecee70444f60c635b57277c0037553320ba101effb0c513f5b5336524",
+    "crates/nera-runtime/src/ffi/receive.rs": "1e76a1f4d51cd582c2d6e06b662567ada1bf485c9c82fb99d3f3603094014597",
+    "crates/nera-runtime/src/ffi/string_ops.rs": "3a2c27ff4a2d2d30f1d3443754b24223414900b461cbe3430929eae4973a4e26",
+    "crates/nera-runtime/src/ffi/timer.rs": "ba9761b4eeaf16015c65acf668813b4cd23173a8de5cfa7c9b329e90e5098bfa",
+    "crates/nera-runtime/src/ffi/tuple_ops.rs": "f3b96f362ce08fd94343cf164de2f0bbdd58f0c44f9cb4d41d73bd30e847af4d",
+    "crates/nera-runtime/src/ffi/type_check.rs": "8ad4ab90c2000b976927f6ea28ff471b8fd78a47c3065e59ef5f968dd30a49a4",
+    "crates/nera-runtime/src/ffi/unicode.rs": "dcc0d52db500701f7d051df0d89fc19df7fc6a5ce59baa5556fc1b42ad05a646",
+    "crates/nera-runtime/src/heap.rs": "eb13ddf7ebbafbe176687178f764aeec6388e3d996d3973427fda506f9e02c28",
+    "crates/nera-runtime/src/io_pool.rs": "2b953ede7c2787a658202b534e034ad3b3462c197751911a6c519fa5a1ef9ea0",
+    "crates/nera-runtime/src/lib.rs": "1e56a2770c030b4bc1046b9f8438e9d2a054d77746eac6efa4ea266cc3e0f6a1",
+    "crates/nera-runtime/src/message.rs": "74ee847245d6c0c8b2dd98357b2b3da68154ad710f777a45f71d3dfaa061a550",
+    "crates/nera-runtime/src/native_work.rs": "2596ea3b25b0bc466005eebc8a8dd8850c66c59d0503c53d694b82c12f9deaf3",
+    "crates/nera-runtime/src/persistent_term.rs": "f430ccc448c7fd65f22ad7d06f44f751aeab8fd907dd66fcb8906cc61d1b837c",
+    "crates/nera-runtime/src/process.rs": "cfadea14e396d72239e9791cfd14d60aefbe36e6a32bbc85bdd3267d13cb0892",
+    "crates/nera-runtime/src/reactor.rs": "6d3f27477fd323c9326ac73691b99f8ab50cc8e2480fef0cd0762769ef455b1b",
+    "crates/nera-runtime/src/reactor/accept_waiters.rs": "ac12da6d642538f1e704d25084a66fe9deab00e0975d9efbc4fe58b11e22bd82",
+    "crates/nera-runtime/src/resource.rs": "27da29fdb99556b1cb055b327c7544ec7fdac4eb764fb88136665701f4c6d7f3",
+    "crates/nera-runtime/src/scheduler.rs": "762d55f0c826c3fcdd6956a0204d80f5686df412343ab5372e134e955a194361",
+    "crates/nera-runtime/src/socket.rs": "a91f96abfed150e19ed45535bf9882c3019692aafef3a7af1202cc894ce2b872",
+    "crates/nera-runtime/src/term.rs": "c311360145077e7ae5b006f2c0b24e3066c75efa5727ce2a65c532b3119ec83a",
+    "crates/nera-runtime/src/timer.rs": "bdc309a56bd4413db4a5b8afd9c66eb0356d2703344981fe1ad5ba7f5a22f6bf",
+    "crates/nera-runtime/tests/exit_signal_contract.rs": "594bb358636665c699fc18a0b7e2c768228b3b7fae04a8ba060b0ffe9941a13f",
+    "crates/nera-runtime/tests/fragment_heap_contract.rs": "1080d402c0ad89517b3b8fd8ac5330db4da9e892b9840a5309ca546c3aa44040",
+    "crates/nera-runtime/tests/scheduler_borrow_scope.rs": "ad2b78902860d655aa91108a79857cd8b07222a8823b062f2e6154288ff8687b",
+    "crates/nera-syntax/Cargo.toml": "4f5735f9466a4c642a00d472887c80d56250bf5bae29d4192ba6e0938de73170",
+    "crates/nera-syntax/fuzz/Cargo.toml": "cfe6e3d12965a415195e3c9017197912ac496eaea34baaf6958a591d86c83ad1",
+    "crates/nera-syntax/fuzz/fuzz_targets/fuzz_lex.rs": "5e8c3fcd6c1f3785b8c950fc776a862dc03a89221486f267d63d9696b20a9a04",
+    "crates/nera-syntax/fuzz/fuzz_targets/fuzz_parse.rs": "8b42d392fa223cd1cf414ea3c9c9898a5d982749f2007b54f6c84a16d1980185",
+    "crates/nera-syntax/src/ast.rs": "e5f59919ff1135220948a696815e92130d3b35935eed64cf53a3c407bb2dbc1d",
+    "crates/nera-syntax/src/error.rs": "0c387b4aa5a89d3380ba4152be8e11f30082b031c7f4f16208650234fbaa25ee",
+    "crates/nera-syntax/src/lexer.rs": "137e398b6426dd5ed1ac87043086ec54f974850fb34e18835d668985dd36531a",
+    "crates/nera-syntax/src/lib.rs": "8ea2b9640e62c066011d347879c2dbc3cb115d724f017a63092a6e5344e1bb76",
+    "crates/nera-syntax/src/parser.rs": "83df99d567310f960a8fe7ec704441c52bd3ebb7305a33498d18cb469708b81e",
+    "crates/nera-syntax/src/preproc.rs": "92906903a5926af2cfa7b284d0f283f73cdc30f896a742fa1ba74f356f9bfea5",
+    "crates/nera-syntax/src/semantic_tokens.rs": "87ebda24423f651ab5f5ea417253f4a9e5cae5b752e7154218182a9bcaec6aa2",
+    "crates/nera-syntax/src/source_map.rs": "f6a269e2333dc4f5e0680001f3e1e31f746fbc0172d42a57e9b28baea2ba9c34",
+    "crates/nera-syntax/src/span.rs": "6f76277a3dacb7c5052a3ff8c3750f337be554a1319d7d128028cc160953a065",
+    "crates/nera-syntax/src/token.rs": "31399746521883c8d69818fd51ccdb13b1cccc3d48f60afc2f868d8e3a4dd91c",
+    "crates/nera-syntax/tests/deprecated_attributes.rs": "5ac43689431fd385209873e8cc85bd8e291560e10b07909b50c66a84ddc3b0ef",
+    "crates/nera/Cargo.toml": "792ab39a95d48b67e65fa093601eaaa3ca40a48b5ba49d8f3ad720aa927fbaa5",
+    "crates/nera/build.rs": "59b85d7b5b31a9996e0438c771cd26ef6048b1153b5d0194105246341dcf998a",
+    "crates/nera/src/app_registry.rs": "9a1e05abfe746bb41484db40e39d2a0814c9aa0f0782026ae6f5c0f3bfc2fb20",
+    "crates/nera/src/cross_module_warnings.rs": "2729145a42d0984e07a8ff20f136eed03caf1690b13792f4baef44d6b695a617",
+    "crates/nera/src/deps.rs": "18bd2b13ed05a33c5099d50fede9c17f734f55dfd16d286fd9b0eaf9f6f679d3",
+    "crates/nera/src/eunit_runner.rs": "1bfe9283e8b0c9a17e2aa49b6d63e2a25c09ce9ab14575f876055454729be4bb",
+    "crates/nera/src/lsp/check.rs": "96a0fe28ee717c25a985bc3bf815c1b17dba86a43c7faffaea9027a81811a175",
+    "crates/nera/src/lsp/cursor.rs": "b6cdcf93620128ad4dccb0c550d96f03a978a37958a61f377c48b89f62315708",
+    "crates/nera/src/lsp/diagnostics.rs": "ef7c430994e1f61b8743397206572e5cf901d1d8deac3db53e08f75d2d96f329",
+    "crates/nera/src/lsp/handlers.rs": "d431fe7fda37320c260afc5a6874a4c59b0e720e56d06b9bef47fd6ce4d81ff8",
+    "crates/nera/src/lsp/mod.rs": "69126791772b3abcb4bb95f8febe7cbeaa11843fb4fa22991dc240b9acd309c0",
+    "crates/nera/src/lsp/references.rs": "9a2bf45644e8a12092c3624fcc95ee3f3b8d3442d66cce97d6d3bd384bdd9daf",
+    "crates/nera/src/lsp/semantic_tokens.rs": "777378c93e3c5b777ff06be3bed4a6c620ffa187071a307d01e20aa36c33dce1",
+    "crates/nera/src/lsp/source_map.rs": "10c50e1b64a2a3665565603740390465ae6cee3dc136eee14a83655c894f154c",
+    "crates/nera/src/lsp/tests.rs": "a2ea14e83c51bf9cb279a3a0eacb491275fec948351174b2bc4f97b08905573a",
+    "crates/nera/src/lsp/type_infer.rs": "1aaddab99d6e044a59d2a5465ddf7e7690a2e8c6e40907ee4e5d14aba41007bf",
+    "crates/nera/src/lsp/types.rs": "5468dc33ad015158708c2490765b9afb7fac4c5576fe5795c6a6ff35a2adeba9",
+    "crates/nera/src/lsp/util.rs": "55d9469af11fd7b86dcfa930a2159d72cb2f0daae8657b71851a0b4616e7b386",
+    "crates/nera/src/main.rs": "1c6f07dc0be7aa7642ea9de99795957559a9dc2a7560ea542c58426309532c49",
+    "crates/nera/src/module_info.rs": "914bf66deed7e60dd99b99f308a63b58cdeda75d22b7e490db6d888c23d53b85",
+    "crates/nera/src/otp.rs": "2d125781d0b38040c5b18e5c3df0104b4315700c647bd2619d305658ebe85af0",
+    "crates/nera/src/test_runner.rs": "142eeed6b3d783f657db2abe9bfef118769ffef74e32e52e6d59a8cd50e65bab",
+    "erlang/stdlib/application.erl": "0544c6f4a7a99f81253377c3235213527305e21f0b960b7cc3ba89cc1868bd51",
+    "erlang/stdlib/base64.erl": "ec3799d71f0aed33f1542ab8c7f8728a3676014e943176bc6573a939785515f7",
+    "erlang/stdlib/calendar.erl": "6a1eefbac37daaf781ce2a5ac5ed281c73d2c58e3684477cc2eeaf650cd0d4eb",
+    "erlang/stdlib/dict.erl": "22121bdde47dc7e034166888d2b8e6fe9b6808efd469f48999e98933fc3581b4",
+    "erlang/stdlib/gen_server.erl": "a19745ad93603025aef0c5403220ee3641433441726dd305453b539e6c1ff954",
+    "erlang/stdlib/lists.erl": "a8c745877fa16fb7c205d74f61e04198bf8d0c05d1675bbf5b3faf4af8f89776",
+    "erlang/stdlib/maps.erl": "74a4349573989927abec631d3c85d833edfe228e000b2d6a245c574dc9dc63ae",
+    "erlang/stdlib/os.erl": "68110be8d5e2555a21a7300e4d2344cd17894c247a8618abe6e371f9e26d3a80",
+    "erlang/stdlib/proc_lib.erl": "db54e8637a547b2d7146d7a524a7f1806d8651a3182d2147931847d2a3ff163e",
+    "erlang/stdlib/proplists.erl": "af7e0fdc609862c571bff0c4556efc126756e61874cb8a1fee4c234441a5fbaa",
+    "erlang/stdlib/queue.erl": "25c2cb642d5b2eb9a673e3ecd6882ece11c7955264289fdcf492e8b46aedf968",
+    "erlang/stdlib/sets.erl": "cc94aa16b7f6617435d6011c8678fe5f3950d6c34cae9f8b374dc7bfbe596a01",
+    "erlang/stdlib/supervisor.erl": "053a109f4de5944b925271f445d30655002734df488d7589822257c3debf2a4e",
+    "erlang/stdlib/timer.erl": "79ddc8e62eabbfb1880e8bcb1db882e55b6613f5be764fea19f8b2f95f95e5f4",
+    "erlang/stdlib/uri_string.erl": "c54acf9f19b797f476240b9f52c26cf51d82fe7e3aee4da72d6bde348bee79ee",
+    "rust-toolchain.toml": "2ad6f15416572b4836585087f1d4abc53b8fa2dbd616f8dacfaa587ed6714228"
+  },
+  "platform": "macOS-15.7.7-arm64-arm-64bit-Mach-O",
+  "harness_sha256": "731f6032059e34f4c1ea5e055328b8d275f1cfbc785d327e1bdad46eade5aee2",
+  "nera_commit": "ed78f5e0a91a90f7cf0c0629544ead5b93576487",
+  "nera_worktree_status": "",
+  "nera_sha256": "d64f20e11e975abbef6c1bf83cdf74444156218f619812ba1b4549273c506aa0",
+  "runtime_sha256": "f37b374c3b1fb8d5ed779584d5e4b16db6f1e136d5612010f8ac1f79edeee715",
+  "eunit_path": "/opt/homebrew/Cellar/erlang/29.0.5/lib/erlang/lib/eunit-2.11",
+  "eunit_sources": {
+    "doc/examples/fib.erl": "d03708f1c6ae706f9dab1a530d59fe4be62ab726f632ff6a5a997d815b5fac13",
+    "include/eunit.hrl": "1ec1a665f54a4c3c78ad9d4ccb614ae58d2320b367455b964fbc2eccabf59102",
+    "src/eunit.erl": "b4ca2dc5f9f854ebd33b247d28e6ffe7fbd4d5a2fc50c2eb31f79aa7b108954c",
+    "src/eunit_autoexport.erl": "c7a26b14de6b5b2accc83b6827fac383ce7aa56ac8dd41a4a316eb5bee400e31",
+    "src/eunit_data.erl": "964ada1aa2107f7452d65a434074a42051131f0dbac8f2a3dba15dba98a56651",
+    "src/eunit_internal.hrl": "0e06a96b302003dabc18a44b16831888dcc7bfd47f70981f1880be95ab694718",
+    "src/eunit_lib.erl": "f6e8dcebbf8d478161a926013bcd71832de01b0819d7da9de43a792bc67cfc20",
+    "src/eunit_listener.erl": "9fcd2363fdf04c28ddd369e9cec5b5490623bf38f93a6565266b60ce2472c4a2",
+    "src/eunit_proc.erl": "a53d8c08181f7134d4fa49b1b7deee7dab648f9183bdef6c680b30c6ec164921",
+    "src/eunit_serial.erl": "24ab121bb9b1c11d3de890cb4d09e223cc93392e541479ab79106abe086475bf",
+    "src/eunit_server.erl": "c71f3cfdd3c4344a0ee1cc7fc6cd8126508995e85ce9162271b87bf050044b8b",
+    "src/eunit_striptests.erl": "04aac7db42326448f2b11a9666e73c529b48e38a5efd23223c0f53a64863e5b3",
+    "src/eunit_surefire.erl": "ddeacfb3f678025e6682c50d0349bd5f3273436c7056a08c5e4fce64dffd2432",
+    "src/eunit_test.erl": "6d04cb599f194c6e0230674ab5fea383ac21de4dfe0ef814a2b1c16d4c7f8bcf",
+    "src/eunit_tests.erl": "56e82ffd824553aa8a06fabc49f1da85baa205416aae4af0afcb457927f9b602",
+    "src/eunit_tty.erl": "50a735ad25eec829b6e126bc8b4b52ab9b13da91df4364191fbe00b84841cddf"
+  },
+  "gb_trees_source": "/opt/homebrew/Cellar/erlang/29.0.5/lib/erlang/lib/stdlib-8.0.3/src/gb_trees.erl",
+  "gb_trees_sha256": "890b641fa4e901c4f11bf65288ea12e8a8c0480d3a4867274f699fb4ef9c60a3",
+  "otp": "Erlang/OTP 29 [erts-17.0.5] [source] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads:1] [jit] [dtrace]",
+  "framework_controls": {
+    "fixture_sha256": "8c1719fc9a5f8d41c466c5496aefc36cb04242e6ab11ed7b62d1734296532399",
+    "beam": {
+      "returncode": 0,
+      "passed": true
+    },
+    "native_build_returncode": 0,
+    "executable_sha256": "6dcb243ac2bee170df44b2324c2be23e156a45974fa2c8756ed0f8d668a81a98",
+    "native": {
+      "returncode": 0,
+      "passed": true
+    }
+  },
+  "validation_date": "2026-10-15",
+  "base_commit": "902702e6d6027866f2f2885df0915a294959e283",
+  "validation_source_commit": "ed78f5e0a91a90f7cf0c0629544ead5b93576487",
+  "source_contract": "No third-party source in repository. Original assertions and fragmentation helpers kept in external prepared source; only horse benchmarks removed; generic project nera test uses external OTP EUnit.",
+  "runtime_diff": "diff --git a/crates/nera-runtime/src/ffi/timer.rs b/crates/nera-runtime/src/ffi/timer.rs\nindex a68a1cc..9d326d6 100644\n--- a/crates/nera-runtime/src/ffi/timer.rs\n+++ b/crates/nera-runtime/src/ffi/timer.rs\n@@ -48,8 +48,11 @@ pub unsafe extern \"C\" fn nera_rt_send_after(ctx: *mut ProcessContext, time_term:\n             let injector = sched.injector.clone();\n             let runnable_count = std::sync::Arc::clone(&sched.runnable_count);\n             let timer_wheel = std::sync::Arc::clone(&sched.timer_wheel);\n+            let pending = timer_wheel.track_message_timer();\n \n             std::thread::spawn(move || {\n+                // Release pending work only after any message/wake is visible.\n+                let _pending = pending;\n                 std::thread::sleep(std::time::Duration::from_millis(time_ms));\n                 let entry = process_table.get(&dest_pid).map(|r| r.clone());\n                 if let Some(entry) = entry {\n@@ -123,8 +126,11 @@ pub unsafe extern \"C\" fn nera_rt_start_timer(ctx: *mut ProcessContext, time_term\n             let injector = sched.injector.clone();\n             let runnable_count = std::sync::Arc::clone(&sched.runnable_count);\n             let timer_wheel = std::sync::Arc::clone(&sched.timer_wheel);\n+            let pending = timer_wheel.track_message_timer();\n \n             std::thread::spawn(move || {\n+                // Release pending work only after any message/wake is visible.\n+                let _pending = pending;\n                 std::thread::sleep(std::time::Duration::from_millis(time_ms));\n                 let entry = process_table.get(&dest_pid).map(|r| r.clone());\n                 if let Some(entry) = entry {\ndiff --git a/crates/nera-runtime/src/scheduler.rs b/crates/nera-runtime/src/scheduler.rs\nindex 6b042f0..9b02e02 100644\n--- a/crates/nera-runtime/src/scheduler.rs\n+++ b/crates/nera-runtime/src/scheduler.rs\n@@ -1644,8 +1644,11 @@ fn worker_loop(\n ///\n /// A process is considered \"potentially runnable\" if:\n /// - Its status is Ready or Running, OR\n-/// - Its status is Waiting and a wake condition exists (mailbox message for\n-///   receive wait, or pending timer in the timer wheel)\n+/// - Its status is Waiting and a wake condition exists (mailbox message,\n+///   published timed-receive deadline, or pending timer callback).\n+///\n+/// A timed receive owns its liveness across registration and expiration\n+/// handoffs, until the wake CAS publishes Ready.\n fn should_terminate(\n     process_table: &ProcessTable,\n     _injector: &Arc<Injector<Arc<ProcessEntry>>>,\n@@ -1673,6 +1676,11 @@ fn should_terminate(\n         return false;\n     }\n \n+    processes_are_blocked(process_table)\n+}\n+\n+/// Final process-state scan, also covering timer registration/expiry handoffs.\n+fn processes_are_blocked(process_table: &ProcessTable) -> bool {\n     // Collect process entry Arcs, then check each individually.\n     if process_table.is_empty() {\n         return true;\n@@ -1697,6 +1705,14 @@ fn should_terminate(\n                 }\n                 // Need Mutex to check wait_reason and mailbox.\n                 let proc = entry.lock_for_runtime();\n+                // The receive deadline bridges both timer handoffs: WAITING\n+                // may precede heap insertion, and expiry removes the entry\n+                // before the wake CAS publishes READY. Neither is deadlock.\n+                if matches!(proc.wait_reason(), Some(WaitReason::Receive {\n+                    timeout_deadline_ms: Some(_),\n+                })) {\n+                    return false;\n+                }\n                 let waiting_for_receive = matches!(\n                     proc.wait_reason(),\n                     Some(WaitReason::Receive { .. }) | None\n@@ -1889,6 +1905,77 @@ mod tests {\n         }\n     }\n \n+    // Reproduce the exact handoff states without sleeps or relying on worker\n+    // timing. Process state, timer heap and runnable count are all local.\n+    fn receive_timer_handoff_snapshot(expired_before_wake: bool) -> bool {\n+        let scheduler = Scheduler::new(1);\n+        let pid = scheduler.next_pid();\n+        scheduler.spawn_process(Process::new(pid));\n+        let entry = match scheduler.injector.steal() {\n+            Steal::Success(entry) => entry,\n+            _ => panic!(\"new process must be queued\"),\n+        };\n+        {\n+            let mut proc = entry.lock_for_runtime();\n+            proc.context.receive_timeout_deadline = 1;\n+            proc.transition(ProcessState::Waiting(WaitReason::Receive {\n+                timeout_deadline_ms: Some(1),\n+            }));\n+            scheduler.runnable_count.fetch_sub(1, Ordering::AcqRel);\n+        }\n+        // First window: WAITING was published, but insert has not run yet.\n+        if expired_before_wake {\n+            scheduler.timer_wheel.insert(1, pid);\n+            let expired = scheduler.timer_wheel.pop_expired(1);\n+            assert_eq!(expired.len(), 1);\n+            assert_eq!(expired[0].owner_pid, pid);\n+            // Second window: the expired batch has been extracted, but the\n+            // timer thread has not yet called wake_process_for_timer.\n+        }\n+        assert_eq!(entry.published_status(), ASTATUS_WAITING);\n+        assert_eq!(scheduler.runnable_count.load(Ordering::Acquire), 0);\n+        assert!(!scheduler.timer_wheel.has_pending_timers());\n+        assert!(entry.inbox.is_empty());\n+        // Every asynchronous fast-path counter is empty here. Inspect the\n+        // exact process-state predicate used by should_terminate, without a\n+        // global reactor or other tests' pending I/O masking the decision.\n+        let terminated = processes_are_blocked(&scheduler.process_table);\n+        if !expired_before_wake {\n+            scheduler.timer_wheel.insert(1, pid);\n+            assert_eq!(scheduler.timer_wheel.pop_expired(1).len(), 1);\n+        }\n+        // Complete the handoff and verify that exactly one runnable slot and\n+        // one queue entry are published, including a duplicate wake attempt.\n+        wake_process_for_timer(pid, &scheduler.process_table, &scheduler.injector,\n+            &scheduler.runnable_count);\n+        wake_process_for_timer(pid, &scheduler.process_table, &scheduler.injector,\n+            &scheduler.runnable_count);\n+        assert_eq!(entry.published_status(), ASTATUS_READY);\n+        assert_eq!(scheduler.runnable_count.load(Ordering::Acquire), 1);\n+        assert!(matches!(scheduler.injector.steal(), Steal::Success(_)));\n+        assert!(scheduler.injector.is_empty());\n+        assert!(!processes_are_blocked(&scheduler.process_table));\n+        // An untimed receive with no message really is blocked; the fix must\n+        // not turn ordinary deadlock detection into an infinite wait.\n+        entry.lock_for_runtime().transition(ProcessState::Waiting(\n+            WaitReason::Receive { timeout_deadline_ms: None }));\n+        scheduler.runnable_count.fetch_sub(1, Ordering::AcqRel);\n+        assert!(processes_are_blocked(&scheduler.process_table));\n+        terminated\n+    }\n+\n+    #[test]\n+    fn receive_timer_registration_handoff_cannot_terminate() {\n+        assert!(!receive_timer_handoff_snapshot(false),\n+            \"timed receive must stay live before timer registration\");\n+    }\n+\n+    #[test]\n+    fn receive_timer_expiration_handoff_cannot_terminate() {\n+        assert!(!receive_timer_handoff_snapshot(true),\n+            \"expired receive must stay live until its wake is published\");\n+    }\n+\n     #[test]\n     fn receive_timeout_wakeup() {\n         let scheduler = Scheduler::new(2);\ndiff --git a/crates/nera-runtime/src/timer.rs b/crates/nera-runtime/src/timer.rs\nindex 56577eb..8875459 100644\n--- a/crates/nera-runtime/src/timer.rs\n+++ b/crates/nera-runtime/src/timer.rs\n@@ -12,7 +12,7 @@\n use std::cmp::Ordering;\n use std::collections::{BinaryHeap, HashMap};\n use std::sync::atomic::{AtomicU64, Ordering as AtomicOrdering};\n-use std::sync::OnceLock;\n+use std::sync::{Arc, OnceLock};\n use std::time::{Duration, Instant};\n \n use parking_lot::{Condvar, Mutex};\n@@ -76,6 +76,19 @@ pub struct TimerWheel {\n     /// remove_for_pid to skip the Mutex when no timers are active (the\n     /// common case for pure message-passing workloads).\n     active_count: std::sync::atomic::AtomicUsize,\n+    /// Message-timer callbacks stay live until delivery has published any wake.\n+    /// They are independent of a process's receive timer and its cancellation.\n+    pending_messages: std::sync::atomic::AtomicUsize,\n+}\n+\n+/// Keeps deadlock detection from shutting down ahead of an asynchronous timer.\n+/// Dropping after delivery (or on callback failure) releases the pending work.\n+pub(crate) struct PendingMessageTimer(Arc<TimerWheel>);\n+\n+impl Drop for PendingMessageTimer {\n+    fn drop(&mut self) {\n+        self.0.pending_messages.fetch_sub(1, AtomicOrdering::Release);\n+    }\n }\n \n impl TimerWheel {\n@@ -87,9 +100,17 @@ impl TimerWheel {\n             notify_lock: Mutex::new(()),\n             notify_cvar: Condvar::new(),\n             active_count: std::sync::atomic::AtomicUsize::new(0),\n+            pending_messages: std::sync::atomic::AtomicUsize::new(0),\n         }\n     }\n \n+    /// Register callback work before spawning its thread. Retain the guard\n+    /// until both message publication and scheduler dispatch are complete.\n+    pub(crate) fn track_message_timer(self: &Arc<Self>) -> PendingMessageTimer {\n+        self.pending_messages.fetch_add(1, AtomicOrdering::AcqRel);\n+        PendingMessageTimer(Arc::clone(self))\n+    }\n+\n     /// Insert a timer for a process. Returns the timer id.\n     /// Wakes the timer thread so it can recalculate its sleep duration.\n     pub fn insert(&self, deadline_ms: u64, pid: ProcessId) -> u64 {\n@@ -178,9 +199,10 @@ impl TimerWheel {\n         self.heap.lock().peek().map(|e| e.deadline_ms)\n     }\n \n-    /// Check if any non-cancelled timers exist.\n+    /// Check for active receive timers or outstanding message-timer callbacks.\n     pub fn has_pending_timers(&self) -> bool {\n         self.active_count.load(std::sync::atomic::Ordering::Relaxed) > 0\n+            || self.pending_messages.load(AtomicOrdering::Acquire) > 0\n     }\n \n     /// Wait on the timer condvar for at most `duration`.\n@@ -225,6 +247,23 @@ mod tests {\n     use super::*;\n     use std::sync::Arc;\n \n+    #[test]\n+    fn message_timers_remain_pending_until_callbacks_finish() {\n+        let timers = Arc::new(TimerWheel::new());\n+        let first = timers.track_message_timer();\n+        let second = timers.track_message_timer();\n+        let pid = ProcessId::new(1);\n+        timers.insert(1, pid);\n+        timers.cancel_for_pid(pid);\n+        timers.remove_for_pid(pid);\n+        assert!(timers.pop_expired(u64::MAX).is_empty());\n+        assert!(timers.has_pending_timers(), \"receive cancellation must not cancel sends\");\n+        drop(first);\n+        assert!(timers.has_pending_timers(), \"each callback owns its pending slot\");\n+        drop(second);\n+        assert!(!timers.has_pending_timers());\n+    }\n+\n     #[test]\n     fn concurrent_expiration_does_not_lose_published_timers() {\n         // Timers may already be due when the scheduler registers them.\n",
+  "verdict": {
+    "upstream_assertions": "49/49 on each engine, no skips or normalization",
+    "framework_controls": "Both engines complete, including timeout/isolation/failure/descriptor controls",
+    "campaign": "passed"
+  },
+  "external_report": {
+    "path": "/private/tmp/nera-cow-http1-te-pr/report.json",
+    "sha256": "d967e96fb2cb152d3afe991e15f80660c5b34f374a33444fca495faf5632ffaa"
+  },
+  "initial_blocker": {
+    "source_commit": "968da9c7c70d35bb2524aa2e1e5b95b17025603d",
+    "nera_sha256": "7bdd8383dc77e12608b7f1e53f54de9d36044c3fd7e71aa5e859bdbd57fb07e0",
+    "runtime_sha256": "59a3df53ebdb093360bfcc8aff792343772a9272c0961edcc310031292caea82",
+    "status": "failed",
+    "report": "/private/tmp/nera-cow-http1-te-main/report.json",
+    "report_sha256": "7e1b4e1a614d28930fdfacc54e874f0d1d8dbbf0e27dff18307088e0c22e5fc5",
+    "framework_controls": {
+      "fixture_sha256": "8c1719fc9a5f8d41c466c5496aefc36cb04242e6ab11ed7b62d1734296532399",
+      "beam": {
+        "returncode": 0,
+        "passed": true
+      },
+      "native_build_returncode": 0,
+      "executable_sha256": "dd40c7d57871e347c1f3d6134a494a27fb3c3f01ab9bee5e3228badedfe91877",
+      "native": {
+        "returncode": 0,
+        "passed": false
+      }
+    },
+    "upstream_assertions": "39/39 and 10/10 already passed; only native framework controls did not complete",
+    "trigger": "eunit:test({timeout, 0.01, fun() -> receive never -> ok end end}) returns process exit 0 without eunit_native_ok; reproduced without Cowlib",
+    "cause": "send_after/start_timer sleeping callback threads were absent from scheduler pending-work/deadlock detection",
+    "fix": "Register a pending-message-timer guard before spawning; release it after delivery and wake publication (also on unwinding). Include pending callbacks in timer liveness; receive timer cancellation is independent."
+  },
+  "message_timer_regressions": {
+    "fixtures": {
+      "tests/send_after_keeps_alive.erl": "3100eaa3f285ed590505c7c189c2d05af0beeb0a066b9facc8cd38d22fa99db1",
+      "tests/start_timer_keeps_alive.erl": "3f75fed5f441f5685fb6babe180020bf488ed07e78d12d2ef2bf37b09f01e476",
+      "tests/integration/eunit/eunit_native.erl": "8c1719fc9a5f8d41c466c5496aefc36cb04242e6ab11ed7b62d1734296532399"
+    },
+    "before": "Both minimal native tests fail on empty output, no compile failure. Both wait without receive-after, preventing a receive timer from masking the defect.",
+    "after": "Both minimal tests pass on native Nera and BEAM. start_timer checks its exact reference. Original EUnit fixture unchanged and completes.",
+    "rust_unit": "message_timers_remain_pending_until_callbacks_finish: multiple callbacks and receive cancellation/removal independence",
+    "checks": {
+      "release": "passed: cargo build --release --locked",
+      "clippy": "passed: cargo clippy --workspace --all-targets --locked -- -D warnings",
+      "rust": {
+        "passed": 1982,
+        "failed": 0,
+        "ignored": 1
+      },
+      "native_erlang": {
+        "passed": 377,
+        "failed": 0,
+        "skipped": 2,
+        "total": 379,
+        "exclusions": "Existing Onecached external dependency exclusions"
+      },
+      "cowlib_harness": 85
+    },
+    "logs": {
+      "red": {
+        "path": "/private/tmp/nera-eunit-timer-red.log",
+        "sha256": "0b24e52b4e7f49dd53e7253611ae938ad20d51be061cfda347a54fd1f054561a"
+      },
+      "green": {
+        "path": "/private/tmp/nera-eunit-timer-green.log",
+        "sha256": "bd0be05dbfefbb3544aba83b859e0eea2b13e098762ced5fbea2c1e2696f96a2"
+      },
+      "release": {
+        "path": "/private/tmp/nera-eunit-timer-release.log",
+        "sha256": "09f7dacae5e6ce98a840c497ab35ecc1cbd00b387804375828ba3eb4441d5894"
+      },
+      "clippy": {
+        "path": "/private/tmp/nera-eunit-timer-clippy.log",
+        "sha256": "e18602765c799ce925b188588716d12f1c36bcd83c9b0c2c1395b0498883b9f7"
+      },
+      "rust": {
+        "path": "/private/tmp/nera-eunit-timer-rust.log",
+        "sha256": "82d512d7d1722cc8954e7fcef25da36005e164d1cacceb23ea343c3faf1aa5a4"
+      },
+      "native": {
+        "path": "/private/tmp/nera-eunit-timer-native.log",
+        "sha256": "6b72b21aeef21e2392154a3d5db8f9b484069b6550c5df20ae53591732e3665c"
+      },
+      "harness": {
+        "path": "/private/tmp/nera-eunit-timer-harness.log",
+        "sha256": "0606c37d4312bf31e8f17ac971d97405f31189fa9d1b3fb11b8b378abe59d126"
+      }
+    },
+    "scope": "Historical RED/GREEN evidence for callback liveness; unchanged fixtures also pass in the final full native suite."
+  },
+  "receive_timer_handoffs": {
+    "cause": "Process WAITING publication can precede heap registration; pop_expired removes a timer before wake publication. Empty timer counters alone cannot establish deadlock in either phase.",
+    "fix": "The final production process-state termination predicate treats a published Receive wait with Some(deadline) as live until wake CAS publishes READY; no new sleeps or timing retries.",
+    "tests": [
+      "scheduler::tests::receive_timer_registration_handoff_cannot_terminate",
+      "scheduler::tests::receive_timer_expiration_handoff_cannot_terminate"
+    ],
+    "determinism": "Replay exact handoff states using production process transitions, timer insertion/extraction, termination process-state scan and wake CAS; local process table/counters; no sleeps, thread luck or global reactor/I/O activity.",
+    "controls": [
+      "No pending timer/inbox and runnable count zero at both checkpoints",
+      "Without timed-receive liveness check both tests fail at intended assertion",
+      "Duplicate wake publishes one runnable slot and one queue entry",
+      "READY remains live",
+      "Untimed empty receive is still blocked",
+      "All 15 scheduler tests, including actual deadlock and timeout execution, pass"
+    ],
+    "red_method": "Temporarily remove only the new timed-receive liveness condition from the final production predicate; run two tests serially; restore source in finally. No unrelated code reverted.",
+    "source_sha256": "762d55f0c826c3fcdd6956a0204d80f5686df412343ab5372e134e955a194361",
+    "logs": {
+      "red": {
+        "path": "/private/tmp/nera-receive-handoff-red.log",
+        "sha256": "9948742c0e60cc6388d542957a6bdea271e875134b53f99d6b97f720d506e2a5"
+      },
+      "green": {
+        "path": "/private/tmp/nera-receive-handoff-green.log",
+        "sha256": "221216d1f7d6f6586b11cae12f5b282ddddb5ef0d550d006b0b759dd9e7cdcce"
+      }
+    }
+  },
+  "limits": [
+    "macOS arm64 only; no cross-platform claim.",
+    "Finite listed original upstream suites, not exhaustive protocol/API, all Cowlib, generic EUnit or all timer behavior.",
+    "cancel_timer/1 remains a stub returning false, not cancellation. Existing thread-based timers can keep a waiting scheduler alive until delivery.",
+    "Earlier Cowlib modules/properties not rerun in this task. CI remains manually paused."
+  ],
+  "final_checks": {
+    "release": "passed: cargo build --release --locked",
+    "clippy": "passed: cargo clippy --workspace --all-targets --locked -- -D warnings",
+    "rust": {
+      "passed": 1994,
+      "failed": 0,
+      "ignored": 1
+    },
+    "native_erlang": {
+      "passed": 379,
+      "failed": 0,
+      "skipped": 2,
+      "total": 381,
+      "exclusions": "Existing Onecached external dependency exclusions"
+    },
+    "cowlib_harness": 85,
+    "test_sources": {
+      "tests/send_after_keeps_alive.erl": "3100eaa3f285ed590505c7c189c2d05af0beeb0a066b9facc8cd38d22fa99db1",
+      "tests/start_timer_keeps_alive.erl": "3f75fed5f441f5685fb6babe180020bf488ed07e78d12d2ef2bf37b09f01e476",
+      "tests/integration/cowlib/test_native_base64url.py": "bba5aea3f8cd512a733a5f0b9d9bae71a0976738ee115c58fd5837a778c00ad8",
+      "tests/integration/cowlib/test_native_date.py": "60c498825ea7701a7070b8d656c94a3a9f86d0ab04cfc17461cc7721c797ee89",
+      "tests/integration/cowlib/test_native_eunit.py": "df030cff4f0023dbf3950ea65c515150e8e92ee06a34e819ded9bbb59f1f00ec",
+      "tests/integration/cowlib/test_native_http_hd.py": "5a03a4c9724ea485f6e8ac24a2bdc45858409ab4b190a59f87f95ee6070e5964",
+      "tests/integration/cowlib/test_runner.py": "b5e6cd90694f355cc65708d4ef4bc9bbb2a7b4d7042e55a743b5b2add0853f55",
+      "tests/integration/cowlib/test_upstream.py": "f9dacb9ba430fb498c903f55bda90abdc072965cec4a589ce9b5ed9683aa0728",
+      "tests/integration/cowlib/test_upstream_base64url.py": "345e335da995dd384a990b96661916715fff1b90eec2bfc99f68d52e7e7b4e4f",
+      "tests/integration/cowlib/test_upstream_cookie_date.py": "5e8976a1c7181e2fc650543b8e75ffcbbeddd8eeed222f8946ab68c87306c19f",
+      "tests/integration/cowlib/test_upstream_date.py": "8c8a4dc3b1c31db744460580bc12d9d1da37b947f9982301628fa4b1df0f842f",
+      "tests/integration/cowlib/test_upstream_http.py": "51bf8d3d16aef5cdc0086dea1d7a93acbfcb84cb5e2f6e22d6826115b882b2b4"
+    },
+    "logs": {
+      "release": {
+        "path": "/private/tmp/nera-timers-pr-release.log",
+        "sha256": "3c5d08a28f76f1641f665ba2658625ba4c1676f96b8e3097ee68c7c5613ac034"
+      },
+      "clippy": {
+        "path": "/private/tmp/nera-timers-pr-clippy.log",
+        "sha256": "fc1854a8202055a6387e25dbf444ed4b05ad07b3695637caba92c005e6768311"
+      },
+      "rust": {
+        "path": "/private/tmp/nera-timers-pr-rust.log",
+        "sha256": "4807f2f343d59e011b2ba6ff3ac6b15f04b9066480559fccf25bda4e740f379d"
+      },
+      "native": {
+        "path": "/private/tmp/nera-timers-pr-native.log",
+        "sha256": "a9bcf112fbb9ac15bb5f4b50eb9dbd337f11cde73743011ca728352db2929ca6"
+      },
+      "harness": {
+        "path": "/private/tmp/nera-timers-pr-harness.log",
+        "sha256": "bc273dbdb92cf1055761264e4a64af72e9beecba10458ee7168325e0d1a7ca8f"
+      }
+    }
+  }
+}

@@ -1,0 +1,10 @@
+   Compiling nera-runtime v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.13s
+   Doc-tests nera_runtime
+
+running 3 tests
+test crates/nera-runtime/src/bif.rs - bif (line 10) - compile fail ... ok
+test crates/nera-runtime/src/bif.rs - bif (line 19) - compile fail ... ok
+test crates/nera-runtime/src/bif.rs - bif (line 15) - compile fail ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 38 filtered out; finished in 0.35s

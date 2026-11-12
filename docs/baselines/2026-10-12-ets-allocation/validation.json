@@ -1,0 +1,29 @@
+{
+  "base": "4b612a7fced36642059b4ef3251cd2bb693f7640",
+  "sources": {
+    "CHANGELOG.md": "84a27f6e89e4be38cd59604351db11c4be4074e40480f85fe454f986e3abc814",
+    "crates/nera-runtime/src/ets.rs": "4feb0b4f7885286a886f4adea35c95cec73e1a8e7cebdbea40448277cdb13594",
+    "crates/nera-runtime/src/ets_pool.rs": "b52152801601182b721905b7f39ed6c8fe892504a3a1fdbc2911b68657bc834c",
+    "crates/nera-runtime/src/persistent_term.rs": "f430ccc448c7fd65f22ad7d06f44f751aeab8fd907dd66fcb8906cc61d1b837c",
+    "docs/baselines/2026-10-12-ets-allocation/measure.py": "ab3e01ce46d963d7e756f0ca0fea3dc92d39581ca790668c2e3aabd42694c6f4",
+    "docs/baselines/2026-10-12-ets-allocation/results-repeat.json": "4520b8af5511b48546e75d6057df23153f850534e831520486f43df9387b9275",
+    "docs/baselines/2026-10-12-ets-allocation/results.json": "1768c79c88cfe846401586009c0163f0d8314a2737bd0d79657f29fb7c941163",
+    "docs/baselines/2026-10-12-ets-allocation/README.md": "6fa5352e0adae0024833d4a44ca55613b7c15fcfea787fe2991da32185117c24",
+    "docs/baselines/2026-10-12-ets-allocation/red-api.txt": "123b838788d1528fa489e97ba1930269b35462af7380d27e18ea2fda2579be0d",
+    "docs/baselines/2026-10-12-ets-allocation/bench_ets_updates.erl": "0eff6e19315d70c209e79aaae5454afd3ee04153fa12be4353ad5cc4df9631ad"
+  },
+  "artifacts": {
+    "before/nera": "296b612d5548e97ed8130dd1c3cbaa549801d06060fc72cb7945862e0f832e49",
+    "before/libnera_runtime.a": "13e73d57c6f025cfef557f3e96dc221605fb505d93fe8c38cf6c49e53a5479e8",
+    "before/bench": "2838fd02d1bcf39dc01195fce0c20b4e4c7f921a3f3e00937d2c6421c1f5621f",
+    "after/nera": "296b612d5548e97ed8130dd1c3cbaa549801d06060fc72cb7945862e0f832e49",
+    "after/libnera_runtime.a": "cd13fcc3da5f4813464368f7b3092821fd035d7565d66a24cb0cd363338f9989",
+    "after/bench": "db616c8a53742d78325d5fee955c78416659f92adde83195a68de4c06d5f66a5"
+  },
+  "logs": {
+    "nera-owned-workspace.log": "b2cf6abcaa2fd0ed69886b3ec6b67fa3605d5245503650ad72516ea59b035ca5",
+    "nera-owned-clippy.log": "4242e33cc38be63af9b202c123b7fe0d9cbb2857d2baa5abfa77fadca2bd66ee",
+    "nera-owned-e2e.log": "2cad753f50de88ba4b8551f30590a916443e27154fb73e43c3703b82a5804358",
+    "nera-owned-after-build.log": "283ff7fc0e2b9676b3d5a9b314ecef88844bdc5d78de245e6ecb7359e54ffc90"
+  }
+}

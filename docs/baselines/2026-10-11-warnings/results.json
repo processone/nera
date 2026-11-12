@@ -1,0 +1,48 @@
+{
+  "base_ref": "origin/main",
+  "base_commit": "b4008d5b86b449d4a74a767f9b757c58f302e006",
+  "source_tree": "1482f3282da424d67ea60336dd78e13c5fd407a4",
+  "branch": "mr/warning-cleanup",
+  "source_changes": false,
+  "dependencies_changed": false,
+  "platform": "macOS ARM64",
+  "rust": "1.99.0",
+  "checks": {
+    "fresh_release_build": {
+      "exit_code": 0,
+      "warnings": 0
+    },
+    "rust_workspace_tests": {
+      "passed": 1689,
+      "failed": 0,
+      "warnings": 0
+    },
+    "hello_with_stdlib": {
+      "build_exit_code": 0,
+      "warnings": 0,
+      "run_exit_code": 0,
+      "stdout": "Hello, World!\n"
+    },
+    "erlang_baseline": {
+      "command": "./target/release/nera test -j 1 --timeout 30",
+      "passed": 286,
+      "failed": 0,
+      "skipped": 2,
+      "exit_code": 0
+    }
+  },
+  "log_directory": "target/warning-audit-2026-10-11",
+  "log_sha256": {
+    "nera-warnings-fresh-build.log": "cf03404140b70af179c6d10cbbdb54124b2a4ea06a27af054614d9d85b42a85f",
+    "nera-warnings-tests-before.log": "ee95e0c06177be9e5ab026b735f7bacea19f78c843fc882109aa65a2bfc10c08",
+    "nera-warnings-stdlib.log": "0827530d60f58a52708664f8795e3dfcbbe1af6a9032044024181d820b4f4dc9",
+    "nera-warnings-erlang-baseline.log": "f0e09eed5b5e10af875e86e37a741c434388a3d66eb4a46ab0c6dc2c4d7ebd5d"
+  },
+  "cargo_lock_sha256": "2b23030c542224604bc14c0b2b0bceff36dcde82391ab8ebe6a7d7b575802e3e",
+  "omitted": [
+    "Optional Clippy lints",
+    "Remote CI",
+    "Cross-platform execution"
+  ],
+  "publication": "uncommitted documentation only"
+}

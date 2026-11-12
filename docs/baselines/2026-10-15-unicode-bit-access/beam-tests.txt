@@ -1,0 +1,17 @@
+tests/binary_unicode_bits.erl:11:18: Warning: a term is constructed, but never used
+%   11|     caught = try <<(id(4294967361))/utf8>>, error(continued)
+%     |                  ^
+
+tests/binary_unicode_bits.erl:13:18: Warning: a term is constructed, but never used
+%   13|     caught = try <<(id(16#D800))/utf16>>, error(continued)
+%     |                  ^
+
+tests/binary_unicode_bits.erl:15:18: Warning: a term is constructed, but never used
+%   15|     caught = try <<(id(16#110000))/utf32>>, error(continued)
+%     |                  ^
+
+tests/binary_unicode_bits.erl:65:36: Warning: 'catch ...' is deprecated; please use 'try ... catch ... end' instead.
+Compile directive 'nowarn_deprecated_catch' can be used to suppress
+warnings in selected modules.
+%   65| bad(F) -> {'EXIT', {badarg, _}} = (catch F()), ok.
+%     |                                    ^

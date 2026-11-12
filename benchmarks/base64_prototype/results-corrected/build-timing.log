@@ -1,0 +1,5 @@
+   Compiling nera-runtime v0.1.0 (/private/var/folders/yk/hpylg6r976qgbphydj66gt9h0000gn/T/nera-base64-01cut7mr/crates/nera-runtime)
+   Compiling nera-ir v0.1.0 (/private/var/folders/yk/hpylg6r976qgbphydj66gt9h0000gn/T/nera-base64-01cut7mr/crates/nera-ir)
+   Compiling nera v0.1.0 (/private/var/folders/yk/hpylg6r976qgbphydj66gt9h0000gn/T/nera-base64-01cut7mr/crates/nera)
+   Compiling nera-codegen v0.1.0 (/private/var/folders/yk/hpylg6r976qgbphydj66gt9h0000gn/T/nera-base64-01cut7mr/crates/nera-codegen)
+    Finished `release` profile [optimized] target(s) in 1m 53s

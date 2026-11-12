@@ -1,0 +1,117 @@
+{
+  "date": "2026-10-11",
+  "target": "capture fix worktree over e242103; exact source hashes below",
+  "base_ref": "origin/main",
+  "base_commit": "7c454856c88175fed552ea49b7f7c135505282ab",
+  "head": "e2421030e20b5d74e310610b082293df3ece951c",
+  "platform": "macOS arm64",
+  "otp": "29.0.5",
+  "source_sha256": {
+    "crates/nera-ir/src/warnings/ast_walkers.rs": "d58f2e13197764b56151a0d49b07a11717e02950df0e813dfade7ead35f2d4d6",
+    "crates/nera-ir/src/lower/tests.rs": "b6023985568526dc471e8b6f8e7c74a716f0739ddf04e13a6c6a7c4756bb3b88",
+    "tests/closure_callee_capture.erl": "6270f8be25e91faea047a7a7a0003d0a77d127dfd841847f7cf20c2ee132707a",
+    "tests/integration/thoas/eunit/run_assertions.py": "1f91ee9e190ed3a58c0ba7334883c029226f236c61d4ad05a05df9640c302aa5"
+  },
+  "compiler_sha256": "5172a07ef77d6b1363b12fd746a07ab0c14b3e9bbb2cdd0c32c0a7dd0eee7c9d",
+  "runtime_sha256": "1c3e358153fe7f529e943d172781a6fc812d2e24ff6405a66aa49dd2fbbf491a",
+  "upstream": {
+    "commit": "7cdcec7e52b80d2869900893b2acf47199d84190",
+    "version": "1.2.1",
+    "checkout_modified": false,
+    "vendored": false,
+    "native_adapter": "External temporary test module adds an export and driver; original test bodies retained."
+  },
+  "checks": {
+    "red": "lowering regression fails at assertion with UndefinedVariable(Expected)",
+    "green": "same regression passes after traversing CallTarget::Expr",
+    "workspace": {
+      "passed": 1792,
+      "failed": 0,
+      "ignored": 1
+    },
+    "clippy": "passed",
+    "capture_regression": {
+      "beam": "ok",
+      "nera": "ok",
+      "iterations": [
+        42,
+        99
+      ]
+    },
+    "original_test_module_native_compile": {
+      "exit": 0,
+      "framework_execution_claimed": false
+    },
+    "beam_original_eunit": {
+      "passed": 36,
+      "failed": 0
+    },
+    "native_assertion_bodies": {
+      "passed": 26,
+      "failed": 10,
+      "failed_indices": [
+        21,
+        27,
+        28,
+        29,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "runner_exit": 1,
+      "process_isolation": "one OS process per assertion",
+      "success_requires": "zero exit status and exact indexed completion marker"
+    },
+    "differential_corpus": {
+      "passed": 80,
+      "failed": 0,
+      "groups": {
+        "boundary": 14,
+        "errors": 30,
+        "options": 6,
+        "valid": 30
+      }
+    }
+  },
+  "remaining_issues": [
+    {
+      "indices": [
+        21
+      ],
+      "diagnosis": "8-bit binary literal string semantics differ from BEAM",
+      "beam_literal_bytes": [
+        20
+      ],
+      "nera_literal_bytes": [
+        240,
+        159,
+        164,
+        148
+      ]
+    },
+    {
+      "indices": [
+        27,
+        28,
+        29,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "observed": "badmatch while encoding objects; cause not yet diagnosed"
+    }
+  ],
+  "limitations": [
+    "Native EUnit runner and autoexport remain unvalidated.",
+    "Full ExUnit suite not rerun.",
+    "Only macOS arm64 validation."
+  ],
+  "logs_directory": "/private/tmp/nera-capture-validation",
+  "runner_revision_note": "Historical strict-run evidence before adding CI baseline mode. See ci-gate-evidence.json for the current runner hashes and validation."
+}

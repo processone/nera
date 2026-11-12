@@ -1,0 +1,1 @@
+Production bif.rs tokens match HEAD after removing comments, whitespace and unsafe markers. No runtime operation was added by the BIF contract change.

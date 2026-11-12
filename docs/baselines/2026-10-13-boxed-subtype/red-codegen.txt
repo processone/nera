@@ -1,0 +1,21 @@
+   Compiling nera-syntax v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-syntax)
+   Compiling nera-runtime v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-runtime)
+   Compiling nera-ir v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-ir)
+   Compiling nera-codegen v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-codegen)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.62s
+   Doc-tests nera_codegen
+
+running 1 test
+test crates/nera-codegen/src/term_layout.rs - term_layout::encode_boxed_header (line 133) - compile fail ... FAILED
+
+failures:
+
+---- crates/nera-codegen/src/term_layout.rs - term_layout::encode_boxed_header (line 133) stdout ----
+Test compiled successfully, but it's marked `compile_fail`.
+
+failures:
+    crates/nera-codegen/src/term_layout.rs - term_layout::encode_boxed_header (line 133)
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.32s
+
+error: doctest failed, to rerun pass `-p nera-codegen --doc`

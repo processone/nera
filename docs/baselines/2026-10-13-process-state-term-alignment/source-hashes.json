@@ -1,0 +1,39 @@
+{
+  "base": "5b24148ce3281db26795adbc07956f86186abdb6",
+  "branch": "mr/process-state-term-alignment",
+  "target": "uncommitted validated worktree",
+  "files": {
+    "CHANGELOG.md": "7ff3338d6ed9ec900df55caee41b2adf259e93df696c4571daf31f8bc016be1c",
+    "crates/nera-runtime/src/bigint.rs": "94334cddac5ad91ac4f83572627038685c1b9904d0088473b3c4e56e96b6b07d",
+    "crates/nera-runtime/src/ets.rs": "41534a8ee495d377d413ed5757fbe7ff7c5fbfdde38e5da4a73d30025bebcb27",
+    "crates/nera-runtime/src/ffi/atomics.rs": "ddf68f50afdfa8c902ea7b77520fcf45a9706490d174b24386ae446d767b3e99",
+    "crates/nera-runtime/src/ffi/base64.rs": "32667de81a4842a5fa67aa6083fda0694043a2089d69662e0573c58ca2fb6c15",
+    "crates/nera-runtime/src/ffi/closure.rs": "29c3d661536dae46ac4ffb377d0baf23ad591e5e03f15531a6998e86b7649d3b",
+    "crates/nera-runtime/src/ffi/compare.rs": "ffec16fe5936709279f30dafbf62c293665cd17cd73f91a577bd14042642de08",
+    "crates/nera-runtime/src/ffi/counters.rs": "aeec0aff3ae0a020266c7530b36ee075f2ad1e55f25a91e8f7686ee9af7bd8fe",
+    "crates/nera-runtime/src/ffi/map_ops.rs": "5ccc87ea4564d6cf158b514aeb2e82f363ab90bba9faf714354a81c69cf3336c",
+    "crates/nera-runtime/src/ffi/misc.rs": "8cb97a960636d5e6a477de559ab670b3292e2974239e5fdd26ae1f2f14a81c77",
+    "crates/nera-runtime/src/ffi/mod.rs": "586490e8113a25d2eddb35952b02d63ed62bb8676797e8286003512c61a638a6",
+    "crates/nera-runtime/src/ffi/process.rs": "9acaafb2cbfada991fff4cfcae998e700c92f443a2a081c0c2d79560cb060e9b",
+    "crates/nera-runtime/src/heap.rs": "2888b00eb17d012408059bc952a3a14ed916cc9d7dd4e60afeeb1c56f05be90f",
+    "crates/nera-runtime/src/io_pool.rs": "abc3e9547c849ecab42c60230603f6b8e589dc0a9f06ad92b5d2edaf378c61a7",
+    "crates/nera-runtime/src/message.rs": "ae31f05d3411bf1a4b3e4d243010f7402e64bb72fc4525e4df2e8d4f6f4b4a2c",
+    "crates/nera-runtime/src/process.rs": "a751d0eaac8796f215393bd7e1cdf4ef5d07ab358ddce83fde6962e8e6d6fc5e",
+    "crates/nera-runtime/src/scheduler.rs": "aee988732df91cbb3559bb5da7c75caff9fd54742016eb81311578aa7c8e3e8b",
+    "crates/nera-runtime/src/term.rs": "c2304f0ae515465b323d6da206fffa4717d1352f355347bd94d2c9a02281c3d7",
+    "Cargo.lock": "a210f397cb773d07c39ed4827a9aea44092f56ee7c2a438f708784dfa5769f80",
+    "rust-toolchain.toml": "2ad6f15416572b4836585087f1d4abc53b8fa2dbd616f8dacfaa587ed6714228"
+  },
+  "probes": {
+    "/tmp/nera-state-align-before": "8318bdb0e963efcea68a55b15efdd97c8619cab6d02f3628eab5bbce5b51657b",
+    "/tmp/nera-state-align-after": "dee29f395b5ff0b87870b3e09fa935e95cc11174a209ff91149f55e7cd71af97"
+  },
+  "probe_sources": {
+    "probe-before.rs": "501292127da99d68b70571de6db779b3c9eabf3079f6c9ae72287d1ea438f8ee",
+    "probe.rs": "c1f70dc4ff0fcea24d93fb3f7da76c158146e6a8412d8e05e9f60d68699ffe89",
+    "measure.py": "b10829fd9846cda362de3df43eaecbc6d5b0bc4e7c6eedac2c3269565256eac5",
+    "build_probe.py": "8d354adf289fda183381d8623b506a5e2068e8784f4312000670c571e67403b5"
+  },
+  "native_binary_sha256": "d17d723f62fc017ecb24be00bda3cdf8452012da34ed18ec0d481d621c69b39d",
+  "source_snapshot_sha256": "223066e09dc3b6ba25e2e8aa7ad4304be2f420388268f4b219ba7e34354930e8"
+}

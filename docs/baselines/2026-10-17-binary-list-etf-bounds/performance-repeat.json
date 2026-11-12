@@ -1,0 +1,800 @@
+{
+  "series": 3,
+  "groups_per_series": 5,
+  "scheduler_threads": 1,
+  "warmup": "same work as timed sample",
+  "operations": {
+    "binary0": 1000000,
+    "binary1": 1000000,
+    "binary16": 300000,
+    "binary256": 20000,
+    "binary4096": 2000,
+    "tuple0": 2000000,
+    "tuple16": 300000,
+    "tuple256": 30000,
+    "list16": 300000,
+    "map16": 100000
+  },
+  "load_start": [
+    13.93115234375,
+    16.89697265625,
+    12.35302734375
+  ],
+  "hashes": {
+    "before": "4c877a4fa93d9d984760abc49fe9e14248c7fbf1dd93980753784684718f2969",
+    "after": "0d41443db0fa7dcd58d272396ade8ef4445a06582b6c82f9858b2d85f286ed2a"
+  },
+  "observations": [
+    {
+      "series": 0,
+      "group": 0,
+      "executable": "before",
+      "values_us": {
+        "binary0": 11760,
+        "binary1": 39395,
+        "binary16": 36260,
+        "binary256": 29926,
+        "binary4096": 60631,
+        "tuple0": 35149,
+        "tuple16": 24285,
+        "tuple256": 27212,
+        "list16": 51057,
+        "map16": 49932
+      },
+      "load": [
+        13.93115234375,
+        16.89697265625,
+        12.35302734375
+      ]
+    },
+    {
+      "series": 0,
+      "group": 0,
+      "executable": "after",
+      "values_us": {
+        "binary0": 10915,
+        "binary1": 36743,
+        "binary16": 36391,
+        "binary256": 29017,
+        "binary4096": 67451,
+        "tuple0": 37666,
+        "tuple16": 24720,
+        "tuple256": 29170,
+        "list16": 55836,
+        "map16": 53308
+      },
+      "load": [
+        13.93115234375,
+        16.89697265625,
+        12.35302734375
+      ]
+    },
+    {
+      "series": 0,
+      "group": 1,
+      "executable": "after",
+      "values_us": {
+        "binary0": 11785,
+        "binary1": 38207,
+        "binary16": 38111,
+        "binary256": 44304,
+        "binary4096": 83967,
+        "tuple0": 41499,
+        "tuple16": 36884,
+        "tuple256": 32082,
+        "list16": 54737,
+        "map16": 58755
+      },
+      "load": [
+        13.93115234375,
+        16.89697265625,
+        12.35302734375
+      ]
+    },
+    {
+      "series": 0,
+      "group": 1,
+      "executable": "before",
+      "values_us": {
+        "binary0": 12697,
+        "binary1": 47619,
+        "binary16": 42750,
+        "binary256": 32048,
+        "binary4096": 62460,
+        "tuple0": 35256,
+        "tuple16": 24342,
+        "tuple256": 27129,
+        "list16": 56335,
+        "map16": 93963
+      },
+      "load": [
+        13.93115234375,
+        16.89697265625,
+        12.35302734375
+      ]
+    },
+    {
+      "series": 0,
+      "group": 2,
+      "executable": "before",
+      "values_us": {
+        "binary0": 16452,
+        "binary1": 47751,
+        "binary16": 44158,
+        "binary256": 50249,
+        "binary4096": 78705,
+        "tuple0": 36948,
+        "tuple16": 25351,
+        "tuple256": 29515,
+        "list16": 54640,
+        "map16": 51923
+      },
+      "load": [
+        13.4560546875,
+        16.7490234375,
+        12.3271484375
+      ]
+    },
+    {
+      "series": 0,
+      "group": 2,
+      "executable": "after",
+      "values_us": {
+        "binary0": 10963,
+        "binary1": 36421,
+        "binary16": 35866,
+        "binary256": 30301,
+        "binary4096": 59635,
+        "tuple0": 35766,
+        "tuple16": 24912,
+        "tuple256": 26728,
+        "list16": 53438,
+        "map16": 49933
+      },
+      "load": [
+        13.4560546875,
+        16.7490234375,
+        12.3271484375
+      ]
+    },
+    {
+      "series": 0,
+      "group": 3,
+      "executable": "after",
+      "values_us": {
+        "binary0": 10969,
+        "binary1": 38018,
+        "binary16": 38617,
+        "binary256": 31470,
+        "binary4096": 59448,
+        "tuple0": 36202,
+        "tuple16": 28399,
+        "tuple256": 27855,
+        "list16": 53772,
+        "map16": 50409
+      },
+      "load": [
+        13.4560546875,
+        16.7490234375,
+        12.3271484375
+      ]
+    },
+    {
+      "series": 0,
+      "group": 3,
+      "executable": "before",
+      "values_us": {
+        "binary0": 11186,
+        "binary1": 36774,
+        "binary16": 36023,
+        "binary256": 29642,
+        "binary4096": 57378,
+        "tuple0": 35636,
+        "tuple16": 25433,
+        "tuple256": 27147,
+        "list16": 51080,
+        "map16": 51436
+      },
+      "load": [
+        13.4560546875,
+        16.7490234375,
+        12.3271484375
+      ]
+    },
+    {
+      "series": 0,
+      "group": 4,
+      "executable": "before",
+      "values_us": {
+        "binary0": 11141,
+        "binary1": 36890,
+        "binary16": 36325,
+        "binary256": 36090,
+        "binary4096": 58806,
+        "tuple0": 36666,
+        "tuple16": 25314,
+        "tuple256": 30564,
+        "list16": 53941,
+        "map16": 50163
+      },
+      "load": [
+        13.4560546875,
+        16.7490234375,
+        12.3271484375
+      ]
+    },
+    {
+      "series": 0,
+      "group": 4,
+      "executable": "after",
+      "values_us": {
+        "binary0": 10942,
+        "binary1": 36859,
+        "binary16": 37134,
+        "binary256": 30613,
+        "binary4096": 61141,
+        "tuple0": 37380,
+        "tuple16": 25039,
+        "tuple256": 29505,
+        "list16": 51148,
+        "map16": 50601
+      },
+      "load": [
+        13.4560546875,
+        16.7490234375,
+        12.3271484375
+      ]
+    },
+    {
+      "series": 1,
+      "group": 0,
+      "executable": "after",
+      "values_us": {
+        "binary0": 10883,
+        "binary1": 36503,
+        "binary16": 35991,
+        "binary256": 30025,
+        "binary4096": 59661,
+        "tuple0": 35742,
+        "tuple16": 24075,
+        "tuple256": 29757,
+        "list16": 51639,
+        "map16": 51844
+      },
+      "load": [
+        12.77880859375,
+        16.5537109375,
+        12.2841796875
+      ]
+    },
+    {
+      "series": 1,
+      "group": 0,
+      "executable": "before",
+      "values_us": {
+        "binary0": 11672,
+        "binary1": 37855,
+        "binary16": 36176,
+        "binary256": 29317,
+        "binary4096": 62248,
+        "tuple0": 35856,
+        "tuple16": 24672,
+        "tuple256": 28812,
+        "list16": 51813,
+        "map16": 50426
+      },
+      "load": [
+        12.77880859375,
+        16.5537109375,
+        12.2841796875
+      ]
+    },
+    {
+      "series": 1,
+      "group": 1,
+      "executable": "before",
+      "values_us": {
+        "binary0": 11213,
+        "binary1": 36773,
+        "binary16": 36661,
+        "binary256": 31841,
+        "binary4096": 60480,
+        "tuple0": 35800,
+        "tuple16": 24338,
+        "tuple256": 27391,
+        "list16": 52619,
+        "map16": 50945
+      },
+      "load": [
+        12.77880859375,
+        16.5537109375,
+        12.2841796875
+      ]
+    },
+    {
+      "series": 1,
+      "group": 1,
+      "executable": "after",
+      "values_us": {
+        "binary0": 11011,
+        "binary1": 40244,
+        "binary16": 47528,
+        "binary256": 86699,
+        "binary4096": 75599,
+        "tuple0": 79065,
+        "tuple16": 47225,
+        "tuple256": 62952,
+        "list16": 91919,
+        "map16": 94186
+      },
+      "load": [
+        12.77880859375,
+        16.5537109375,
+        12.2841796875
+      ]
+    },
+    {
+      "series": 1,
+      "group": 2,
+      "executable": "after",
+      "values_us": {
+        "binary0": 11631,
+        "binary1": 38244,
+        "binary16": 48116,
+        "binary256": 30326,
+        "binary4096": 84038,
+        "tuple0": 45334,
+        "tuple16": 39053,
+        "tuple256": 73777,
+        "list16": 74645,
+        "map16": 50528
+      },
+      "load": [
+        12.77880859375,
+        16.5537109375,
+        12.2841796875
+      ]
+    },
+    {
+      "series": 1,
+      "group": 2,
+      "executable": "before",
+      "values_us": {
+        "binary0": 11069,
+        "binary1": 37022,
+        "binary16": 36151,
+        "binary256": 62619,
+        "binary4096": 104103,
+        "tuple0": 80690,
+        "tuple16": 29699,
+        "tuple256": 28284,
+        "list16": 120142,
+        "map16": 62555
+      },
+      "load": [
+        14.15771484375,
+        16.77685546875,
+        12.3876953125
+      ]
+    },
+    {
+      "series": 1,
+      "group": 3,
+      "executable": "before",
+      "values_us": {
+        "binary0": 12878,
+        "binary1": 42760,
+        "binary16": 43132,
+        "binary256": 37213,
+        "binary4096": 97932,
+        "tuple0": 106810,
+        "tuple16": 36886,
+        "tuple256": 39918,
+        "list16": 128369,
+        "map16": 68722
+      },
+      "load": [
+        14.15771484375,
+        16.77685546875,
+        12.3876953125
+      ]
+    },
+    {
+      "series": 1,
+      "group": 3,
+      "executable": "after",
+      "values_us": {
+        "binary0": 19351,
+        "binary1": 46341,
+        "binary16": 37405,
+        "binary256": 31034,
+        "binary4096": 66324,
+        "tuple0": 37220,
+        "tuple16": 26622,
+        "tuple256": 28810,
+        "list16": 56032,
+        "map16": 79697
+      },
+      "load": [
+        14.15771484375,
+        16.77685546875,
+        12.3876953125
+      ]
+    },
+    {
+      "series": 1,
+      "group": 4,
+      "executable": "after",
+      "values_us": {
+        "binary0": 19161,
+        "binary1": 57991,
+        "binary16": 65048,
+        "binary256": 56884,
+        "binary4096": 101224,
+        "tuple0": 90144,
+        "tuple16": 47268,
+        "tuple256": 62912,
+        "list16": 113882,
+        "map16": 93369
+      },
+      "load": [
+        14.15771484375,
+        16.77685546875,
+        12.3876953125
+      ]
+    },
+    {
+      "series": 1,
+      "group": 4,
+      "executable": "before",
+      "values_us": {
+        "binary0": 13050,
+        "binary1": 46906,
+        "binary16": 46909,
+        "binary256": 40073,
+        "binary4096": 103096,
+        "tuple0": 56158,
+        "tuple16": 28154,
+        "tuple256": 29947,
+        "list16": 51690,
+        "map16": 51179
+      },
+      "load": [
+        15.66650390625,
+        17.0458984375,
+        12.50830078125
+      ]
+    },
+    {
+      "series": 2,
+      "group": 0,
+      "executable": "before",
+      "values_us": {
+        "binary0": 11131,
+        "binary1": 37240,
+        "binary16": 58363,
+        "binary256": 53957,
+        "binary4096": 112775,
+        "tuple0": 39134,
+        "tuple16": 48671,
+        "tuple256": 46831,
+        "list16": 97246,
+        "map16": 86339
+      },
+      "load": [
+        15.66650390625,
+        17.0458984375,
+        12.50830078125
+      ]
+    },
+    {
+      "series": 2,
+      "group": 0,
+      "executable": "after",
+      "values_us": {
+        "binary0": 18262,
+        "binary1": 50672,
+        "binary16": 54009,
+        "binary256": 44845,
+        "binary4096": 101532,
+        "tuple0": 88877,
+        "tuple16": 46733,
+        "tuple256": 48093,
+        "list16": 107515,
+        "map16": 67378
+      },
+      "load": [
+        15.66650390625,
+        17.0458984375,
+        12.50830078125
+      ]
+    },
+    {
+      "series": 2,
+      "group": 1,
+      "executable": "after",
+      "values_us": {
+        "binary0": 11010,
+        "binary1": 37147,
+        "binary16": 36274,
+        "binary256": 28939,
+        "binary4096": 62905,
+        "tuple0": 36973,
+        "tuple16": 24817,
+        "tuple256": 48747,
+        "list16": 85857,
+        "map16": 101499
+      },
+      "load": [
+        15.66650390625,
+        17.0458984375,
+        12.50830078125
+      ]
+    },
+    {
+      "series": 2,
+      "group": 1,
+      "executable": "before",
+      "values_us": {
+        "binary0": 20453,
+        "binary1": 55053,
+        "binary16": 49125,
+        "binary256": 35807,
+        "binary4096": 109043,
+        "tuple0": 102404,
+        "tuple16": 70694,
+        "tuple256": 41738,
+        "list16": 163194,
+        "map16": 128581
+      },
+      "load": [
+        17.13427734375,
+        17.3271484375,
+        12.6337890625
+      ]
+    },
+    {
+      "series": 2,
+      "group": 2,
+      "executable": "before",
+      "values_us": {
+        "binary0": 19157,
+        "binary1": 56723,
+        "binary16": 37990,
+        "binary256": 29595,
+        "binary4096": 62617,
+        "tuple0": 35477,
+        "tuple16": 23997,
+        "tuple256": 33129,
+        "list16": 51053,
+        "map16": 50458
+      },
+      "load": [
+        17.13427734375,
+        17.3271484375,
+        12.6337890625
+      ]
+    },
+    {
+      "series": 2,
+      "group": 2,
+      "executable": "after",
+      "values_us": {
+        "binary0": 10948,
+        "binary1": 36796,
+        "binary16": 35916,
+        "binary256": 30789,
+        "binary4096": 57564,
+        "tuple0": 35596,
+        "tuple16": 23819,
+        "tuple256": 29035,
+        "list16": 52153,
+        "map16": 56049
+      },
+      "load": [
+        17.13427734375,
+        17.3271484375,
+        12.6337890625
+      ]
+    },
+    {
+      "series": 2,
+      "group": 3,
+      "executable": "after",
+      "values_us": {
+        "binary0": 11379,
+        "binary1": 37789,
+        "binary16": 37364,
+        "binary256": 29520,
+        "binary4096": 59919,
+        "tuple0": 36517,
+        "tuple16": 23793,
+        "tuple256": 29832,
+        "list16": 52278,
+        "map16": 50063
+      },
+      "load": [
+        17.13427734375,
+        17.3271484375,
+        12.6337890625
+      ]
+    },
+    {
+      "series": 2,
+      "group": 3,
+      "executable": "before",
+      "values_us": {
+        "binary0": 11310,
+        "binary1": 40822,
+        "binary16": 37776,
+        "binary256": 29606,
+        "binary4096": 57887,
+        "tuple0": 35440,
+        "tuple16": 23921,
+        "tuple256": 27468,
+        "list16": 51290,
+        "map16": 50304
+      },
+      "load": [
+        17.13427734375,
+        17.3271484375,
+        12.6337890625
+      ]
+    },
+    {
+      "series": 2,
+      "group": 4,
+      "executable": "before",
+      "values_us": {
+        "binary0": 11107,
+        "binary1": 36744,
+        "binary16": 36022,
+        "binary256": 29223,
+        "binary4096": 58096,
+        "tuple0": 35938,
+        "tuple16": 25090,
+        "tuple256": 27772,
+        "list16": 51219,
+        "map16": 49764
+      },
+      "load": [
+        16.162109375,
+        17.1220703125,
+        12.5888671875
+      ]
+    },
+    {
+      "series": 2,
+      "group": 4,
+      "executable": "after",
+      "values_us": {
+        "binary0": 11294,
+        "binary1": 36418,
+        "binary16": 36133,
+        "binary256": 28624,
+        "binary4096": 62216,
+        "tuple0": 35672,
+        "tuple16": 24043,
+        "tuple256": 29633,
+        "list16": 52340,
+        "map16": 50568
+      },
+      "load": [
+        16.162109375,
+        17.1220703125,
+        12.5888671875
+      ]
+    }
+  ],
+  "load_end": [
+    16.162109375,
+    17.1220703125,
+    12.5888671875
+  ],
+  "medians_us": {
+    "before": {
+      "binary0": 11672,
+      "binary1": 39395,
+      "binary16": 37776,
+      "binary256": 32048,
+      "binary4096": 62460,
+      "tuple0": 35938,
+      "tuple16": 25314,
+      "tuple256": 28812,
+      "list16": 52619,
+      "map16": 51179
+    },
+    "after": {
+      "binary0": 11011,
+      "binary1": 37789,
+      "binary16": 37364,
+      "binary256": 30613,
+      "binary4096": 62905,
+      "tuple0": 37220,
+      "tuple16": 25039,
+      "tuple256": 29757,
+      "list16": 54737,
+      "map16": 53308
+    }
+  },
+  "series_medians_us": {
+    "0": {
+      "before": {
+        "binary0": 11760,
+        "binary1": 39395,
+        "binary16": 36325,
+        "binary256": 32048,
+        "binary4096": 60631,
+        "tuple0": 35636,
+        "tuple16": 25314,
+        "tuple256": 27212,
+        "list16": 53941,
+        "map16": 51436
+      },
+      "after": {
+        "binary0": 10963,
+        "binary1": 36859,
+        "binary16": 37134,
+        "binary256": 30613,
+        "binary4096": 61141,
+        "tuple0": 37380,
+        "tuple16": 25039,
+        "tuple256": 29170,
+        "list16": 53772,
+        "map16": 50601
+      }
+    },
+    "1": {
+      "before": {
+        "binary0": 11672,
+        "binary1": 37855,
+        "binary16": 36661,
+        "binary256": 37213,
+        "binary4096": 97932,
+        "tuple0": 56158,
+        "tuple16": 28154,
+        "tuple256": 28812,
+        "list16": 52619,
+        "map16": 51179
+      },
+      "after": {
+        "binary0": 11631,
+        "binary1": 40244,
+        "binary16": 47528,
+        "binary256": 31034,
+        "binary4096": 75599,
+        "tuple0": 45334,
+        "tuple16": 39053,
+        "tuple256": 62912,
+        "list16": 74645,
+        "map16": 79697
+      }
+    },
+    "2": {
+      "before": {
+        "binary0": 11310,
+        "binary1": 40822,
+        "binary16": 37990,
+        "binary256": 29606,
+        "binary4096": 62617,
+        "tuple0": 35938,
+        "tuple16": 25090,
+        "tuple256": 33129,
+        "list16": 51290,
+        "map16": 50458
+      },
+      "after": {
+        "binary0": 11294,
+        "binary1": 37147,
+        "binary16": 36274,
+        "binary256": 29520,
+        "binary4096": 62216,
+        "tuple0": 36517,
+        "tuple16": 24043,
+        "tuple256": 29832,
+        "list16": 52340,
+        "map16": 56049
+      }
+    }
+  }
+}

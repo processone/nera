@@ -1,0 +1,8 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.11s
+     Running unittests src/lib.rs (/tmp/nera-transfer-target/debug/deps/nera_runtime-27bb0f9fcbc2d668)
+
+running 2 tests
+test resource::tests::resource_kind_rejects_plain_and_cross_type_references_before_pointer_use ... ok
+test resource::tests::resource_identity_survives_full_gc_message_copy_and_heap_drop ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 571 filtered out; finished in 0.00s

@@ -1,0 +1,68 @@
+{
+  "base_ref": "origin/main",
+  "base": "a53877f6c0d6084e0a25765ec36afc124cf0f616",
+  "target": "uncommitted worktree on mr/ets-ownership-atomicity",
+  "worktree": "/tmp/nera-ets-ownership",
+  "source_sha256": {
+    "crates/nera-runtime/src/ets.rs": "34feac8b7584db889a620c93765aecc96d75a664d0f77b50ced68c04f2b2531a",
+    "docs/SEND_SYNC.md": "68227701c5d070fef068ceff9b2ed65f22f552a59cc42b7217e5c00ac3efe74a",
+    "docs/baselines/2026-10-11-ets-ownership/bench_ets_updates.erl": "0eff6e19315d70c209e79aaae5454afd3ee04153fa12be4353ad5cc4df9631ad"
+  },
+  "source_fingerprint": "a478b6980274c5aa154353af92d7e73e83893caae52d93f04b56caf3ecd1ecd1",
+  "logs": {
+    "red-owner": {
+      "path": "/tmp/nera-ets-red-owner.log",
+      "sha256": "5babb76522347330bfa59618f873f7a47c503605544d88ca8542fdc15fb90c1d"
+    },
+    "red-atomic": {
+      "path": "/tmp/nera-ets-red-atomic.log",
+      "sha256": "df76e7f37313e9c7740830d147b732f31c11598085d189fedd4e12ab31ae1bc7"
+    },
+    "runtime-final": {
+      "path": "/tmp/nera-ets-runtime-final.log",
+      "sha256": "2917fd2a8189ad08f5d829d89811cdc8757d38251742165b523e3c9486095824"
+    },
+    "tests-final": {
+      "path": "/tmp/nera-ets-tests-final.log",
+      "sha256": "aae77c4a9ae7a750224e94a69f8e4d8746ca895b7eb5499aa742c4acc260bae6"
+    },
+    "clippy-final": {
+      "path": "/tmp/nera-ets-clippy-final.log",
+      "sha256": "4adc6c25e658f721e7d61d93fbf7139a3fb0aa8bb169a0b1d2383c5088ceb540"
+    },
+    "release-final": {
+      "path": "/tmp/nera-ets-release-final.log",
+      "sha256": "38511262a8e63d020c305f79943ba07cd7e70b9e5347d6e506ed7c4acba3948e"
+    },
+    "e2e": {
+      "path": "/tmp/nera-ets-e2e.log",
+      "sha256": "d8fbcd7d20b57e9df79c2fb7ba99f1edfb0ddde7076cfd08d371ecb91cf9b9cc"
+    },
+    "bench-final": {
+      "path": "/tmp/nera-ets-bench-final.log",
+      "sha256": "d981e885ec94757c74aee895e65873de796c1b4795ebf073de05138955312db4"
+    }
+  },
+  "runtime_archive_sha256": {
+    "before": "9f4f74b655c97e642c74724872bf9672b59efdce7a11632117553ad8327eda30",
+    "after": "b13fa89fd1e6aa3aa4b1c62d7681334241189adc18496747e7913fc24b31a46a"
+  },
+  "results": {
+    "workspace_tests_passed": 1752,
+    "runtime_tests_passed": 455,
+    "runtime_doctests_passed": 6,
+    "strict_clippy": "passed",
+    "release_workspace_build": "passed",
+    "erlang_passed": 286,
+    "erlang_failed": 0,
+    "erlang_skipped": 2,
+    "diff_check": "passed"
+  },
+  "platform": "macOS ARM64, Rust 1.99.0",
+  "not_run": [
+    "remote CI",
+    "cross-platform tests",
+    "sanitizers/Miri"
+  ],
+  "publication": "local only; not committed or pushed"
+}

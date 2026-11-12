@@ -1,0 +1,2473 @@
+{
+  "operations_by_case": {
+    "default": 500000,
+    "binary256": 50000,
+    "extra": 100000
+  },
+  "warmup_operations": "same as timed operations",
+  "series": 3,
+  "groups_per_series": 5,
+  "scheduler_threads": 1,
+  "offsets": [
+    0,
+    3
+  ],
+  "hashes": {
+    "before-0": "c5fef05180cee6cf6354e842a2ca5c36897038346d95d2ae4a0d43bcef085cf2",
+    "after-0": "7de9461aa065b2400be93a3b5355840151944312f317b56cab9c6184b1a3314a",
+    "before-3": "00a2803e953887ea66f693cbed486102116463c6011267e6b757a0679e0eccb7",
+    "after-3": "ab4b66829900a0cd50b30ea39cc4bcf12b3298e8ddf4d42e420349be988c84ff",
+    "after-extra-0": "9ab86faaf05b05e4b08ecba08a82a8cdc4fa8786ba9cdfb9542b8a83a7bc8e4a",
+    "after-extra-3": "6c68fa0ccab8cfffe394afc0a6fca95cc118436303007c7d66b4a9a0a619f38f"
+  },
+  "load_start": [
+    4.76171875,
+    5.26025390625,
+    5.42431640625
+  ],
+  "observations": [
+    {
+      "series": 0,
+      "group": 0,
+      "executable": "before-0",
+      "load": [
+        4.76171875,
+        5.26025390625,
+        5.42431640625
+      ],
+      "values_us": {
+        "i8_write": 19002,
+        "i8_read": 8961,
+        "i32_write": 20517,
+        "i32_read": 8787,
+        "i64_write": 22126,
+        "i64_read": 8958,
+        "i64le_write": 21546,
+        "i64le_read": 8827,
+        "i13_write": 19748,
+        "i13_read": 11573,
+        "dynamic32_write": 22756,
+        "dynamic32_read": 10249,
+        "dynamicprefix32_write": 21922,
+        "dynamicprefix32_read": 10951,
+        "binary16_write": 22759,
+        "binary16_read": 22440,
+        "binary256_write": 10715,
+        "binary256_read": 26548
+      }
+    },
+    {
+      "series": 0,
+      "group": 0,
+      "executable": "after-0",
+      "load": [
+        4.76171875,
+        5.26025390625,
+        5.42431640625
+      ],
+      "values_us": {
+        "i8_write": 18654,
+        "i8_read": 8889,
+        "i32_write": 20228,
+        "i32_read": 9096,
+        "i64_write": 21591,
+        "i64_read": 9093,
+        "i64le_write": 21396,
+        "i64le_read": 9413,
+        "i13_write": 20525,
+        "i13_read": 12604,
+        "dynamic32_write": 22404,
+        "dynamic32_read": 16222,
+        "dynamicprefix32_write": 23091,
+        "dynamicprefix32_read": 12752,
+        "binary16_write": 26088,
+        "binary16_read": 23756,
+        "binary256_write": 11261,
+        "binary256_read": 27721
+      }
+    },
+    {
+      "series": 0,
+      "group": 0,
+      "executable": "before-3",
+      "load": [
+        4.76171875,
+        5.26025390625,
+        5.42431640625
+      ],
+      "values_us": {
+        "i8_write": 20689,
+        "i8_read": 11611,
+        "i32_write": 22708,
+        "i32_read": 12362,
+        "i64_write": 25564,
+        "i64_read": 14005,
+        "i64le_write": 26107,
+        "i64le_read": 16344,
+        "i13_write": 20929,
+        "i13_read": 11534,
+        "dynamic32_write": 24547,
+        "dynamic32_read": 14306,
+        "dynamicprefix32_write": 25018,
+        "dynamicprefix32_read": 14595,
+        "binary16_write": 178084,
+        "binary16_read": 52203,
+        "binary256_write": 261577,
+        "binary256_read": 57062
+      }
+    },
+    {
+      "series": 0,
+      "group": 0,
+      "executable": "after-3",
+      "load": [
+        4.78076171875,
+        5.255859375,
+        5.42138671875
+      ],
+      "values_us": {
+        "i8_write": 21323,
+        "i8_read": 12064,
+        "i32_write": 24073,
+        "i32_read": 13021,
+        "i64_write": 26986,
+        "i64_read": 15400,
+        "i64le_write": 28202,
+        "i64le_read": 17762,
+        "i13_write": 22165,
+        "i13_read": 12747,
+        "dynamic32_write": 26770,
+        "dynamic32_read": 15772,
+        "dynamicprefix32_write": 26155,
+        "dynamicprefix32_read": 16399,
+        "binary16_write": 179809,
+        "binary16_read": 53549,
+        "binary256_write": 262228,
+        "binary256_read": 57828
+      }
+    },
+    {
+      "series": 0,
+      "group": 0,
+      "executable": "after-extra-0",
+      "load": [
+        4.78076171875,
+        5.255859375,
+        5.42138671875
+      ],
+      "values_us": {
+        "i13le_write": 4072,
+        "i13le_read": 2537,
+        "i80_write": 29558,
+        "i80_read": 17563,
+        "i128le_write": 42122,
+        "i128le_read": 16769
+      }
+    },
+    {
+      "series": 0,
+      "group": 0,
+      "executable": "after-extra-3",
+      "load": [
+        4.78076171875,
+        5.255859375,
+        5.42138671875
+      ],
+      "values_us": {
+        "i13le_write": 4372,
+        "i13le_read": 2546,
+        "i80_write": 29984,
+        "i80_read": 17524,
+        "i128le_write": 42874,
+        "i128le_read": 17429
+      }
+    },
+    {
+      "series": 0,
+      "group": 1,
+      "executable": "after-extra-0",
+      "load": [
+        4.78076171875,
+        5.255859375,
+        5.42138671875
+      ],
+      "values_us": {
+        "i13le_write": 4146,
+        "i13le_read": 2603,
+        "i80_write": 29725,
+        "i80_read": 17560,
+        "i128le_write": 42684,
+        "i128le_read": 16823
+      }
+    },
+    {
+      "series": 0,
+      "group": 1,
+      "executable": "after-3",
+      "load": [
+        4.78076171875,
+        5.255859375,
+        5.42138671875
+      ],
+      "values_us": {
+        "i8_write": 21348,
+        "i8_read": 11997,
+        "i32_write": 23746,
+        "i32_read": 13040,
+        "i64_write": 26327,
+        "i64_read": 14858,
+        "i64le_write": 29486,
+        "i64le_read": 17212,
+        "i13_write": 21900,
+        "i13_read": 12436,
+        "dynamic32_write": 26375,
+        "dynamic32_read": 15336,
+        "dynamicprefix32_write": 25290,
+        "dynamicprefix32_read": 15934,
+        "binary16_write": 179496,
+        "binary16_read": 53243,
+        "binary256_write": 260166,
+        "binary256_read": 57204
+      }
+    },
+    {
+      "series": 0,
+      "group": 1,
+      "executable": "before-3",
+      "load": [
+        4.7177734375,
+        5.23486328125,
+        5.41259765625
+      ],
+      "values_us": {
+        "i8_write": 20711,
+        "i8_read": 11534,
+        "i32_write": 22978,
+        "i32_read": 12396,
+        "i64_write": 25627,
+        "i64_read": 14102,
+        "i64le_write": 26195,
+        "i64le_read": 16670,
+        "i13_write": 21062,
+        "i13_read": 11525,
+        "dynamic32_write": 24465,
+        "dynamic32_read": 13871,
+        "dynamicprefix32_write": 24213,
+        "dynamicprefix32_read": 14149,
+        "binary16_write": 178625,
+        "binary16_read": 52227,
+        "binary256_write": 259899,
+        "binary256_read": 57058
+      }
+    },
+    {
+      "series": 0,
+      "group": 1,
+      "executable": "after-0",
+      "load": [
+        4.7177734375,
+        5.23486328125,
+        5.41259765625
+      ],
+      "values_us": {
+        "i8_write": 18881,
+        "i8_read": 8794,
+        "i32_write": 20032,
+        "i32_read": 9115,
+        "i64_write": 21558,
+        "i64_read": 9101,
+        "i64le_write": 21270,
+        "i64le_read": 9104,
+        "i13_write": 20112,
+        "i13_read": 12279,
+        "dynamic32_write": 21655,
+        "dynamic32_read": 15691,
+        "dynamicprefix32_write": 21568,
+        "dynamicprefix32_read": 12001,
+        "binary16_write": 23303,
+        "binary16_read": 21984,
+        "binary256_write": 10152,
+        "binary256_read": 26725
+      }
+    },
+    {
+      "series": 0,
+      "group": 1,
+      "executable": "before-0",
+      "load": [
+        4.7177734375,
+        5.23486328125,
+        5.41259765625
+      ],
+      "values_us": {
+        "i8_write": 18760,
+        "i8_read": 8627,
+        "i32_write": 20562,
+        "i32_read": 9166,
+        "i64_write": 22404,
+        "i64_read": 8931,
+        "i64le_write": 21586,
+        "i64le_read": 8865,
+        "i13_write": 19814,
+        "i13_read": 11533,
+        "dynamic32_write": 21912,
+        "dynamic32_read": 10232,
+        "dynamicprefix32_write": 22087,
+        "dynamicprefix32_read": 10630,
+        "binary16_write": 22057,
+        "binary16_read": 21692,
+        "binary256_write": 10358,
+        "binary256_read": 25966
+      }
+    },
+    {
+      "series": 0,
+      "group": 1,
+      "executable": "after-extra-3",
+      "load": [
+        4.7177734375,
+        5.23486328125,
+        5.41259765625
+      ],
+      "values_us": {
+        "i13le_write": 4372,
+        "i13le_read": 2542,
+        "i80_write": 30075,
+        "i80_read": 17405,
+        "i128le_write": 42983,
+        "i128le_read": 17495
+      }
+    },
+    {
+      "series": 0,
+      "group": 2,
+      "executable": "before-3",
+      "load": [
+        4.7177734375,
+        5.23486328125,
+        5.41259765625
+      ],
+      "values_us": {
+        "i8_write": 20755,
+        "i8_read": 11547,
+        "i32_write": 22755,
+        "i32_read": 12355,
+        "i64_write": 25927,
+        "i64_read": 14058,
+        "i64le_write": 26163,
+        "i64le_read": 16379,
+        "i13_write": 21050,
+        "i13_read": 11556,
+        "dynamic32_write": 24455,
+        "dynamic32_read": 13858,
+        "dynamicprefix32_write": 24291,
+        "dynamicprefix32_read": 14170,
+        "binary16_write": 178206,
+        "binary16_read": 52159,
+        "binary256_write": 262213,
+        "binary256_read": 57366
+      }
+    },
+    {
+      "series": 0,
+      "group": 2,
+      "executable": "after-3",
+      "load": [
+        4.8203125,
+        5.24755859375,
+        5.416015625
+      ],
+      "values_us": {
+        "i8_write": 21818,
+        "i8_read": 12079,
+        "i32_write": 23718,
+        "i32_read": 13028,
+        "i64_write": 26482,
+        "i64_read": 20814,
+        "i64le_write": 27303,
+        "i64le_read": 17378,
+        "i13_write": 21490,
+        "i13_read": 12381,
+        "dynamic32_write": 26166,
+        "dynamic32_read": 15289,
+        "dynamicprefix32_write": 25360,
+        "dynamicprefix32_read": 15687,
+        "binary16_write": 179386,
+        "binary16_read": 53168,
+        "binary256_write": 261141,
+        "binary256_read": 59936
+      }
+    },
+    {
+      "series": 0,
+      "group": 2,
+      "executable": "after-extra-0",
+      "load": [
+        4.8203125,
+        5.24755859375,
+        5.416015625
+      ],
+      "values_us": {
+        "i13le_write": 4112,
+        "i13le_read": 2594,
+        "i80_write": 29673,
+        "i80_read": 17615,
+        "i128le_write": 42497,
+        "i128le_read": 16956
+      }
+    },
+    {
+      "series": 0,
+      "group": 2,
+      "executable": "after-extra-3",
+      "load": [
+        4.8203125,
+        5.24755859375,
+        5.416015625
+      ],
+      "values_us": {
+        "i13le_write": 4427,
+        "i13le_read": 2548,
+        "i80_write": 29935,
+        "i80_read": 17511,
+        "i128le_write": 42850,
+        "i128le_read": 17527
+      }
+    },
+    {
+      "series": 0,
+      "group": 2,
+      "executable": "before-0",
+      "load": [
+        4.8203125,
+        5.24755859375,
+        5.416015625
+      ],
+      "values_us": {
+        "i8_write": 18743,
+        "i8_read": 8632,
+        "i32_write": 20220,
+        "i32_read": 8773,
+        "i64_write": 22040,
+        "i64_read": 8954,
+        "i64le_write": 21571,
+        "i64le_read": 8840,
+        "i13_write": 19819,
+        "i13_read": 11535,
+        "dynamic32_write": 21645,
+        "dynamic32_read": 10282,
+        "dynamicprefix32_write": 22332,
+        "dynamicprefix32_read": 10612,
+        "binary16_write": 22378,
+        "binary16_read": 21775,
+        "binary256_write": 10403,
+        "binary256_read": 25796
+      }
+    },
+    {
+      "series": 0,
+      "group": 2,
+      "executable": "after-0",
+      "load": [
+        4.8203125,
+        5.24755859375,
+        5.416015625
+      ],
+      "values_us": {
+        "i8_write": 18609,
+        "i8_read": 8777,
+        "i32_write": 20314,
+        "i32_read": 9133,
+        "i64_write": 22684,
+        "i64_read": 9263,
+        "i64le_write": 21261,
+        "i64le_read": 9124,
+        "i13_write": 19855,
+        "i13_read": 12208,
+        "dynamic32_write": 21650,
+        "dynamic32_read": 15927,
+        "dynamicprefix32_write": 21725,
+        "dynamicprefix32_read": 11943,
+        "binary16_write": 23792,
+        "binary16_read": 22015,
+        "binary256_write": 10136,
+        "binary256_read": 25791
+      }
+    },
+    {
+      "series": 0,
+      "group": 3,
+      "executable": "before-3",
+      "load": [
+        4.8203125,
+        5.24755859375,
+        5.416015625
+      ],
+      "values_us": {
+        "i8_write": 20709,
+        "i8_read": 11571,
+        "i32_write": 23585,
+        "i32_read": 12373,
+        "i64_write": 25726,
+        "i64_read": 14098,
+        "i64le_write": 26252,
+        "i64le_read": 16423,
+        "i13_write": 21173,
+        "i13_read": 11590,
+        "dynamic32_write": 25090,
+        "dynamic32_read": 13862,
+        "dynamicprefix32_write": 24264,
+        "dynamicprefix32_read": 14202,
+        "binary16_write": 178175,
+        "binary16_read": 52114,
+        "binary256_write": 262261,
+        "binary256_read": 57032
+      }
+    },
+    {
+      "series": 0,
+      "group": 3,
+      "executable": "after-0",
+      "load": [
+        4.75439453125,
+        5.2265625,
+        5.40771484375
+      ],
+      "values_us": {
+        "i8_write": 18534,
+        "i8_read": 8894,
+        "i32_write": 19997,
+        "i32_read": 9109,
+        "i64_write": 21575,
+        "i64_read": 9096,
+        "i64le_write": 21196,
+        "i64le_read": 9107,
+        "i13_write": 19957,
+        "i13_read": 12195,
+        "dynamic32_write": 21633,
+        "dynamic32_read": 15740,
+        "dynamicprefix32_write": 21584,
+        "dynamicprefix32_read": 11963,
+        "binary16_write": 23523,
+        "binary16_read": 22045,
+        "binary256_write": 10064,
+        "binary256_read": 25836
+      }
+    },
+    {
+      "series": 0,
+      "group": 3,
+      "executable": "before-0",
+      "load": [
+        4.75439453125,
+        5.2265625,
+        5.40771484375
+      ],
+      "values_us": {
+        "i8_write": 18747,
+        "i8_read": 8619,
+        "i32_write": 20366,
+        "i32_read": 8779,
+        "i64_write": 22030,
+        "i64_read": 8972,
+        "i64le_write": 21617,
+        "i64le_read": 8818,
+        "i13_write": 19742,
+        "i13_read": 11544,
+        "dynamic32_write": 21690,
+        "dynamic32_read": 10224,
+        "dynamicprefix32_write": 21715,
+        "dynamicprefix32_read": 10664,
+        "binary16_write": 22022,
+        "binary16_read": 21658,
+        "binary256_write": 10462,
+        "binary256_read": 25730
+      }
+    },
+    {
+      "series": 0,
+      "group": 3,
+      "executable": "after-extra-3",
+      "load": [
+        4.75439453125,
+        5.2265625,
+        5.40771484375
+      ],
+      "values_us": {
+        "i13le_write": 4392,
+        "i13le_read": 2571,
+        "i80_write": 30043,
+        "i80_read": 17468,
+        "i128le_write": 43155,
+        "i128le_read": 17500
+      }
+    },
+    {
+      "series": 0,
+      "group": 3,
+      "executable": "after-extra-0",
+      "load": [
+        4.75439453125,
+        5.2265625,
+        5.40771484375
+      ],
+      "values_us": {
+        "i13le_write": 4084,
+        "i13le_read": 2551,
+        "i80_write": 29589,
+        "i80_read": 17540,
+        "i128le_write": 42161,
+        "i128le_read": 16763
+      }
+    },
+    {
+      "series": 0,
+      "group": 3,
+      "executable": "after-3",
+      "load": [
+        4.75439453125,
+        5.2265625,
+        5.40771484375
+      ],
+      "values_us": {
+        "i8_write": 21350,
+        "i8_read": 12013,
+        "i32_write": 23738,
+        "i32_read": 13057,
+        "i64_write": 26253,
+        "i64_read": 14708,
+        "i64le_write": 27020,
+        "i64le_read": 17123,
+        "i13_write": 21494,
+        "i13_read": 12323,
+        "dynamic32_write": 26371,
+        "dynamic32_read": 15292,
+        "dynamicprefix32_write": 25281,
+        "dynamicprefix32_read": 15764,
+        "binary16_write": 179126,
+        "binary16_read": 53293,
+        "binary256_write": 260447,
+        "binary256_read": 57269
+      }
+    },
+    {
+      "series": 0,
+      "group": 4,
+      "executable": "after-extra-0",
+      "load": [
+        4.75439453125,
+        5.2265625,
+        5.40771484375
+      ],
+      "values_us": {
+        "i13le_write": 4083,
+        "i13le_read": 2541,
+        "i80_write": 29444,
+        "i80_read": 17691,
+        "i128le_write": 42416,
+        "i128le_read": 16744
+      }
+    },
+    {
+      "series": 0,
+      "group": 4,
+      "executable": "after-extra-3",
+      "load": [
+        4.75439453125,
+        5.2265625,
+        5.40771484375
+      ],
+      "values_us": {
+        "i13le_write": 4368,
+        "i13le_read": 2542,
+        "i80_write": 29976,
+        "i80_read": 17450,
+        "i128le_write": 43016,
+        "i128le_read": 17902
+      }
+    },
+    {
+      "series": 0,
+      "group": 4,
+      "executable": "before-0",
+      "load": [
+        4.61376953125,
+        5.189453125,
+        5.3935546875
+      ],
+      "values_us": {
+        "i8_write": 19027,
+        "i8_read": 8702,
+        "i32_write": 20207,
+        "i32_read": 8762,
+        "i64_write": 22016,
+        "i64_read": 8936,
+        "i64le_write": 21532,
+        "i64le_read": 8811,
+        "i13_write": 19780,
+        "i13_read": 11528,
+        "dynamic32_write": 21617,
+        "dynamic32_read": 10258,
+        "dynamicprefix32_write": 21947,
+        "dynamicprefix32_read": 10619,
+        "binary16_write": 22783,
+        "binary16_read": 22380,
+        "binary256_write": 10759,
+        "binary256_read": 26581
+      }
+    },
+    {
+      "series": 0,
+      "group": 4,
+      "executable": "after-0",
+      "load": [
+        4.61376953125,
+        5.189453125,
+        5.3935546875
+      ],
+      "values_us": {
+        "i8_write": 19638,
+        "i8_read": 9207,
+        "i32_write": 20632,
+        "i32_read": 9419,
+        "i64_write": 22310,
+        "i64_read": 9431,
+        "i64le_write": 22123,
+        "i64le_read": 9477,
+        "i13_write": 20628,
+        "i13_read": 12586,
+        "dynamic32_write": 22335,
+        "dynamic32_read": 16213,
+        "dynamicprefix32_write": 22406,
+        "dynamicprefix32_read": 12325,
+        "binary16_write": 24104,
+        "binary16_read": 22777,
+        "binary256_write": 10597,
+        "binary256_read": 26658
+      }
+    },
+    {
+      "series": 0,
+      "group": 4,
+      "executable": "before-3",
+      "load": [
+        4.61376953125,
+        5.189453125,
+        5.3935546875
+      ],
+      "values_us": {
+        "i8_write": 21836,
+        "i8_read": 12068,
+        "i32_write": 23765,
+        "i32_read": 12780,
+        "i64_write": 26464,
+        "i64_read": 14541,
+        "i64le_write": 27149,
+        "i64le_read": 16906,
+        "i13_write": 21725,
+        "i13_read": 11924,
+        "dynamic32_write": 25587,
+        "dynamic32_read": 14293,
+        "dynamicprefix32_write": 25145,
+        "dynamicprefix32_read": 14602,
+        "binary16_write": 180833,
+        "binary16_read": 52018,
+        "binary256_write": 259793,
+        "binary256_read": 56950
+      }
+    },
+    {
+      "series": 0,
+      "group": 4,
+      "executable": "after-3",
+      "load": [
+        4.61376953125,
+        5.189453125,
+        5.3935546875
+      ],
+      "values_us": {
+        "i8_write": 21450,
+        "i8_read": 12064,
+        "i32_write": 23673,
+        "i32_read": 13093,
+        "i64_write": 26231,
+        "i64_read": 14683,
+        "i64le_write": 26998,
+        "i64le_read": 17049,
+        "i13_write": 21552,
+        "i13_read": 12354,
+        "dynamic32_write": 25944,
+        "dynamic32_read": 15412,
+        "dynamicprefix32_write": 25328,
+        "dynamicprefix32_read": 15880,
+        "binary16_write": 178802,
+        "binary16_read": 52982,
+        "binary256_write": 260123,
+        "binary256_read": 57162
+      }
+    },
+    {
+      "series": 1,
+      "group": 0,
+      "executable": "before-0",
+      "load": [
+        4.61376953125,
+        5.189453125,
+        5.3935546875
+      ],
+      "values_us": {
+        "i8_write": 18797,
+        "i8_read": 8605,
+        "i32_write": 20252,
+        "i32_read": 8772,
+        "i64_write": 22019,
+        "i64_read": 8939,
+        "i64le_write": 21696,
+        "i64le_read": 8824,
+        "i13_write": 19856,
+        "i13_read": 11521,
+        "dynamic32_write": 21741,
+        "dynamic32_read": 10218,
+        "dynamicprefix32_write": 21737,
+        "dynamicprefix32_read": 10633,
+        "binary16_write": 22019,
+        "binary16_read": 21691,
+        "binary256_write": 10392,
+        "binary256_read": 25622
+      }
+    },
+    {
+      "series": 1,
+      "group": 0,
+      "executable": "after-extra-3",
+      "load": [
+        4.484375,
+        5.15283203125,
+        5.37939453125
+      ],
+      "values_us": {
+        "i13le_write": 4594,
+        "i13le_read": 2631,
+        "i80_write": 30027,
+        "i80_read": 17411,
+        "i128le_write": 42857,
+        "i128le_read": 17481
+      }
+    },
+    {
+      "series": 1,
+      "group": 0,
+      "executable": "after-extra-0",
+      "load": [
+        4.484375,
+        5.15283203125,
+        5.37939453125
+      ],
+      "values_us": {
+        "i13le_write": 4056,
+        "i13le_read": 2534,
+        "i80_write": 29409,
+        "i80_read": 17499,
+        "i128le_write": 42122,
+        "i128le_read": 16744
+      }
+    },
+    {
+      "series": 1,
+      "group": 0,
+      "executable": "after-3",
+      "load": [
+        4.484375,
+        5.15283203125,
+        5.37939453125
+      ],
+      "values_us": {
+        "i8_write": 21288,
+        "i8_read": 11988,
+        "i32_write": 23676,
+        "i32_read": 13038,
+        "i64_write": 26210,
+        "i64_read": 14736,
+        "i64le_write": 26999,
+        "i64le_read": 17015,
+        "i13_write": 21863,
+        "i13_read": 12333,
+        "dynamic32_write": 26543,
+        "dynamic32_read": 15326,
+        "dynamicprefix32_write": 25270,
+        "dynamicprefix32_read": 15702,
+        "binary16_write": 179176,
+        "binary16_read": 53068,
+        "binary256_write": 259871,
+        "binary256_read": 57501
+      }
+    },
+    {
+      "series": 1,
+      "group": 0,
+      "executable": "before-3",
+      "load": [
+        4.484375,
+        5.15283203125,
+        5.37939453125
+      ],
+      "values_us": {
+        "i8_write": 20743,
+        "i8_read": 11531,
+        "i32_write": 22628,
+        "i32_read": 12362,
+        "i64_write": 25534,
+        "i64_read": 14031,
+        "i64le_write": 26086,
+        "i64le_read": 16426,
+        "i13_write": 20983,
+        "i13_read": 11553,
+        "dynamic32_write": 24972,
+        "dynamic32_read": 13831,
+        "dynamicprefix32_write": 24221,
+        "dynamicprefix32_read": 14142,
+        "binary16_write": 177954,
+        "binary16_read": 52682,
+        "binary256_write": 259695,
+        "binary256_read": 56987
+      }
+    },
+    {
+      "series": 1,
+      "group": 0,
+      "executable": "after-0",
+      "load": [
+        4.484375,
+        5.15283203125,
+        5.37939453125
+      ],
+      "values_us": {
+        "i8_write": 18575,
+        "i8_read": 8799,
+        "i32_write": 20666,
+        "i32_read": 9398,
+        "i64_write": 21988,
+        "i64_read": 9207,
+        "i64le_write": 21221,
+        "i64le_read": 9122,
+        "i13_write": 19823,
+        "i13_read": 12364,
+        "dynamic32_write": 21651,
+        "dynamic32_read": 15691,
+        "dynamicprefix32_write": 21719,
+        "dynamicprefix32_read": 11970,
+        "binary16_write": 31448,
+        "binary16_read": 25183,
+        "binary256_write": 10829,
+        "binary256_read": 26754
+      }
+    },
+    {
+      "series": 1,
+      "group": 1,
+      "executable": "before-0",
+      "load": [
+        4.365234375,
+        5.11669921875,
+        5.365234375
+      ],
+      "values_us": {
+        "i8_write": 18760,
+        "i8_read": 8632,
+        "i32_write": 20247,
+        "i32_read": 8840,
+        "i64_write": 22041,
+        "i64_read": 8950,
+        "i64le_write": 21976,
+        "i64le_read": 8883,
+        "i13_write": 20070,
+        "i13_read": 11542,
+        "dynamic32_write": 21635,
+        "dynamic32_read": 10331,
+        "dynamicprefix32_write": 21713,
+        "dynamicprefix32_read": 10671,
+        "binary16_write": 22024,
+        "binary16_read": 21692,
+        "binary256_write": 10368,
+        "binary256_read": 25793
+      }
+    },
+    {
+      "series": 1,
+      "group": 1,
+      "executable": "after-0",
+      "load": [
+        4.365234375,
+        5.11669921875,
+        5.365234375
+      ],
+      "values_us": {
+        "i8_write": 18570,
+        "i8_read": 8839,
+        "i32_write": 19955,
+        "i32_read": 9125,
+        "i64_write": 21548,
+        "i64_read": 9120,
+        "i64le_write": 21242,
+        "i64le_read": 9119,
+        "i13_write": 19857,
+        "i13_read": 12238,
+        "dynamic32_write": 21729,
+        "dynamic32_read": 15728,
+        "dynamicprefix32_write": 21554,
+        "dynamicprefix32_read": 11945,
+        "binary16_write": 23346,
+        "binary16_read": 21998,
+        "binary256_write": 10078,
+        "binary256_read": 25872
+      }
+    },
+    {
+      "series": 1,
+      "group": 1,
+      "executable": "before-3",
+      "load": [
+        4.365234375,
+        5.11669921875,
+        5.365234375
+      ],
+      "values_us": {
+        "i8_write": 21799,
+        "i8_read": 11517,
+        "i32_write": 22675,
+        "i32_read": 12359,
+        "i64_write": 25574,
+        "i64_read": 14018,
+        "i64le_write": 26093,
+        "i64le_read": 16387,
+        "i13_write": 20913,
+        "i13_read": 11541,
+        "dynamic32_write": 24858,
+        "dynamic32_read": 13840,
+        "dynamicprefix32_write": 24209,
+        "dynamicprefix32_read": 14154,
+        "binary16_write": 179797,
+        "binary16_read": 55296,
+        "binary256_write": 260803,
+        "binary256_read": 57044
+      }
+    },
+    {
+      "series": 1,
+      "group": 1,
+      "executable": "after-3",
+      "load": [
+        4.365234375,
+        5.11669921875,
+        5.365234375
+      ],
+      "values_us": {
+        "i8_write": 21361,
+        "i8_read": 12009,
+        "i32_write": 23736,
+        "i32_read": 13040,
+        "i64_write": 26296,
+        "i64_read": 14757,
+        "i64le_write": 27118,
+        "i64le_read": 17091,
+        "i13_write": 21511,
+        "i13_read": 12356,
+        "dynamic32_write": 25938,
+        "dynamic32_read": 15278,
+        "dynamicprefix32_write": 25364,
+        "dynamicprefix32_read": 15686,
+        "binary16_write": 179034,
+        "binary16_read": 53111,
+        "binary256_write": 261541,
+        "binary256_read": 57207
+      }
+    },
+    {
+      "series": 1,
+      "group": 1,
+      "executable": "after-extra-0",
+      "load": [
+        4.255859375,
+        5.08154296875,
+        5.35107421875
+      ],
+      "values_us": {
+        "i13le_write": 4077,
+        "i13le_read": 2541,
+        "i80_write": 29502,
+        "i80_read": 17580,
+        "i128le_write": 42102,
+        "i128le_read": 16733
+      }
+    },
+    {
+      "series": 1,
+      "group": 1,
+      "executable": "after-extra-3",
+      "load": [
+        4.255859375,
+        5.08154296875,
+        5.35107421875
+      ],
+      "values_us": {
+        "i13le_write": 4376,
+        "i13le_read": 2532,
+        "i80_write": 30119,
+        "i80_read": 17472,
+        "i128le_write": 46195,
+        "i128le_read": 17552
+      }
+    },
+    {
+      "series": 1,
+      "group": 2,
+      "executable": "after-extra-0",
+      "load": [
+        4.255859375,
+        5.08154296875,
+        5.35107421875
+      ],
+      "values_us": {
+        "i13le_write": 4086,
+        "i13le_read": 2544,
+        "i80_write": 29581,
+        "i80_read": 17564,
+        "i128le_write": 42240,
+        "i128le_read": 16801
+      }
+    },
+    {
+      "series": 1,
+      "group": 2,
+      "executable": "after-3",
+      "load": [
+        4.255859375,
+        5.08154296875,
+        5.35107421875
+      ],
+      "values_us": {
+        "i8_write": 21338,
+        "i8_read": 12018,
+        "i32_write": 23687,
+        "i32_read": 13025,
+        "i64_write": 26326,
+        "i64_read": 14711,
+        "i64le_write": 27121,
+        "i64le_read": 17088,
+        "i13_write": 21525,
+        "i13_read": 12342,
+        "dynamic32_write": 25936,
+        "dynamic32_read": 15273,
+        "dynamicprefix32_write": 25416,
+        "dynamicprefix32_read": 15660,
+        "binary16_write": 179098,
+        "binary16_read": 53493,
+        "binary256_write": 260061,
+        "binary256_read": 57229
+      }
+    },
+    {
+      "series": 1,
+      "group": 2,
+      "executable": "before-3",
+      "load": [
+        4.255859375,
+        5.08154296875,
+        5.35107421875
+      ],
+      "values_us": {
+        "i8_write": 20741,
+        "i8_read": 11525,
+        "i32_write": 22704,
+        "i32_read": 12366,
+        "i64_write": 25550,
+        "i64_read": 14037,
+        "i64le_write": 26263,
+        "i64le_read": 16333,
+        "i13_write": 21067,
+        "i13_read": 11553,
+        "dynamic32_write": 24419,
+        "dynamic32_read": 13825,
+        "dynamicprefix32_write": 24263,
+        "dynamicprefix32_read": 14839,
+        "binary16_write": 178381,
+        "binary16_read": 52052,
+        "binary256_write": 260442,
+        "binary256_read": 56944
+      }
+    },
+    {
+      "series": 1,
+      "group": 2,
+      "executable": "after-0",
+      "load": [
+        4.255859375,
+        5.08154296875,
+        5.35107421875
+      ],
+      "values_us": {
+        "i8_write": 18566,
+        "i8_read": 8788,
+        "i32_write": 20800,
+        "i32_read": 9431,
+        "i64_write": 23363,
+        "i64_read": 9508,
+        "i64le_write": 22587,
+        "i64le_read": 9525,
+        "i13_write": 20796,
+        "i13_read": 12716,
+        "dynamic32_write": 22305,
+        "dynamic32_read": 15744,
+        "dynamicprefix32_write": 21539,
+        "dynamicprefix32_read": 12026,
+        "binary16_write": 23307,
+        "binary16_read": 22005,
+        "binary256_write": 10110,
+        "binary256_read": 25781
+      }
+    },
+    {
+      "series": 1,
+      "group": 2,
+      "executable": "before-0",
+      "load": [
+        4.1552734375,
+        5.046875,
+        5.3369140625
+      ],
+      "values_us": {
+        "i8_write": 18753,
+        "i8_read": 8661,
+        "i32_write": 20249,
+        "i32_read": 8759,
+        "i64_write": 22058,
+        "i64_read": 8949,
+        "i64le_write": 21608,
+        "i64le_read": 8833,
+        "i13_write": 19831,
+        "i13_read": 11658,
+        "dynamic32_write": 21647,
+        "dynamic32_read": 10252,
+        "dynamicprefix32_write": 21695,
+        "dynamicprefix32_read": 10597,
+        "binary16_write": 22074,
+        "binary16_read": 21687,
+        "binary256_write": 10355,
+        "binary256_read": 25796
+      }
+    },
+    {
+      "series": 1,
+      "group": 2,
+      "executable": "after-extra-3",
+      "load": [
+        4.1552734375,
+        5.046875,
+        5.3369140625
+      ],
+      "values_us": {
+        "i13le_write": 4382,
+        "i13le_read": 2545,
+        "i80_write": 30334,
+        "i80_read": 17562,
+        "i128le_write": 42922,
+        "i128le_read": 17540
+      }
+    },
+    {
+      "series": 1,
+      "group": 3,
+      "executable": "before-3",
+      "load": [
+        4.1552734375,
+        5.046875,
+        5.3369140625
+      ],
+      "values_us": {
+        "i8_write": 20693,
+        "i8_read": 11562,
+        "i32_write": 22651,
+        "i32_read": 12372,
+        "i64_write": 25665,
+        "i64_read": 14013,
+        "i64le_write": 26239,
+        "i64le_read": 16366,
+        "i13_write": 21021,
+        "i13_read": 11561,
+        "dynamic32_write": 24483,
+        "dynamic32_read": 13859,
+        "dynamicprefix32_write": 24350,
+        "dynamicprefix32_read": 14185,
+        "binary16_write": 178250,
+        "binary16_read": 52329,
+        "binary256_write": 260959,
+        "binary256_read": 56977
+      }
+    },
+    {
+      "series": 1,
+      "group": 3,
+      "executable": "after-3",
+      "load": [
+        4.1552734375,
+        5.046875,
+        5.3369140625
+      ],
+      "values_us": {
+        "i8_write": 21322,
+        "i8_read": 12041,
+        "i32_write": 23704,
+        "i32_read": 13028,
+        "i64_write": 26273,
+        "i64_read": 14744,
+        "i64le_write": 27021,
+        "i64le_read": 17037,
+        "i13_write": 21494,
+        "i13_read": 12349,
+        "dynamic32_write": 26079,
+        "dynamic32_read": 15304,
+        "dynamicprefix32_write": 25318,
+        "dynamicprefix32_read": 15768,
+        "binary16_write": 179625,
+        "binary16_read": 53032,
+        "binary256_write": 262090,
+        "binary256_read": 57171
+      }
+    },
+    {
+      "series": 1,
+      "group": 3,
+      "executable": "after-extra-0",
+      "load": [
+        4.1552734375,
+        5.046875,
+        5.3369140625
+      ],
+      "values_us": {
+        "i13le_write": 4068,
+        "i13le_read": 2538,
+        "i80_write": 29600,
+        "i80_read": 17659,
+        "i128le_write": 42148,
+        "i128le_read": 16873
+      }
+    },
+    {
+      "series": 1,
+      "group": 3,
+      "executable": "after-extra-3",
+      "load": [
+        4.0625,
+        5.0126953125,
+        5.32275390625
+      ],
+      "values_us": {
+        "i13le_write": 4359,
+        "i13le_read": 2554,
+        "i80_write": 29983,
+        "i80_read": 17450,
+        "i128le_write": 42855,
+        "i128le_read": 17498
+      }
+    },
+    {
+      "series": 1,
+      "group": 3,
+      "executable": "before-0",
+      "load": [
+        4.0625,
+        5.0126953125,
+        5.32275390625
+      ],
+      "values_us": {
+        "i8_write": 18839,
+        "i8_read": 8620,
+        "i32_write": 20565,
+        "i32_read": 8768,
+        "i64_write": 22069,
+        "i64_read": 8926,
+        "i64le_write": 22040,
+        "i64le_read": 8933,
+        "i13_write": 19799,
+        "i13_read": 11524,
+        "dynamic32_write": 22230,
+        "dynamic32_read": 10224,
+        "dynamicprefix32_write": 21721,
+        "dynamicprefix32_read": 10574,
+        "binary16_write": 22283,
+        "binary16_read": 21647,
+        "binary256_write": 10364,
+        "binary256_read": 25759
+      }
+    },
+    {
+      "series": 1,
+      "group": 3,
+      "executable": "after-0",
+      "load": [
+        4.0625,
+        5.0126953125,
+        5.32275390625
+      ],
+      "values_us": {
+        "i8_write": 18572,
+        "i8_read": 8779,
+        "i32_write": 19975,
+        "i32_read": 9104,
+        "i64_write": 21537,
+        "i64_read": 9095,
+        "i64le_write": 21197,
+        "i64le_read": 9118,
+        "i13_write": 19877,
+        "i13_read": 12203,
+        "dynamic32_write": 21632,
+        "dynamic32_read": 15697,
+        "dynamicprefix32_write": 21527,
+        "dynamicprefix32_read": 11959,
+        "binary16_write": 23476,
+        "binary16_read": 22027,
+        "binary256_write": 10100,
+        "binary256_read": 26451
+      }
+    },
+    {
+      "series": 1,
+      "group": 4,
+      "executable": "before-3",
+      "load": [
+        4.0625,
+        5.0126953125,
+        5.32275390625
+      ],
+      "values_us": {
+        "i8_write": 122454,
+        "i8_read": 12029,
+        "i32_write": 22830,
+        "i32_read": 12400,
+        "i64_write": 25574,
+        "i64_read": 14037,
+        "i64le_write": 26109,
+        "i64le_read": 16353,
+        "i13_write": 21437,
+        "i13_read": 11630,
+        "dynamic32_write": 24732,
+        "dynamic32_read": 13884,
+        "dynamicprefix32_write": 24182,
+        "dynamicprefix32_read": 14119,
+        "binary16_write": 178733,
+        "binary16_read": 52256,
+        "binary256_write": 259445,
+        "binary256_read": 57237
+      }
+    },
+    {
+      "series": 1,
+      "group": 4,
+      "executable": "after-0",
+      "load": [
+        4.0625,
+        5.0126953125,
+        5.32275390625
+      ],
+      "values_us": {
+        "i8_write": 18567,
+        "i8_read": 8785,
+        "i32_write": 19969,
+        "i32_read": 9130,
+        "i64_write": 21505,
+        "i64_read": 9075,
+        "i64le_write": 21178,
+        "i64le_read": 9111,
+        "i13_write": 19853,
+        "i13_read": 12471,
+        "dynamic32_write": 21605,
+        "dynamic32_read": 15718,
+        "dynamicprefix32_write": 21532,
+        "dynamicprefix32_read": 11921,
+        "binary16_write": 23195,
+        "binary16_read": 21984,
+        "binary256_write": 10086,
+        "binary256_read": 25748
+      }
+    },
+    {
+      "series": 1,
+      "group": 4,
+      "executable": "before-0",
+      "load": [
+        4.0625,
+        5.0126953125,
+        5.32275390625
+      ],
+      "values_us": {
+        "i8_write": 18698,
+        "i8_read": 8593,
+        "i32_write": 20310,
+        "i32_read": 8764,
+        "i64_write": 22023,
+        "i64_read": 8924,
+        "i64le_write": 21558,
+        "i64le_read": 8813,
+        "i13_write": 19846,
+        "i13_read": 11593,
+        "dynamic32_write": 21926,
+        "dynamic32_read": 10245,
+        "dynamicprefix32_write": 22442,
+        "dynamicprefix32_read": 10992,
+        "binary16_write": 22154,
+        "binary16_read": 21801,
+        "binary256_write": 10325,
+        "binary256_read": 25684
+      }
+    },
+    {
+      "series": 1,
+      "group": 4,
+      "executable": "after-extra-3",
+      "load": [
+        3.97705078125,
+        4.97900390625,
+        5.30908203125
+      ],
+      "values_us": {
+        "i13le_write": 4368,
+        "i13le_read": 2541,
+        "i80_write": 30029,
+        "i80_read": 17413,
+        "i128le_write": 42816,
+        "i128le_read": 17748
+      }
+    },
+    {
+      "series": 1,
+      "group": 4,
+      "executable": "after-extra-0",
+      "load": [
+        3.97705078125,
+        4.97900390625,
+        5.30908203125
+      ],
+      "values_us": {
+        "i13le_write": 4074,
+        "i13le_read": 2657,
+        "i80_write": 29466,
+        "i80_read": 17762,
+        "i128le_write": 42071,
+        "i128le_read": 16819
+      }
+    },
+    {
+      "series": 1,
+      "group": 4,
+      "executable": "after-3",
+      "load": [
+        3.97705078125,
+        4.97900390625,
+        5.30908203125
+      ],
+      "values_us": {
+        "i8_write": 21321,
+        "i8_read": 12079,
+        "i32_write": 23690,
+        "i32_read": 13018,
+        "i64_write": 26349,
+        "i64_read": 14684,
+        "i64le_write": 27006,
+        "i64le_read": 17096,
+        "i13_write": 21442,
+        "i13_read": 12327,
+        "dynamic32_write": 25913,
+        "dynamic32_read": 15292,
+        "dynamicprefix32_write": 25283,
+        "dynamicprefix32_read": 15706,
+        "binary16_write": 180628,
+        "binary16_read": 53758,
+        "binary256_write": 262246,
+        "binary256_read": 57065
+      }
+    },
+    {
+      "series": 2,
+      "group": 0,
+      "executable": "after-extra-0",
+      "load": [
+        3.97705078125,
+        4.97900390625,
+        5.30908203125
+      ],
+      "values_us": {
+        "i13le_write": 4065,
+        "i13le_read": 2536,
+        "i80_write": 29420,
+        "i80_read": 17496,
+        "i128le_write": 42064,
+        "i128le_read": 16872
+      }
+    },
+    {
+      "series": 2,
+      "group": 0,
+      "executable": "after-extra-3",
+      "load": [
+        3.97705078125,
+        4.97900390625,
+        5.30908203125
+      ],
+      "values_us": {
+        "i13le_write": 4359,
+        "i13le_read": 2548,
+        "i80_write": 30031,
+        "i80_read": 17461,
+        "i128le_write": 42863,
+        "i128le_read": 17448
+      }
+    },
+    {
+      "series": 2,
+      "group": 0,
+      "executable": "before-0",
+      "load": [
+        3.97705078125,
+        4.97900390625,
+        5.30908203125
+      ],
+      "values_us": {
+        "i8_write": 18727,
+        "i8_read": 8650,
+        "i32_write": 20368,
+        "i32_read": 8822,
+        "i64_write": 22024,
+        "i64_read": 8933,
+        "i64le_write": 21541,
+        "i64le_read": 8822,
+        "i13_write": 19835,
+        "i13_read": 11570,
+        "dynamic32_write": 21686,
+        "dynamic32_read": 10217,
+        "dynamicprefix32_write": 21725,
+        "dynamicprefix32_read": 10593,
+        "binary16_write": 22006,
+        "binary16_read": 21733,
+        "binary256_write": 10518,
+        "binary256_read": 25680
+      }
+    },
+    {
+      "series": 2,
+      "group": 0,
+      "executable": "after-0",
+      "load": [
+        3.97705078125,
+        4.97900390625,
+        5.30908203125
+      ],
+      "values_us": {
+        "i8_write": 18536,
+        "i8_read": 8759,
+        "i32_write": 20001,
+        "i32_read": 9098,
+        "i64_write": 21516,
+        "i64_read": 9086,
+        "i64le_write": 21387,
+        "i64le_read": 9195,
+        "i13_write": 19826,
+        "i13_read": 12150,
+        "dynamic32_write": 21633,
+        "dynamic32_read": 15380,
+        "dynamicprefix32_write": 21561,
+        "dynamicprefix32_read": 11981,
+        "binary16_write": 23269,
+        "binary16_read": 22042,
+        "binary256_write": 10090,
+        "binary256_read": 26785
+      }
+    },
+    {
+      "series": 2,
+      "group": 0,
+      "executable": "before-3",
+      "load": [
+        3.8984375,
+        4.94580078125,
+        5.29541015625
+      ],
+      "values_us": {
+        "i8_write": 20729,
+        "i8_read": 11569,
+        "i32_write": 23008,
+        "i32_read": 12365,
+        "i64_write": 25558,
+        "i64_read": 14059,
+        "i64le_write": 26445,
+        "i64le_read": 16685,
+        "i13_write": 21453,
+        "i13_read": 11629,
+        "dynamic32_write": 24423,
+        "dynamic32_read": 13845,
+        "dynamicprefix32_write": 24301,
+        "dynamicprefix32_read": 14150,
+        "binary16_write": 178483,
+        "binary16_read": 52063,
+        "binary256_write": 259911,
+        "binary256_read": 59386
+      }
+    },
+    {
+      "series": 2,
+      "group": 0,
+      "executable": "after-3",
+      "load": [
+        3.8984375,
+        4.94580078125,
+        5.29541015625
+      ],
+      "values_us": {
+        "i8_write": 21307,
+        "i8_read": 12022,
+        "i32_write": 23664,
+        "i32_read": 13050,
+        "i64_write": 26235,
+        "i64_read": 14673,
+        "i64le_write": 26995,
+        "i64le_read": 17047,
+        "i13_write": 21492,
+        "i13_read": 12349,
+        "dynamic32_write": 25948,
+        "dynamic32_read": 15329,
+        "dynamicprefix32_write": 25356,
+        "dynamicprefix32_read": 15723,
+        "binary16_write": 178982,
+        "binary16_read": 53126,
+        "binary256_write": 260462,
+        "binary256_read": 57158
+      }
+    },
+    {
+      "series": 2,
+      "group": 1,
+      "executable": "before-0",
+      "load": [
+        3.8984375,
+        4.94580078125,
+        5.29541015625
+      ],
+      "values_us": {
+        "i8_write": 18766,
+        "i8_read": 8680,
+        "i32_write": 20215,
+        "i32_read": 8789,
+        "i64_write": 22068,
+        "i64_read": 8999,
+        "i64le_write": 21569,
+        "i64le_read": 8827,
+        "i13_write": 19838,
+        "i13_read": 11534,
+        "dynamic32_write": 21761,
+        "dynamic32_read": 10249,
+        "dynamicprefix32_write": 21659,
+        "dynamicprefix32_read": 10614,
+        "binary16_write": 22030,
+        "binary16_read": 21674,
+        "binary256_write": 10354,
+        "binary256_read": 25734
+      }
+    },
+    {
+      "series": 2,
+      "group": 1,
+      "executable": "after-extra-3",
+      "load": [
+        3.8984375,
+        4.94580078125,
+        5.29541015625
+      ],
+      "values_us": {
+        "i13le_write": 4383,
+        "i13le_read": 2544,
+        "i80_write": 30028,
+        "i80_read": 17434,
+        "i128le_write": 42912,
+        "i128le_read": 17433
+      }
+    },
+    {
+      "series": 2,
+      "group": 1,
+      "executable": "after-extra-0",
+      "load": [
+        3.8984375,
+        4.94580078125,
+        5.29541015625
+      ],
+      "values_us": {
+        "i13le_write": 4091,
+        "i13le_read": 2543,
+        "i80_write": 29498,
+        "i80_read": 17520,
+        "i128le_write": 42412,
+        "i128le_read": 16814
+      }
+    },
+    {
+      "series": 2,
+      "group": 1,
+      "executable": "after-3",
+      "load": [
+        3.826171875,
+        4.9130859375,
+        5.28173828125
+      ],
+      "values_us": {
+        "i8_write": 21321,
+        "i8_read": 12123,
+        "i32_write": 23738,
+        "i32_read": 13027,
+        "i64_write": 26363,
+        "i64_read": 14690,
+        "i64le_write": 27084,
+        "i64le_read": 17040,
+        "i13_write": 21658,
+        "i13_read": 12371,
+        "dynamic32_write": 25935,
+        "dynamic32_read": 15275,
+        "dynamicprefix32_write": 25365,
+        "dynamicprefix32_read": 15664,
+        "binary16_write": 179028,
+        "binary16_read": 53274,
+        "binary256_write": 260873,
+        "binary256_read": 58800
+      }
+    },
+    {
+      "series": 2,
+      "group": 1,
+      "executable": "before-3",
+      "load": [
+        3.826171875,
+        4.9130859375,
+        5.28173828125
+      ],
+      "values_us": {
+        "i8_write": 20722,
+        "i8_read": 11519,
+        "i32_write": 22708,
+        "i32_read": 12506,
+        "i64_write": 26775,
+        "i64_read": 14501,
+        "i64le_write": 27046,
+        "i64le_read": 16366,
+        "i13_write": 21050,
+        "i13_read": 11543,
+        "dynamic32_write": 24377,
+        "dynamic32_read": 13863,
+        "dynamicprefix32_write": 24252,
+        "dynamicprefix32_read": 14121,
+        "binary16_write": 178003,
+        "binary16_read": 52133,
+        "binary256_write": 264777,
+        "binary256_read": 57353
+      }
+    },
+    {
+      "series": 2,
+      "group": 1,
+      "executable": "after-0",
+      "load": [
+        3.826171875,
+        4.9130859375,
+        5.28173828125
+      ],
+      "values_us": {
+        "i8_write": 18577,
+        "i8_read": 8878,
+        "i32_write": 20074,
+        "i32_read": 9117,
+        "i64_write": 21584,
+        "i64_read": 9103,
+        "i64le_write": 21270,
+        "i64le_read": 9095,
+        "i13_write": 19957,
+        "i13_read": 12213,
+        "dynamic32_write": 21631,
+        "dynamic32_read": 15729,
+        "dynamicprefix32_write": 21644,
+        "dynamicprefix32_read": 11939,
+        "binary16_write": 23271,
+        "binary16_read": 22034,
+        "binary256_write": 10156,
+        "binary256_read": 25796
+      }
+    },
+    {
+      "series": 2,
+      "group": 2,
+      "executable": "before-0",
+      "load": [
+        3.826171875,
+        4.9130859375,
+        5.28173828125
+      ],
+      "values_us": {
+        "i8_write": 18813,
+        "i8_read": 8612,
+        "i32_write": 20212,
+        "i32_read": 8851,
+        "i64_write": 22231,
+        "i64_read": 8930,
+        "i64le_write": 21595,
+        "i64le_read": 8830,
+        "i13_write": 19792,
+        "i13_read": 11567,
+        "dynamic32_write": 21634,
+        "dynamic32_read": 10238,
+        "dynamicprefix32_write": 21656,
+        "dynamicprefix32_read": 10664,
+        "binary16_write": 22173,
+        "binary16_read": 21734,
+        "binary256_write": 10491,
+        "binary256_read": 26232
+      }
+    },
+    {
+      "series": 2,
+      "group": 2,
+      "executable": "after-0",
+      "load": [
+        3.826171875,
+        4.9130859375,
+        5.28173828125
+      ],
+      "values_us": {
+        "i8_write": 18616,
+        "i8_read": 8902,
+        "i32_write": 20006,
+        "i32_read": 9098,
+        "i64_write": 21571,
+        "i64_read": 9135,
+        "i64le_write": 21214,
+        "i64le_read": 9114,
+        "i13_write": 19918,
+        "i13_read": 12174,
+        "dynamic32_write": 21631,
+        "dynamic32_read": 15701,
+        "dynamicprefix32_write": 21580,
+        "dynamicprefix32_read": 11955,
+        "binary16_write": 23481,
+        "binary16_read": 21992,
+        "binary256_write": 10094,
+        "binary256_read": 25923
+      }
+    },
+    {
+      "series": 2,
+      "group": 2,
+      "executable": "before-3",
+      "load": [
+        3.759765625,
+        4.880859375,
+        5.26806640625
+      ],
+      "values_us": {
+        "i8_write": 20739,
+        "i8_read": 11543,
+        "i32_write": 22711,
+        "i32_read": 12358,
+        "i64_write": 25595,
+        "i64_read": 14037,
+        "i64le_write": 26119,
+        "i64le_read": 16361,
+        "i13_write": 20964,
+        "i13_read": 11524,
+        "dynamic32_write": 24493,
+        "dynamic32_read": 13852,
+        "dynamicprefix32_write": 24219,
+        "dynamicprefix32_read": 14182,
+        "binary16_write": 178925,
+        "binary16_read": 52118,
+        "binary256_write": 265153,
+        "binary256_read": 57145
+      }
+    },
+    {
+      "series": 2,
+      "group": 2,
+      "executable": "after-3",
+      "load": [
+        3.759765625,
+        4.880859375,
+        5.26806640625
+      ],
+      "values_us": {
+        "i8_write": 21357,
+        "i8_read": 12265,
+        "i32_write": 23713,
+        "i32_read": 13056,
+        "i64_write": 26337,
+        "i64_read": 14677,
+        "i64le_write": 27025,
+        "i64le_read": 17039,
+        "i13_write": 21486,
+        "i13_read": 12363,
+        "dynamic32_write": 25928,
+        "dynamic32_read": 15279,
+        "dynamicprefix32_write": 25347,
+        "dynamicprefix32_read": 15655,
+        "binary16_write": 179185,
+        "binary16_read": 53115,
+        "binary256_write": 261197,
+        "binary256_read": 57130
+      }
+    },
+    {
+      "series": 2,
+      "group": 2,
+      "executable": "after-extra-0",
+      "load": [
+        3.759765625,
+        4.880859375,
+        5.26806640625
+      ],
+      "values_us": {
+        "i13le_write": 4173,
+        "i13le_read": 2546,
+        "i80_write": 29496,
+        "i80_read": 17516,
+        "i128le_write": 42174,
+        "i128le_read": 16893
+      }
+    },
+    {
+      "series": 2,
+      "group": 2,
+      "executable": "after-extra-3",
+      "load": [
+        3.759765625,
+        4.880859375,
+        5.26806640625
+      ],
+      "values_us": {
+        "i13le_write": 4415,
+        "i13le_read": 2567,
+        "i80_write": 30035,
+        "i80_read": 17441,
+        "i128le_write": 43202,
+        "i128le_read": 17552
+      }
+    },
+    {
+      "series": 2,
+      "group": 3,
+      "executable": "after-extra-0",
+      "load": [
+        3.759765625,
+        4.880859375,
+        5.26806640625
+      ],
+      "values_us": {
+        "i13le_write": 4054,
+        "i13le_read": 2545,
+        "i80_write": 29526,
+        "i80_read": 17544,
+        "i128le_write": 42142,
+        "i128le_read": 16815
+      }
+    },
+    {
+      "series": 2,
+      "group": 3,
+      "executable": "after-3",
+      "load": [
+        3.77880859375,
+        4.8662109375,
+        5.26025390625
+      ],
+      "values_us": {
+        "i8_write": 21375,
+        "i8_read": 12017,
+        "i32_write": 23753,
+        "i32_read": 13016,
+        "i64_write": 26261,
+        "i64_read": 14706,
+        "i64le_write": 27376,
+        "i64le_read": 17089,
+        "i13_write": 21711,
+        "i13_read": 12344,
+        "dynamic32_write": 25936,
+        "dynamic32_read": 15280,
+        "dynamicprefix32_write": 25278,
+        "dynamicprefix32_read": 15639,
+        "binary16_write": 178921,
+        "binary16_read": 53095,
+        "binary256_write": 261061,
+        "binary256_read": 57088
+      }
+    },
+    {
+      "series": 2,
+      "group": 3,
+      "executable": "before-3",
+      "load": [
+        3.77880859375,
+        4.8662109375,
+        5.26025390625
+      ],
+      "values_us": {
+        "i8_write": 20733,
+        "i8_read": 11505,
+        "i32_write": 22706,
+        "i32_read": 12378,
+        "i64_write": 25515,
+        "i64_read": 14088,
+        "i64le_write": 26065,
+        "i64le_read": 16411,
+        "i13_write": 20906,
+        "i13_read": 11520,
+        "dynamic32_write": 24689,
+        "dynamic32_read": 13827,
+        "dynamicprefix32_write": 24227,
+        "dynamicprefix32_read": 14126,
+        "binary16_write": 177961,
+        "binary16_read": 52123,
+        "binary256_write": 260261,
+        "binary256_read": 57225
+      }
+    },
+    {
+      "series": 2,
+      "group": 3,
+      "executable": "after-0",
+      "load": [
+        3.77880859375,
+        4.8662109375,
+        5.26025390625
+      ],
+      "values_us": {
+        "i8_write": 18529,
+        "i8_read": 8763,
+        "i32_write": 19962,
+        "i32_read": 9089,
+        "i64_write": 21502,
+        "i64_read": 9189,
+        "i64le_write": 21209,
+        "i64le_read": 9089,
+        "i13_write": 19914,
+        "i13_read": 13326,
+        "dynamic32_write": 21636,
+        "dynamic32_read": 15670,
+        "dynamicprefix32_write": 21547,
+        "dynamicprefix32_read": 11952,
+        "binary16_write": 23305,
+        "binary16_read": 21996,
+        "binary256_write": 10077,
+        "binary256_read": 25729
+      }
+    },
+    {
+      "series": 2,
+      "group": 3,
+      "executable": "before-0",
+      "load": [
+        3.77880859375,
+        4.8662109375,
+        5.26025390625
+      ],
+      "values_us": {
+        "i8_write": 18762,
+        "i8_read": 8643,
+        "i32_write": 20205,
+        "i32_read": 8793,
+        "i64_write": 21988,
+        "i64_read": 8973,
+        "i64le_write": 21573,
+        "i64le_read": 8826,
+        "i13_write": 19762,
+        "i13_read": 11530,
+        "dynamic32_write": 21707,
+        "dynamic32_read": 10264,
+        "dynamicprefix32_write": 21719,
+        "dynamicprefix32_read": 10712,
+        "binary16_write": 22101,
+        "binary16_read": 21827,
+        "binary256_write": 10385,
+        "binary256_read": 25663
+      }
+    },
+    {
+      "series": 2,
+      "group": 3,
+      "executable": "after-extra-3",
+      "load": [
+        3.77880859375,
+        4.8662109375,
+        5.26025390625
+      ],
+      "values_us": {
+        "i13le_write": 4379,
+        "i13le_read": 2542,
+        "i80_write": 30085,
+        "i80_read": 17463,
+        "i128le_write": 42819,
+        "i128le_read": 17492
+      }
+    },
+    {
+      "series": 2,
+      "group": 4,
+      "executable": "before-3",
+      "load": [
+        3.71630859375,
+        4.8349609375,
+        5.24658203125
+      ],
+      "values_us": {
+        "i8_write": 20683,
+        "i8_read": 11530,
+        "i32_write": 22666,
+        "i32_read": 12521,
+        "i64_write": 25568,
+        "i64_read": 14176,
+        "i64le_write": 26104,
+        "i64le_read": 16438,
+        "i13_write": 20955,
+        "i13_read": 11530,
+        "dynamic32_write": 24356,
+        "dynamic32_read": 13893,
+        "dynamicprefix32_write": 24200,
+        "dynamicprefix32_read": 14151,
+        "binary16_write": 177942,
+        "binary16_read": 52040,
+        "binary256_write": 259995,
+        "binary256_read": 57048
+      }
+    },
+    {
+      "series": 2,
+      "group": 4,
+      "executable": "after-3",
+      "load": [
+        3.71630859375,
+        4.8349609375,
+        5.24658203125
+      ],
+      "values_us": {
+        "i8_write": 27087,
+        "i8_read": 16630,
+        "i32_write": 29737,
+        "i32_read": 14653,
+        "i64_write": 26615,
+        "i64_read": 14675,
+        "i64le_write": 27006,
+        "i64le_read": 17124,
+        "i13_write": 21492,
+        "i13_read": 12330,
+        "dynamic32_write": 25952,
+        "dynamic32_read": 15262,
+        "dynamicprefix32_write": 25323,
+        "dynamicprefix32_read": 15665,
+        "binary16_write": 178735,
+        "binary16_read": 53019,
+        "binary256_write": 260278,
+        "binary256_read": 57145
+      }
+    },
+    {
+      "series": 2,
+      "group": 4,
+      "executable": "after-extra-0",
+      "load": [
+        3.71630859375,
+        4.8349609375,
+        5.24658203125
+      ],
+      "values_us": {
+        "i13le_write": 4061,
+        "i13le_read": 2539,
+        "i80_write": 29438,
+        "i80_read": 17529,
+        "i128le_write": 42119,
+        "i128le_read": 16720
+      }
+    },
+    {
+      "series": 2,
+      "group": 4,
+      "executable": "after-extra-3",
+      "load": [
+        3.71630859375,
+        4.8349609375,
+        5.24658203125
+      ],
+      "values_us": {
+        "i13le_write": 4376,
+        "i13le_read": 2537,
+        "i80_write": 29958,
+        "i80_read": 17445,
+        "i128le_write": 42811,
+        "i128le_read": 17456
+      }
+    },
+    {
+      "series": 2,
+      "group": 4,
+      "executable": "before-0",
+      "load": [
+        3.71630859375,
+        4.8349609375,
+        5.24658203125
+      ],
+      "values_us": {
+        "i8_write": 18716,
+        "i8_read": 8614,
+        "i32_write": 20270,
+        "i32_read": 8866,
+        "i64_write": 21978,
+        "i64_read": 9091,
+        "i64le_write": 21549,
+        "i64le_read": 8806,
+        "i13_write": 19743,
+        "i13_read": 11690,
+        "dynamic32_write": 21743,
+        "dynamic32_read": 10232,
+        "dynamicprefix32_write": 23104,
+        "dynamicprefix32_read": 10606,
+        "binary16_write": 22018,
+        "binary16_read": 21755,
+        "binary256_write": 10355,
+        "binary256_read": 25600
+      }
+    },
+    {
+      "series": 2,
+      "group": 4,
+      "executable": "after-0",
+      "load": [
+        3.65869140625,
+        4.80419921875,
+        5.2333984375
+      ],
+      "values_us": {
+        "i8_write": 18657,
+        "i8_read": 8759,
+        "i32_write": 19950,
+        "i32_read": 9089,
+        "i64_write": 21744,
+        "i64_read": 9093,
+        "i64le_write": 21210,
+        "i64le_read": 9362,
+        "i13_write": 20179,
+        "i13_read": 12577,
+        "dynamic32_write": 22444,
+        "dynamic32_read": 16215,
+        "dynamicprefix32_write": 22314,
+        "dynamicprefix32_read": 12365,
+        "binary16_write": 24503,
+        "binary16_read": 22811,
+        "binary256_write": 10443,
+        "binary256_read": 26814
+      }
+    }
+  ],
+  "load_end": [
+    3.65869140625,
+    4.80419921875,
+    5.2333984375
+  ],
+  "medians_us": {
+    "before-0": {
+      "i8_write": 18760,
+      "i8_read": 8632,
+      "i32_write": 20252,
+      "i32_read": 8787,
+      "i64_write": 22040,
+      "i64_read": 8949,
+      "i64le_write": 21573,
+      "i64le_read": 8827,
+      "i13_write": 19814,
+      "i13_read": 11542,
+      "dynamic32_write": 21707,
+      "dynamic32_read": 10245,
+      "dynamicprefix32_write": 21725,
+      "dynamicprefix32_read": 10630,
+      "binary16_write": 22074,
+      "binary16_read": 21733,
+      "binary256_write": 10385,
+      "binary256_read": 25759
+    },
+    "after-0": {
+      "i8_write": 18575,
+      "i8_read": 8794,
+      "i32_write": 20006,
+      "i32_read": 9115,
+      "i64_write": 21575,
+      "i64_read": 9103,
+      "i64le_write": 21242,
+      "i64le_read": 9119,
+      "i13_write": 19918,
+      "i13_read": 12279,
+      "dynamic32_write": 21650,
+      "dynamic32_read": 15728,
+      "dynamicprefix32_write": 21580,
+      "dynamicprefix32_read": 11963,
+      "binary16_write": 23476,
+      "binary16_read": 22027,
+      "binary256_write": 10110,
+      "binary256_read": 25923
+    },
+    "before-3": {
+      "i8_write": 20733,
+      "i8_read": 11543,
+      "i32_write": 22708,
+      "i32_read": 12372,
+      "i64_write": 25574,
+      "i64_read": 14058,
+      "i64le_write": 26163,
+      "i64le_read": 16387,
+      "i13_write": 21050,
+      "i13_read": 11553,
+      "dynamic32_write": 24493,
+      "dynamic32_read": 13859,
+      "dynamicprefix32_write": 24252,
+      "dynamicprefix32_read": 14154,
+      "binary16_write": 178250,
+      "binary16_read": 52133,
+      "binary256_write": 260442,
+      "binary256_read": 57058
+    },
+    "after-3": {
+      "i8_write": 21348,
+      "i8_read": 12041,
+      "i32_write": 23718,
+      "i32_read": 13038,
+      "i64_write": 26326,
+      "i64_read": 14708,
+      "i64le_write": 27025,
+      "i64le_read": 17089,
+      "i13_write": 21511,
+      "i13_read": 12349,
+      "dynamic32_write": 25948,
+      "dynamic32_read": 15292,
+      "dynamicprefix32_write": 25328,
+      "dynamicprefix32_read": 15702,
+      "binary16_write": 179126,
+      "binary16_read": 53126,
+      "binary256_write": 260873,
+      "binary256_read": 57204
+    },
+    "after-extra-0": {
+      "i13le_write": 4077,
+      "i13le_read": 2543,
+      "i80_write": 29502,
+      "i80_read": 17560,
+      "i128le_write": 42148,
+      "i128le_read": 16814
+    },
+    "after-extra-3": {
+      "i13le_write": 4376,
+      "i13le_read": 2545,
+      "i80_write": 30029,
+      "i80_read": 17450,
+      "i128le_write": 42874,
+      "i128le_read": 17498
+    }
+  }
+}

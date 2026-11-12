@@ -1,0 +1,500 @@
+{
+  "rust199": {
+    "checks": {
+      "release": {
+        "command": [
+          "env",
+          "RUSTC_WRAPPER=",
+          "CARGO_TARGET_DIR=target/rust199-baseline",
+          "bash",
+          "-c",
+          "cargo +1.99.0 build --release --locked --offline -p nera-runtime && cargo +1.99.0 build --release --locked --offline"
+        ],
+        "cwd": "/home/user/AIProjects/nera",
+        "exit_code": 0,
+        "timed_out": false,
+        "seconds": 266.14
+      },
+      "package": {
+        "command": [
+          "env",
+          "RUSTUP_TOOLCHAIN=1.99.0",
+          "RUSTC_WRAPPER=",
+          "CARGO_TARGET_DIR=target/rust199-baseline",
+          "CARGO_NET_OFFLINE=true",
+          "./scripts/dist.sh",
+          "--version",
+          "0.1.0-rust199",
+          "--target",
+          "aarch64-apple-darwin"
+        ],
+        "cwd": "/home/user/AIProjects/nera",
+        "exit_code": 0,
+        "timed_out": false,
+        "seconds": 2.48
+      },
+      "installed": {
+        "command": [
+          "python3",
+          "scripts/test-dist.py",
+          "dist/nera-0.1.0-rust199-aarch64-apple-darwin.tar.gz"
+        ],
+        "cwd": "/home/user/AIProjects/nera",
+        "exit_code": 0,
+        "timed_out": false,
+        "seconds": 2.08
+      },
+      "probes": {
+        "command": [
+          "python3",
+          "docs/baselines/2026-10-10/reproduce.py",
+          "--nera",
+          "/home/user/AIProjects/nera/target/rust199-baseline/release/nera"
+        ],
+        "cwd": "/home/user/AIProjects/nera",
+        "exit_code": 1,
+        "timed_out": false,
+        "seconds": 3.31
+      },
+      "pinned-installed": {
+        "command": [
+          "python3",
+          "scripts/test-dist.py",
+          "dist/nera-0.1.0-rust199-pinned-aarch64-apple-darwin.tar.gz"
+        ],
+        "cwd": "/home/user/AIProjects/nera",
+        "exit_code": 0,
+        "timed_out": false,
+        "seconds": 6.77
+      },
+      "clippy": {
+        "command": [
+          "env",
+          "RUSTC_WRAPPER=",
+          "CARGO_TARGET_DIR=target/rust199-baseline",
+          "cargo",
+          "+1.99.0",
+          "clippy",
+          "--workspace",
+          "--all-targets",
+          "--locked",
+          "--offline",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "cwd": "/home/user/AIProjects/nera",
+        "exit_code": 101,
+        "timed_out": false,
+        "seconds": 68.93
+      },
+      "erlang": {
+        "command": [
+          "./target/rust199-baseline/release/nera",
+          "test",
+          "-j",
+          "4",
+          "--timeout",
+          "30"
+        ],
+        "cwd": "/home/user/AIProjects/nera",
+        "exit_code": 0,
+        "timed_out": false,
+        "seconds": 68.2
+      },
+      "thoas-build": {
+        "command": [
+          "/home/user/AIProjects/nera/target/rust199-baseline/release/nera",
+          "build",
+          "-o",
+          "/home/user/AIProjects/nera/target/toolchain-refresh-2026-10-10/thoas-rust199"
+        ],
+        "cwd": "/home/user/AIProjects/nera/tests/integration/thoas",
+        "exit_code": 0,
+        "timed_out": false,
+        "seconds": 1.42
+      },
+      "format-semantics": {
+        "command": [
+          "python3",
+          "/tmp/nera-refresh-format-semantics.py"
+        ],
+        "cwd": "/home/user/AIProjects/nera",
+        "exit_code": 0,
+        "timed_out": false,
+        "seconds": 2.35
+      },
+      "workspace": {
+        "command": [
+          "env",
+          "RUSTC_WRAPPER=",
+          "CARGO_TARGET_DIR=target/rust199-baseline",
+          "cargo",
+          "+1.99.0",
+          "test",
+          "--workspace",
+          "--locked",
+          "--offline",
+          "--no-fail-fast"
+        ],
+        "cwd": "/home/user/AIProjects/nera",
+        "exit_code": 101,
+        "timed_out": false,
+        "seconds": 119.72
+      },
+      "format": {
+        "command": [
+          "cargo",
+          "+1.99.0",
+          "fmt",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "cwd": "/home/user/AIProjects/nera",
+        "exit_code": 1,
+        "timed_out": false,
+        "seconds": 5.57
+      },
+      "thoas-run": {
+        "command": [
+          "/home/user/AIProjects/nera/target/toolchain-refresh-2026-10-10/thoas-rust199"
+        ],
+        "cwd": "/home/user/AIProjects/nera/tests/integration/thoas",
+        "exit_code": 0,
+        "timed_out": false,
+        "seconds": 0.29
+      },
+      "poolboy-build": {
+        "command": [
+          "/home/user/AIProjects/nera/target/rust199-baseline/release/nera",
+          "build",
+          "-o",
+          "/home/user/AIProjects/nera/target/toolchain-refresh-2026-10-10/poolboy-rust199"
+        ],
+        "cwd": "/home/user/AIProjects/nera/tests/integration/poolboy",
+        "exit_code": 1,
+        "timed_out": false,
+        "seconds": 0.18
+      },
+      "pinned-package": {
+        "command": [
+          "env",
+          "RUSTC_WRAPPER=",
+          "CARGO_TARGET_DIR=target/rust199-baseline",
+          "CARGO_NET_OFFLINE=true",
+          "./scripts/dist.sh",
+          "--version",
+          "0.1.0-rust199-pinned",
+          "--target",
+          "aarch64-apple-darwin"
+        ],
+        "cwd": "/home/user/AIProjects/nera",
+        "exit_code": 0,
+        "timed_out": false,
+        "seconds": 2.03
+      }
+    },
+    "workspace": {
+      "passed": 1677,
+      "failed": 5
+    },
+    "erlang": {
+      "passed": 285,
+      "failed": 0,
+      "skipped": 2
+    },
+    "probes": {
+      "resume_exception_probe": {
+        "expected": "before\nafter\n",
+        "beam": {
+          "exit": 0,
+          "stdout": "before\nafter\n",
+          "stderr": ""
+        },
+        "native": {
+          "exit": 0,
+          "stdout": "before\nafter\n",
+          "stderr": ""
+        },
+        "pass": true
+      },
+      "late_reply_probe": {
+        "expected": "no_late_reply\n",
+        "beam": {
+          "exit": 0,
+          "stdout": "no_late_reply\n",
+          "stderr": ""
+        },
+        "native": {
+          "exit": 0,
+          "stdout": "late_reply\n",
+          "stderr": ""
+        },
+        "pass": false
+      },
+      "formatter_guard_probe": {
+        "original_beam": {
+          "exit": 0,
+          "stdout": "matched\n",
+          "stderr": ""
+        },
+        "formatted_beam": {
+          "exit": 0,
+          "stdout": "matched\n",
+          "stderr": ""
+        },
+        "formatted_source": "%% Run on BEAM before and after `nera fmt --stdout`.\n%% The unformatted program must print matched.\n-module(formatter_guard_probe).\n-export([start/0]).\n\nstart() -> io:format(\"~p~n\", [classify(2, 1)]).\n\nclassify(A, B) when not (A < B) -> matched;\nclassify(_, _) -> fallback.\n",
+        "pass": true
+      }
+    }
+  },
+  "cranelift": {
+    "checks": {
+      "thoas-run": {
+        "command": [
+          "/home/user/AIProjects/nera/target/toolchain-refresh-2026-10-10/thoas-cranelift"
+        ],
+        "cwd": "/home/user/AIProjects/nera/tests/integration/thoas",
+        "exit_code": 0,
+        "timed_out": false,
+        "seconds": 0.3
+      },
+      "erlang": {
+        "command": [
+          "./target/rust199-baseline/release/nera",
+          "test",
+          "-j",
+          "4",
+          "--timeout",
+          "30"
+        ],
+        "cwd": "/home/user/AIProjects/nera",
+        "exit_code": 0,
+        "timed_out": false,
+        "seconds": 61.4
+      },
+      "clippy": {
+        "command": [
+          "env",
+          "RUSTC_WRAPPER=",
+          "CARGO_TARGET_DIR=target/rust199-baseline",
+          "cargo",
+          "clippy",
+          "--workspace",
+          "--all-targets",
+          "--locked",
+          "--offline",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "cwd": "/home/user/AIProjects/nera",
+        "exit_code": 101,
+        "timed_out": false,
+        "seconds": 22.28
+      },
+      "workspace": {
+        "command": [
+          "env",
+          "RUSTC_WRAPPER=",
+          "CARGO_TARGET_DIR=target/rust199-baseline",
+          "cargo",
+          "test",
+          "--workspace",
+          "--locked",
+          "--offline",
+          "--no-fail-fast"
+        ],
+        "cwd": "/home/user/AIProjects/nera",
+        "exit_code": 101,
+        "timed_out": false,
+        "seconds": 29.88
+      },
+      "probes": {
+        "command": [
+          "python3",
+          "docs/baselines/2026-10-10/reproduce.py",
+          "--nera",
+          "/home/user/AIProjects/nera/target/rust199-baseline/release/nera"
+        ],
+        "cwd": "/home/user/AIProjects/nera",
+        "exit_code": 1,
+        "timed_out": false,
+        "seconds": 2.71
+      },
+      "format-semantics": {
+        "command": [
+          "python3",
+          "/tmp/nera-refresh-format-semantics.py"
+        ],
+        "cwd": "/home/user/AIProjects/nera",
+        "exit_code": 0,
+        "timed_out": false,
+        "seconds": 1.86
+      },
+      "release": {
+        "command": [
+          "env",
+          "RUSTC_WRAPPER=",
+          "CARGO_TARGET_DIR=target/rust199-baseline",
+          "bash",
+          "-c",
+          "cargo build --release --locked --offline -p nera-runtime && cargo build --release --locked --offline"
+        ],
+        "cwd": "/home/user/AIProjects/nera",
+        "exit_code": 0,
+        "timed_out": false,
+        "seconds": 164.12
+      },
+      "thoas-build": {
+        "command": [
+          "/home/user/AIProjects/nera/target/rust199-baseline/release/nera",
+          "build",
+          "-o",
+          "/home/user/AIProjects/nera/target/toolchain-refresh-2026-10-10/thoas-cranelift"
+        ],
+        "cwd": "/home/user/AIProjects/nera/tests/integration/thoas",
+        "exit_code": 0,
+        "timed_out": false,
+        "seconds": 1.22
+      },
+      "package": {
+        "command": [
+          "env",
+          "RUSTUP_TOOLCHAIN=1.99.0",
+          "RUSTC_WRAPPER=",
+          "CARGO_TARGET_DIR=target/rust199-baseline",
+          "CARGO_NET_OFFLINE=true",
+          "./scripts/dist.sh",
+          "--version",
+          "0.1.0-cranelift",
+          "--target",
+          "aarch64-apple-darwin"
+        ],
+        "cwd": "/home/user/AIProjects/nera",
+        "exit_code": 0,
+        "timed_out": false,
+        "seconds": 2.25
+      },
+      "update": {
+        "command": [
+          "env",
+          "RUSTC_WRAPPER=",
+          "cargo",
+          "update",
+          "-p",
+          "cranelift-codegen",
+          "--precise",
+          "0.129.2"
+        ],
+        "cwd": "/home/user/AIProjects/nera",
+        "exit_code": 0,
+        "timed_out": false,
+        "seconds": 3.87
+      },
+      "poolboy-build": {
+        "command": [
+          "/home/user/AIProjects/nera/target/rust199-baseline/release/nera",
+          "build",
+          "-o",
+          "/home/user/AIProjects/nera/target/toolchain-refresh-2026-10-10/poolboy-cranelift"
+        ],
+        "cwd": "/home/user/AIProjects/nera/tests/integration/poolboy",
+        "exit_code": 1,
+        "timed_out": false,
+        "seconds": 0.18
+      },
+      "fetch": {
+        "command": [
+          "cargo",
+          "fetch",
+          "--locked",
+          "--target",
+          "aarch64-apple-darwin"
+        ],
+        "cwd": "/home/user/AIProjects/nera",
+        "exit_code": 0,
+        "timed_out": false,
+        "seconds": 1.17
+      },
+      "installed": {
+        "command": [
+          "python3",
+          "scripts/test-dist.py",
+          "dist/nera-0.1.0-cranelift-aarch64-apple-darwin.tar.gz"
+        ],
+        "cwd": "/home/user/AIProjects/nera",
+        "exit_code": 0,
+        "timed_out": false,
+        "seconds": 2.03
+      },
+      "format": {
+        "command": [
+          "cargo",
+          "fmt",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "cwd": "/home/user/AIProjects/nera",
+        "exit_code": 1,
+        "timed_out": false,
+        "seconds": 1.71
+      }
+    },
+    "workspace": {
+      "passed": 1677,
+      "failed": 5
+    },
+    "erlang": {
+      "passed": 285,
+      "failed": 0,
+      "skipped": 2
+    },
+    "probes": {
+      "resume_exception_probe": {
+        "expected": "before\nafter\n",
+        "beam": {
+          "exit": 0,
+          "stdout": "before\nafter\n",
+          "stderr": ""
+        },
+        "native": {
+          "exit": 0,
+          "stdout": "before\nafter\n",
+          "stderr": ""
+        },
+        "pass": true
+      },
+      "late_reply_probe": {
+        "expected": "no_late_reply\n",
+        "beam": {
+          "exit": 0,
+          "stdout": "no_late_reply\n",
+          "stderr": ""
+        },
+        "native": {
+          "exit": 0,
+          "stdout": "late_reply\n",
+          "stderr": ""
+        },
+        "pass": false
+      },
+      "formatter_guard_probe": {
+        "original_beam": {
+          "exit": 0,
+          "stdout": "matched\n",
+          "stderr": ""
+        },
+        "formatted_beam": {
+          "exit": 0,
+          "stdout": "matched\n",
+          "stderr": ""
+        },
+        "formatted_source": "%% Run on BEAM before and after `nera fmt --stdout`.\n%% The unformatted program must print matched.\n-module(formatter_guard_probe).\n-export([start/0]).\n\nstart() -> io:format(\"~p~n\", [classify(2, 1)]).\n\nclassify(A, B) when not (A < B) -> matched;\nclassify(_, _) -> fallback.\n",
+        "pass": true
+      }
+    }
+  }
+}

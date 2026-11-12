@@ -1,0 +1,22 @@
+Running 2 tests (1 threads)
+────────────────────────────────────────────────────────────
+  FAIL  atomics_integer_domain                    768ms  [1/2]
+  FAIL  atomics_resource_kind                     149ms  [2/2]
+────────────────────────────────────────────────────────────
+Results: 0 passed, 2 failed (1 compile), 0 skipped / 2 total
+
+Failures:
+  atomics_integer_domain: runtime crash, exit=-1
+    stderr:
+
+    thread 'nera-worker-0' (7876656) panicked at crates/nera-runtime/src/term.rs:348:34:
+    small integer outside signed 61-bit domain
+    note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+  atomics_resource_kind: compile error
+    error: unresolved function `erlang:garbage_collect/0`
+       ┌─ /private/tmp/nera-transferable-heap-fragments/tests/atomics_resource_kind.erl:30:5
+       │
+    30 │     erlang:garbage_collect(),
+       │     ^^^^^^^^^^^^^^^^^^^^^^^^ module `erlang` is not available
+
+SOME TESTS FAILED

@@ -1,0 +1,24 @@
+    Blocking waiting for file lock on build directory
+   Compiling nera-runtime v0.1.0 (/private/tmp/nera-mailbox-capacity/crates/nera-runtime)
+   Compiling unicode-segmentation v1.13.3
+    Finished `release` profile [optimized] target(s) in 1m 45s
+     Running unittests src/lib.rs (/home/user/AIProjects/nera/target/release/deps/nera_runtime-d9d0cab72757adae)
+
+running 1 test
+test process::tests::mailbox_rejects_overflowing_growth_without_mutation ... FAILED
+
+failures:
+
+---- process::tests::mailbox_rejects_overflowing_growth_without_mutation stdout ----
+
+thread 'process::tests::mailbox_rejects_overflowing_growth_without_mutation' (2709489) panicked at crates/nera-runtime/src/process.rs:2026:17:
+out-of-domain growth must be rejected
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    process::tests::mailbox_rejects_overflowing_growth_without_mutation
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 487 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p nera-runtime --lib`

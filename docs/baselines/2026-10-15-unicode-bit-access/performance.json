@@ -1,0 +1,1350 @@
+{
+  "operations_per_case": 100000,
+  "warmups_per_case": 100000,
+  "series": [
+    {
+      "before-aligned": [
+        {
+          "u8_ascii_write": 3782,
+          "u8_ascii_read": 1894,
+          "u8_multi_write": 4263,
+          "u8_multi_read": 2049,
+          "u16_bmp_write": 3706,
+          "u16_bmp_read": 1833,
+          "u16_pair_write": 3811,
+          "u16_pair_read": 1892,
+          "u16_le_write": 3780,
+          "u16_le_read": 1893,
+          "u32_write": 4457,
+          "u32_read": 1825
+        },
+        {
+          "u8_ascii_write": 6553,
+          "u8_ascii_read": 2930,
+          "u8_multi_write": 5540,
+          "u8_multi_read": 2594,
+          "u16_bmp_write": 4309,
+          "u16_bmp_read": 2032,
+          "u16_pair_write": 4084,
+          "u16_pair_read": 1980,
+          "u16_le_write": 3860,
+          "u16_le_read": 1908,
+          "u32_write": 4419,
+          "u32_read": 1830
+        },
+        {
+          "u8_ascii_write": 5705,
+          "u8_ascii_read": 2691,
+          "u8_multi_write": 4996,
+          "u8_multi_read": 2377,
+          "u16_bmp_write": 4139,
+          "u16_bmp_read": 1889,
+          "u16_pair_write": 4185,
+          "u16_pair_read": 1982,
+          "u16_le_write": 3941,
+          "u16_le_read": 1987,
+          "u32_write": 4830,
+          "u32_read": 1910
+        },
+        {
+          "u8_ascii_write": 3928,
+          "u8_ascii_read": 1966,
+          "u8_multi_write": 4299,
+          "u8_multi_read": 2066,
+          "u16_bmp_write": 3841,
+          "u16_bmp_read": 1882,
+          "u16_pair_write": 4048,
+          "u16_pair_read": 1980,
+          "u16_le_write": 3955,
+          "u16_le_read": 1982,
+          "u32_write": 5218,
+          "u32_read": 1914
+        },
+        {
+          "u8_ascii_write": 4118,
+          "u8_ascii_read": 1955,
+          "u8_multi_write": 4149,
+          "u8_multi_read": 2063,
+          "u16_bmp_write": 3890,
+          "u16_bmp_read": 1880,
+          "u16_pair_write": 4142,
+          "u16_pair_read": 1985,
+          "u16_le_write": 3936,
+          "u16_le_read": 1982,
+          "u32_write": 4674,
+          "u32_read": 1919
+        },
+        {
+          "u8_ascii_write": 6100,
+          "u8_ascii_read": 2675,
+          "u8_multi_write": 5206,
+          "u8_multi_read": 2384,
+          "u16_bmp_write": 4172,
+          "u16_bmp_read": 2042,
+          "u16_pair_write": 4055,
+          "u16_pair_read": 1983,
+          "u16_le_write": 3815,
+          "u16_le_read": 1887,
+          "u32_write": 4597,
+          "u32_read": 1829
+        },
+        {
+          "u8_ascii_write": 5979,
+          "u8_ascii_read": 2686,
+          "u8_multi_write": 5109,
+          "u8_multi_read": 2389,
+          "u16_bmp_write": 4161,
+          "u16_bmp_read": 1985,
+          "u16_pair_write": 3990,
+          "u16_pair_read": 1996,
+          "u16_le_write": 3833,
+          "u16_le_read": 1907,
+          "u32_write": 4677,
+          "u32_read": 1844
+        },
+        {
+          "u8_ascii_write": 6712,
+          "u8_ascii_read": 3059,
+          "u8_multi_write": 5463,
+          "u8_multi_read": 2620,
+          "u16_bmp_write": 4380,
+          "u16_bmp_read": 2042,
+          "u16_pair_write": 4153,
+          "u16_pair_read": 1985,
+          "u16_le_write": 3919,
+          "u16_le_read": 1919,
+          "u32_write": 4592,
+          "u32_read": 1851
+        },
+        {
+          "u8_ascii_write": 6207,
+          "u8_ascii_read": 2883,
+          "u8_multi_write": 5274,
+          "u8_multi_read": 2457,
+          "u16_bmp_write": 4290,
+          "u16_bmp_read": 2039,
+          "u16_pair_write": 4188,
+          "u16_pair_read": 1981,
+          "u16_le_write": 3830,
+          "u16_le_read": 1898,
+          "u32_write": 4451,
+          "u32_read": 1813
+        }
+      ],
+      "after-aligned": [
+        {
+          "u8_ascii_write": 3923,
+          "u8_ascii_read": 2754,
+          "u8_multi_write": 8520,
+          "u8_multi_read": 3126,
+          "u16_bmp_write": 6137,
+          "u16_bmp_read": 2753,
+          "u16_pair_write": 5277,
+          "u16_pair_read": 2398,
+          "u16_le_write": 4556,
+          "u16_le_read": 2224,
+          "u32_write": 4604,
+          "u32_read": 1906
+        },
+        {
+          "u8_ascii_write": 6167,
+          "u8_ascii_read": 2622,
+          "u8_multi_write": 5323,
+          "u8_multi_read": 2429,
+          "u16_bmp_write": 4403,
+          "u16_bmp_read": 2082,
+          "u16_pair_write": 4243,
+          "u16_pair_read": 2076,
+          "u16_le_write": 4023,
+          "u16_le_read": 1982,
+          "u32_write": 4385,
+          "u32_read": 1871
+        },
+        {
+          "u8_ascii_write": 4052,
+          "u8_ascii_read": 1927,
+          "u8_multi_write": 4213,
+          "u8_multi_read": 2150,
+          "u16_bmp_write": 4111,
+          "u16_bmp_read": 2037,
+          "u16_pair_write": 4221,
+          "u16_pair_read": 2081,
+          "u16_le_write": 4225,
+          "u16_le_read": 2085,
+          "u32_write": 4638,
+          "u32_read": 1994
+        },
+        {
+          "u8_ascii_write": 4031,
+          "u8_ascii_read": 1928,
+          "u8_multi_write": 4222,
+          "u8_multi_read": 2109,
+          "u16_bmp_write": 4076,
+          "u16_bmp_read": 2006,
+          "u16_pair_write": 4214,
+          "u16_pair_read": 2075,
+          "u16_le_write": 4192,
+          "u16_le_read": 2082,
+          "u32_write": 4791,
+          "u32_read": 2082
+        },
+        {
+          "u8_ascii_write": 3890,
+          "u8_ascii_read": 1868,
+          "u8_multi_write": 4070,
+          "u8_multi_read": 2048,
+          "u16_bmp_write": 3943,
+          "u16_bmp_read": 1943,
+          "u16_pair_write": 4062,
+          "u16_pair_read": 2013,
+          "u16_le_write": 4435,
+          "u16_le_read": 2087,
+          "u32_write": 4726,
+          "u32_read": 1903
+        },
+        {
+          "u8_ascii_write": 6201,
+          "u8_ascii_read": 2633,
+          "u8_multi_write": 5261,
+          "u8_multi_read": 2473,
+          "u16_bmp_write": 4387,
+          "u16_bmp_read": 2096,
+          "u16_pair_write": 4239,
+          "u16_pair_read": 2016,
+          "u16_le_write": 4037,
+          "u16_le_read": 1996,
+          "u32_write": 4441,
+          "u32_read": 1879
+        },
+        {
+          "u8_ascii_write": 6231,
+          "u8_ascii_read": 2668,
+          "u8_multi_write": 5326,
+          "u8_multi_read": 2467,
+          "u16_bmp_write": 4453,
+          "u16_bmp_read": 2162,
+          "u16_pair_write": 4209,
+          "u16_pair_read": 2079,
+          "u16_le_write": 4106,
+          "u16_le_read": 1995,
+          "u32_write": 4576,
+          "u32_read": 1891
+        },
+        {
+          "u8_ascii_write": 6319,
+          "u8_ascii_read": 2617,
+          "u8_multi_write": 5289,
+          "u8_multi_read": 2457,
+          "u16_bmp_write": 4433,
+          "u16_bmp_read": 2160,
+          "u16_pair_write": 4221,
+          "u16_pair_read": 2094,
+          "u16_le_write": 4101,
+          "u16_le_read": 1992,
+          "u32_write": 4489,
+          "u32_read": 1884
+        },
+        {
+          "u8_ascii_write": 6594,
+          "u8_ascii_read": 2830,
+          "u8_multi_write": 5351,
+          "u8_multi_read": 2541,
+          "u16_bmp_write": 4521,
+          "u16_bmp_read": 2178,
+          "u16_pair_write": 4214,
+          "u16_pair_read": 2077,
+          "u16_le_write": 4080,
+          "u16_le_read": 1995,
+          "u32_write": 4387,
+          "u32_read": 1872
+        }
+      ],
+      "after-shifted": [
+        {
+          "u8_ascii_write": 7007,
+          "u8_ascii_read": 3920,
+          "u8_multi_write": 7460,
+          "u8_multi_read": 3307,
+          "u16_bmp_write": 5840,
+          "u16_bmp_read": 2522,
+          "u16_pair_write": 5129,
+          "u16_pair_read": 2520,
+          "u16_le_write": 4673,
+          "u16_le_read": 2253,
+          "u32_write": 4163,
+          "u32_read": 1968
+        },
+        {
+          "u8_ascii_write": 6880,
+          "u8_ascii_read": 2699,
+          "u8_multi_write": 6001,
+          "u8_multi_read": 2666,
+          "u16_bmp_write": 4803,
+          "u16_bmp_read": 2091,
+          "u16_pair_write": 4723,
+          "u16_pair_read": 2263,
+          "u16_le_write": 4488,
+          "u16_le_read": 2192,
+          "u32_write": 4103,
+          "u32_read": 1965
+        },
+        {
+          "u8_ascii_write": 4453,
+          "u8_ascii_read": 1963,
+          "u8_multi_write": 4540,
+          "u8_multi_read": 2280,
+          "u16_bmp_write": 4424,
+          "u16_bmp_read": 2064,
+          "u16_pair_write": 4626,
+          "u16_pair_read": 2397,
+          "u16_le_write": 4650,
+          "u16_le_read": 2287,
+          "u32_write": 4276,
+          "u32_read": 2062
+        },
+        {
+          "u8_ascii_write": 4339,
+          "u8_ascii_read": 1979,
+          "u8_multi_write": 4465,
+          "u8_multi_read": 2283,
+          "u16_bmp_write": 4458,
+          "u16_bmp_read": 2016,
+          "u16_pair_write": 4630,
+          "u16_pair_read": 2302,
+          "u16_le_write": 4639,
+          "u16_le_read": 2256,
+          "u32_write": 4273,
+          "u32_read": 2058
+        },
+        {
+          "u8_ascii_write": 6726,
+          "u8_ascii_read": 2706,
+          "u8_multi_write": 5602,
+          "u8_multi_read": 2627,
+          "u16_bmp_write": 4776,
+          "u16_bmp_read": 2082,
+          "u16_pair_write": 4689,
+          "u16_pair_read": 2326,
+          "u16_le_write": 4650,
+          "u16_le_read": 2204,
+          "u32_write": 4174,
+          "u32_read": 1999
+        },
+        {
+          "u8_ascii_write": 7119,
+          "u8_ascii_read": 2750,
+          "u8_multi_write": 5740,
+          "u8_multi_read": 2696,
+          "u16_bmp_write": 4824,
+          "u16_bmp_read": 2162,
+          "u16_pair_write": 4637,
+          "u16_pair_read": 2291,
+          "u16_le_write": 4432,
+          "u16_le_read": 2150,
+          "u32_write": 4115,
+          "u32_read": 1965
+        },
+        {
+          "u8_ascii_write": 6945,
+          "u8_ascii_read": 2877,
+          "u8_multi_write": 5660,
+          "u8_multi_read": 2631,
+          "u16_bmp_write": 4829,
+          "u16_bmp_read": 2181,
+          "u16_pair_write": 4647,
+          "u16_pair_read": 2305,
+          "u16_le_write": 4437,
+          "u16_le_read": 2156,
+          "u32_write": 4150,
+          "u32_read": 1968
+        },
+        {
+          "u8_ascii_write": 6550,
+          "u8_ascii_read": 2683,
+          "u8_multi_write": 5350,
+          "u8_multi_read": 2601,
+          "u16_bmp_write": 4764,
+          "u16_bmp_read": 2015,
+          "u16_pair_write": 4689,
+          "u16_pair_read": 2254,
+          "u16_le_write": 4420,
+          "u16_le_read": 2149,
+          "u32_write": 4071,
+          "u32_read": 1960
+        },
+        {
+          "u8_ascii_write": 6765,
+          "u8_ascii_read": 2706,
+          "u8_multi_write": 5569,
+          "u8_multi_read": 2668,
+          "u16_bmp_write": 4780,
+          "u16_bmp_read": 2048,
+          "u16_pair_write": 4622,
+          "u16_pair_read": 2228,
+          "u16_le_write": 4442,
+          "u16_le_read": 2144,
+          "u32_write": 4116,
+          "u32_read": 1955
+        }
+      ]
+    },
+    {
+      "before-aligned": [
+        {
+          "u8_ascii_write": 6219,
+          "u8_ascii_read": 2876,
+          "u8_multi_write": 5365,
+          "u8_multi_read": 2479,
+          "u16_bmp_write": 4278,
+          "u16_bmp_read": 2037,
+          "u16_pair_write": 4211,
+          "u16_pair_read": 1999,
+          "u16_le_write": 3842,
+          "u16_le_read": 1890,
+          "u32_write": 4472,
+          "u32_read": 1814
+        },
+        {
+          "u8_ascii_write": 6123,
+          "u8_ascii_read": 2695,
+          "u8_multi_write": 5225,
+          "u8_multi_read": 2382,
+          "u16_bmp_write": 4193,
+          "u16_bmp_read": 2029,
+          "u16_pair_write": 4001,
+          "u16_pair_read": 2025,
+          "u16_le_write": 3793,
+          "u16_le_read": 1912,
+          "u32_write": 4603,
+          "u32_read": 1835
+        },
+        {
+          "u8_ascii_write": 6440,
+          "u8_ascii_read": 2827,
+          "u8_multi_write": 5424,
+          "u8_multi_read": 2593,
+          "u16_bmp_write": 4256,
+          "u16_bmp_read": 2048,
+          "u16_pair_write": 4034,
+          "u16_pair_read": 1985,
+          "u16_le_write": 3854,
+          "u16_le_read": 1890,
+          "u32_write": 4436,
+          "u32_read": 1813
+        },
+        {
+          "u8_ascii_write": 6330,
+          "u8_ascii_read": 2723,
+          "u8_multi_write": 5358,
+          "u8_multi_read": 2524,
+          "u16_bmp_write": 4239,
+          "u16_bmp_read": 2029,
+          "u16_pair_write": 4089,
+          "u16_pair_read": 1981,
+          "u16_le_write": 3835,
+          "u16_le_read": 1884,
+          "u32_write": 4428,
+          "u32_read": 1815
+        },
+        {
+          "u8_ascii_write": 6146,
+          "u8_ascii_read": 2752,
+          "u8_multi_write": 5211,
+          "u8_multi_read": 2405,
+          "u16_bmp_write": 4220,
+          "u16_bmp_read": 2052,
+          "u16_pair_write": 4110,
+          "u16_pair_read": 1992,
+          "u16_le_write": 3820,
+          "u16_le_read": 1904,
+          "u32_write": 4685,
+          "u32_read": 1840
+        },
+        {
+          "u8_ascii_write": 5642,
+          "u8_ascii_read": 2610,
+          "u8_multi_write": 4934,
+          "u8_multi_read": 2384,
+          "u16_bmp_write": 4188,
+          "u16_bmp_read": 1904,
+          "u16_pair_write": 4001,
+          "u16_pair_read": 1918,
+          "u16_le_write": 3785,
+          "u16_le_read": 1939,
+          "u32_write": 4655,
+          "u32_read": 1833
+        },
+        {
+          "u8_ascii_write": 6339,
+          "u8_ascii_read": 2988,
+          "u8_multi_write": 5458,
+          "u8_multi_read": 2584,
+          "u16_bmp_write": 4334,
+          "u16_bmp_read": 2041,
+          "u16_pair_write": 4008,
+          "u16_pair_read": 1990,
+          "u16_le_write": 3859,
+          "u16_le_read": 1912,
+          "u32_write": 4433,
+          "u32_read": 1882
+        },
+        {
+          "u8_ascii_write": 6301,
+          "u8_ascii_read": 2973,
+          "u8_multi_write": 5355,
+          "u8_multi_read": 2511,
+          "u16_bmp_write": 4196,
+          "u16_bmp_read": 2038,
+          "u16_pair_write": 4124,
+          "u16_pair_read": 1995,
+          "u16_le_write": 3839,
+          "u16_le_read": 1882,
+          "u32_write": 4593,
+          "u32_read": 1835
+        },
+        {
+          "u8_ascii_write": 6471,
+          "u8_ascii_read": 2987,
+          "u8_multi_write": 5516,
+          "u8_multi_read": 2609,
+          "u16_bmp_write": 4287,
+          "u16_bmp_read": 2027,
+          "u16_pair_write": 4055,
+          "u16_pair_read": 2048,
+          "u16_le_write": 3883,
+          "u16_le_read": 1908,
+          "u32_write": 4429,
+          "u32_read": 1822
+        }
+      ],
+      "after-aligned": [
+        {
+          "u8_ascii_write": 6257,
+          "u8_ascii_read": 2659,
+          "u8_multi_write": 5298,
+          "u8_multi_read": 2430,
+          "u16_bmp_write": 4401,
+          "u16_bmp_read": 2166,
+          "u16_pair_write": 4233,
+          "u16_pair_read": 2075,
+          "u16_le_write": 4080,
+          "u16_le_read": 1995,
+          "u32_write": 4387,
+          "u32_read": 1907
+        },
+        {
+          "u8_ascii_write": 6597,
+          "u8_ascii_read": 2924,
+          "u8_multi_write": 5621,
+          "u8_multi_read": 2691,
+          "u16_bmp_write": 4602,
+          "u16_bmp_read": 2163,
+          "u16_pair_write": 4224,
+          "u16_pair_read": 2074,
+          "u16_le_write": 4088,
+          "u16_le_read": 1993,
+          "u32_write": 4520,
+          "u32_read": 1910
+        },
+        {
+          "u8_ascii_write": 6600,
+          "u8_ascii_read": 2832,
+          "u8_multi_write": 5554,
+          "u8_multi_read": 2638,
+          "u16_bmp_write": 4490,
+          "u16_bmp_read": 2172,
+          "u16_pair_write": 4261,
+          "u16_pair_read": 2076,
+          "u16_le_write": 4051,
+          "u16_le_read": 1984,
+          "u32_write": 4068,
+          "u32_read": 1879
+        },
+        {
+          "u8_ascii_write": 6196,
+          "u8_ascii_read": 2652,
+          "u8_multi_write": 5315,
+          "u8_multi_read": 2466,
+          "u16_bmp_write": 4421,
+          "u16_bmp_read": 2174,
+          "u16_pair_write": 4257,
+          "u16_pair_read": 2086,
+          "u16_le_write": 4072,
+          "u16_le_read": 1985,
+          "u32_write": 4526,
+          "u32_read": 1879
+        },
+        {
+          "u8_ascii_write": 6342,
+          "u8_ascii_read": 2796,
+          "u8_multi_write": 5370,
+          "u8_multi_read": 2497,
+          "u16_bmp_write": 4475,
+          "u16_bmp_read": 2163,
+          "u16_pair_write": 4200,
+          "u16_pair_read": 2084,
+          "u16_le_write": 4064,
+          "u16_le_read": 2000,
+          "u32_write": 4449,
+          "u32_read": 1880
+        },
+        {
+          "u8_ascii_write": 6498,
+          "u8_ascii_read": 2948,
+          "u8_multi_write": 5485,
+          "u8_multi_read": 2603,
+          "u16_bmp_write": 4443,
+          "u16_bmp_read": 2167,
+          "u16_pair_write": 4212,
+          "u16_pair_read": 2100,
+          "u16_le_write": 4075,
+          "u16_le_read": 1982,
+          "u32_write": 4381,
+          "u32_read": 1906
+        },
+        {
+          "u8_ascii_write": 6633,
+          "u8_ascii_read": 2904,
+          "u8_multi_write": 5407,
+          "u8_multi_read": 2579,
+          "u16_bmp_write": 4529,
+          "u16_bmp_read": 2517,
+          "u16_pair_write": 4207,
+          "u16_pair_read": 2076,
+          "u16_le_write": 4073,
+          "u16_le_read": 1998,
+          "u32_write": 4384,
+          "u32_read": 1880
+        },
+        {
+          "u8_ascii_write": 5261,
+          "u8_ascii_read": 2417,
+          "u8_multi_write": 4635,
+          "u8_multi_read": 2325,
+          "u16_bmp_write": 4087,
+          "u16_bmp_read": 2007,
+          "u16_pair_write": 4091,
+          "u16_pair_read": 2019,
+          "u16_le_write": 3994,
+          "u16_le_read": 1988,
+          "u32_write": 4374,
+          "u32_read": 1881
+        },
+        {
+          "u8_ascii_write": 6304,
+          "u8_ascii_read": 2644,
+          "u8_multi_write": 5385,
+          "u8_multi_read": 2451,
+          "u16_bmp_write": 4417,
+          "u16_bmp_read": 2184,
+          "u16_pair_write": 4248,
+          "u16_pair_read": 2079,
+          "u16_le_write": 4054,
+          "u16_le_read": 2019,
+          "u32_write": 4597,
+          "u32_read": 1900
+        }
+      ],
+      "after-shifted": [
+        {
+          "u8_ascii_write": 7204,
+          "u8_ascii_read": 2997,
+          "u8_multi_write": 5834,
+          "u8_multi_read": 2758,
+          "u16_bmp_write": 4883,
+          "u16_bmp_read": 2176,
+          "u16_pair_write": 4655,
+          "u16_pair_read": 2349,
+          "u16_le_write": 4455,
+          "u16_le_read": 2174,
+          "u32_write": 4086,
+          "u32_read": 1971
+        },
+        {
+          "u8_ascii_write": 6736,
+          "u8_ascii_read": 2716,
+          "u8_multi_write": 5615,
+          "u8_multi_read": 2630,
+          "u16_bmp_write": 4792,
+          "u16_bmp_read": 2150,
+          "u16_pair_write": 4624,
+          "u16_pair_read": 2232,
+          "u16_le_write": 4405,
+          "u16_le_read": 2182,
+          "u32_write": 4089,
+          "u32_read": 1978
+        },
+        {
+          "u8_ascii_write": 6739,
+          "u8_ascii_read": 2699,
+          "u8_multi_write": 5643,
+          "u8_multi_read": 2630,
+          "u16_bmp_write": 4788,
+          "u16_bmp_read": 2141,
+          "u16_pair_write": 4637,
+          "u16_pair_read": 2288,
+          "u16_le_write": 4489,
+          "u16_le_read": 2154,
+          "u32_write": 4074,
+          "u32_read": 1969
+        },
+        {
+          "u8_ascii_write": 6959,
+          "u8_ascii_read": 2851,
+          "u8_multi_write": 5653,
+          "u8_multi_read": 2627,
+          "u16_bmp_write": 4798,
+          "u16_bmp_read": 2177,
+          "u16_pair_write": 4658,
+          "u16_pair_read": 2336,
+          "u16_le_write": 4457,
+          "u16_le_read": 2148,
+          "u32_write": 4086,
+          "u32_read": 1963
+        },
+        {
+          "u8_ascii_write": 7298,
+          "u8_ascii_read": 2948,
+          "u8_multi_write": 5703,
+          "u8_multi_read": 2673,
+          "u16_bmp_write": 4826,
+          "u16_bmp_read": 2174,
+          "u16_pair_write": 4638,
+          "u16_pair_read": 2302,
+          "u16_le_write": 4481,
+          "u16_le_read": 2156,
+          "u32_write": 4075,
+          "u32_read": 1989
+        },
+        {
+          "u8_ascii_write": 6751,
+          "u8_ascii_read": 2745,
+          "u8_multi_write": 5648,
+          "u8_multi_read": 2642,
+          "u16_bmp_write": 4787,
+          "u16_bmp_read": 2181,
+          "u16_pair_write": 4635,
+          "u16_pair_read": 2322,
+          "u16_le_write": 4501,
+          "u16_le_read": 2171,
+          "u32_write": 4086,
+          "u32_read": 1969
+        },
+        {
+          "u8_ascii_write": 5513,
+          "u8_ascii_read": 2273,
+          "u8_multi_write": 4906,
+          "u8_multi_read": 2398,
+          "u16_bmp_write": 4442,
+          "u16_bmp_read": 1974,
+          "u16_pair_write": 4416,
+          "u16_pair_read": 2210,
+          "u16_le_write": 4548,
+          "u16_le_read": 2159,
+          "u32_write": 4104,
+          "u32_read": 1993
+        },
+        {
+          "u8_ascii_write": 6745,
+          "u8_ascii_read": 2692,
+          "u8_multi_write": 5596,
+          "u8_multi_read": 2665,
+          "u16_bmp_write": 4766,
+          "u16_bmp_read": 2155,
+          "u16_pair_write": 4654,
+          "u16_pair_read": 2280,
+          "u16_le_write": 4493,
+          "u16_le_read": 2155,
+          "u32_write": 4088,
+          "u32_read": 1963
+        },
+        {
+          "u8_ascii_write": 6591,
+          "u8_ascii_read": 2691,
+          "u8_multi_write": 5502,
+          "u8_multi_read": 2625,
+          "u16_bmp_write": 4776,
+          "u16_bmp_read": 2018,
+          "u16_pair_write": 4629,
+          "u16_pair_read": 2252,
+          "u16_le_write": 4441,
+          "u16_le_read": 2150,
+          "u32_write": 4066,
+          "u32_read": 1993
+        }
+      ]
+    },
+    {
+      "before-aligned": [
+        {
+          "u8_ascii_write": 6412,
+          "u8_ascii_read": 3004,
+          "u8_multi_write": 5438,
+          "u8_multi_read": 2594,
+          "u16_bmp_write": 4408,
+          "u16_bmp_read": 2029,
+          "u16_pair_write": 3996,
+          "u16_pair_read": 1992,
+          "u16_le_write": 3812,
+          "u16_le_read": 1917,
+          "u32_write": 4432,
+          "u32_read": 1824
+        },
+        {
+          "u8_ascii_write": 6071,
+          "u8_ascii_read": 2756,
+          "u8_multi_write": 5211,
+          "u8_multi_read": 2407,
+          "u16_bmp_write": 4246,
+          "u16_bmp_read": 2026,
+          "u16_pair_write": 4016,
+          "u16_pair_read": 1981,
+          "u16_le_write": 3824,
+          "u16_le_read": 1905,
+          "u32_write": 4440,
+          "u32_read": 1830
+        },
+        {
+          "u8_ascii_write": 6111,
+          "u8_ascii_read": 2849,
+          "u8_multi_write": 5357,
+          "u8_multi_read": 2450,
+          "u16_bmp_write": 4287,
+          "u16_bmp_read": 2039,
+          "u16_pair_write": 4003,
+          "u16_pair_read": 1992,
+          "u16_le_write": 3937,
+          "u16_le_read": 1905,
+          "u32_write": 4614,
+          "u32_read": 1829
+        },
+        {
+          "u8_ascii_write": 6295,
+          "u8_ascii_read": 2923,
+          "u8_multi_write": 5325,
+          "u8_multi_read": 2524,
+          "u16_bmp_write": 4296,
+          "u16_bmp_read": 2049,
+          "u16_pair_write": 4191,
+          "u16_pair_read": 1983,
+          "u16_le_write": 3827,
+          "u16_le_read": 1919,
+          "u32_write": 4602,
+          "u32_read": 1847
+        },
+        {
+          "u8_ascii_write": 6447,
+          "u8_ascii_read": 2861,
+          "u8_multi_write": 5273,
+          "u8_multi_read": 2492,
+          "u16_bmp_write": 4306,
+          "u16_bmp_read": 2027,
+          "u16_pair_write": 3982,
+          "u16_pair_read": 1987,
+          "u16_le_write": 3879,
+          "u16_le_read": 1903,
+          "u32_write": 4439,
+          "u32_read": 1828
+        },
+        {
+          "u8_ascii_write": 6085,
+          "u8_ascii_read": 2790,
+          "u8_multi_write": 5254,
+          "u8_multi_read": 2448,
+          "u16_bmp_write": 4273,
+          "u16_bmp_read": 2026,
+          "u16_pair_write": 4170,
+          "u16_pair_read": 1993,
+          "u16_le_write": 3811,
+          "u16_le_read": 1899,
+          "u32_write": 4477,
+          "u32_read": 1815
+        },
+        {
+          "u8_ascii_write": 6071,
+          "u8_ascii_read": 2710,
+          "u8_multi_write": 5182,
+          "u8_multi_read": 2390,
+          "u16_bmp_write": 4186,
+          "u16_bmp_read": 2027,
+          "u16_pair_write": 4145,
+          "u16_pair_read": 1996,
+          "u16_le_write": 3809,
+          "u16_le_read": 1891,
+          "u32_write": 4434,
+          "u32_read": 1818
+        },
+        {
+          "u8_ascii_write": 6325,
+          "u8_ascii_read": 2962,
+          "u8_multi_write": 5374,
+          "u8_multi_read": 2598,
+          "u16_bmp_write": 4329,
+          "u16_bmp_read": 2032,
+          "u16_pair_write": 4004,
+          "u16_pair_read": 1982,
+          "u16_le_write": 3832,
+          "u16_le_read": 1913,
+          "u32_write": 4413,
+          "u32_read": 1778
+        },
+        {
+          "u8_ascii_write": 6479,
+          "u8_ascii_read": 2792,
+          "u8_multi_write": 5225,
+          "u8_multi_read": 2408,
+          "u16_bmp_write": 4225,
+          "u16_bmp_read": 2035,
+          "u16_pair_write": 3983,
+          "u16_pair_read": 1982,
+          "u16_le_write": 3821,
+          "u16_le_read": 1913,
+          "u32_write": 4522,
+          "u32_read": 1843
+        }
+      ],
+      "after-aligned": [
+        {
+          "u8_ascii_write": 6168,
+          "u8_ascii_read": 2648,
+          "u8_multi_write": 5317,
+          "u8_multi_read": 2450,
+          "u16_bmp_write": 4385,
+          "u16_bmp_read": 2161,
+          "u16_pair_write": 4225,
+          "u16_pair_read": 2089,
+          "u16_le_write": 4075,
+          "u16_le_read": 2081,
+          "u32_write": 4542,
+          "u32_read": 1888
+        },
+        {
+          "u8_ascii_write": 6149,
+          "u8_ascii_read": 2671,
+          "u8_multi_write": 5282,
+          "u8_multi_read": 2432,
+          "u16_bmp_write": 4438,
+          "u16_bmp_read": 2162,
+          "u16_pair_write": 4215,
+          "u16_pair_read": 2077,
+          "u16_le_write": 4055,
+          "u16_le_read": 2007,
+          "u32_write": 4381,
+          "u32_read": 1886
+        },
+        {
+          "u8_ascii_write": 5531,
+          "u8_ascii_read": 2419,
+          "u8_multi_write": 4846,
+          "u8_multi_read": 2293,
+          "u16_bmp_write": 4124,
+          "u16_bmp_read": 2007,
+          "u16_pair_write": 4154,
+          "u16_pair_read": 2015,
+          "u16_le_write": 4001,
+          "u16_le_read": 1996,
+          "u32_write": 4394,
+          "u32_read": 1875
+        },
+        {
+          "u8_ascii_write": 6712,
+          "u8_ascii_read": 2953,
+          "u8_multi_write": 5554,
+          "u8_multi_read": 2665,
+          "u16_bmp_write": 4638,
+          "u16_bmp_read": 2184,
+          "u16_pair_write": 4202,
+          "u16_pair_read": 2077,
+          "u16_le_write": 4062,
+          "u16_le_read": 2002,
+          "u32_write": 4401,
+          "u32_read": 1890
+        },
+        {
+          "u8_ascii_write": 6399,
+          "u8_ascii_read": 2833,
+          "u8_multi_write": 5378,
+          "u8_multi_read": 2522,
+          "u16_bmp_write": 4523,
+          "u16_bmp_read": 2162,
+          "u16_pair_write": 4200,
+          "u16_pair_read": 2074,
+          "u16_le_write": 4088,
+          "u16_le_read": 1982,
+          "u32_write": 4381,
+          "u32_read": 1896
+        },
+        {
+          "u8_ascii_write": 4932,
+          "u8_ascii_read": 2207,
+          "u8_multi_write": 4550,
+          "u8_multi_read": 2134,
+          "u16_bmp_write": 4061,
+          "u16_bmp_read": 1990,
+          "u16_pair_write": 4033,
+          "u16_pair_read": 1981,
+          "u16_le_write": 4120,
+          "u16_le_read": 2006,
+          "u32_write": 4466,
+          "u32_read": 1881
+        },
+        {
+          "u8_ascii_write": 6502,
+          "u8_ascii_read": 2688,
+          "u8_multi_write": 5265,
+          "u8_multi_read": 2471,
+          "u16_bmp_write": 4441,
+          "u16_bmp_read": 2166,
+          "u16_pair_write": 4214,
+          "u16_pair_read": 2086,
+          "u16_le_write": 4124,
+          "u16_le_read": 1992,
+          "u32_write": 4353,
+          "u32_read": 1882
+        },
+        {
+          "u8_ascii_write": 6174,
+          "u8_ascii_read": 2611,
+          "u8_multi_write": 5302,
+          "u8_multi_read": 2434,
+          "u16_bmp_write": 4382,
+          "u16_bmp_read": 2202,
+          "u16_pair_write": 4221,
+          "u16_pair_read": 2075,
+          "u16_le_write": 4056,
+          "u16_le_read": 1987,
+          "u32_write": 4520,
+          "u32_read": 1854
+        },
+        {
+          "u8_ascii_write": 6675,
+          "u8_ascii_read": 2952,
+          "u8_multi_write": 5574,
+          "u8_multi_read": 2645,
+          "u16_bmp_write": 4629,
+          "u16_bmp_read": 2173,
+          "u16_pair_write": 4211,
+          "u16_pair_read": 2088,
+          "u16_le_write": 4066,
+          "u16_le_read": 1992,
+          "u32_write": 4403,
+          "u32_read": 1896
+        }
+      ],
+      "after-shifted": [
+        {
+          "u8_ascii_write": 6825,
+          "u8_ascii_read": 2719,
+          "u8_multi_write": 5599,
+          "u8_multi_read": 2627,
+          "u16_bmp_write": 4765,
+          "u16_bmp_read": 2117,
+          "u16_pair_write": 4649,
+          "u16_pair_read": 2284,
+          "u16_le_write": 4430,
+          "u16_le_read": 2153,
+          "u32_write": 4094,
+          "u32_read": 1970
+        },
+        {
+          "u8_ascii_write": 6728,
+          "u8_ascii_read": 2684,
+          "u8_multi_write": 5614,
+          "u8_multi_read": 2644,
+          "u16_bmp_write": 4798,
+          "u16_bmp_read": 2048,
+          "u16_pair_write": 4643,
+          "u16_pair_read": 2251,
+          "u16_le_write": 4463,
+          "u16_le_read": 2179,
+          "u32_write": 4085,
+          "u32_read": 1967
+        },
+        {
+          "u8_ascii_write": 7079,
+          "u8_ascii_read": 2936,
+          "u8_multi_write": 5748,
+          "u8_multi_read": 2667,
+          "u16_bmp_write": 4802,
+          "u16_bmp_read": 2180,
+          "u16_pair_write": 4630,
+          "u16_pair_read": 2290,
+          "u16_le_write": 4507,
+          "u16_le_read": 2146,
+          "u32_write": 4080,
+          "u32_read": 1961
+        },
+        {
+          "u8_ascii_write": 6742,
+          "u8_ascii_read": 2684,
+          "u8_multi_write": 5631,
+          "u8_multi_read": 2631,
+          "u16_bmp_write": 4783,
+          "u16_bmp_read": 2140,
+          "u16_pair_write": 4629,
+          "u16_pair_read": 2238,
+          "u16_le_write": 4463,
+          "u16_le_read": 2154,
+          "u32_write": 4111,
+          "u32_read": 1992
+        },
+        {
+          "u8_ascii_write": 6812,
+          "u8_ascii_read": 2721,
+          "u8_multi_write": 5612,
+          "u8_multi_read": 2632,
+          "u16_bmp_write": 4786,
+          "u16_bmp_read": 2158,
+          "u16_pair_write": 4655,
+          "u16_pair_read": 2347,
+          "u16_le_write": 4428,
+          "u16_le_read": 2155,
+          "u32_write": 4100,
+          "u32_read": 1979
+        },
+        {
+          "u8_ascii_write": 7088,
+          "u8_ascii_read": 2912,
+          "u8_multi_write": 5704,
+          "u8_multi_read": 2639,
+          "u16_bmp_write": 4774,
+          "u16_bmp_read": 2176,
+          "u16_pair_write": 4618,
+          "u16_pair_read": 2261,
+          "u16_le_write": 4453,
+          "u16_le_read": 2146,
+          "u32_write": 4086,
+          "u32_read": 1962
+        },
+        {
+          "u8_ascii_write": 7004,
+          "u8_ascii_read": 2825,
+          "u8_multi_write": 5647,
+          "u8_multi_read": 2626,
+          "u16_bmp_write": 4810,
+          "u16_bmp_read": 2175,
+          "u16_pair_write": 4633,
+          "u16_pair_read": 2256,
+          "u16_le_write": 4460,
+          "u16_le_read": 2164,
+          "u32_write": 4096,
+          "u32_read": 1984
+        },
+        {
+          "u8_ascii_write": 4357,
+          "u8_ascii_read": 1969,
+          "u8_multi_write": 4281,
+          "u8_multi_read": 2170,
+          "u16_bmp_write": 4231,
+          "u16_bmp_read": 1937,
+          "u16_pair_write": 4441,
+          "u16_pair_read": 2199,
+          "u16_le_write": 4437,
+          "u16_le_read": 2169,
+          "u32_write": 4158,
+          "u32_read": 1960
+        },
+        {
+          "u8_ascii_write": 7043,
+          "u8_ascii_read": 2962,
+          "u8_multi_write": 5779,
+          "u8_multi_read": 2662,
+          "u16_bmp_write": 4807,
+          "u16_bmp_read": 2175,
+          "u16_pair_write": 4637,
+          "u16_pair_read": 2271,
+          "u16_le_write": 4446,
+          "u16_le_read": 2156,
+          "u32_write": 4296,
+          "u32_read": 1988
+        }
+      ]
+    }
+  ],
+  "start_load": [
+    5.47705078125,
+    6.08447265625,
+    5.31494140625
+  ],
+  "executables": {
+    "before-aligned": "75b48e4a0683ae63b6f7c0e84aa0d16c4f08dbc274ae7205febb07cabfb1c897",
+    "after-aligned": "8cedcce05bcb143b381e70ae89615cda25c58f93ea5d376d08831a592d7a29f6",
+    "after-shifted": "a73af4bed93bc9c287847767b01d2774d794adcb71c917cd2b1c201bcdc5e07b"
+  },
+  "timestamp": 1792087491.735303,
+  "end_load": [
+    4.2626953125,
+    5.78564453125,
+    5.22119140625
+  ],
+  "summary": {
+    "u8_ascii_write": {
+      "median_us": {
+        "before-aligned": 6207,
+        "after-aligned": 6231,
+        "after-shifted": 6765
+      },
+      "aligned_change_pct": 0.3866602223296267,
+      "shifted_vs_aligned_pct": 8.57005296100144,
+      "aligned_series_pct": [
+        3.1443385181468386,
+        0.6506903666084751,
+        -1.9221604447974605
+      ]
+    },
+    "u8_ascii_read": {
+      "median_us": {
+        "before-aligned": 2792,
+        "after-aligned": 2659,
+        "after-shifted": 2716
+      },
+      "aligned_change_pct": -4.76361031518625,
+      "shifted_vs_aligned_pct": 2.1436630312147376,
+      "aligned_series_pct": [
+        -2.3827252419955314,
+        -1.0965688008489516,
+        -6.247806247806242
+      ]
+    },
+    "u8_multi_write": {
+      "median_us": {
+        "before-aligned": 5273,
+        "after-aligned": 5317,
+        "after-shifted": 5631
+      },
+      "aligned_change_pct": 0.8344395979518193,
+      "shifted_vs_aligned_pct": 5.905585856686102,
+      "aligned_series_pct": [
+        3.523194362889015,
+        0.50391937290033,
+        0.5499715531955163
+      ]
+    },
+    "u8_multi_read": {
+      "median_us": {
+        "before-aligned": 2450,
+        "after-aligned": 2466,
+        "after-shifted": 2631
+      },
+      "aligned_change_pct": 0.6530612244898037,
+      "shifted_vs_aligned_pct": 6.690997566909984,
+      "aligned_series_pct": [
+        3.062080536912748,
+        -0.5575467941059342,
+        0.0
+      ]
+    },
+    "u16_bmp_write": {
+      "median_us": {
+        "before-aligned": 4246,
+        "after-aligned": 4433,
+        "after-shifted": 4787
+      },
+      "aligned_change_pct": 4.404145077720201,
+      "shifted_vs_aligned_pct": 7.985562824272496,
+      "aligned_series_pct": [
+        5.815909637106476,
+        4.812455767869772,
+        3.5222766503382408
+      ]
+    },
+    "u16_bmp_read": {
+      "median_us": {
+        "before-aligned": 2029,
+        "after-aligned": 2163,
+        "after-shifted": 2150
+      },
+      "aligned_change_pct": 6.6042385411532845,
+      "shifted_vs_aligned_pct": -0.6010171058714708,
+      "aligned_series_pct": [
+        5.591939546599489,
+        6.381934216985763,
+        6.554953178905865
+      ]
+    },
+    "u16_pair_write": {
+      "median_us": {
+        "before-aligned": 4055,
+        "after-aligned": 4214,
+        "after-shifted": 4637
+      },
+      "aligned_change_pct": 3.921085080147968,
+      "shifted_vs_aligned_pct": 10.037968675842436,
+      "aligned_series_pct": [
+        3.354554358472095,
+        4.167694204685568,
+        5.16983016983017
+      ]
+    },
+    "u16_pair_read": {
+      "median_us": {
+        "before-aligned": 1985,
+        "after-aligned": 2077,
+        "after-shifted": 2284
+      },
+      "aligned_change_pct": 4.6347607052896755,
+      "shifted_vs_aligned_pct": 9.966297544535397,
+      "aligned_series_pct": [
+        4.793138244197781,
+        4.216867469879526,
+        4.529441368897835
+      ]
+    },
+    "u16_le_write": {
+      "median_us": {
+        "before-aligned": 3833,
+        "after-aligned": 4075,
+        "after-shifted": 4460
+      },
+      "aligned_change_pct": 6.313592486303166,
+      "shifted_vs_aligned_pct": 9.447852760736186,
+      "aligned_series_pct": [
+        6.373056994818649,
+        6.069288877311796,
+        6.3284518828451874
+      ]
+    },
+    "u16_le_read": {
+      "median_us": {
+        "before-aligned": 1907,
+        "after-aligned": 1995,
+        "after-shifted": 2156
+      },
+      "aligned_change_pct": 4.614577871001568,
+      "shifted_vs_aligned_pct": 8.070175438596493,
+      "aligned_series_pct": [
+        4.612159329140453,
+        4.674369747899165,
+        4.776902887139101
+      ]
+    },
+    "u32_write": {
+      "median_us": {
+        "before-aligned": 4477,
+        "after-aligned": 4441,
+        "after-shifted": 4096
+      },
+      "aligned_change_pct": -0.8041098950189896,
+      "shifted_vs_aligned_pct": -7.768520603467688,
+      "aligned_series_pct": [
+        -0.4568196649989087,
+        -1.9007155635062611,
+        -0.878378378378375
+      ]
+    },
+    "u32_read": {
+      "median_us": {
+        "before-aligned": 1830,
+        "after-aligned": 1886,
+        "after-shifted": 1969
+      },
+      "aligned_change_pct": 3.0601092896174853,
+      "shifted_vs_aligned_pct": 4.40084835630965,
+      "aligned_series_pct": [
+        2.5488069414316694,
+        2.6186579378068675,
+        3.1728665207877427
+      ]
+    }
+  }
+}

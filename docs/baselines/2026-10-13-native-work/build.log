@@ -1,0 +1,9 @@
+   Compiling nera-runtime v0.1.0 (/home/user/.codex/worktrees/binary-match-corrections/nera/crates/nera-runtime)
+    Finished `release` profile [optimized] target(s) in 9.91s
+   Compiling nera-syntax v0.1.0 (/home/user/.codex/worktrees/binary-match-corrections/nera/crates/nera-syntax)
+   Compiling nera-runtime v0.1.0 (/home/user/.codex/worktrees/binary-match-corrections/nera/crates/nera-runtime)
+   Compiling nera v0.1.0 (/home/user/.codex/worktrees/binary-match-corrections/nera/crates/nera)
+   Compiling nera-ir v0.1.0 (/home/user/.codex/worktrees/binary-match-corrections/nera/crates/nera-ir)
+   Compiling nera-fmt v0.1.0 (/home/user/.codex/worktrees/binary-match-corrections/nera/crates/nera-fmt)
+   Compiling nera-codegen v0.1.0 (/home/user/.codex/worktrees/binary-match-corrections/nera/crates/nera-codegen)
+    Finished `release` profile [optimized] target(s) in 1m 55s

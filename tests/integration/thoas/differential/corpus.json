@@ -1,0 +1,562 @@
+[
+  {
+    "id": "decode_null",
+    "group": "valid",
+    "operation": "decode",
+    "expression": "thoas:decode(<<110,117,108,108>>)",
+    "expect": "ok"
+  },
+  {
+    "id": "decode_true",
+    "group": "valid",
+    "operation": "decode",
+    "expression": "thoas:decode(<<116,114,117,101>>)",
+    "expect": "ok"
+  },
+  {
+    "id": "decode_false",
+    "group": "valid",
+    "operation": "decode",
+    "expression": "thoas:decode(<<102,97,108,115,101>>)",
+    "expect": "ok"
+  },
+  {
+    "id": "decode_integer",
+    "group": "valid",
+    "operation": "decode",
+    "expression": "thoas:decode(<<52,50>>)",
+    "expect": "ok"
+  },
+  {
+    "id": "decode_negative",
+    "group": "valid",
+    "operation": "decode",
+    "expression": "thoas:decode(<<45,52,50>>)",
+    "expect": "ok"
+  },
+  {
+    "id": "decode_fraction",
+    "group": "valid",
+    "operation": "decode",
+    "expression": "thoas:decode(<<51,46,49,50,53>>)",
+    "expect": "ok"
+  },
+  {
+    "id": "decode_exponent",
+    "group": "valid",
+    "operation": "decode",
+    "expression": "thoas:decode(<<49,46,50,53,101,43,51>>)",
+    "expect": "ok"
+  },
+  {
+    "id": "decode_empty_string",
+    "group": "valid",
+    "operation": "decode",
+    "expression": "thoas:decode(<<34,34>>)",
+    "expect": "ok"
+  },
+  {
+    "id": "decode_empty_array",
+    "group": "valid",
+    "operation": "decode",
+    "expression": "thoas:decode(<<91,93>>)",
+    "expect": "ok"
+  },
+  {
+    "id": "decode_empty_object",
+    "group": "valid",
+    "operation": "decode",
+    "expression": "thoas:decode(<<123,125>>)",
+    "expect": "ok"
+  },
+  {
+    "id": "decode_mixed",
+    "group": "valid",
+    "operation": "decode",
+    "expression": "thoas:decode(<<91,110,117,108,108,44,116,114,117,101,44,102,97,108,115,101,44,49,44,34,120,34,93>>)",
+    "expect": "ok"
+  },
+  {
+    "id": "decode_nested",
+    "group": "valid",
+    "operation": "decode",
+    "expression": "thoas:decode(<<123,34,97,34,58,91,123,34,98,34,58,50,125,93,44,34,122,34,58,123,125,125>>)",
+    "expect": "ok"
+  },
+  {
+    "id": "decode_whitespace",
+    "group": "valid",
+    "operation": "decode",
+    "expression": "thoas:decode(<<32,13,10,9,32,91,49,44,32,50,93,32,10>>)",
+    "expect": "ok"
+  },
+  {
+    "id": "decode_escapes",
+    "group": "valid",
+    "operation": "decode",
+    "expression": "thoas:decode(<<34,92,34,92,92,92,47,92,98,92,102,92,110,92,114,92,116,34>>)",
+    "expect": "ok"
+  },
+  {
+    "id": "decode_utf8",
+    "group": "valid",
+    "operation": "decode",
+    "expression": "thoas:decode(<<34,99,97,102,195,169,32,230,151,165,230,156,172,32,240,159,152,128,34>>)",
+    "expect": "ok"
+  },
+  {
+    "id": "decode_unicode_escape",
+    "group": "valid",
+    "operation": "decode",
+    "expression": "thoas:decode(<<34,92,117,48,48,101,57,92,117,54,53,101,53,34>>)",
+    "expect": "ok"
+  },
+  {
+    "id": "decode_surrogate_pair",
+    "group": "valid",
+    "operation": "decode",
+    "expression": "thoas:decode(<<34,92,117,100,56,51,100,92,117,100,101,48,48,34>>)",
+    "expect": "ok"
+  },
+  {
+    "id": "error_empty",
+    "group": "errors",
+    "operation": "decode",
+    "expression": "thoas:decode(<<>>)",
+    "expect": "error"
+  },
+  {
+    "id": "error_space_only",
+    "group": "errors",
+    "operation": "decode",
+    "expression": "thoas:decode(<<32,13,10>>)",
+    "expect": "error"
+  },
+  {
+    "id": "error_truncated_null",
+    "group": "errors",
+    "operation": "decode",
+    "expression": "thoas:decode(<<110,117,108>>)",
+    "expect": "error"
+  },
+  {
+    "id": "error_bad_literal",
+    "group": "errors",
+    "operation": "decode",
+    "expression": "thoas:decode(<<84,114,117,101>>)",
+    "expect": "error"
+  },
+  {
+    "id": "error_trailing_data",
+    "group": "errors",
+    "operation": "decode",
+    "expression": "thoas:decode(<<116,114,117,101,32,102,97,108,115,101>>)",
+    "expect": "error"
+  },
+  {
+    "id": "error_array_truncated",
+    "group": "errors",
+    "operation": "decode",
+    "expression": "thoas:decode(<<91,49>>)",
+    "expect": "error"
+  },
+  {
+    "id": "error_object_truncated",
+    "group": "errors",
+    "operation": "decode",
+    "expression": "thoas:decode(<<123,34,97,34,58>>)",
+    "expect": "error"
+  },
+  {
+    "id": "error_array_trailing_comma",
+    "group": "errors",
+    "operation": "decode",
+    "expression": "thoas:decode(<<91,49,44,93>>)",
+    "expect": "error"
+  },
+  {
+    "id": "error_object_trailing_comma",
+    "group": "errors",
+    "operation": "decode",
+    "expression": "thoas:decode(<<123,34,97,34,58,49,44,125>>)",
+    "expect": "error"
+  },
+  {
+    "id": "error_missing_colon",
+    "group": "errors",
+    "operation": "decode",
+    "expression": "thoas:decode(<<123,34,97,34,32,49,125>>)",
+    "expect": "error"
+  },
+  {
+    "id": "error_unquoted_key",
+    "group": "errors",
+    "operation": "decode",
+    "expression": "thoas:decode(<<123,97,58,49,125>>)",
+    "expect": "error"
+  },
+  {
+    "id": "error_missing_comma",
+    "group": "errors",
+    "operation": "decode",
+    "expression": "thoas:decode(<<91,49,32,50,93>>)",
+    "expect": "error"
+  },
+  {
+    "id": "error_string_truncated",
+    "group": "errors",
+    "operation": "decode",
+    "expression": "thoas:decode(<<34,97,98,99>>)",
+    "expect": "error"
+  },
+  {
+    "id": "error_escape_truncated",
+    "group": "errors",
+    "operation": "decode",
+    "expression": "thoas:decode(<<34,97,98,99,92>>)",
+    "expect": "error"
+  },
+  {
+    "id": "error_bad_escape",
+    "group": "errors",
+    "operation": "decode",
+    "expression": "thoas:decode(<<34,92,120,34>>)",
+    "expect": "error"
+  },
+  {
+    "id": "error_bad_unicode",
+    "group": "errors",
+    "operation": "decode",
+    "expression": "thoas:decode(<<34,92,117,49,50,120,122,34>>)",
+    "expect": "error"
+  },
+  {
+    "id": "error_high_surrogate",
+    "group": "errors",
+    "operation": "decode",
+    "expression": "thoas:decode(<<34,92,117,100,56,48,48,34>>)",
+    "expect": "error"
+  },
+  {
+    "id": "error_low_surrogate",
+    "group": "errors",
+    "operation": "decode",
+    "expression": "thoas:decode(<<34,92,117,100,99,48,48,34>>)",
+    "expect": "error"
+  },
+  {
+    "id": "error_control_byte",
+    "group": "errors",
+    "operation": "decode",
+    "expression": "thoas:decode(<<34,97,0,98,34>>)",
+    "expect": "error"
+  },
+  {
+    "id": "error_invalid_utf8",
+    "group": "errors",
+    "operation": "decode",
+    "expression": "thoas:decode(<<34,255,34>>)",
+    "expect": "error"
+  },
+  {
+    "id": "error_leading_zero",
+    "group": "errors",
+    "operation": "decode",
+    "expression": "thoas:decode(<<48,49>>)",
+    "expect": "error"
+  },
+  {
+    "id": "error_minus_only",
+    "group": "errors",
+    "operation": "decode",
+    "expression": "thoas:decode(<<45>>)",
+    "expect": "error"
+  },
+  {
+    "id": "error_fraction_truncated",
+    "group": "errors",
+    "operation": "decode",
+    "expression": "thoas:decode(<<49,46>>)",
+    "expect": "error"
+  },
+  {
+    "id": "error_exponent_truncated",
+    "group": "errors",
+    "operation": "decode",
+    "expression": "thoas:decode(<<49,101,43>>)",
+    "expect": "error"
+  },
+  {
+    "id": "error_nan",
+    "group": "errors",
+    "operation": "decode",
+    "expression": "thoas:decode(<<78,97,78>>)",
+    "expect": "error"
+  },
+  {
+    "id": "error_infinity",
+    "group": "errors",
+    "operation": "decode",
+    "expression": "thoas:decode(<<73,110,102,105,110,105,116,121>>)",
+    "expect": "error"
+  },
+  {
+    "id": "error_float_overflow",
+    "group": "errors",
+    "operation": "decode",
+    "expression": "thoas:decode(<<49,101,57,57,57,57>>)",
+    "expect": "error"
+  },
+  {
+    "id": "boundary_zero",
+    "group": "boundary",
+    "operation": "decode",
+    "expression": "thoas:decode(<<48>>)",
+    "expect": "ok"
+  },
+  {
+    "id": "boundary_negative_zero",
+    "group": "boundary",
+    "operation": "decode",
+    "expression": "thoas:decode(<<45,48>>)",
+    "expect": "ok"
+  },
+  {
+    "id": "boundary_negative_float_zero",
+    "group": "boundary",
+    "operation": "decode",
+    "expression": "thoas:decode(<<45,48,46,48>>)",
+    "expect": "ok"
+  },
+  {
+    "id": "boundary_small_int_max",
+    "group": "boundary",
+    "operation": "decode",
+    "expression": "thoas:decode(<<49,49,53,50,57,50,49,53,48,52,54,48,54,56,52,54,57,55,53>>)",
+    "expect": "ok"
+  },
+  {
+    "id": "boundary_small_int_next",
+    "group": "boundary",
+    "operation": "decode",
+    "expression": "thoas:decode(<<49,49,53,50,57,50,49,53,48,52,54,48,54,56,52,54,57,55,54>>)",
+    "expect": "ok"
+  },
+  {
+    "id": "boundary_int64_max",
+    "group": "boundary",
+    "operation": "decode",
+    "expression": "thoas:decode(<<57,50,50,51,51,55,50,48,51,54,56,53,52,55,55,53,56,48,55>>)",
+    "expect": "ok"
+  },
+  {
+    "id": "boundary_huge_integer",
+    "group": "boundary",
+    "operation": "decode",
+    "expression": "thoas:decode(<<49,50,51,52,53,54,55,56,57,48,49,50,51,52,53,54,55,56,57,48,49,50,51,52,53,54,55,56,57,48,49,50,51,52,53,54,55,56,57,48>>)",
+    "expect": "ok"
+  },
+  {
+    "id": "boundary_float_min",
+    "group": "boundary",
+    "operation": "decode",
+    "expression": "thoas:decode(<<53,101,45,51,50,52>>)",
+    "expect": "ok"
+  },
+  {
+    "id": "boundary_float_max",
+    "group": "boundary",
+    "operation": "decode",
+    "expression": "thoas:decode(<<49,46,55,57,55,54,57,51,49,51,52,56,54,50,51,49,53,55,101,51,48,56>>)",
+    "expect": "ok"
+  },
+  {
+    "id": "boundary_float_underflow",
+    "group": "boundary",
+    "operation": "decode",
+    "expression": "thoas:decode(<<49,101,45,57,57,57>>)",
+    "expect": "ok"
+  },
+  {
+    "id": "boundary_duplicate_keys",
+    "group": "boundary",
+    "operation": "decode",
+    "expression": "thoas:decode(<<123,34,97,34,58,49,44,34,97,34,58,50,125>>)",
+    "expect": "ok"
+  },
+  {
+    "id": "boundary_deep_array",
+    "group": "boundary",
+    "operation": "decode",
+    "expression": "thoas:decode(<<91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,91,48,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93,93>>)",
+    "expect": "ok"
+  },
+  {
+    "id": "boundary_long_string",
+    "group": "boundary",
+    "operation": "decode",
+    "expression": "thoas:decode(iolist_to_binary([34, binary:copy(<<97,98,195,169>>, 1024), 34]))",
+    "expect": "ok"
+  },
+  {
+    "id": "boundary_wide_array",
+    "group": "boundary",
+    "operation": "decode",
+    "expression": "thoas:decode(<<91,48,44,32,49,44,32,50,44,32,51,44,32,52,44,32,53,44,32,54,44,32,55,44,32,56,44,32,57,44,32,49,48,44,32,49,49,44,32,49,50,44,32,49,51,44,32,49,52,44,32,49,53,44,32,49,54,44,32,49,55,44,32,49,56,44,32,49,57,44,32,50,48,44,32,50,49,44,32,50,50,44,32,50,51,44,32,50,52,44,32,50,53,44,32,50,54,44,32,50,55,44,32,50,56,44,32,50,57,44,32,51,48,44,32,51,49,44,32,51,50,44,32,51,51,44,32,51,52,44,32,51,53,44,32,51,54,44,32,51,55,44,32,51,56,44,32,51,57,44,32,52,48,44,32,52,49,44,32,52,50,44,32,52,51,44,32,52,52,44,32,52,53,44,32,52,54,44,32,52,55,44,32,52,56,44,32,52,57,44,32,53,48,44,32,53,49,44,32,53,50,44,32,53,51,44,32,53,52,44,32,53,53,44,32,53,54,44,32,53,55,44,32,53,56,44,32,53,57,44,32,54,48,44,32,54,49,44,32,54,50,44,32,54,51,44,32,54,52,44,32,54,53,44,32,54,54,44,32,54,55,44,32,54,56,44,32,54,57,44,32,55,48,44,32,55,49,44,32,55,50,44,32,55,51,44,32,55,52,44,32,55,53,44,32,55,54,44,32,55,55,44,32,55,56,44,32,55,57,44,32,56,48,44,32,56,49,44,32,56,50,44,32,56,51,44,32,56,52,44,32,56,53,44,32,56,54,44,32,56,55,44,32,56,56,44,32,56,57,44,32,57,48,44,32,57,49,44,32,57,50,44,32,57,51,44,32,57,52,44,32,57,53,44,32,57,54,44,32,57,55,44,32,57,56,44,32,57,57,44,32,49,48,48,44,32,49,48,49,44,32,49,48,50,44,32,49,48,51,44,32,49,48,52,44,32,49,48,53,44,32,49,48,54,44,32,49,48,55,44,32,49,48,56,44,32,49,48,57,44,32,49,49,48,44,32,49,49,49,44,32,49,49,50,44,32,49,49,51,44,32,49,49,52,44,32,49,49,53,44,32,49,49,54,44,32,49,49,55,44,32,49,49,56,44,32,49,49,57,44,32,49,50,48,44,32,49,50,49,44,32,49,50,50,44,32,49,50,51,44,32,49,50,52,44,32,49,50,53,44,32,49,50,54,44,32,49,50,55,44,32,49,50,56,44,32,49,50,57,44,32,49,51,48,44,32,49,51,49,44,32,49,51,50,44,32,49,51,51,44,32,49,51,52,44,32,49,51,53,44,32,49,51,54,44,32,49,51,55,44,32,49,51,56,44,32,49,51,57,44,32,49,52,48,44,32,49,52,49,44,32,49,52,50,44,32,49,52,51,44,32,49,52,52,44,32,49,52,53,44,32,49,52,54,44,32,49,52,55,44,32,49,52,56,44,32,49,52,57,44,32,49,53,48,44,32,49,53,49,44,32,49,53,50,44,32,49,53,51,44,32,49,53,52,44,32,49,53,53,44,32,49,53,54,44,32,49,53,55,44,32,49,53,56,44,32,49,53,57,44,32,49,54,48,44,32,49,54,49,44,32,49,54,50,44,32,49,54,51,44,32,49,54,52,44,32,49,54,53,44,32,49,54,54,44,32,49,54,55,44,32,49,54,56,44,32,49,54,57,44,32,49,55,48,44,32,49,55,49,44,32,49,55,50,44,32,49,55,51,44,32,49,55,52,44,32,49,55,53,44,32,49,55,54,44,32,49,55,55,44,32,49,55,56,44,32,49,55,57,44,32,49,56,48,44,32,49,56,49,44,32,49,56,50,44,32,49,56,51,44,32,49,56,52,44,32,49,56,53,44,32,49,56,54,44,32,49,56,55,44,32,49,56,56,44,32,49,56,57,44,32,49,57,48,44,32,49,57,49,44,32,49,57,50,44,32,49,57,51,44,32,49,57,52,44,32,49,57,53,44,32,49,57,54,44,32,49,57,55,44,32,49,57,56,44,32,49,57,57,44,32,50,48,48,44,32,50,48,49,44,32,50,48,50,44,32,50,48,51,44,32,50,48,52,44,32,50,48,53,44,32,50,48,54,44,32,50,48,55,44,32,50,48,56,44,32,50,48,57,44,32,50,49,48,44,32,50,49,49,44,32,50,49,50,44,32,50,49,51,44,32,50,49,52,44,32,50,49,53,44,32,50,49,54,44,32,50,49,55,44,32,50,49,56,44,32,50,49,57,44,32,50,50,48,44,32,50,50,49,44,32,50,50,50,44,32,50,50,51,44,32,50,50,52,44,32,50,50,53,44,32,50,50,54,44,32,50,50,55,44,32,50,50,56,44,32,50,50,57,44,32,50,51,48,44,32,50,51,49,44,32,50,51,50,44,32,50,51,51,44,32,50,51,52,44,32,50,51,53,44,32,50,51,54,44,32,50,51,55,44,32,50,51,56,44,32,50,51,57,44,32,50,52,48,44,32,50,52,49,44,32,50,52,50,44,32,50,52,51,44,32,50,52,52,44,32,50,52,53,44,32,50,52,54,44,32,50,52,55,44,32,50,52,56,44,32,50,52,57,44,32,50,53,48,44,32,50,53,49,44,32,50,53,50,44,32,50,53,51,44,32,50,53,52,44,32,50,53,53,93>>)",
+    "expect": "ok"
+  },
+  {
+    "id": "option_copy",
+    "group": "options",
+    "operation": "decode",
+    "expression": "thoas:decode(<<123,34,110,97,109,101,34,58,34,118,97,108,117,101,34,125>>, #{strings => copy, keys => copy})",
+    "expect": "ok"
+  },
+  {
+    "id": "option_existing_atom",
+    "group": "options",
+    "operation": "decode",
+    "expression": "thoas:decode(<<123,34,111,107,34,58,49,125>>, #{keys => to_existing_atom})",
+    "expect": "ok"
+  },
+  {
+    "id": "encode_null",
+    "group": "valid",
+    "operation": "encode",
+    "expression": "thoas:encode(null)",
+    "expect": "ok"
+  },
+  {
+    "id": "encode_bool",
+    "group": "valid",
+    "operation": "encode",
+    "expression": "thoas:encode(true)",
+    "expect": "ok"
+  },
+  {
+    "id": "encode_integer",
+    "group": "valid",
+    "operation": "encode",
+    "expression": "thoas:encode(42)",
+    "expect": "ok"
+  },
+  {
+    "id": "encode_huge_integer",
+    "group": "valid",
+    "operation": "encode",
+    "expression": "thoas:encode(binary_to_integer(<<\"1234567890123456789012345678901234567890\">>))",
+    "expect": "ok"
+  },
+  {
+    "id": "encode_float",
+    "group": "valid",
+    "operation": "encode",
+    "expression": "thoas:encode(3.125)",
+    "expect": "ok"
+  },
+  {
+    "id": "encode_negative_zero",
+    "group": "valid",
+    "operation": "encode",
+    "expression": "thoas:encode(-0.0)",
+    "expect": "ok"
+  },
+  {
+    "id": "encode_string",
+    "group": "valid",
+    "operation": "encode",
+    "expression": "thoas:encode(<<99,97,102,195,169,32,230,151,165,230,156,172,32,240,159,152,128>>)",
+    "expect": "ok"
+  },
+  {
+    "id": "encode_escapes",
+    "group": "valid",
+    "operation": "encode",
+    "expression": "thoas:encode(<<0,8,9,10,13,34,92>>)",
+    "expect": "ok"
+  },
+  {
+    "id": "encode_empty_array",
+    "group": "valid",
+    "operation": "encode",
+    "expression": "thoas:encode([])",
+    "expect": "ok"
+  },
+  {
+    "id": "encode_empty_map",
+    "group": "valid",
+    "operation": "encode",
+    "expression": "thoas:encode(#{})",
+    "expect": "ok"
+  },
+  {
+    "id": "encode_mixed",
+    "group": "valid",
+    "operation": "encode",
+    "expression": "thoas:encode([null,true,42,3.125,<<\"x\">>])",
+    "expect": "ok"
+  },
+  {
+    "id": "encode_atom_key",
+    "group": "valid",
+    "operation": "encode",
+    "expression": "thoas:encode(#{name => <<\"test\">>})",
+    "expect": "ok"
+  },
+  {
+    "id": "encode_nested",
+    "group": "valid",
+    "operation": "encode",
+    "expression": "thoas:encode(#{<<\"users\">> => [#{<<\"id\">> => 1}, #{<<\"id\">> => 2}], <<\"count\">> => 2})",
+    "expect": "ok"
+  },
+  {
+    "id": "encode_invalid_utf8",
+    "group": "errors",
+    "operation": "encode",
+    "expression": "thoas:encode(<<255>>)",
+    "expect": "exception"
+  },
+  {
+    "id": "encode_unsupported_tuple",
+    "group": "errors",
+    "operation": "encode",
+    "expression": "thoas:encode({not_json})",
+    "expect": "exception"
+  },
+  {
+    "id": "encode_invalid_key",
+    "group": "errors",
+    "operation": "encode",
+    "expression": "thoas:encode(#{ {invalid} => 1})",
+    "expect": "exception"
+  },
+  {
+    "id": "escape_json",
+    "group": "options",
+    "operation": "encode",
+    "expression": "thoas:encode(<<60,62,38,47,195,169,226,128,168,226,128,169>>, #{escape => json})",
+    "expect": "ok"
+  },
+  {
+    "id": "escape_unicode",
+    "group": "options",
+    "operation": "encode",
+    "expression": "thoas:encode(<<60,62,38,47,195,169,226,128,168,226,128,169>>, #{escape => unicode})",
+    "expect": "ok"
+  },
+  {
+    "id": "escape_html",
+    "group": "options",
+    "operation": "encode",
+    "expression": "thoas:encode(<<60,62,38,47,195,169,226,128,168,226,128,169>>, #{escape => html})",
+    "expect": "ok"
+  },
+  {
+    "id": "escape_javascript",
+    "group": "options",
+    "operation": "encode",
+    "expression": "thoas:encode(<<60,62,38,47,195,169,226,128,168,226,128,169>>, #{escape => javascript})",
+    "expect": "ok"
+  }
+]

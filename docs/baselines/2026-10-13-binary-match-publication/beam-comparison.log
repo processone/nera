@@ -1,0 +1,2 @@
+Linking with runtime: /home/user/AIProjects/nera/target/binary-match-publication/release/libnera_runtime.a
+BEAM == Nera: ok (minimal case, 2048 offset/value combinations, large binary)

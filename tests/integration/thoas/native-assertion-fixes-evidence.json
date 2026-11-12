@@ -1,0 +1,280 @@
+{
+  "date": "2026-10-11",
+  "target": "uncommitted native assertion fixes over f8ce98e",
+  "base_ref": "origin/main",
+  "base_commit": "ab347d5a9f6dad929e68cc0a3bfde7782bc2740e",
+  "head_commit": "f8ce98e1b03742fd13593aa5479ca6c9473a786e",
+  "platform": "macOS arm64",
+  "otp": "29.0.5",
+  "upstream_commit": "7cdcec7e52b80d2869900893b2acf47199d84190",
+  "vendored": false,
+  "source_sha256": {
+    ".github/workflows/ci.yml": "378a17aee9e5c54d719ca99af61f78eb132e53a273c7d7b9ff6913f9987852a6",
+    "crates/nera-ir/src/lower/expr.rs": "ecc21917f72ebc2e024d06904187e568d9d41d536fe810925547198c176ae0b1",
+    "crates/nera-ir/src/lower/tests.rs": "22630d9ba5eab3be44a61e43b62c701afe3ac7998e7c5ce2d443cfc89e81d77e",
+    "crates/nera-runtime/src/ffi/apply.rs": "21a25fc6b32932deb5877706d160f0013c11aa4c44d80d92f48886145a9c3291",
+    "crates/nera-runtime/src/ffi/closure.rs": "5720cb179b38a3c2945794caee6147b0419a834061dce08898cc03d73dcb0d21",
+    "crates/nera-runtime/src/ffi/helpers.rs": "ccd97e5c7e1f14d999cf6f322dd8586bceb53e946aba45b4c60811147ea067fc",
+    "tests/integration/thoas/eunit/known_failures.json": "103ec0906a4d9cc4ade4f39860abe8bcb22aaa4530c5a7d6d734028097eba03f",
+    "tests/integration/thoas/eunit/run_assertions.py": "992c2571322c0a90f7933907f86c1df29c28a3a50ccf59e95ad304705b815a23",
+    "tests/binary_string_codepoints.erl": "46c125fac0d64454f7bb17c45ed4ee4f60b72cd8533a291004c70520d6b616f0",
+    "tests/nested_dynamic_tail_call.erl": "5ac2ef32faaea85a7b228853ced17c1036ac7a835903d153e7433218a0b465fb"
+  },
+  "compiler_sha256": "dfc59f6fa0ee9249bbab7170e5eac09d49cc39832473428b57def027c921be1a",
+  "runtime_sha256": "548e8713447fde1c8bee38c013fb1812302d48dd3fabe5084cb3b8b1320f4d0b",
+  "profiles": {
+    "compiler": "debug",
+    "runtime": "release"
+  },
+  "regression_red": {
+    "binary_string": "codepoint 0x1f914 absent; source UTF-8 bytes emitted instead",
+    "nested_dynamic_tail_call": "result 42 instead of caller continuation result 43"
+  },
+  "checks": {
+    "workspace": {
+      "passed": 1794,
+      "failed": 0,
+      "ignored": 1
+    },
+    "clippy": "passed",
+    "python_harness_tests": 29,
+    "native_targeted_tests": {
+      "unique_passed": 15,
+      "nested_dynamic_tail_call": "retested after adding remote call, exception and 100000-call assertions"
+    },
+    "beam_regressions": [
+      "binary_string_codepoints: ok",
+      "nested_dynamic_tail_call: ok"
+    ],
+    "assertion_bodies": {
+      "status": "passed",
+      "upstream_commit": "7cdcec7e52b80d2869900893b2acf47199d84190",
+      "beam_eunit_passed": 36,
+      "native_counts": {
+        "passed": 36,
+        "known_failure": 0,
+        "unexpected_failure": 0,
+        "unexpected_success": 0
+      },
+      "results": [
+        {
+          "index": 1,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 2,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 3,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 4,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 5,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 6,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 7,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 8,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 9,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 10,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 11,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 12,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 13,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 14,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 15,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 16,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 17,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 18,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 19,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 20,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 21,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 22,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 23,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 24,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 25,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 26,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 27,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 28,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 29,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 30,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 31,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 32,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 33,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 34,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 35,
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "index": 36,
+          "status": "passed",
+          "exit_code": 0
+        }
+      ],
+      "scope": "assertion bodies with external adapter; not the native EUnit framework"
+    },
+    "differential_corpus": {
+      "passed": 80,
+      "groups": {
+        "boundary": 14,
+        "errors": 30,
+        "options": 6,
+        "valid": 30
+      }
+    },
+    "memory": {
+      "passed": 4,
+      "binary_size_regression": "passed on both engines"
+    },
+    "otp_probes": {
+      "status": "passed",
+      "probes": [
+        {
+          "module": "header_probe",
+          "beam": "EUNIT_HEADERS_OK",
+          "nera": "EUNIT_HEADERS_OK"
+        },
+        {
+          "module": "assertion_probe",
+          "beam": "OTP_ASSERTIONS_OK",
+          "nera": "OTP_ASSERTIONS_OK"
+        }
+      ]
+    },
+    "yaml_syntax": "passed"
+  },
+  "known_failure_exemptions": 0,
+  "limitations": [
+    "Native EUnit runner/autoexport remain unvalidated; assertions run with an external adapter.",
+    "Full ExUnit suite not rerun.",
+    "Local macOS arm64 result, not a Linux CI verdict."
+  ],
+  "logs_directory": "/private/tmp/nera-thoas-final-fixes"
+}

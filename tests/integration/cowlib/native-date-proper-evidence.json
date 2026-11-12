@@ -1,0 +1,654 @@
+{
+  "validation_date": "2026-10-15",
+  "status": "passed",
+  "scope": "Original cow_date:prop_http_date/0 with real native PropEr generation on Nera compared with BEAM",
+  "candidate": {
+    "base_commit": "306f5fe624718a2eebcadb342133fa8c4e2f0871",
+    "compiler_runtime_stdlib_changed": false,
+    "source_snapshot_sha256": "36e61df4f739d4e6756b663683403fc6c2f476f5373cb1a54fb1cb2f5cca1ac7",
+    "nera_sha256": "fb6441414d6588d47e925af0213ecb134f857c8014b7074fc83ea13ac9430700",
+    "runtime_sha256": "e326c26a0813e3207e21357afef00a0ea31b6fa82a9365b9d5944fb583c1c0e0",
+    "runner_sha256": "da7d7f293ab843a615fcd9e1c58e3f4872cc3a850cbce3402a03057ce560583b",
+    "scenario_sha256": "f5af06b1cefa1e8bb65acd03c3ddc8da14d43748d5c9ff80a4eb1d081ee35b98",
+    "cowlib_preparation_sha256": "540dcec05e340d9669ef7e011a4f28fdea4a6165fd79bd1dd9ee71c5b0a94d2d",
+    "preparation_helper_sha256": "02689434aec0c0505b3cd2fb9ec4cea631f8e5bc3b8b27944adc08ca95e6dcb2",
+    "shared_generation_sha256": "734d8062cf04d3ebc384405e7b3180ee967a4de8720905c1be4a7b122a628f02",
+    "etf_decoder_sha256": "7070107789f63da6b848eb584bac20950eafabde99386216efbd2d97ebc3db96"
+  },
+  "platform": "macOS-15.7.7-arm64-arm-64bit-Mach-O",
+  "build_reference_otp": "29.0.5",
+  "dependencies": {
+    "cowlib": {
+      "name": "cowlib",
+      "version": "2.20.0",
+      "url": "https://github.com/ninenines/cowlib.git",
+      "commit": "c768a804565ff5b8178ed968a5921e469d6bd7b2"
+    },
+    "proper_pin": "5640d0715d4b346676267504d8e84398e2a29f75",
+    "otp_rand_ordsets_revision": "05737d130706c7189a8e6750d9c2252d2cc7987e",
+    "cowlib_source_sha256": "6f22428c9b1df2c59abe8b372f6a075c3d1b51ea6653cbf778a5bceeff813504",
+    "cowlib_prepared_sha256": "ab5ec57dd5ee2b8f95524eabea90474ae7429d5267b3392496b462fb49e75f66",
+    "otp_rand_sha256": "7f956b3658f5b2054fe5809b7db1221e76109339a27ca728184d5a90fc679b0d",
+    "otp_ordsets_sha256": "064acc495f9a5ddf0c1bdc9d97fa7d1b1b975b10076495dbce4babf73900f17d"
+  },
+  "source_preparation": "Normal explicit erlc -P TEST preprocessing/parse transforms outside repository; only prop_http_date/0 export added to prepared Cowlib listing; both engines compile identical listing.",
+  "generator_predicate": "Original oneof of fixdate/rfc850/asctime generators and original predicate retained, with input/parsed-date observation only; no BEAM-generated inputs supplied to Nera.",
+  "outcomes": {
+    "beam_passed": true,
+    "native_passed": true,
+    "traces_match": true,
+    "trace_sha256": {
+      "beam": "bc371ae0deae5b92db0cb55dec9151e4cc98d849353ccad85bace998c5d1d6b9",
+      "native": "bc371ae0deae5b92db0cb55dec9151e4cc98d849353ccad85bace998c5d1d6b9"
+    }
+  },
+  "seeds": [
+    [
+      101,
+      202,
+      303
+    ],
+    [
+      7,
+      11,
+      13
+    ],
+    [
+      999,
+      1001,
+      2027
+    ]
+  ],
+  "size_options": {
+    "start_size": 1,
+    "max_size": 50
+  },
+  "summary": {
+    "trials_per_engine": 6000,
+    "trials_per_seed_repetition": 1000,
+    "repetitions": 2,
+    "false_shrinking_controls_per_engine": 6,
+    "false_and_true_replays_per_engine": 12,
+    "coverage": [
+      {
+        "seed": [
+          101,
+          202,
+          303
+        ],
+        "false_initial": "(((2019, 3, 25), (13, 27, 16)), b'Tuesday, 25-Mar-19 13:27:16 GMT')",
+        "false_minimum": "(((1951, 1, 1), (0, 0, 0)), b'Mon, 01 Jan 1951 00:00:00 GMT')",
+        "shrink_invocations": 12,
+        "formats": {
+          "rfc850": {
+            "count_before_repetition": 329,
+            "components": {
+              "years": {
+                "unique": 97,
+                "min": 1951,
+                "max": 2049
+              },
+              "months": {
+                "unique": 12,
+                "min": 1,
+                "max": 12
+              },
+              "days": {
+                "unique": 31,
+                "min": 1,
+                "max": 31
+              },
+              "hours": {
+                "unique": 24,
+                "min": 0,
+                "max": 23
+              },
+              "minutes": {
+                "unique": 59,
+                "min": 0,
+                "max": 59
+              },
+              "seconds": {
+                "unique": 61,
+                "min": 0,
+                "max": 60
+              }
+            }
+          },
+          "fixdate": {
+            "count_before_repetition": 346,
+            "components": {
+              "years": {
+                "unique": 99,
+                "min": 1951,
+                "max": 2050
+              },
+              "months": {
+                "unique": 12,
+                "min": 1,
+                "max": 12
+              },
+              "days": {
+                "unique": 31,
+                "min": 1,
+                "max": 31
+              },
+              "hours": {
+                "unique": 24,
+                "min": 0,
+                "max": 23
+              },
+              "minutes": {
+                "unique": 60,
+                "min": 0,
+                "max": 59
+              },
+              "seconds": {
+                "unique": 61,
+                "min": 0,
+                "max": 60
+              }
+            }
+          },
+          "asctime": {
+            "count_before_repetition": 325,
+            "components": {
+              "years": {
+                "unique": 98,
+                "min": 1951,
+                "max": 2050
+              },
+              "months": {
+                "unique": 12,
+                "min": 1,
+                "max": 12
+              },
+              "days": {
+                "unique": 31,
+                "min": 1,
+                "max": 31
+              },
+              "hours": {
+                "unique": 24,
+                "min": 0,
+                "max": 23
+              },
+              "minutes": {
+                "unique": 60,
+                "min": 0,
+                "max": 59
+              },
+              "seconds": {
+                "unique": 60,
+                "min": 0,
+                "max": 60
+              }
+            }
+          }
+        }
+      },
+      {
+        "seed": [
+          7,
+          11,
+          13
+        ],
+        "false_initial": "(((2028, 4, 4), (12, 38, 46)), b'Fri, 04 Apr 2028 12:38:46 GMT')",
+        "false_minimum": "(((1951, 1, 1), (0, 0, 0)), b'Mon, 01 Jan 1951 00:00:00 GMT')",
+        "shrink_invocations": 11,
+        "formats": {
+          "fixdate": {
+            "count_before_repetition": 316,
+            "components": {
+              "years": {
+                "unique": 95,
+                "min": 1951,
+                "max": 2050
+              },
+              "months": {
+                "unique": 12,
+                "min": 1,
+                "max": 12
+              },
+              "days": {
+                "unique": 31,
+                "min": 1,
+                "max": 31
+              },
+              "hours": {
+                "unique": 24,
+                "min": 0,
+                "max": 23
+              },
+              "minutes": {
+                "unique": 59,
+                "min": 0,
+                "max": 59
+              },
+              "seconds": {
+                "unique": 59,
+                "min": 0,
+                "max": 60
+              }
+            }
+          },
+          "rfc850": {
+            "count_before_repetition": 342,
+            "components": {
+              "years": {
+                "unique": 96,
+                "min": 1951,
+                "max": 2050
+              },
+              "months": {
+                "unique": 12,
+                "min": 1,
+                "max": 12
+              },
+              "days": {
+                "unique": 31,
+                "min": 1,
+                "max": 31
+              },
+              "hours": {
+                "unique": 24,
+                "min": 0,
+                "max": 23
+              },
+              "minutes": {
+                "unique": 60,
+                "min": 0,
+                "max": 59
+              },
+              "seconds": {
+                "unique": 60,
+                "min": 0,
+                "max": 60
+              }
+            }
+          },
+          "asctime": {
+            "count_before_repetition": 342,
+            "components": {
+              "years": {
+                "unique": 97,
+                "min": 1951,
+                "max": 2050
+              },
+              "months": {
+                "unique": 12,
+                "min": 1,
+                "max": 12
+              },
+              "days": {
+                "unique": 31,
+                "min": 1,
+                "max": 31
+              },
+              "hours": {
+                "unique": 24,
+                "min": 0,
+                "max": 23
+              },
+              "minutes": {
+                "unique": 60,
+                "min": 0,
+                "max": 59
+              },
+              "seconds": {
+                "unique": 61,
+                "min": 0,
+                "max": 60
+              }
+            }
+          }
+        }
+      },
+      {
+        "seed": [
+          999,
+          1001,
+          2027
+        ],
+        "false_initial": "(((1988, 4, 6), (14, 53, 44)), b'Friday, 06-Apr-88 14:53:44 GMT')",
+        "false_minimum": "(((1951, 1, 1), (0, 0, 0)), b'Mon, 01 Jan 1951 00:00:00 GMT')",
+        "shrink_invocations": 12,
+        "formats": {
+          "rfc850": {
+            "count_before_repetition": 350,
+            "components": {
+              "years": {
+                "unique": 94,
+                "min": 1951,
+                "max": 2050
+              },
+              "months": {
+                "unique": 12,
+                "min": 1,
+                "max": 12
+              },
+              "days": {
+                "unique": 31,
+                "min": 1,
+                "max": 31
+              },
+              "hours": {
+                "unique": 24,
+                "min": 0,
+                "max": 23
+              },
+              "minutes": {
+                "unique": 60,
+                "min": 0,
+                "max": 59
+              },
+              "seconds": {
+                "unique": 61,
+                "min": 0,
+                "max": 60
+              }
+            }
+          },
+          "fixdate": {
+            "count_before_repetition": 338,
+            "components": {
+              "years": {
+                "unique": 97,
+                "min": 1951,
+                "max": 2050
+              },
+              "months": {
+                "unique": 12,
+                "min": 1,
+                "max": 12
+              },
+              "days": {
+                "unique": 31,
+                "min": 1,
+                "max": 31
+              },
+              "hours": {
+                "unique": 24,
+                "min": 0,
+                "max": 23
+              },
+              "minutes": {
+                "unique": 59,
+                "min": 0,
+                "max": 59
+              },
+              "seconds": {
+                "unique": 61,
+                "min": 0,
+                "max": 60
+              }
+            }
+          },
+          "asctime": {
+            "count_before_repetition": 312,
+            "components": {
+              "years": {
+                "unique": 92,
+                "min": 1951,
+                "max": 2050
+              },
+              "months": {
+                "unique": 12,
+                "min": 1,
+                "max": 12
+              },
+              "days": {
+                "unique": 31,
+                "min": 1,
+                "max": 31
+              },
+              "hours": {
+                "unique": 24,
+                "min": 0,
+                "max": 23
+              },
+              "minutes": {
+                "unique": 60,
+                "min": 0,
+                "max": 59
+              },
+              "seconds": {
+                "unique": 60,
+                "min": 0,
+                "max": 60
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "aggregate_format_coverage": {
+    "rfc850": {
+      "count_before_repetition": 1021,
+      "components": {
+        "years": {
+          "unique": 100,
+          "min": 1951,
+          "max": 2050,
+          "all_values_in_observed_range": true
+        },
+        "months": {
+          "unique": 12,
+          "min": 1,
+          "max": 12,
+          "all_values_in_observed_range": true
+        },
+        "days": {
+          "unique": 31,
+          "min": 1,
+          "max": 31,
+          "all_values_in_observed_range": true
+        },
+        "hours": {
+          "unique": 24,
+          "min": 0,
+          "max": 23,
+          "all_values_in_observed_range": true
+        },
+        "minutes": {
+          "unique": 60,
+          "min": 0,
+          "max": 59,
+          "all_values_in_observed_range": true
+        },
+        "seconds": {
+          "unique": 61,
+          "min": 0,
+          "max": 60,
+          "all_values_in_observed_range": true
+        }
+      },
+      "trials_including_repetition": 2042
+    },
+    "fixdate": {
+      "count_before_repetition": 1000,
+      "components": {
+        "years": {
+          "unique": 100,
+          "min": 1951,
+          "max": 2050,
+          "all_values_in_observed_range": true
+        },
+        "months": {
+          "unique": 12,
+          "min": 1,
+          "max": 12,
+          "all_values_in_observed_range": true
+        },
+        "days": {
+          "unique": 31,
+          "min": 1,
+          "max": 31,
+          "all_values_in_observed_range": true
+        },
+        "hours": {
+          "unique": 24,
+          "min": 0,
+          "max": 23,
+          "all_values_in_observed_range": true
+        },
+        "minutes": {
+          "unique": 60,
+          "min": 0,
+          "max": 59,
+          "all_values_in_observed_range": true
+        },
+        "seconds": {
+          "unique": 61,
+          "min": 0,
+          "max": 60,
+          "all_values_in_observed_range": true
+        }
+      },
+      "trials_including_repetition": 2000
+    },
+    "asctime": {
+      "count_before_repetition": 979,
+      "components": {
+        "years": {
+          "unique": 100,
+          "min": 1951,
+          "max": 2050,
+          "all_values_in_observed_range": true
+        },
+        "months": {
+          "unique": 12,
+          "min": 1,
+          "max": 12,
+          "all_values_in_observed_range": true
+        },
+        "days": {
+          "unique": 31,
+          "min": 1,
+          "max": 31,
+          "all_values_in_observed_range": true
+        },
+        "hours": {
+          "unique": 24,
+          "min": 0,
+          "max": 23,
+          "all_values_in_observed_range": true
+        },
+        "minutes": {
+          "unique": 60,
+          "min": 0,
+          "max": 59,
+          "all_values_in_observed_range": true
+        },
+        "seconds": {
+          "unique": 61,
+          "min": 0,
+          "max": 60,
+          "all_values_in_observed_range": true
+        }
+      },
+      "trials_including_repetition": 1958
+    }
+  },
+  "traces": [
+    {
+      "seed": [
+        101,
+        202,
+        303
+      ],
+      "input_parsed_trace_sha256": "804044532c64ae296a0fc0ae2410d1cf1a514b6fba44be963a81c3fae205be93",
+      "false_shrink_trace_sha256": "696681845059a44292cb050865d72e8ca59bfe9ab43181ab0c23152b9d19ae70",
+      "minimum_date": [
+        [
+          1951,
+          1,
+          1
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "minimum_wire": "Mon, 01 Jan 1951 00:00:00 GMT"
+    },
+    {
+      "seed": [
+        7,
+        11,
+        13
+      ],
+      "input_parsed_trace_sha256": "03cfcaa2efa3b2993cf40825bb31f11ce5245c10d983428e6de73a36844fcefc",
+      "false_shrink_trace_sha256": "c9905f4cc9bd33ba103da3c74bd2546dad8c79c3982abc0b4133da42064084b9",
+      "minimum_date": [
+        [
+          1951,
+          1,
+          1
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "minimum_wire": "Mon, 01 Jan 1951 00:00:00 GMT"
+    },
+    {
+      "seed": [
+        999,
+        1001,
+        2027
+      ],
+      "input_parsed_trace_sha256": "748d1fdfb4c71418f80193338b2903aaa123bda1f4528b1b908ece3741f9333d",
+      "false_shrink_trace_sha256": "e3dfc6c9b04ec2dd55138110a9250b8f1c72e651a3cb2122aedaf665e77740f4",
+      "minimum_date": [
+        [
+          1951,
+          1,
+          1
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "minimum_wire": "Mon, 01 Jan 1951 00:00:00 GMT"
+    }
+  ],
+  "oracle": "Independent project-owned wire/date-field parser: month/weekday labels, zero/space padding, RFC850 50/51 pivot and second60; compares exact expected/generated/parsed date components, not calendar validity or actual weekday/leap-second consistency.",
+  "controls": {
+    "false_shrinking_quickchecks_per_engine": 6,
+    "false_and_true_seeded_replays_per_engine": 12,
+    "minimum": "{{{1951,1,1},{0,0,0}}, <<\"Mon, 01 Jan 1951 00:00:00 GMT\">>}",
+    "repetition": "All trial and shrink traces asserted identical across two cumulative repetitions of each seed",
+    "independence_limit": "3,000 seeded trial positions repeated twice, not 6,000 independent trials"
+  },
+  "checks": {
+    "release_build": "cargo build --release --locked passed; compiler/runtime/stdlib unchanged",
+    "cowlib_harness_tests": 77,
+    "proper_harness_tests": 6,
+    "date_harness_sha256": "60c498825ea7701a7070b8d656c94a3a9f86d0ab04cfc17461cc7721c797ee89",
+    "protocol_red": "Acceptance assertion failed before completion validator implementation, then passed with strict parsing/oracle checks",
+    "base64url_regression": {
+      "status": "passed",
+      "trials_per_engine": 12000,
+      "traces_match": true,
+      "report_path": "/private/tmp/nera-cow-date-native-proper-base64-regression/report.json",
+      "report_sha256": "92e8d1f019e0381711f8d1627a02e09fb15adb9bbe6db2fdc741a2c030893abd"
+    }
+  },
+  "limits": [
+    "Finite seeded workload; not exhaustive date combinations, calendar validation, actual weekday consistency or actual leap-second validation.",
+    "Prior EUnit7/7 and finite predicate replay are separate evidence; no new full Rust/Erlang or EUnit suite run for this Python integration/documentation change.",
+    "Only macOS arm64; native HTTP properties remain unvalidated.",
+    "Explicit build-time BEAM preparation, pinned OTP27 sources and defer_undefined=true remain required; native executable uses no BEAM process."
+  ],
+  "full_external_report": {
+    "path": "/private/tmp/nera-cow-date-native-proper-final/report.json",
+    "sha256": "3d1944bdc9ef2e7709e29f7c41ef80fc1d67136950b08845359f7f2d49fb311d"
+  }
+}

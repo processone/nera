@@ -1,0 +1,21 @@
+{
+  "Cargo.lock": "a210f397cb773d07c39ed4827a9aea44092f56ee7c2a438f708784dfa5769f80",
+  "Cargo.toml": "8d8f30e39479037b8f2cb82dbcc3f4705503423f0a6db6237003281cf25d24b3",
+  "crates/nera-runtime/src/ffi/gen_tcp.rs": "c461de671ca8c851d8050c9a086e775a7e780de119314a05d29391f2146e7c93",
+  "crates/nera-runtime/src/io_pool.rs": "2b953ede7c2787a658202b534e034ad3b3462c197751911a6c519fa5a1ef9ea0",
+  "crates/nera-runtime/src/message.rs": "74ee847245d6c0c8b2dd98357b2b3da68154ad710f777a45f71d3dfaa061a550",
+  "crates/nera-runtime/src/process.rs": "4841755438369d9341898d140beea3da2846fa5030b2fbcc91dc9e575d0d65b9",
+  "crates/nera-runtime/src/reactor.rs": "3b57298baf2afb7a436e9c54e5976154ea3e059d463eb0db8ada887c1b42db02",
+  "crates/nera-runtime/src/reactor/accept_waiters.rs": "ac12da6d642538f1e704d25084a66fe9deab00e0975d9efbc4fe58b11e22bd82",
+  "crates/nera-runtime/src/scheduler.rs": "cbacbe1b193ada01c48fec3e039d44ed8932062b056f101dc64bf7e7f550f6d0",
+  "crates/nera-runtime/src/socket.rs": "eb36e4df7a7985046c73abc34c2ed565868912ad65c44d0c9c8db62c4d4b279e",
+  "docs/baselines/2026-10-14-socket-handles/after-registry-probe.rs": "1170b091f48cd10a3ed304807ee4280970f45f7cf1739142f9f334035c285365",
+  "docs/baselines/2026-10-14-socket-handles/before-registry-probe.rs": "fd7db470d10bf06046ca4c8ff9e4a52761ac5fe884b7b084b84bb72546a1ff34",
+  "docs/baselines/2026-10-14-socket-handles/build_control.py": "27410a4bb5a28544eeb90dea46158f6ecd45f863044735e4916a24901848911b",
+  "docs/baselines/2026-10-14-socket-handles/build_probe.py": "bd1c1fadcd15f37903a9481b95a5994d1ca2e0c9e484a3bd147dff7ba98fc5cb",
+  "docs/baselines/2026-10-14-socket-handles/measure.py": "8f99e95d22213a40f7b99a43875e950a11d09f67107f7bbc5b2c947f7f15ad37",
+  "docs/baselines/2026-10-14-socket-handles/socket_probe.erl": "1745d068ac4ccaa428eca50dac519a2f4fe0cac416114444f9f4cfc4f2487469",
+  "rust-toolchain.toml": "2ad6f15416572b4836585087f1d4abc53b8fa2dbd616f8dacfaa587ed6714228",
+  "tests/tcp_handle_domain.erl": "1f7fa13292038817567c46e007484161ec45dfca5166e188200e2d17f1ebc8a4",
+  "CHANGELOG.md": "7f053ffd26ad85e35fad21f9da7e75faff59efbbd18aa9317dbe4c61fe06ceb5"
+}

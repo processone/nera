@@ -1,0 +1,224 @@
+{
+  "date": "2026-10-12",
+  "status": "escaped_character_fixed_http_still_blocked",
+  "base_commit": "4b612a7fced36642059b4ef3251cd2bb693f7640",
+  "base_tree": "cb2cf2a71630df7b3b1e7baf9ab42b1148673c1a",
+  "target": "Uncommitted worktree on the recorded merged-main base; exact compiler and regression source hashes recorded below.",
+  "source_sha256": {
+    "crates/nera-syntax/src/token.rs": "25ba6315d61afee288b304b18fbf4b3cbb39888c6a3cef8f296ff45e8675175d",
+    "crates/nera-syntax/src/lexer.rs": "5db39cd1f07f9be81ae1a00d8e0b1a23ca00fedf9e5833234f5ba60562cd412e",
+    "tests/char_escaped_ordinary.erl": "56ba7be69b5a154510a4beaf32f6cdb2ab95c4b02d5cfdcf3aee326da5db8eb6",
+    "tests/integration/cowlib/runner.py": "5097133d9fcb18fdcfc2fdda61f52bc510e9bb1cb131d47cc525b0b8d212e7c4",
+    "tests/integration/cowlib/corpus.json": "3ceda8256ca6333faa33e508fa59fc8c7869ec5c739f248f419f08cffc4396b5"
+  },
+  "nera_sha256": "ea3cbae10347d35ff5c54d4167014870728f01f4fe6d272ddabc7c7dac39e65a",
+  "runtime_sha256": "2fddde0178063e8f830d1d973848834787f951cfe110f3e937b556c3acf6322d",
+  "platform": "macOS-15.7.7-arm64-arm-64bit-Mach-O",
+  "otp_version": "Erlang/OTP 29 [erts-17.0.5] [source] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads:1] [jit] [dtrace]",
+  "upstream": {
+    "name": "cowlib",
+    "version": "2.20.0",
+    "url": "https://github.com/ninenines/cowlib.git",
+    "commit": "c768a804565ff5b8178ed968a5921e469d6bd7b2"
+  },
+  "fix": "Accept ordinary escaped character literals by returning their Unicode scalar value, while preserving named/octals and reserving hexadecimal/control-prefix syntax.",
+  "regression": {
+    "native_fixture": "tests/char_escaped_ordinary.erl",
+    "focused_unit": "lexer::tests::lex_char_escaped_ordinary_characters",
+    "before_exit_code": 101,
+    "before_log_sha256": "b2a41fab8ff20f8aa8e4511f2becdb0fc970130016bc092fb1db4dbe9db4e440",
+    "after_syntax_tests": {
+      "passed": 299,
+      "failed": 0
+    },
+    "beam_exit_code": 0,
+    "beam_log_sha256": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22",
+    "native_regressions": {
+      "passed": 3,
+      "failed": 0,
+      "tests": [
+        "char_escaped_ordinary",
+        "char_octal",
+        "binary_bound_match"
+      ],
+      "log_sha256": "fa8ff94370479ac5526990eb3090344fe13cd09e5a2344a78c7a9d7615d6f82c"
+    },
+    "previous_three_line_probe_nera_check_exit_code_after": 0
+  },
+  "workspace_serial": {
+    "passed": 1815,
+    "failed": 0,
+    "ignored": 1,
+    "log_sha256": "4563f38eb89e4daab83d7602dc165357681b2f1018d3bd81d05c7d7b75022b3b"
+  },
+  "syntax_clippy_all_targets_warnings_denied": {
+    "status": "passed",
+    "log_sha256": "b3794d5cb51f42c4c6dc3ea677999f7cc52f5131bc6e5240b9adf57a95c77924"
+  },
+  "build": {
+    "exit_code": 0,
+    "command": "RUSTC_WRAPPER= CARGO_TARGET_DIR=/private/tmp/nera-main-cowlib-target cargo build --release --locked --offline",
+    "log_sha256": "5aaeccd66e71b885041e8bd311e939bc030ff7af0f0f571e47028436cc31aa22"
+  },
+  "http_rerun": {
+    "status": "failed",
+    "runner_exit_code": 1,
+    "report_path": "/private/tmp/nera-cow-http-escaped-fixed/report.json",
+    "report_sha256": "8b867f0f2aeab943eaebc030c5104a6cec126573a36f7d221015cb9c755c93f0",
+    "modules": {
+      "cow_http_hd": {
+        "beam_passed": 63,
+        "nera_passed": 0,
+        "nera_blocked": 63,
+        "nera_executed": 0,
+        "total": 63,
+        "native_build_exit_code": 1,
+        "native_sources": [
+          "src/cow_http_hd.erl",
+          "src/cow_http.erl",
+          "src/cow_http1.erl",
+          "src/cow_cookie.erl",
+          "src/cow_date.erl",
+          "src/cow_http2.erl",
+          "src/cow_http_struct_hd.erl",
+          "src/cow_link.erl"
+        ],
+        "native_build_stderr_sha256": "512650cac26604118e40f064091c5cc5042f4e7eb21224f7183cdc441103c07e"
+      },
+      "cow_http": {
+        "beam_passed": 136,
+        "nera_passed": 0,
+        "nera_blocked": 136,
+        "nera_executed": 0,
+        "total": 136,
+        "native_build_exit_code": 1,
+        "native_sources": [
+          "src/cow_http.erl",
+          "src/cow_http1.erl",
+          "src/cow_http_hd.erl",
+          "src/cow_cookie.erl",
+          "src/cow_date.erl",
+          "src/cow_http2.erl",
+          "src/cow_http_struct_hd.erl",
+          "src/cow_link.erl"
+        ],
+        "native_build_stderr_sha256": "512650cac26604118e40f064091c5cc5042f4e7eb21224f7183cdc441103c07e"
+      }
+    },
+    "command": "python3 tests/integration/cowlib/runner.py --module cow_http_hd --module cow_http --nera /private/tmp/nera-main-cowlib-target/release/nera --work-dir /private/tmp/nera-cow-http-escaped-fixed --offline",
+    "next_blocker": {
+      "stage": "lexer",
+      "source": "src/cow_http_hd.erl",
+      "literal": "99999999999999999999",
+      "occurrences": 7,
+      "lines": [
+        1686,
+        2661,
+        2663,
+        2665,
+        2721,
+        3729
+      ],
+      "cause": "The decimal Integer token parses into i64 and returns a lexer error on overflow. The lexer sees inactive TEST sections before preprocessing."
+    }
+  },
+  "next_blocker_probe": {
+    "project_owned_source": "-module(big_literal_inactive).\n-export([test/0]).\n-ifdef(TEST).\nlarge() -> 99999999999999999999.\n-endif.\ntest() -> ok.\n",
+    "source_sha256": "c483d6e5414b7713793c6b787dfa5da7c42203c3ecaacb76c90ae14464547fcb",
+    "beam_exit_code": 0,
+    "beam_stdout": "ok\n",
+    "nera_check_exit_code": 1,
+    "nera_stderr_sha256": "c698e5c679a53dd53e2ff35facffded5f3a0c2bf75df85b9b67a8244f0e41ac3"
+  },
+  "core_rerun": {
+    "passed": 122,
+    "total": 122,
+    "status": "passed",
+    "runner_exit_code": 0,
+    "modules": {
+      "cow_qs": {
+        "passed": 29,
+        "total": 29
+      },
+      "cow_cookie": {
+        "passed": 34,
+        "total": 34
+      },
+      "cow_date": {
+        "passed": 26,
+        "total": 26
+      },
+      "cow_base64url": {
+        "passed": 33,
+        "total": 33
+      }
+    },
+    "report_path": "/private/tmp/nera-cow-http-escaped-core/report.json",
+    "report_sha256": "fa6baff385a31d41c22289dc57ce328ad07edd2a08e44246c779bcf6ae1ab8c6",
+    "timezone": "Pacific/Honolulu"
+  },
+  "harness_tests": {
+    "passed": 37,
+    "failed": 0,
+    "log_sha256": "fac0334047ff57ff627d485da0acd29e7c80762b75d4d5e3f3aeed43ffd199f3"
+  },
+  "limitations": [
+    "No native HTTP case executed after the fix; full dependency builds fail on large integer literals.",
+    "cow_http_hd corpus remains an initial subset of 12/68 public functions.",
+    "No upstream source copied or changed; only project-owned corpora and external probes used.",
+    "Native EUnit/PropEr framework not validated; Base64url property replay not rerun for this lexical fix.",
+    "No remote CI run yet for this uncommitted change."
+  ],
+  "publication_validation": {
+    "integration_base": "e739528",
+    "validated_commit": "e93e50baae3388b231ac7cfefe57a238febfd341",
+    "validated_tree": "d5092027ebf28ed1df05a963956714d6d766113e",
+    "note": "After integrating main containing PR 49; subsequent edits are documentation/evidence only. Earlier validation remains historical on base 4b612a7.",
+    "nera_sha256": "3091096f2c965311e9ce002d41f5403e46a479abd4f2705240d512f8c2de59de",
+    "runtime_sha256": "381df860f5b21104ec2e7e0cfe60927524a85673c19f957d78a48d16aa7b039c",
+    "workspace_serial": {
+      "passed": 1820,
+      "failed": 0,
+      "ignored": 1,
+      "log_sha256": "d6094bfd4eadf5229497ed329006c20902836877008066eeeb7d992c0fac426b"
+    },
+    "native_regressions": {
+      "passed": 3,
+      "failed": 0,
+      "log_sha256": "ac7c1288bb0524deed413d179f04bcfaed23a68ee3599a6232da1db96c05a60c"
+    },
+    "core_corpus": {
+      "passed": 122,
+      "total": 122,
+      "runner_exit_code": 0,
+      "report_sha256": "4c5992d5db4d7654ca247842c9e2c71f53a6c05e5c758837141a9cb76093cb08"
+    },
+    "http_corpora": {
+      "runner_exit_code": 1,
+      "report_sha256": "ccea03476b4ab7dfd7001ebb305b0cd37a73d7a967185809f2136f071b54f1bf",
+      "modules": {
+        "cow_http_hd": {
+          "beam_passed": 63,
+          "nera_passed": 0,
+          "blocked": 63,
+          "total": 63
+        },
+        "cow_http": {
+          "beam_passed": 136,
+          "nera_passed": 0,
+          "blocked": 136,
+          "total": 136
+        }
+      },
+      "blocker": "Same seven integer literals exceeding i64; no native HTTP cases executed."
+    },
+    "harness_tests": {
+      "passed": 37,
+      "failed": 0,
+      "log_sha256": "4afc8536e424d466d582500ae1060601573f9d8698c901dd2a1a16e6d3f69553"
+    },
+    "actionlint": "passed",
+    "diff_check": "passed",
+    "build_log_sha256": "3435396c284ca64059a9c98a67f4c014e668f8873f29bea052d7bc24c6b3519e"
+  }
+}

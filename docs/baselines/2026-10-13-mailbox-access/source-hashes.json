@@ -1,0 +1,28 @@
+{
+  "base_ref": "fetched main",
+  "base": "8f027bad46ea4e034b61aa11bfc1836419dd4f52",
+  "target": "uncommitted worktree /tmp/nera-transferable-heap-fragments",
+  "branch": "mr/mailbox-access-exit-scan",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "source_sha256": {
+    "crates/nera-runtime/src/process.rs": "6e62c95d9f679b9815396bca3f3c27ec663267c0889ec3d7bec87091018eac89",
+    "CHANGELOG.md": "02ab3fbc350a237441b445e6e4371ea476a1455d85c24f9d94117e19f7d3439f",
+    "Cargo.lock": "a210f397cb773d07c39ed4827a9aea44092f56ee7c2a438f708784dfa5769f80",
+    "docs/baselines/2026-10-13-mailbox-access/probe.rs": "14135d609e6952cff46b9f09a7fce8740667ccc46ba9a46af7661e0020315615",
+    "docs/baselines/2026-10-13-mailbox-access/measure.py": "c2047472cfa0be6456046ae9394ce89c230ac29c6601359cdb07665686c80c82"
+  },
+  "base_process_rs_sha256": "62b4b1ae3a11b36f92a98c1ad55b1e61431271d34b2fc5e83c4066c831af4618",
+  "artifact_sha256": {
+    "before": {
+      "libnera_runtime.rlib": "097ecf016da70c841e69ad666263abfdbb5b516f680f5d0f2c78feaa3466b1ad",
+      "probe": "d86b986ef9ce6706a3070cbaa76803f2d73d9a69d2df3aa4508ada23f1eac96b"
+    },
+    "after": {
+      "nera": "40cef497a5be8291c763b04e6e62acd5c186de3c963b6a58886904e107d7ca14",
+      "libnera_runtime.rlib": "9db60b45090d2ce29f23b38da08903212fc102f0fe6078974123a106c52c2de3",
+      "libnera_runtime.a": "2c77f9ac273bc9f84ba6c9e14c1b67f8a760f5e1e960c29ded50cede2524a42e",
+      "probe": "1b6c3fb304acde3782c786351161c73fb3b8826110f3385d4cd380cdd8910f72"
+    }
+  },
+  "publication_main": "eb08091"
+}

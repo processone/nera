@@ -1,0 +1,205 @@
+1000c8100: 6db923e9    	stp	d9, d8, [sp, #-0x70]!
+1000c8104: a9016ffc    	stp	x28, x27, [sp, #0x10]
+1000c8108: a90267fa    	stp	x26, x25, [sp, #0x20]
+1000c810c: a9035ff8    	stp	x24, x23, [sp, #0x30]
+1000c8110: a90457f6    	stp	x22, x21, [sp, #0x40]
+1000c8114: a9054ff4    	stp	x20, x19, [sp, #0x50]
+1000c8118: a9067bfd    	stp	x29, x30, [sp, #0x60]
+1000c811c: 910183fd    	add	x29, sp, #0x60
+1000c8120: d107c3ff    	sub	sp, sp, #0x1f0
+1000c8124: aa0803f9    	mov	x25, x8
+1000c8128: 5292d016    	mov	w22, #0x9680            ; =38528
+1000c812c: 72a01316    	movk	w22, #0x98, lsl #16
+1000c8130: 52800100    	mov	w0, #0x8                ; =8
+1000c8134: 94029dfc    	bl	0x10016f924 <<std::sys::pal::unix::time::Timespec>::now>
+1000c8138: aa0003f4    	mov	x20, x0
+1000c813c: aa0103f5    	mov	x21, x1
+1000c8140: 528003e8    	mov	w8, #0x1f               ; =31
+1000c8144: 910283e9    	add	x9, sp, #0xa0
+1000c8148: 5292d00a    	mov	w10, #0x9680            ; =38528
+1000c814c: 72a0130a    	movk	w10, #0x98, lsl #16
+1000c8150: f90053e8    	str	x8, [sp, #0xa0]
+1000c8154: f94053eb    	ldr	x11, [sp, #0xa0]
+1000c8158: d37cfd6c    	lsr	x12, x11, #60
+1000c815c: b5002b0c    	cbnz	x12, 0x1000c86bc <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x5bc>
+1000c8160: d37ced6b    	lsl	x11, x11, #4
+1000c8164: f90053eb    	str	x11, [sp, #0xa0]
+1000c8168: 7100054a    	subs	w10, w10, #0x1
+1000c816c: 54ffff21    	b.ne	0x1000c8150 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x50>
+1000c8170: 52800118    	mov	w24, #0x8               ; =8
+1000c8174: 52800100    	mov	w0, #0x8                ; =8
+1000c8178: 94029deb    	bl	0x10016f924 <<std::sys::pal::unix::time::Timespec>::now>
+1000c817c: f90043e0    	str	x0, [sp, #0x80]
+1000c8180: b9008be1    	str	w1, [sp, #0x88]
+1000c8184: f90013f4    	str	x20, [sp, #0x20]
+1000c8188: b9002bf5    	str	w21, [sp, #0x28]
+1000c818c: 910283f3    	add	x19, sp, #0xa0
+1000c8190: 910203f7    	add	x23, sp, #0x80
+1000c8194: 910083f4    	add	x20, sp, #0x20
+1000c8198: 910283e0    	add	x0, sp, #0xa0
+1000c819c: 910203e1    	add	x1, sp, #0x80
+1000c81a0: 910083e2    	add	x2, sp, #0x20
+1000c81a4: 94029da7    	bl	0x10016f840 <<std::sys::pal::unix::time::Timespec>::sub_timespec>
+1000c81a8: b940a3e8    	ldr	w8, [sp, #0xa0]
+1000c81ac: f94057e9    	ldr	x9, [sp, #0xa8]
+1000c81b0: b940b3ea    	ldr	w10, [sp, #0xb0]
+1000c81b4: 5288480b    	mov	w11, #0x4240            ; =16960
+1000c81b8: 72a001eb    	movk	w11, #0xf, lsl #16
+1000c81bc: 9bcb7d2c    	umulh	x12, x9, x11
+1000c81c0: 9b0b7d29    	mul	x9, x9, x11
+1000c81c4: 5289ba6b    	mov	w11, #0x4dd3            ; =19923
+1000c81c8: 72a20c4b    	movk	w11, #0x1062, lsl #16
+1000c81cc: 9bab7d4a    	umull	x10, w10, w11
+1000c81d0: ab4a9929    	adds	x9, x9, x10, lsr #38
+1000c81d4: 9a8c358a    	cinc	x10, x12, hs
+1000c81d8: 7100011f    	cmp	w8, #0x0
+1000c81dc: 9a8a13e8    	csel	x8, xzr, x10, ne
+1000c81e0: 9a8913e9    	csel	x9, xzr, x9, ne
+1000c81e4: a90223e9    	stp	x9, x8, [sp, #0x20]
+1000c81e8: 9000031b    	adrp	x27, 0x100128000 <<core::io::error::Error as core::fmt::Debug>::fmt+0xd0>
+1000c81ec: 9133637b    	add	x27, x27, #0xcd8
+1000c81f0: a90a6ff4    	stp	x20, x27, [sp, #0xa0]
+1000c81f4: 90000c80    	adrp	x0, 0x100258000 <dyld_stub_binder+0x100258000>
+1000c81f8: 913cd000    	add	x0, x0, #0xf34
+1000c81fc: 910283e1    	add	x1, sp, #0xa0
+1000c8200: 9402ce49    	bl	0x10017bb24 <std::io::stdio::_print>
+1000c8204: d0000b28    	adrp	x8, 0x10022e000 <GCC_except_table2934+0x50>
+1000c8208: 3dc38100    	ldr	q0, [x8, #0xe00]
+1000c820c: f0000b28    	adrp	x8, 0x10022f000 <dyld_stub_binder+0x10022f000>
+1000c8210: 3dc1bd01    	ldr	q1, [x8, #0x6f0]
+1000c8214: ad0107e0    	stp	q0, q1, [sp, #0x20]
+1000c8218: f0000b28    	adrp	x8, 0x10022f000 <dyld_stub_binder+0x10022f000>
+1000c821c: 3dc1c100    	ldr	q0, [x8, #0x700]
+1000c8220: f0000b28    	adrp	x8, 0x10022f000 <dyld_stub_binder+0x10022f000>
+1000c8224: 3dc1c501    	ldr	q1, [x8, #0x710]
+1000c8228: ad0207e0    	stp	q0, q1, [sp, #0x40]
+1000c822c: f90033f8    	str	x24, [sp, #0x60]
+1000c8230: 52800100    	mov	w0, #0x8                ; =8
+1000c8234: 94029dbc    	bl	0x10016f924 <<std::sys::pal::unix::time::Timespec>::now>
+1000c8238: aa0003f4    	mov	x20, x0
+1000c823c: aa0103f5    	mov	x21, x1
+1000c8240: d2800008    	mov	x8, #0x0                ; =0
+1000c8244: 910083e9    	add	x9, sp, #0x20
+1000c8248: 5292d00a    	mov	w10, #0x9680            ; =38528
+1000c824c: 72a0130a    	movk	w10, #0x98, lsl #16
+1000c8250: d29c71eb    	mov	x11, #0xe38f            ; =58255
+1000c8254: f2b1c70b    	movk	x11, #0x8e38, lsl #16
+1000c8258: f2c71c6b    	movk	x11, #0x38e3, lsl #32
+1000c825c: f2fc71cb    	movk	x11, #0xe38e, lsl #48
+1000c8260: 928008ec    	mov	x12, #-0x48             ; =-72
+1000c8264: 528003ed    	mov	w13, #0x1f              ; =31
+1000c8268: 9bcb7d0e    	umulh	x14, x8, x11
+1000c826c: d343fdce    	lsr	x14, x14, #3
+1000c8270: 9b0c7dce    	mul	x14, x14, x12
+1000c8274: f86e692e    	ldr	x14, [x9, x14]
+1000c8278: f90043ee    	str	x14, [sp, #0x80]
+1000c827c: f90053ed    	str	x13, [sp, #0xa0]
+1000c8280: f94053ee    	ldr	x14, [sp, #0xa0]
+1000c8284: d37cfdcf    	lsr	x15, x14, #60
+1000c8288: b50021af    	cbnz	x15, 0x1000c86bc <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x5bc>
+1000c828c: 91002129    	add	x9, x9, #0x8
+1000c8290: 91000508    	add	x8, x8, #0x1
+1000c8294: f94043ef    	ldr	x15, [sp, #0x80]
+1000c8298: b37cedcf    	bfi	x15, x14, #4, #60
+1000c829c: f90053ef    	str	x15, [sp, #0xa0]
+1000c82a0: f100054a    	subs	x10, x10, #0x1
+1000c82a4: 54fffe21    	b.ne	0x1000c8268 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x168>
+1000c82a8: 52800100    	mov	w0, #0x8                ; =8
+1000c82ac: 94029d9e    	bl	0x10016f924 <<std::sys::pal::unix::time::Timespec>::now>
+1000c82b0: f81803a0    	stur	x0, [x29, #-0x80]
+1000c82b4: b81883a1    	stur	w1, [x29, #-0x78]
+1000c82b8: f90043f4    	str	x20, [sp, #0x80]
+1000c82bc: b9008bf5    	str	w21, [sp, #0x88]
+1000c82c0: 910283f3    	add	x19, sp, #0xa0
+1000c82c4: 910203f7    	add	x23, sp, #0x80
+1000c82c8: 910283e0    	add	x0, sp, #0xa0
+1000c82cc: d10203a1    	sub	x1, x29, #0x80
+1000c82d0: 910203e2    	add	x2, sp, #0x80
+1000c82d4: 94029d5b    	bl	0x10016f840 <<std::sys::pal::unix::time::Timespec>::sub_timespec>
+1000c82d8: b940a3e8    	ldr	w8, [sp, #0xa0]
+1000c82dc: f94057e9    	ldr	x9, [sp, #0xa8]
+1000c82e0: b940b3ea    	ldr	w10, [sp, #0xb0]
+1000c82e4: 5288480b    	mov	w11, #0x4240            ; =16960
+1000c82e8: 72a001eb    	movk	w11, #0xf, lsl #16
+1000c82ec: 9bcb7d2c    	umulh	x12, x9, x11
+1000c82f0: 9b0b7d29    	mul	x9, x9, x11
+1000c82f4: 5289ba6b    	mov	w11, #0x4dd3            ; =19923
+1000c82f8: 72a20c4b    	movk	w11, #0x1062, lsl #16
+1000c82fc: 9bab7d4a    	umull	x10, w10, w11
+1000c8300: ab4a9929    	adds	x9, x9, x10, lsr #38
+1000c8304: 9a8c358a    	cinc	x10, x12, hs
+1000c8308: 7100011f    	cmp	w8, #0x0
+1000c830c: 9a8a13e8    	csel	x8, xzr, x10, ne
+1000c8310: 9a8913e9    	csel	x9, xzr, x9, ne
+1000c8314: a90823e9    	stp	x9, x8, [sp, #0x80]
+1000c8318: a90a6ff7    	stp	x23, x27, [sp, #0xa0]
+1000c831c: 90000c80    	adrp	x0, 0x100258000 <dyld_stub_binder+0x100258000>
+1000c8320: 913d1c00    	add	x0, x0, #0xf47
+1000c8324: 910283e1    	add	x1, sp, #0xa0
+1000c8328: 9402cdff    	bl	0x10017bb24 <std::io::stdio::_print>
+1000c832c: 52800100    	mov	w0, #0x8                ; =8
+1000c8330: 94029d7d    	bl	0x10016f924 <<std::sys::pal::unix::time::Timespec>::now>
+1000c8334: aa0003f4    	mov	x20, x0
+1000c8338: aa0103f5    	mov	x21, x1
+1000c833c: 52810068    	mov	w8, #0x803              ; =2051
+1000c8340: 52800809    	mov	w9, #0x40               ; =64
+1000c8344: f90043e8    	str	x8, [sp, #0x80]
+1000c8348: f94043ea    	ldr	x10, [sp, #0x80]
+1000c834c: f90053e9    	str	x9, [sp, #0xa0]
+1000c8350: f94053eb    	ldr	x11, [sp, #0xa0]
+1000c8354: d37cfd6c    	lsr	x12, x11, #60
+1000c8358: b5001b2c    	cbnz	x12, 0x1000c86bc <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x5bc>
+1000c835c: b37ced6a    	bfi	x10, x11, #4, #60
+1000c8360: f90053ea    	str	x10, [sp, #0xa0]
+1000c8364: 710006d6    	subs	w22, w22, #0x1
+1000c8368: 54fffee1    	b.ne	0x1000c8344 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x244>
+1000c836c: f9000bf9    	str	x25, [sp, #0x10]
+1000c8370: 52800100    	mov	w0, #0x8                ; =8
+1000c8374: 94029d6c    	bl	0x10016f924 <<std::sys::pal::unix::time::Timespec>::now>
+1000c8378: f81803a0    	stur	x0, [x29, #-0x80]
+1000c837c: b81883a1    	stur	w1, [x29, #-0x78]
+1000c8380: f90043f4    	str	x20, [sp, #0x80]
+1000c8384: b9008bf5    	str	w21, [sp, #0x88]
+1000c8388: d10203ba    	sub	x26, x29, #0x80
+1000c838c: 910203f3    	add	x19, sp, #0x80
+1000c8390: 910283e0    	add	x0, sp, #0xa0
+1000c8394: d10203a1    	sub	x1, x29, #0x80
+1000c8398: 910203e2    	add	x2, sp, #0x80
+1000c839c: 94029d29    	bl	0x10016f840 <<std::sys::pal::unix::time::Timespec>::sub_timespec>
+1000c83a0: b940a3e8    	ldr	w8, [sp, #0xa0]
+1000c83a4: f94057e9    	ldr	x9, [sp, #0xa8]
+1000c83a8: b940b3ea    	ldr	w10, [sp, #0xb0]
+1000c83ac: 5288480b    	mov	w11, #0x4240            ; =16960
+1000c83b0: 72a001eb    	movk	w11, #0xf, lsl #16
+1000c83b4: 9bcb7d2c    	umulh	x12, x9, x11
+1000c83b8: 9b0b7d29    	mul	x9, x9, x11
+1000c83bc: 5289ba6b    	mov	w11, #0x4dd3            ; =19923
+1000c83c0: 72a20c4b    	movk	w11, #0x1062, lsl #16
+1000c83c4: 9bab7d4a    	umull	x10, w10, w11
+1000c83c8: ab4a9929    	adds	x9, x9, x10, lsr #38
+1000c83cc: 9a8c358a    	cinc	x10, x12, hs
+1000c83d0: 7100011f    	cmp	w8, #0x0
+1000c83d4: 9a8a13e8    	csel	x8, xzr, x10, ne
+1000c83d8: 9a8913e9    	csel	x9, xzr, x9, ne
+1000c83dc: a90823e9    	stp	x9, x8, [sp, #0x80]
+1000c83e0: a90a6ff3    	stp	x19, x27, [sp, #0xa0]
+1000c83e4: 90000c80    	adrp	x0, 0x100258000 <dyld_stub_binder+0x100258000>
+1000c83e8: 913d6c00    	add	x0, x0, #0xf5b
+1000c83ec: 910283e1    	add	x1, sp, #0xa0
+1000c83f0: 9402cdcd    	bl	0x10017bb24 <std::io::stdio::_print>
+1000c83f4: d0000b28    	adrp	x8, 0x10022e000 <GCC_except_table2934+0x50>
+1000c83f8: 3dc3c500    	ldr	q0, [x8, #0xf10]
+1000c83fc: ad0383e0    	stp	q0, q0, [sp, #0x70]
+1000c8400: f0000b28    	adrp	x8, 0x10022f000 <dyld_stub_binder+0x10022f000>
+1000c8404: 3dc1c901    	ldr	q1, [x8, #0x720]
+1000c8408: 3d8027e1    	str	q1, [sp, #0x90]
+1000c840c: 52800100    	mov	w0, #0x8                ; =8
+1000c8410: 94029d45    	bl	0x10016f924 <<std::sys::pal::unix::time::Timespec>::now>
+1000c8414: f90007e0    	str	x0, [sp, #0x8]
+1000c8418: b90007e1    	str	w1, [sp, #0x4]
+1000c841c: 52800008    	mov	w8, #0x0                ; =0
+1000c8420: 52800059    	mov	w25, #0x2               ; =2
+1000c8424: d10243b4    	sub	x20, x29, #0x90
+1000c8428: d2e7ff15    	mov	x21, #0x3ff8000000000000 ; =4609434218613702656
+1000c842c: 5280023c    	mov	w28, #0x11              ; =17
+1000c8430: 14000006    	b	0x1000c8448 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x348>

@@ -1,0 +1,15 @@
+Running 1 tests (1 threads)
+────────────────────────────────────────────────────────────
+  FAIL  binary_float_bits                          1.0s  [1/1]
+────────────────────────────────────────────────────────────
+Results: 0 passed, 1 failed (0 compile), 0 skipped / 1 total
+
+Failures:
+  binary_float_bits: runtime crash, exit=1
+    stderr:
+    Error in process <0.1.0>: error:expected_badarg
+    Stacktrace (most recent call last):
+      binary_float_bits:bad/1 (binary_float_bits.erl, line 69)
+      lists:foreach/2 (lists.erl, line 61)
+
+SOME TESTS FAILED

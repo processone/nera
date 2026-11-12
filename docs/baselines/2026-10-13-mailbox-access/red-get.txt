@@ -1,0 +1,19 @@
+   Compiling nera-runtime v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-runtime)
+    Finished `release` profile [optimized] target(s) in 28.20s
+     Running unittests src/lib.rs (/tmp/nera-transfer-target/release/deps/nera_runtime-d1e13e6021944ea8)
+
+running 1 test
+
+thread 'process::tests::mailbox_get_rejects_out_of_range_in_release' (4186471) panicked at crates/nera-runtime/src/process.rs:2104:13:
+out-of-range index 16 was accepted
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test process::tests::mailbox_get_rejects_out_of_range_in_release ... FAILED
+
+failures:
+
+failures:
+    process::tests::mailbox_get_rejects_out_of_range_in_release
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 514 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p nera-runtime --lib`

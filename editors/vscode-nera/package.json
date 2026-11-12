@@ -1,0 +1,69 @@
+{
+  "name": "vscode-nera",
+  "displayName": "Nera Erlang",
+  "description": "Language support for Erlang projects using the nera compiler",
+  "version": "0.1.0",
+  "publisher": "processone",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "activationEvents": [
+    "workspaceContains:nera.toml"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "erlang",
+        "aliases": ["Erlang"],
+        "extensions": [".erl", ".hrl", ".xrl", ".yrl", ".escript"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "erlang",
+        "scopeName": "source.erlang",
+        "path": "./syntaxes/erlang.tmLanguage"
+      }
+    ],
+    "semanticTokenModifiers": [
+      {
+        "id": "unused",
+        "description": "Marks intentionally unused variables (prefixed with _)"
+      }
+    ],
+    "configurationDefaults": {
+      "editor.semanticTokenColorCustomizations": {
+        "rules": {
+          "*.unused:erlang": "#6b7280"
+        }
+      }
+    },
+    "configuration": {
+      "title": "Nera",
+      "properties": {
+        "nera.path": {
+          "type": "string",
+          "default": "nera",
+          "description": "Path to the nera binary"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.75.0",
+    "typescript": "^5.0.0"
+  }
+}

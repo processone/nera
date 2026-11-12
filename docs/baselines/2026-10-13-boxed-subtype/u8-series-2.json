@@ -1,0 +1,157 @@
+{
+  "samples": {
+    "before": [
+      {
+        "header_static": 3942,
+        "header_dynamic": 13215,
+        "header_resize": 11786,
+        "heap_boxed": 11906,
+        "process_cpu_us": 40168
+      },
+      {
+        "header_static": 9831,
+        "header_dynamic": 12505,
+        "header_resize": 13043,
+        "heap_boxed": 45186,
+        "process_cpu_us": 45408
+      },
+      {
+        "header_static": 8110,
+        "header_dynamic": 9796,
+        "header_resize": 7016,
+        "heap_boxed": 11825,
+        "process_cpu_us": 36930
+      },
+      {
+        "header_static": 5342,
+        "header_dynamic": 9036,
+        "header_resize": 5529,
+        "heap_boxed": 9826,
+        "process_cpu_us": 31903
+      },
+      {
+        "header_static": 4238,
+        "header_dynamic": 8589,
+        "header_resize": 8893,
+        "heap_boxed": 10644,
+        "process_cpu_us": 32962
+      },
+      {
+        "header_static": 5899,
+        "header_dynamic": 12673,
+        "header_resize": 23061,
+        "heap_boxed": 24576,
+        "process_cpu_us": 35972
+      },
+      {
+        "header_static": 6264,
+        "header_dynamic": 7854,
+        "header_resize": 9927,
+        "heap_boxed": 11234,
+        "process_cpu_us": 34746
+      },
+      {
+        "header_static": 6640,
+        "header_dynamic": 8554,
+        "header_resize": 5549,
+        "heap_boxed": 14018,
+        "process_cpu_us": 34942
+      },
+      {
+        "header_static": 4917,
+        "header_dynamic": 10010,
+        "header_resize": 5591,
+        "heap_boxed": 14002,
+        "process_cpu_us": 32817
+      }
+    ],
+    "after": [
+      {
+        "header_static": 6492,
+        "header_dynamic": 20361,
+        "header_resize": 13237,
+        "heap_boxed": 23805,
+        "process_cpu_us": 52636
+      },
+      {
+        "header_static": 6137,
+        "header_dynamic": 15555,
+        "header_resize": 7712,
+        "heap_boxed": 15016,
+        "process_cpu_us": 38148
+      },
+      {
+        "header_static": 8463,
+        "header_dynamic": 12899,
+        "header_resize": 7655,
+        "heap_boxed": 9929,
+        "process_cpu_us": 35117
+      },
+      {
+        "header_static": 6400,
+        "header_dynamic": 16094,
+        "header_resize": 10002,
+        "heap_boxed": 10278,
+        "process_cpu_us": 39770
+      },
+      {
+        "header_static": 7822,
+        "header_dynamic": 13814,
+        "header_resize": 6775,
+        "heap_boxed": 10192,
+        "process_cpu_us": 38458
+      },
+      {
+        "header_static": 4973,
+        "header_dynamic": 12030,
+        "header_resize": 8378,
+        "heap_boxed": 24730,
+        "process_cpu_us": 38812
+      },
+      {
+        "header_static": 5922,
+        "header_dynamic": 12853,
+        "header_resize": 9462,
+        "heap_boxed": 14962,
+        "process_cpu_us": 38050
+      },
+      {
+        "header_static": 6992,
+        "header_dynamic": 9277,
+        "header_resize": 5411,
+        "heap_boxed": 9029,
+        "process_cpu_us": 34252
+      },
+      {
+        "header_static": 7802,
+        "header_dynamic": 9196,
+        "header_resize": 7774,
+        "heap_boxed": 28173,
+        "process_cpu_us": 42223
+      }
+    ]
+  },
+  "medians": {
+    "before": {
+      "header_static": 5899,
+      "header_dynamic": 9796,
+      "header_resize": 8893,
+      "heap_boxed": 11906,
+      "process_cpu_us": 34942
+    },
+    "after": {
+      "header_static": 6492,
+      "header_dynamic": 12899,
+      "header_resize": 7774,
+      "heap_boxed": 14962,
+      "process_cpu_us": 38458
+    }
+  },
+  "percent_change": {
+    "header_static": 10.052551279877942,
+    "header_dynamic": 31.67619436504696,
+    "header_resize": -12.58293039469246,
+    "heap_boxed": 25.667730556022185,
+    "process_cpu_us": 10.06238910194035
+  }
+}

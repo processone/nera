@@ -1,0 +1,89 @@
+{
+  "status": "incomplete",
+  "platform": "macOS-15.7.7-arm64-arm-64bit-Mach-O",
+  "modules": {
+    "cow_cookie": {
+      "expected": 54,
+      "inventory": {
+        "generators": {
+          "parse_cookie_test_": 13,
+          "parse_cookie_error_test_": 1,
+          "parse_set_cookie_test_": 16,
+          "cookie_test_": 5,
+          "setcookie_test_": 9,
+          "setcookie_failures_test_": 5,
+          "setcookie_attr_failures_test_": 3
+        },
+        "direct": [
+          "parse_cookie_max_cookies_test",
+          "setcookie_max_age_test"
+        ]
+      },
+      "native": [],
+      "beam_passed": true,
+      "adapted_sha256": "e9152285940fdaa2c84ba4222b79781b53a02d6785a93dfa3dbd9709e64d4b02",
+      "removed_benchmarks": [],
+      "native_build_returncode": 1,
+      "native_passed": 0,
+      "native_blocked": 54
+    },
+    "cow_date": {
+      "expected": 7,
+      "inventory": {
+        "generators": {
+          "http_date_test_": 3,
+          "rfc2109_test_": 2,
+          "rfc7231_test_": 2
+        },
+        "direct": []
+      },
+      "native": [],
+      "beam_passed": true,
+      "adapted_sha256": "d509a81a1cdbae76a6d6e44acc201ac75c3351089fbb683996bb285739acc7ad",
+      "removed_benchmarks": [
+        "horse_http_date_fixdate",
+        "horse_http_date_rfc850",
+        "horse_http_date_asctime",
+        "horse_rfc2109_20130101_000000",
+        "horse_rfc2109_20131231_235959",
+        "horse_rfc2109_12340506_070809",
+        "horse_rfc7231_20130101_000000",
+        "horse_rfc7231_20131231_235959",
+        "horse_rfc7231_12340506_070809"
+      ],
+      "native_build_returncode": 1,
+      "native_passed": 0,
+      "native_blocked": 7
+    }
+  },
+  "upstream": {
+    "name": "cowlib",
+    "version": "2.20.0",
+    "url": "https://github.com/ninenines/cowlib.git",
+    "commit": "c768a804565ff5b8178ed968a5921e469d6bd7b2"
+  },
+  "proper_commit": "5640d0715d4b346676267504d8e84398e2a29f75",
+  "nera_commit": "bff545cccb090b15446e9ad7784d5fa54d1944a2",
+  "nera_sha256": "695ba8b3ed635f78fcb8b5bed1dccf96d8ed12e48aff8243b774052ba0c536e6",
+  "runtime_sha256": "999a181175b377f62e0b4521005874664316b0351beb3e3ba3c5e99505b8ceb4",
+  "harness_sha256": "796e496e293e13229e4f34ab145e125c10232c8ba9d55119d310b154e21c7d29",
+  "source_sha256": {
+    "cow_cookie": "949f38c2aaa1fd30f690289a024429ea2d8a66e08b6c87a4436e51e568ddf88d",
+    "cow_date": "6f22428c9b1df2c59abe8b372f6a075c3d1b51ea6653cbf778a5bceeff813504"
+  },
+  "otp_version": "Erlang/OTP 29 [erts-17.0.5] [source] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads:1] [jit] [dtrace]",
+  "property": {
+    "name": "prop_http_date",
+    "beam_passed": true,
+    "trials": 1000,
+    "seed": "PropEr default (time based)",
+    "nera": "not executed; native PropEr runtime unsupported by this adapter"
+  },
+  "functional_status": "failed",
+  "scope": "Original EUnit on BEAM; original functional bodies via external adapter on Nera. Date property runs only on BEAM; native property unexecuted.",
+  "build_log_sha256": "74d3a28589c0a20bf19c767b0a593051e3e0aa42345ea296325c5ad3046cc2fa",
+  "observed_blockers": {
+    "cow_cookie": "8 lexer errors on octal character literals",
+    "cow_date": "unresolved calendar:day_of_the_week/1; module calendar unavailable"
+  }
+}

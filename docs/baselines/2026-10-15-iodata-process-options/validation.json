@@ -1,0 +1,24 @@
+{
+  "workspace-tests.txt": {
+    "passed": 1966,
+    "failed": 0,
+    "ignored": 1
+  },
+  "release-tests.txt": {
+    "passed": 625,
+    "failed": 0,
+    "ignored": 1
+  },
+  "base": "3a671593017e485e1fbc17ad47291531a4f3be33",
+  "target": "local worktree mr/iodata-process-options",
+  "platform": "macOS-15.7.7-arm64-arm-64bit-Mach-O",
+  "native_distinct": {
+    "passed": 23,
+    "failed": 0,
+    "skipped": 0
+  },
+  "artifacts": {
+    "/tmp/nera-transfer-target/release/nera": "b6135a95e5bfad3bfd705c092e867a70f5044392f3afcb5cc64ec3070005ce76",
+    "/tmp/nera-transfer-target/release/libnera_runtime.a": "798c7d312b9a20c78c1a73f224e688487e024b1315533f56de786053108be85f"
+  }
+}

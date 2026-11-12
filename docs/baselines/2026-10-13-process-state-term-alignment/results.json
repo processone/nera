@@ -1,0 +1,241 @@
+{
+  "samples": {
+    "before": [
+      {
+        "lock_transition": 18805,
+        "lock_empty_drain": 21822,
+        "drain_1": 1441,
+        "drain_16": 22812,
+        "exit_scan": 11152,
+        "encode_public": 1733,
+        "encode_trusted": 1735,
+        "heap_terms": 4143,
+        "process_cpu_us": 86451
+      },
+      {
+        "lock_transition": 18319,
+        "lock_empty_drain": 21392,
+        "drain_1": 1466,
+        "drain_16": 22742,
+        "exit_scan": 11236,
+        "encode_public": 1735,
+        "encode_trusted": 1749,
+        "heap_terms": 4071,
+        "process_cpu_us": 85393
+      },
+      {
+        "lock_transition": 18547,
+        "lock_empty_drain": 22104,
+        "drain_1": 1454,
+        "drain_16": 22990,
+        "exit_scan": 11373,
+        "encode_public": 1769,
+        "encode_trusted": 1752,
+        "heap_terms": 4104,
+        "process_cpu_us": 86657
+      },
+      {
+        "lock_transition": 18223,
+        "lock_empty_drain": 21350,
+        "drain_1": 1434,
+        "drain_16": 22630,
+        "exit_scan": 11091,
+        "encode_public": 1748,
+        "encode_trusted": 1738,
+        "heap_terms": 4048,
+        "process_cpu_us": 85024
+      },
+      {
+        "lock_transition": 18220,
+        "lock_empty_drain": 21324,
+        "drain_1": 1435,
+        "drain_16": 22655,
+        "exit_scan": 11184,
+        "encode_public": 1741,
+        "encode_trusted": 1733,
+        "heap_terms": 4035,
+        "process_cpu_us": 85009
+      },
+      {
+        "lock_transition": 18706,
+        "lock_empty_drain": 21489,
+        "drain_1": 1474,
+        "drain_16": 22762,
+        "exit_scan": 11198,
+        "encode_public": 1799,
+        "encode_trusted": 1827,
+        "heap_terms": 4080,
+        "process_cpu_us": 85903
+      },
+      {
+        "lock_transition": 18341,
+        "lock_empty_drain": 21594,
+        "drain_1": 1438,
+        "drain_16": 22658,
+        "exit_scan": 11297,
+        "encode_public": 1925,
+        "encode_trusted": 1751,
+        "heap_terms": 4121,
+        "process_cpu_us": 85853
+      },
+      {
+        "lock_transition": 18386,
+        "lock_empty_drain": 21315,
+        "drain_1": 1437,
+        "drain_16": 22780,
+        "exit_scan": 11094,
+        "encode_public": 1807,
+        "encode_trusted": 1733,
+        "heap_terms": 4075,
+        "process_cpu_us": 85376
+      },
+      {
+        "lock_transition": 18274,
+        "lock_empty_drain": 21762,
+        "drain_1": 1446,
+        "drain_16": 22499,
+        "exit_scan": 11072,
+        "encode_public": 1743,
+        "encode_trusted": 1745,
+        "heap_terms": 4050,
+        "process_cpu_us": 85198
+      }
+    ],
+    "after": [
+      {
+        "lock_transition": 18254,
+        "lock_empty_drain": 21405,
+        "drain_1": 1432,
+        "drain_16": 22607,
+        "exit_scan": 11041,
+        "encode_public": 1775,
+        "encode_trusted": 1827,
+        "heap_terms": 4117,
+        "process_cpu_us": 85231
+      },
+      {
+        "lock_transition": 18227,
+        "lock_empty_drain": 21368,
+        "drain_1": 1469,
+        "drain_16": 22594,
+        "exit_scan": 11147,
+        "encode_public": 1774,
+        "encode_trusted": 1770,
+        "heap_terms": 4048,
+        "process_cpu_us": 85039
+      },
+      {
+        "lock_transition": 18845,
+        "lock_empty_drain": 21635,
+        "drain_1": 1460,
+        "drain_16": 22799,
+        "exit_scan": 11008,
+        "encode_public": 1777,
+        "encode_trusted": 1804,
+        "heap_terms": 4142,
+        "process_cpu_us": 86314
+      },
+      {
+        "lock_transition": 18242,
+        "lock_empty_drain": 21356,
+        "drain_1": 1439,
+        "drain_16": 22651,
+        "exit_scan": 11054,
+        "encode_public": 1822,
+        "encode_trusted": 1736,
+        "heap_terms": 4025,
+        "process_cpu_us": 85072
+      },
+      {
+        "lock_transition": 18241,
+        "lock_empty_drain": 21698,
+        "drain_1": 1451,
+        "drain_16": 22773,
+        "exit_scan": 11269,
+        "encode_public": 1810,
+        "encode_trusted": 1740,
+        "heap_terms": 4091,
+        "process_cpu_us": 85702
+      },
+      {
+        "lock_transition": 18561,
+        "lock_empty_drain": 21668,
+        "drain_1": 1457,
+        "drain_16": 22899,
+        "exit_scan": 11638,
+        "encode_public": 1791,
+        "encode_trusted": 1766,
+        "heap_terms": 4095,
+        "process_cpu_us": 87004
+      },
+      {
+        "lock_transition": 18506,
+        "lock_empty_drain": 21555,
+        "drain_1": 1437,
+        "drain_16": 22569,
+        "exit_scan": 11256,
+        "encode_public": 1803,
+        "encode_trusted": 1758,
+        "heap_terms": 4038,
+        "process_cpu_us": 85538
+      },
+      {
+        "lock_transition": 18324,
+        "lock_empty_drain": 21669,
+        "drain_1": 1475,
+        "drain_16": 23038,
+        "exit_scan": 11375,
+        "encode_public": 1798,
+        "encode_trusted": 1762,
+        "heap_terms": 4212,
+        "process_cpu_us": 86349
+      },
+      {
+        "lock_transition": 18316,
+        "lock_empty_drain": 21605,
+        "drain_1": 1439,
+        "drain_16": 22738,
+        "exit_scan": 11071,
+        "encode_public": 1827,
+        "encode_trusted": 1742,
+        "heap_terms": 4064,
+        "process_cpu_us": 85536
+      }
+    ]
+  },
+  "medians": {
+    "before": {
+      "lock_transition": 18341,
+      "lock_empty_drain": 21489,
+      "drain_1": 1441,
+      "drain_16": 22742,
+      "exit_scan": 11184,
+      "encode_public": 1748,
+      "encode_trusted": 1745,
+      "heap_terms": 4075,
+      "process_cpu_us": 85393
+    },
+    "after": {
+      "lock_transition": 18316,
+      "lock_empty_drain": 21605,
+      "drain_1": 1451,
+      "drain_16": 22738,
+      "exit_scan": 11147,
+      "encode_public": 1798,
+      "encode_trusted": 1762,
+      "heap_terms": 4091,
+      "process_cpu_us": 85538
+    }
+  },
+  "percent_change": {
+    "lock_transition": -0.13630663540701304,
+    "lock_empty_drain": 0.5398110661268607,
+    "drain_1": 0.6939625260235838,
+    "drain_16": -0.017588602585527635,
+    "exit_scan": -0.3308297567954255,
+    "encode_public": 2.8604118993134975,
+    "encode_trusted": 0.9742120343839478,
+    "heap_terms": 0.39263803680982257,
+    "process_cpu_us": 0.16980314545689268
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "base": "79e2bd1eddf5e18589c601b657702ac01f7174e4",
+  "branch": "mr/binary-match-corrections",
+  "target": "working-tree source snapshot before publication commit",
+  "source_sha256": {
+    "CHANGELOG.md": "e80af0a6c418d8ab5741537e67ef3690a49f245396cd68dd152b1bb27b70ce2a",
+    "crates/nera-codegen/src/func_translator/instructions.rs": "65db3226b905009dfd70e6d742e2df387d610ca036cda76beb41f1c44d4bc506",
+    "crates/nera-codegen/src/func_translator/liveness.rs": "01e1522a017962be647a1ef2e3b4823d7c031e8d03939d484fab33ec783a231b",
+    "crates/nera-codegen/src/func_translator/mod.rs": "dbe0f451f20594dd88e32c71dc9ed114d7ce4a99317ecd816ddb8e8a35113c6a",
+    "crates/nera-ir/src/display.rs": "0445dd188c5fc4a7a38b6ffc281b40a54fa665003fb4a3a2d93e1b6ddc2a5588",
+    "crates/nera-ir/src/ir.rs": "6fbfbf5a32030d2fce7601b9762556060de36c3f4ef67c95736fae0a8b656c63",
+    "crates/nera-ir/src/lower/pattern_lower.rs": "c804adebf50d8051903f9872c9d551e3b1fbf67f39b7c4728d85691d61f84d6e",
+    "crates/nera-ir/src/passes/uses.rs": "0b6300edb9bcdffb520c15512ce54ae5ef224cca10d035b93666a5d9b84d4146",
+    "crates/nera-ir/src/pattern.rs": "d99ad4e54b3ef5c4de80279856997545f47db5b887149759d31d2b3d673d4265",
+    "crates/nera-ir/src/verify/operands.rs": "2958da7d4dcff3fefc735bf9cf9e7d7f79917455be6095ee356ca723e7ac516f",
+    "crates/nera-ir/src/verify/tests.rs": "ea3f3edb38d87dcd0732d33fc75748d87c7ba459555a793bd74a6e0e2ff232cb",
+    "crates/nera-runtime/src/ffi/alloc.rs": "bdd31baf9e093c976f8e97ece0cd789349606ef34e14baf282a8a44f60114178",
+    "tests/binary_recursive_bits.erl": "f702283ee979741588aaadfa7436b981ba248f0430b33175c828b4ab71427d45",
+    "tests/binary_match_reuse_alloc.erl": "a153f95ccd2c18dc7fc63b40014da8afc0ebab718a2a1715357c287a4ae7cec5"
+  },
+  "toolchain": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "checks": {
+    "release": "pass",
+    "clippy_workspace_all_targets_deny_warnings": "pass",
+    "rust_workspace": {
+      "passed": 1850,
+      "failed": 0,
+      "ignored": 1
+    },
+    "erlang": {
+      "passed": 322,
+      "failed": 0,
+      "skipped": 2
+    },
+    "beam": "matching ok; 2048 offset/value combinations and large binary",
+    "diff_check": "pass"
+  },
+  "artifacts": {
+    "nera": "0f905b5ae5a0dae3d549133095898f0bc689f03da4973d08d7db01daa1493660",
+    "libnera_runtime.a": "ce82de44ace350611b197e2779eb067bbc835770a4c0cba27bc649b21ff88358"
+  },
+  "evidence_sha256": {
+    "beam-comparison.log": "1f2d5a14590df356f39679de943c329acc0b24e364c8b755f356b4e2bb27c8dd",
+    "build.log": "79c17916ce4d535ccf7134e075b0125bec000b7e012b035dc39c1312376f2995",
+    "clippy.log": "14a705e9ee4b32d4901b2da29642b0b846f0fd138dc1faa45bc17e09b495d9b0",
+    "erlang-tests.log": "d0487211b28058d6b70d37e00e593cb5a83b987cb0f32bd1554fe372e73d9cae",
+    "workspace-tests.log": "a0ef83e7f7e34a2ada4bf415cb1a5a228ddbeca9c6cfa0b23984075833671971"
+  },
+  "platform": "macOS arm64",
+  "omitted": [
+    "Linux/Windows",
+    "cross-target",
+    "installed archives",
+    "independent merge review"
+  ],
+  "remote_ci": "paused by repository policy; not enabled or triggered"
+}

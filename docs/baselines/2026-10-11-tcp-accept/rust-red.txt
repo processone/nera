@@ -1,0 +1,34 @@
+running 1 test
+test reactor::tests::concurrent_accepts_preserve_waiters ... FAILED
+
+failures:
+
+---- reactor::tests::concurrent_accepts_preserve_waiters stdout ----
+
+thread 'reactor::tests::concurrent_accepts_preserve_waiters' (1533006350) panicked at crates/nera-runtime/src/reactor.rs:1116:13:
+
+running 1 test
+test reactor::tests::concurrent_accepts_preserve_waiters ... FAILED
+
+failures:
+
+failures:
+    reactor::tests::concurrent_accepts_preserve_waiters
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 451 filtered out; finished in 0.00s
+
+
+
+thread 'reactor::tests::concurrent_accepts_preserve_waiters' (1533006352) panicked at crates/nera-runtime/src/reactor.rs:1140:9:
+a second accept must not discard the first suspended process
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    reactor::tests::concurrent_accepts_preserve_waiters
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 451 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p nera-runtime --lib`

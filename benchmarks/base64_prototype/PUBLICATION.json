@@ -1,0 +1,27 @@
+{
+  "base_ref": "mr/binary-match-corrections",
+  "base": "45a1d1ff6596bdbdb04c7947252ef5821b23397e",
+  "base_tree": "0d187bed73d2264179f3aae25424eaa93805e3b0",
+  "target": "working tree: benchmarks/base64_prototype only",
+  "checks": [
+    "release timing build",
+    "release allocation build",
+    "3 prototype Rust tests (16388 round trips)",
+    "78000+ differential comparisons in each build",
+    "Base64 options/dynamic calls",
+    "448 checksum-validated benchmark rows",
+    "runtime Clippy warnings denied",
+    "Python syntax",
+    "scoped whitespace"
+  ],
+  "evidence": "results-publication/artifacts.json",
+  "previous_runs": "historical snapshots preserved, with trailing blank log lines normalized and hashes refreshed",
+  "production_changes_in_this_pr": false,
+  "omitted": [
+    "concurrent latency",
+    "large-input resource-limit tests",
+    "cross-platform",
+    "production integration"
+  ],
+  "publication": "draft PR stacked on #60; no merge"
+}

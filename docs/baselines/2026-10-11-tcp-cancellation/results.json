@@ -1,0 +1,43 @@
+{
+  "base": "81cb1fcdab8265eb72b5dc51526708ac75a24a5f",
+  "target": "uncommitted working tree on mr/tcp-cancellation-index",
+  "sources": {
+    "crates/nera-runtime/src/reactor.rs": "3bfe0016c3b1a643f178c40d679c2963913301415b6dc2d416932b49052949f1",
+    "crates/nera-runtime/src/reactor/accept_waiters.rs": "edc4d8e06dd90ba1ff9e49969dcda6a0137a273b1c21055227bb3fa8e179cf37",
+    "Cargo.lock": "2b23030c542224604bc14c0b2b0bceff36dcde82391ab8ebe6a7d7b575802e3e"
+  },
+  "logs": {
+    "index-tests.log": "581488eb773bdf8989f029420a6b17c4d62f5cb6ec1c677492f9141c2fd8f163",
+    "index-clippy.log": "6e6a575e1db8c0130f523cec0b65b2dc9edccb07d46cfcee62a76309a1999135",
+    "index-workspace-clippy.log": "71781102475e670f6badf2f604ed6876694b57cb25b28fc894c3a82f8f1299a1",
+    "index-workspace-tests.log": "eaa83152e6d11088a53d4086ef7125d135c8cf27a002a82997f894d57732aae6",
+    "index-build.log": "4a33f95ffd631d7379655a3ec1da05630ba43431a158682eee8403a55c2a198c",
+    "index-baseline.log": "c6e81e72848fc7eb463cc4b0007800106df64d032fa4d02b7aa2e8ce1c194007",
+    "index-scaling.log": "8f33d661498ab27123301cd9758a2f38214a0f4219759efddb67c40dff7e46f0",
+    "index-scaling-repeat.log": "0b361363f699f58214ab02585126d7bd7b23c8abd20366306979dd999bb63c37",
+    "index-repeated/results.json": "0d6132d50d24ddb5e2f3caa36ef65620769e6d301294463e959645e3531c05f2"
+  },
+  "rust": {
+    "passed": 1757,
+    "failed": 0,
+    "ignored": 1
+  },
+  "erlang": {
+    "passed": 287,
+    "failed": 0,
+    "skipped": 2
+  },
+  "strict_clippy": "passed",
+  "release_build": "passed",
+  "publication": "not committed or pushed",
+  "repeated": {
+    "tcp_reactor_stress": {
+      "runs": 100,
+      "passed": 100
+    },
+    "tcp_accept_concurrent": {
+      "runs": 100,
+      "passed": 100
+    }
+  }
+}

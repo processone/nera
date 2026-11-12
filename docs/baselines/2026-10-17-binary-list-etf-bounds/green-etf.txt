@@ -1,0 +1,95 @@
+   Compiling nera-runtime v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.05s
+     Running unittests src/lib.rs (/tmp/nera-transfer-target/debug/deps/nera_runtime-27bb0f9fcbc2d668)
+
+running 70 tests
+test bif::tests::etf_binary_to_term_badarg ... ok
+test bif::tests::etf_binary_to_term_only_version_byte ... ok
+test bif::tests::etf_binary_to_term_truncated_atom ... ok
+test bif::tests::etf_binary_to_term_truncated_binary ... ok
+test bif::tests::etf_binary_to_term_truncated_float ... ok
+test bif::tests::etf_binary_to_term_truncated_integer ... ok
+test bif::tests::etf_binary_to_term_truncated_list ... ok
+test bif::tests::etf_binary_to_term_truncated_map ... ok
+test bif::tests::etf_binary_to_term_truncated_small_big ... ok
+test bif::tests::etf_binary_to_term_truncated_small_int ... ok
+test bif::tests::etf_binary_to_term_truncated_string_ext ... ok
+test bif::tests::etf_binary_to_term_truncated_tuple ... ok
+test bif::tests::etf_binary_to_term_unknown_tag ... ok
+test bif::tests::etf_binary_to_term_wrong_arity ... ok
+test bif::tests::etf_container_bounds_allow_one_byte_terms_and_empty_containers ... ok
+test bif::tests::etf_idempotent_encode ... ok
+test bif::tests::etf_impossible_container_counts_reject_before_allocation ... ok
+test bif::tests::etf_list_with_mixed_types_uses_list_ext ... ok
+test bif::tests::etf_list_with_negative_uses_list_ext ... ok
+test bif::tests::etf_list_with_non_byte_uses_list_ext ... ok
+test bif::tests::etf_maximum_container_counts_and_missing_list_tails_are_rejected ... ok
+test bif::tests::etf_output_starts_with_version_131 ... ok
+test bif::tests::etf_pid_preserves_domain_and_rejects_reserved_bits ... ok
+test bif::tests::etf_roundtrip_atom ... ok
+test bif::tests::etf_roundtrip_atom_empty ... ok
+test bif::tests::etf_roundtrip_atom_true_false ... ok
+test bif::tests::etf_roundtrip_atom_unicode ... ok
+test bif::tests::etf_roundtrip_below_i32_uses_bigext ... ok
+test bif::tests::etf_roundtrip_beyond_i32_uses_bigext ... ok
+test bif::tests::etf_roundtrip_bigint ... ok
+test bif::tests::etf_roundtrip_bigint_zero ... ok
+test bif::tests::etf_roundtrip_binary ... ok
+test bif::tests::etf_roundtrip_binary_all_byte_values ... ok
+test bif::tests::etf_roundtrip_binary_with_nulls ... ok
+test bif::tests::etf_roundtrip_deeply_nested ... ok
+test bif::tests::etf_roundtrip_empty_binary ... ok
+test bif::tests::etf_roundtrip_empty_map ... ok
+test bif::tests::etf_roundtrip_empty_tuple ... ok
+test bif::tests::etf_roundtrip_float ... ok
+test bif::tests::etf_roundtrip_float_infinity ... ok
+test bif::tests::etf_roundtrip_float_nan ... ok
+test bif::tests::etf_roundtrip_float_neg_infinity ... ok
+test bif::tests::etf_roundtrip_float_negative ... ok
+test bif::tests::etf_roundtrip_float_zero ... ok
+test bif::tests::etf_roundtrip_i32_max ... ok
+test bif::tests::etf_roundtrip_i32_min ... ok
+test bif::tests::etf_roundtrip_int_255 ... ok
+test bif::tests::etf_roundtrip_int_256 ... ok
+test bif::tests::etf_roundtrip_int_neg1 ... ok
+test bif::tests::etf_roundtrip_large_int ... ok
+test bif::tests::etf_roundtrip_large_tuple ... ok
+test bif::tests::etf_roundtrip_list ... ok
+test bif::tests::etf_roundtrip_list_of_tuples ... ok
+test bif::tests::etf_roundtrip_long_list ... ok
+test bif::tests::etf_roundtrip_map ... ok
+test bif::tests::etf_roundtrip_map_multiple_pairs ... ok
+test bif::tests::etf_roundtrip_map_with_complex_values ... ok
+test bif::tests::etf_roundtrip_negative_int ... ok
+test bif::tests::etf_roundtrip_nested ... ok
+test bif::tests::etf_roundtrip_nil ... ok
+test bif::tests::etf_roundtrip_pid ... ok
+test bif::tests::etf_roundtrip_pid_large ... ok
+test bif::tests::etf_roundtrip_pid_zero ... ok
+test bif::tests::etf_roundtrip_single_element_list ... ok
+test bif::tests::etf_roundtrip_small_int ... ok
+test bif::tests::etf_roundtrip_tuple ... ok
+test bif::tests::etf_roundtrip_very_large_bigint ... ok
+test bif::tests::etf_roundtrip_zero ... ok
+test bif::tests::etf_string_ext_optimization ... ok
+test bif::tests::etf_term_to_binary_wrong_arity ... ok
+
+test result: ok. 70 passed; 0 failed; 0 ignored; 0 measured; 559 filtered out; finished in 0.01s
+
+     Running tests/exit_signal_contract.rs (/tmp/nera-transfer-target/debug/deps/exit_signal_contract-3858ad16e9a3e84b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/fragment_heap_contract.rs (/tmp/nera-transfer-target/debug/deps/fragment_heap_contract-a6d410d2fc9c10d6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/scheduler_borrow_scope.rs (/tmp/nera-transfer-target/debug/deps/scheduler_borrow_scope-ea7af5f77a2923fd)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s

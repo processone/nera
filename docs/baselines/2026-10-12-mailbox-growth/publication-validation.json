@@ -1,0 +1,20 @@
+{
+  "base": "4b612a7fced36642059b4ef3251cd2bb693f7640",
+  "command": "cargo test --workspace --locked --no-fail-fast",
+  "passed": 1814,
+  "failed": 0,
+  "ignored": 1,
+  "log_sha256": "3b77425bb03273e5389f01fe33610366c8dd5170855a8cd7dd217eef5df4fdd3",
+  "sources": {
+    "CHANGELOG.md": "1fd9fff8e17bceb8d5c51b86574205c948563868c2a8b5a5ddf9369495aae802",
+    "crates/nera-runtime/src/process.rs": "88bbfa4605116bdf750624eba483c5a4513b235f162c60073f7abf744a53f788",
+    "docs/baselines/2026-10-12-mailbox-growth/measure.py": "7f5983ecbbb6c5082084000842959687e980cf2c2dcb8ee8c89fa85e0457838d",
+    "docs/baselines/2026-10-12-mailbox-growth/results-repeat.json": "0ff8c84fbea9eccae850fe7e08241013eaee6d4ffb78aafc29cd9e8751ee8a91",
+    "docs/baselines/2026-10-12-mailbox-growth/results-during-validation.json": "a9c7f14d2483329bfed04ced58e6125603a2f96a2dd1b84dd7d01c179fce6c06",
+    "docs/baselines/2026-10-12-mailbox-growth/results.json": "76f6272c8321a09ef63930e49490481bb753d2aae19aa35ebbd71be885c38fc1",
+    "docs/baselines/2026-10-12-mailbox-growth/README.md": "876234afce1c2a82f1e21ddc38048e5223abe188f8af57c3ac141b25547a151a",
+    "docs/baselines/2026-10-12-mailbox-growth/results-during-validation-repeat.json": "c0b92cba1660d174204d194d69d02f6c800a652f40cd2c09db5018bb97aa170f",
+    "docs/baselines/2026-10-12-mailbox-growth/red-release.txt": "dc83737d7d82e0e7764aea44aa9d11f6ded7927ab864850dbf299f38ef90ba9f",
+    "docs/baselines/2026-10-12-mailbox-growth/probe.rs": "d8a06d12487d172705341c4a7ab268fd2d1df573dbd81f9eb534fe3260d5e159"
+  }
+}

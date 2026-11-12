@@ -1,0 +1,199 @@
+{
+  "samples": {
+    "before": [
+      {
+        "pid_allocate": 2285,
+        "pid_contended": 4532,
+        "encode_decode": 6008,
+        "status_write": 8578,
+        "process_create": 731,
+        "spawn_contended": 486,
+        "process_cpu_us": 39992
+      },
+      {
+        "pid_allocate": 2126,
+        "pid_contended": 4543,
+        "encode_decode": 5411,
+        "status_write": 8291,
+        "process_create": 718,
+        "spawn_contended": 465,
+        "process_cpu_us": 38779
+      },
+      {
+        "pid_allocate": 2150,
+        "pid_contended": 4492,
+        "encode_decode": 5001,
+        "status_write": 8298,
+        "process_create": 718,
+        "spawn_contended": 459,
+        "process_cpu_us": 38232
+      },
+      {
+        "pid_allocate": 2140,
+        "pid_contended": 4492,
+        "encode_decode": 4944,
+        "status_write": 8299,
+        "process_create": 719,
+        "spawn_contended": 451,
+        "process_cpu_us": 37903
+      },
+      {
+        "pid_allocate": 2123,
+        "pid_contended": 4541,
+        "encode_decode": 5484,
+        "status_write": 8292,
+        "process_create": 718,
+        "spawn_contended": 455,
+        "process_cpu_us": 38743
+      },
+      {
+        "pid_allocate": 2139,
+        "pid_contended": 4524,
+        "encode_decode": 5496,
+        "status_write": 8304,
+        "process_create": 718,
+        "spawn_contended": 446,
+        "process_cpu_us": 38649
+      },
+      {
+        "pid_allocate": 2140,
+        "pid_contended": 4502,
+        "encode_decode": 4842,
+        "status_write": 8302,
+        "process_create": 718,
+        "spawn_contended": 452,
+        "process_cpu_us": 37958
+      },
+      {
+        "pid_allocate": 2134,
+        "pid_contended": 4530,
+        "encode_decode": 4840,
+        "status_write": 8306,
+        "process_create": 716,
+        "spawn_contended": 439,
+        "process_cpu_us": 38088
+      },
+      {
+        "pid_allocate": 2141,
+        "pid_contended": 4538,
+        "encode_decode": 5816,
+        "status_write": 8292,
+        "process_create": 718,
+        "spawn_contended": 442,
+        "process_cpu_us": 38910
+      }
+    ],
+    "after": [
+      {
+        "pid_allocate": 2186,
+        "pid_contended": 7120,
+        "encode_decode": 5060,
+        "status_write": 8285,
+        "process_create": 709,
+        "spawn_contended": 468,
+        "process_cpu_us": 48289
+      },
+      {
+        "pid_allocate": 2185,
+        "pid_contended": 7126,
+        "encode_decode": 5059,
+        "status_write": 8296,
+        "process_create": 708,
+        "spawn_contended": 442,
+        "process_cpu_us": 48185
+      },
+      {
+        "pid_allocate": 2172,
+        "pid_contended": 7179,
+        "encode_decode": 5064,
+        "status_write": 8282,
+        "process_create": 708,
+        "spawn_contended": 458,
+        "process_cpu_us": 48313
+      },
+      {
+        "pid_allocate": 2174,
+        "pid_contended": 7226,
+        "encode_decode": 5058,
+        "status_write": 8294,
+        "process_create": 708,
+        "spawn_contended": 462,
+        "process_cpu_us": 48519
+      },
+      {
+        "pid_allocate": 2169,
+        "pid_contended": 7581,
+        "encode_decode": 5058,
+        "status_write": 8309,
+        "process_create": 707,
+        "spawn_contended": 454,
+        "process_cpu_us": 49539
+      },
+      {
+        "pid_allocate": 2171,
+        "pid_contended": 7966,
+        "encode_decode": 5231,
+        "status_write": 8298,
+        "process_create": 713,
+        "spawn_contended": 461,
+        "process_cpu_us": 51237
+      },
+      {
+        "pid_allocate": 2175,
+        "pid_contended": 7068,
+        "encode_decode": 5058,
+        "status_write": 8315,
+        "process_create": 711,
+        "spawn_contended": 585,
+        "process_cpu_us": 48198
+      },
+      {
+        "pid_allocate": 2345,
+        "pid_contended": 7398,
+        "encode_decode": 5063,
+        "status_write": 8318,
+        "process_create": 713,
+        "spawn_contended": 423,
+        "process_cpu_us": 48544
+      },
+      {
+        "pid_allocate": 2169,
+        "pid_contended": 7140,
+        "encode_decode": 5064,
+        "status_write": 8289,
+        "process_create": 709,
+        "spawn_contended": 447,
+        "process_cpu_us": 48206
+      }
+    ]
+  },
+  "medians": {
+    "before": {
+      "pid_allocate": 2140,
+      "pid_contended": 4530,
+      "encode_decode": 5411,
+      "status_write": 8299,
+      "process_create": 718,
+      "spawn_contended": 452,
+      "process_cpu_us": 38649
+    },
+    "after": {
+      "pid_allocate": 2174,
+      "pid_contended": 7179,
+      "encode_decode": 5060,
+      "status_write": 8296,
+      "process_create": 709,
+      "spawn_contended": 458,
+      "process_cpu_us": 48313
+    }
+  },
+  "percent_change": {
+    "pid_allocate": 1.5887850467289688,
+    "pid_contended": 58.476821192052974,
+    "encode_decode": -6.486786176307524,
+    "status_write": -0.03614893360646132,
+    "process_create": -1.253481894150421,
+    "spawn_contended": 1.327433628318575,
+    "process_cpu_us": 25.00452793086496
+  }
+}

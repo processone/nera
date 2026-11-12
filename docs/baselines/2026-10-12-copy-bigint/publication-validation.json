@@ -1,0 +1,31 @@
+{
+  "base": "4f5a266e291d5b4c3dc56cfc060663000bb59d9c",
+  "command": "cargo test --workspace --locked --no-fail-fast",
+  "passed": 1818,
+  "failed": 0,
+  "ignored": 1,
+  "log_sha256": "8bd1372d3d68a37d2420d9b8fd1264ce1f5c4c4333a9d18d07f85e48b6c957fc",
+  "sources": {
+    "CHANGELOG.md": "83d21a11be364752a9422e4fe834af9b53f54e012dbbcb42559f4d112d9e5902",
+    "crates/nera-runtime/src/bigint.rs": "b22ab186fadc23cdd4aa4e426cb692fe2d31abcbc29d71d54192390f828214f8",
+    "crates/nera-runtime/src/ffi/process.rs": "de086fcadc583ec9766ff3d4eb1459d112fb43c54e5e84909f610d099aa90f7d",
+    "crates/nera-runtime/src/message.rs": "1796119388e6a82d023b63ebf09022d3e09728d32e52e2f6df8b719b4a69e673",
+    "crates/nera-runtime/src/process.rs": "1c9f118dbb779fc90175f18a134746a023ffe85e58c6a799c899a27c3909170c",
+    "crates/nera-runtime/src/scheduler.rs": "1cdd2d59d107a666393d57f9ffe5016eb41e6b56bf094c81828d140a154e1d75",
+    "crates/nera-runtime/src/term.rs": "93db6797113fb70bc90727ad4302ac062e762365e301652e25098e1e243a2904",
+    "tests/hibernate_heap_args.erl": "b9e07b95db81f36bf8b8af7878778f6a4088952709a23d4a1f6790a2b5de0ed6",
+    "docs/baselines/2026-10-12-copy-bigint/snapshot-inline-owner.json": "3a3e6750dadf9854e44fec70101f52c4a34fc4249d702a1f3197b0d54ccea85e",
+    "docs/baselines/2026-10-12-copy-bigint/measure.py": "7f5983ecbbb6c5082084000842959687e980cf2c2dcb8ee8c89fa85e0457838d",
+    "docs/baselines/2026-10-12-copy-bigint/copy.json": "1ef4125fd5b5e1ef8022940c75de77667c8026c5a598c1c2b7c915dcb3d5387c",
+    "docs/baselines/2026-10-12-copy-bigint/counters-final.json": "b2483b41f2111957290e6b5d00e656084e0e57049ad8e9a6e202ea3d0b549ab2",
+    "docs/baselines/2026-10-12-copy-bigint/bench_promoted_counters.erl": "9f3308c7e5b05acf1dee434573e680d48c2fb7915be0636cf811d573b35d3db5",
+    "docs/baselines/2026-10-12-copy-bigint/counters-repeat.json": "8566be03703146170468cfe3a1d32f4dbfdd0fef31202d90b8f71594e2ecd09f",
+    "docs/baselines/2026-10-12-copy-bigint/README.md": "c926251cf6bf7f3a7ede3917f529f03f3d399c3ee1afc3e48c9cf33fc3558a7d",
+    "docs/baselines/2026-10-12-copy-bigint/red-api.txt": "fb18b534eea7d5cadd17fcc52c7a7fa0dce19e8a981ddbf44c78d0590870390b",
+    "docs/baselines/2026-10-12-copy-bigint/bench_copy.erl": "8e09a0baf7acbb59574849352c51c86542a15b850e769e49255562acd7d4b5c2",
+    "docs/baselines/2026-10-12-copy-bigint/snapshot-final.json": "2003a00cca384fba1edd2f6a4b9b6ea1e41e24750c61cd6a99d1b8aeeb6d04f1",
+    "docs/baselines/2026-10-12-copy-bigint/counters.json": "420ff80f80eb2176e7e4b61de71a167f801035705aa9dbc84e0813db4927131a",
+    "docs/baselines/2026-10-12-copy-bigint/snapshot-initial.json": "a2a9a26dc4a086bd21a3e063e0cb61ef86c75161f7622163823bb50571ef0477",
+    "docs/baselines/2026-10-12-copy-bigint/snapshot-repeat.json": "7ee3567457048ddafa44c2aca026c174326dddb85cfa5fdeac0aedb3b4dc4e34"
+  }
+}

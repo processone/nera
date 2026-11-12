@@ -1,0 +1,30 @@
+warning: method `should_collect_idle` is never used
+   --> crates/nera-runtime/src/heap.rs:747:19
+    |
+377 | impl ProcessHeap {
+    | ---------------- method in this implementation
+...
+747 |     pub(crate) fn should_collect_idle(&self, _roots: &[ErlTerm]) -> bool {
+    |                   ^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `nera-runtime` (lib) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.13s
+     Running unittests src/lib.rs (/home/user/AIProjects/nera/target/binary-match-publication/debug/deps/nera_runtime-27bb0f9fcbc2d668)
+
+running 1 test
+
+thread 'heap::tests::idle_gc_skips_unchanged_roots_but_reclaims_dropped_roots' (4957162) panicked at crates/nera-runtime/src/heap.rs:2619:9:
+assertion failed: !heap.should_collect_idle(&[roots[1], roots[0], roots[0], roots[2]])
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test heap::tests::idle_gc_skips_unchanged_roots_but_reclaims_dropped_roots ... FAILED
+
+failures:
+
+failures:
+    heap::tests::idle_gc_skips_unchanged_roots_but_reclaims_dropped_roots
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 540 filtered out; finished in 0.22s
+
+error: test failed, to rerun pass `-p nera-runtime --lib`

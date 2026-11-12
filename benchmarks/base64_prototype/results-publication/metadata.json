@@ -1,0 +1,10 @@
+{
+  "base_head": "45a1d1ff6596bdbdb04c7947252ef5821b23397e",
+  "input_status": "?? benchmarks/base64_prototype/\n?? target\n",
+  "platform": "macOS-15.7.7-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "workspace": "/var/folders/yk/hpylg6r976qgbphydj66gt9h0000gn/T/nera-base64-u35q9cui",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "scheduler_threads": 1,
+  "timing_instrumented": false
+}

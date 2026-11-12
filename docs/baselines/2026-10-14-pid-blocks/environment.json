@@ -1,0 +1,22 @@
+{
+  "platform": "macOS-15.7.7-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "measurement_start": "2026-10-14T13:35:34.679798+00:00",
+  "load_start": [
+    6.5322265625,
+    8.1396484375,
+    7.21435546875
+  ],
+  "binaries": {
+    "/tmp/nera-pid-block-before": "0d9d547b173ca1824ac846b857cb0211897bc0bc05f61a48ccea9b60df5a4f1e",
+    "/tmp/nera-pid-block-after": "365663222333bcacd161403f96b78e79f55718e9c4fb2479e1ad20be2bf6ebf1",
+    "/tmp/nera-pid-block-spawn-before": "f6fe7841dee4a3d24cf1ed10c35bdec86bab0e18aa31441aac0d84f4c83ac30e",
+    "/tmp/nera-pid-block-spawn-after": "bd374dcdb12534382d0b4f3fda123986512f48861d7227d9f8ae785b04128659"
+  },
+  "measurement_end": "2026-10-14T13:37:17.340024+00:00",
+  "load_end": [
+    4.9326171875,
+    7.1796875,
+    6.9501953125
+  ]
+}

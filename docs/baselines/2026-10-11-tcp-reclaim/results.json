@@ -1,0 +1,37 @@
+{
+  "base": "8627d638e5b26b5f385559d9fc1fc959bde1b71e",
+  "target": "uncommitted working tree on mr/tcp-cancellation-index",
+  "sources": {
+    "crates/nera-runtime/src/reactor/accept_waiters.rs": "c7b4f1f2b022b0e0e3854c72d8c3f13489dd0737cc90a7e4bfe199636e2b6969",
+    "docs/baselines/2026-10-11-tcp-reclaim/memory.rs": "1f91f467b88adcd3c0fcb651093cab94f768a5369dd8c676410503a7ca39b170"
+  },
+  "local_logs": {
+    "nera-reclaim-red.log": "bf7d520216804a5f266b7b4b746bb43aaf76bd6b366db05fc34160aa53319f7c",
+    "nera-reclaim-green.log": "28e9def1805ad097045e3b80c56d70c40905d56a69ef0ffe0f18d081ed4ff2e4",
+    "nera-reclaim-clippy.log": "b062abbec8383cd9626af1cc519c528be805d48ef0464d8097e62739148b01d1",
+    "nera-reclaim-runtime-tests.log": "0720071c02c644916e8f45e3a16a7919b9694b78226a9d6f9f8d863e31183ad4",
+    "nera-reclaim-build.log": "9cc071a4bae34c8de8c7a3a25d1e21cbb96eab69788436299107ed3d9c68f959",
+    "nera-reclaim-tcp.log": "7615ce7a19e2ec57dc9a45113843cb24af2f14bef830e430f711ca729a661683",
+    "nera-reclaim-scaling.log": "add86ced3f29930b81dc551c761917d3d688b3b98bd8a06895e382ae1712d089",
+    "nera-reclaim-scaling-repeat.log": "c2997899a23649d82a06ae2a569a58377467c4fc902f98188b5164fca86f8550"
+  },
+  "runtime_tests": {
+    "passed": 466,
+    "failed": 0,
+    "ignored": 1
+  },
+  "tcp_tests": {
+    "passed": 8,
+    "failed": 0
+  },
+  "strict_runtime_clippy": "passed",
+  "release_runtime_build": "passed",
+  "regression_before_fix": "failed: PID index retained peak capacity",
+  "regression_after_fix": "passed",
+  "memory_retained_32768_one_listener": {
+    "before_bytes": 3735700,
+    "after_bytes": 14740
+  },
+  "full_workspace_and_erlang_baseline": "not rerun; scoped runtime and TCP checks",
+  "publication": "not committed or pushed"
+}

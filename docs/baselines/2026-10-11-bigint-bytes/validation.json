@@ -1,0 +1,26 @@
+{
+  "base": "9b64f629dbc854014ad351a451145cd55df6a50c",
+  "sources": {
+    "crates/nera-runtime/src/bigint.rs": "966f019af12378bd6169207d8f88c08fe6a56a1e4b6ae00784646eff3d24e575",
+    "CHANGELOG.md": "5373a1d57e50607e5ec5b04a8f08e8ccc94b137c0905f475542c75474da33cf1",
+    "docs/baselines/2026-10-11-bigint-bytes/measure.py": "0c04771cb3194566ea46c1f7ba9de3709095c6c6bee78322ef093894cb0b2e4f",
+    "docs/baselines/2026-10-11-bigint-bytes/results-repeat.json": "88b633ee63857b8b34680a379d32d39a051c09fba5a368e4e1012385bb15f90a",
+    "docs/baselines/2026-10-11-bigint-bytes/results.json": "3f383fb233a6f64177f0fde86f52cc57083100aca9a13556a11535b479102af6",
+    "docs/baselines/2026-10-11-bigint-bytes/bench_promoted_counters.erl": "9f3308c7e5b05acf1dee434573e680d48c2fb7915be0636cf811d573b35d3db5",
+    "docs/baselines/2026-10-11-bigint-bytes/README.md": "3726ccd45b7e6facc8ccd08564f931d5d32f09f087d3c1513c4ac13b16a19c71"
+  },
+  "artifacts": {
+    "before/nera": "630172ccc9008b0286bc3187fa7e67d45d32694b53c30f54a4f9b0ed767726f8",
+    "before/libnera_runtime.a": "548e8713447fde1c8bee38c013fb1812302d48dd3fabe5084cb3b8b1320f4d0b",
+    "before/bench": "47fa9d1032794d0ea817aabad1a36647df1c35bc6ff7e4a18afaff8f724938e2",
+    "after/nera": "630172ccc9008b0286bc3187fa7e67d45d32694b53c30f54a4f9b0ed767726f8",
+    "after/libnera_runtime.a": "3ab064ef6a5ea1cef8a3c5db77b967247847ffa812cfb99044848680ca7bfe08",
+    "after/bench": "b9e026bdcb8b69801254e80e435472326a7056133d1445aafc144572c97b7139"
+  },
+  "logs": {
+    "nera-bytes-tests.log": "5b7ff0ad267b83cdeafa5704366648891b19de1a5ec3bf2be10979c9d1fe9e28",
+    "nera-bytes-clippy.log": "0d2bbac5b0bdf65c254b462aff3fc27c2ce044d952c36b46fc4fb8947492e316",
+    "nera-bytes-before-build.log": "1401ace5561e86b7bcaaeedf1f691319f66b9cda9b7a170f7e9e65512df745bd",
+    "nera-bytes-after-build.log": "670c2ebfcea5c306a07d751d964b46210dd2d2eb51e0abc0cb7cc0cdb7b68480"
+  }
+}

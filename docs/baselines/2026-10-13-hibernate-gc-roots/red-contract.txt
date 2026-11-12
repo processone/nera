@@ -1,0 +1,17 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.23s
+   Doc-tests nera_runtime
+
+running 1 test
+test crates/nera-runtime/src/heap.rs - heap::ProcessHeap::collect (line 655) - compile fail ... FAILED
+
+failures:
+
+---- crates/nera-runtime/src/heap.rs - heap::ProcessHeap::collect (line 655) stdout ----
+Test compiled successfully, but it's marked `compile_fail`.
+
+failures:
+    crates/nera-runtime/src/heap.rs - heap::ProcessHeap::collect (line 655)
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 15 filtered out; finished in 0.35s
+
+error: doctest failed, to rerun pass `-p nera-runtime --doc`

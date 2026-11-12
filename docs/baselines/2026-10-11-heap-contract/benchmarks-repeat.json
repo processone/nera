@@ -1,0 +1,509 @@
+{
+  "ets": {
+    "samples": [
+      {
+        "pair": 0,
+        "version": "before",
+        "stdout": "set insert 43454\nset overwrite 56782\nset immediate 26718\nset boxed 42616\nset lookup 57685\nset concurrent 78938\nset concurrent_boxed 48212\nordered_set insert 52874\nordered_set overwrite 125355\nordered_set immediate 86057\nordered_set boxed 91149\nordered_set lookup 118568\nordered_set concurrent 69486\nordered_set concurrent_boxed 29536\n"
+      },
+      {
+        "pair": 0,
+        "version": "after",
+        "stdout": "set insert 33302\nset overwrite 53742\nset immediate 24197\nset boxed 44793\nset lookup 42223\nset concurrent 72528\nset concurrent_boxed 29936\nordered_set insert 47760\nordered_set overwrite 101490\nordered_set immediate 78388\nordered_set boxed 89154\nordered_set lookup 114667\nordered_set concurrent 84280\nordered_set concurrent_boxed 34057\n"
+      },
+      {
+        "pair": 1,
+        "version": "after",
+        "stdout": "set insert 42478\nset overwrite 52142\nset immediate 25264\nset boxed 38451\nset lookup 46129\nset concurrent 88497\nset concurrent_boxed 35798\nordered_set insert 51606\nordered_set overwrite 113005\nordered_set immediate 78639\nordered_set boxed 87646\nordered_set lookup 111746\nordered_set concurrent 87997\nordered_set concurrent_boxed 39329\n"
+      },
+      {
+        "pair": 1,
+        "version": "before",
+        "stdout": "set insert 53368\nset overwrite 56921\nset immediate 32691\nset boxed 63410\nset lookup 52377\nset concurrent 78217\nset concurrent_boxed 26120\nordered_set insert 53878\nordered_set overwrite 344075\nordered_set immediate 78041\nordered_set boxed 90077\nordered_set lookup 121176\nordered_set concurrent 62141\nordered_set concurrent_boxed 29849\n"
+      },
+      {
+        "pair": 2,
+        "version": "before",
+        "stdout": "set insert 30657\nset overwrite 45409\nset immediate 20894\nset boxed 34059\nset lookup 42591\nset concurrent 63737\nset concurrent_boxed 26935\nordered_set insert 57911\nordered_set overwrite 98365\nordered_set immediate 103823\nordered_set boxed 95881\nordered_set lookup 121135\nordered_set concurrent 73009\nordered_set concurrent_boxed 32082\n"
+      },
+      {
+        "pair": 2,
+        "version": "after",
+        "stdout": "set insert 33896\nset overwrite 54345\nset immediate 22195\nset boxed 35677\nset lookup 45793\nset concurrent 70684\nset concurrent_boxed 31677\nordered_set insert 57311\nordered_set overwrite 104256\nordered_set immediate 75128\nordered_set boxed 87124\nordered_set lookup 123562\nordered_set concurrent 66948\nordered_set concurrent_boxed 33079\n"
+      },
+      {
+        "pair": 3,
+        "version": "after",
+        "stdout": "set insert 35893\nset overwrite 45005\nset immediate 19042\nset boxed 31774\nset lookup 39965\nset concurrent 60101\nset concurrent_boxed 26018\nordered_set insert 46450\nordered_set overwrite 98450\nordered_set immediate 73610\nordered_set boxed 85709\nordered_set lookup 114009\nordered_set concurrent 64572\nordered_set concurrent_boxed 32144\n"
+      },
+      {
+        "pair": 3,
+        "version": "before",
+        "stdout": "set insert 36566\nset overwrite 50499\nset immediate 19965\nset boxed 34849\nset lookup 45362\nset concurrent 67191\nset concurrent_boxed 26982\nordered_set insert 44784\nordered_set overwrite 97929\nordered_set immediate 73445\nordered_set boxed 84804\nordered_set lookup 110458\nordered_set concurrent 64897\nordered_set concurrent_boxed 31263\n"
+      },
+      {
+        "pair": 4,
+        "version": "before",
+        "stdout": "set insert 29713\nset overwrite 47214\nset immediate 21137\nset boxed 34176\nset lookup 40834\nset concurrent 72006\nset concurrent_boxed 27357\nordered_set insert 46976\nordered_set overwrite 99808\nordered_set immediate 73224\nordered_set boxed 84772\nordered_set lookup 109562\nordered_set concurrent 62318\nordered_set concurrent_boxed 30659\n"
+      },
+      {
+        "pair": 4,
+        "version": "after",
+        "stdout": "set insert 31604\nset overwrite 46199\nset immediate 19340\nset boxed 32189\nset lookup 40337\nset concurrent 72004\nset concurrent_boxed 27410\nordered_set insert 48973\nordered_set overwrite 111169\nordered_set immediate 81675\nordered_set boxed 91786\nordered_set lookup 122031\nordered_set concurrent 72568\nordered_set concurrent_boxed 29634\n"
+      },
+      {
+        "pair": 5,
+        "version": "after",
+        "stdout": "set insert 33913\nset overwrite 48042\nset immediate 23480\nset boxed 36578\nset lookup 43106\nset concurrent 66964\nset concurrent_boxed 26960\nordered_set insert 48058\nordered_set overwrite 107145\nordered_set immediate 82581\nordered_set boxed 88778\nordered_set lookup 115345\nordered_set concurrent 79814\nordered_set concurrent_boxed 48084\n"
+      },
+      {
+        "pair": 5,
+        "version": "before",
+        "stdout": "set insert 37884\nset overwrite 48513\nset immediate 23700\nset boxed 35887\nset lookup 42833\nset concurrent 68734\nset concurrent_boxed 26707\nordered_set insert 48349\nordered_set overwrite 100878\nordered_set immediate 77755\nordered_set boxed 89295\nordered_set lookup 122131\nordered_set concurrent 63118\nordered_set concurrent_boxed 30704\n"
+      },
+      {
+        "pair": 6,
+        "version": "before",
+        "stdout": "set insert 33410\nset overwrite 51191\nset immediate 23644\nset boxed 37835\nset lookup 58096\nset concurrent 73704\nset concurrent_boxed 30021\nordered_set insert 73522\nordered_set overwrite 156741\nordered_set immediate 74737\nordered_set boxed 87066\nordered_set lookup 113008\nordered_set concurrent 67417\nordered_set concurrent_boxed 31865\n"
+      },
+      {
+        "pair": 6,
+        "version": "after",
+        "stdout": "set insert 33278\nset overwrite 50921\nset immediate 20456\nset boxed 34473\nset lookup 43101\nset concurrent 59519\nset concurrent_boxed 26220\nordered_set insert 45735\nordered_set overwrite 103533\nordered_set immediate 78690\nordered_set boxed 86177\nordered_set lookup 109851\nordered_set concurrent 62334\nordered_set concurrent_boxed 30115\n"
+      },
+      {
+        "pair": 7,
+        "version": "after",
+        "stdout": "set insert 37892\nset overwrite 51965\nset immediate 23464\nset boxed 38410\nset lookup 49821\nset concurrent 72343\nset concurrent_boxed 35640\nordered_set insert 56199\nordered_set overwrite 109219\nordered_set immediate 81090\nordered_set boxed 99524\nordered_set lookup 126190\nordered_set concurrent 68310\nordered_set concurrent_boxed 32641\n"
+      },
+      {
+        "pair": 7,
+        "version": "before",
+        "stdout": "set insert 33180\nset overwrite 60376\nset immediate 24797\nset boxed 36906\nset lookup 48452\nset concurrent 70655\nset concurrent_boxed 27943\nordered_set insert 48009\nordered_set overwrite 104841\nordered_set immediate 75679\nordered_set boxed 86218\nordered_set lookup 110469\nordered_set concurrent 63887\nordered_set concurrent_boxed 30522\n"
+      },
+      {
+        "pair": 8,
+        "version": "before",
+        "stdout": "set insert 29173\nset overwrite 45943\nset immediate 19716\nset boxed 32399\nset lookup 40834\nset concurrent 63661\nset concurrent_boxed 27119\nordered_set insert 43651\nordered_set overwrite 100058\nordered_set immediate 73980\nordered_set boxed 84951\nordered_set lookup 110579\nordered_set concurrent 67229\nordered_set concurrent_boxed 30198\n"
+      },
+      {
+        "pair": 8,
+        "version": "after",
+        "stdout": "set insert 35868\nset overwrite 49837\nset immediate 24419\nset boxed 35746\nset lookup 44649\nset concurrent 66563\nset concurrent_boxed 26189\nordered_set insert 46346\nordered_set overwrite 102830\nordered_set immediate 73526\nordered_set boxed 85144\nordered_set lookup 109883\nordered_set concurrent 63337\nordered_set concurrent_boxed 30691\n"
+      },
+      {
+        "pair": 9,
+        "version": "after",
+        "stdout": "set insert 29462\nset overwrite 45892\nset immediate 19337\nset boxed 32251\nset lookup 39366\nset concurrent 64089\nset concurrent_boxed 38965\nordered_set insert 47017\nordered_set overwrite 100888\nordered_set immediate 74734\nordered_set boxed 86120\nordered_set lookup 113064\nordered_set concurrent 67071\nordered_set concurrent_boxed 30925\n"
+      },
+      {
+        "pair": 9,
+        "version": "before",
+        "stdout": "set insert 34911\nset overwrite 46348\nset immediate 19283\nset boxed 33824\nset lookup 41726\nset concurrent 61487\nset concurrent_boxed 27763\nordered_set insert 45357\nordered_set overwrite 100956\nordered_set immediate 76188\nordered_set boxed 89056\nordered_set lookup 116274\nordered_set concurrent 64760\nordered_set concurrent_boxed 28551\n"
+      },
+      {
+        "pair": 10,
+        "version": "before",
+        "stdout": "set insert 35549\nset overwrite 48701\nset immediate 23406\nset boxed 36672\nset lookup 44042\nset concurrent 66822\nset concurrent_boxed 31842\nordered_set insert 47985\nordered_set overwrite 111245\nordered_set immediate 80994\nordered_set boxed 89859\nordered_set lookup 129568\nordered_set concurrent 78415\nordered_set concurrent_boxed 38973\n"
+      },
+      {
+        "pair": 10,
+        "version": "after",
+        "stdout": "set insert 38416\nset overwrite 45345\nset immediate 19485\nset boxed 32049\nset lookup 39778\nset concurrent 56538\nset concurrent_boxed 25980\nordered_set insert 47705\nordered_set overwrite 101347\nordered_set immediate 73343\nordered_set boxed 86261\nordered_set lookup 111058\nordered_set concurrent 63933\nordered_set concurrent_boxed 31476\n"
+      },
+      {
+        "pair": 11,
+        "version": "after",
+        "stdout": "set insert 30267\nset overwrite 45426\nset immediate 19422\nset boxed 31844\nset lookup 39403\nset concurrent 56662\nset concurrent_boxed 26554\nordered_set insert 44000\nordered_set overwrite 98148\nordered_set immediate 73551\nordered_set boxed 84881\nordered_set lookup 115691\nordered_set concurrent 63842\nordered_set concurrent_boxed 29620\n"
+      },
+      {
+        "pair": 11,
+        "version": "before",
+        "stdout": "set insert 31881\nset overwrite 44106\nset immediate 19024\nset boxed 32205\nset lookup 40060\nset concurrent 58098\nset concurrent_boxed 26925\nordered_set insert 45475\nordered_set overwrite 98547\nordered_set immediate 73649\nordered_set boxed 87166\nordered_set lookup 111756\nordered_set concurrent 64251\nordered_set concurrent_boxed 30894\n"
+      },
+      {
+        "pair": 12,
+        "version": "before",
+        "stdout": "set insert 32642\nset overwrite 46980\nset immediate 18957\nset boxed 32036\nset lookup 39452\nset concurrent 58764\nset concurrent_boxed 27093\nordered_set insert 45365\nordered_set overwrite 97505\nordered_set immediate 73395\nordered_set boxed 84973\nordered_set lookup 111271\nordered_set concurrent 63528\nordered_set concurrent_boxed 29276\n"
+      },
+      {
+        "pair": 12,
+        "version": "after",
+        "stdout": "set insert 29986\nset overwrite 49546\nset immediate 23459\nset boxed 36382\nset lookup 42419\nset concurrent 68269\nset concurrent_boxed 26264\nordered_set insert 47595\nordered_set overwrite 107953\nordered_set immediate 74610\nordered_set boxed 85973\nordered_set lookup 110206\nordered_set concurrent 69788\nordered_set concurrent_boxed 29019\n"
+      },
+      {
+        "pair": 13,
+        "version": "after",
+        "stdout": "set insert 31208\nset overwrite 44277\nset immediate 20881\nset boxed 32469\nset lookup 41959\nset concurrent 60106\nset concurrent_boxed 25613\nordered_set insert 45783\nordered_set overwrite 98299\nordered_set immediate 73391\nordered_set boxed 87894\nordered_set lookup 110140\nordered_set concurrent 61875\nordered_set concurrent_boxed 30218\n"
+      },
+      {
+        "pair": 13,
+        "version": "before",
+        "stdout": "set insert 29317\nset overwrite 44186\nset immediate 25177\nset boxed 61289\nset lookup 53401\nset concurrent 75979\nset concurrent_boxed 27117\nordered_set insert 47928\nordered_set overwrite 101907\nordered_set immediate 75704\nordered_set boxed 88666\nordered_set lookup 115229\nordered_set concurrent 68847\nordered_set concurrent_boxed 28997\n"
+      },
+      {
+        "pair": 14,
+        "version": "before",
+        "stdout": "set insert 33680\nset overwrite 53086\nset immediate 26665\nset boxed 39922\nset lookup 49820\nset concurrent 67732\nset concurrent_boxed 27396\nordered_set insert 47298\nordered_set overwrite 103372\nordered_set immediate 76081\nordered_set boxed 87177\nordered_set lookup 114661\nordered_set concurrent 64204\nordered_set concurrent_boxed 28389\n"
+      },
+      {
+        "pair": 14,
+        "version": "after",
+        "stdout": "set insert 34482\nset overwrite 51086\nset immediate 26076\nset boxed 41870\nset lookup 46859\nset concurrent 84573\nset concurrent_boxed 35692\nordered_set insert 47772\nordered_set overwrite 107849\nordered_set immediate 75465\nordered_set boxed 86186\nordered_set lookup 113177\nordered_set concurrent 67912\nordered_set concurrent_boxed 30867\n"
+      },
+      {
+        "pair": 15,
+        "version": "after",
+        "stdout": "set insert 30800\nset overwrite 51484\nset immediate 23115\nset boxed 95302\nset lookup 47000\nset concurrent 58892\nset concurrent_boxed 25623\nordered_set insert 45589\nordered_set overwrite 99855\nordered_set immediate 73286\nordered_set boxed 85437\nordered_set lookup 109697\nordered_set concurrent 62984\nordered_set concurrent_boxed 29327\n"
+      },
+      {
+        "pair": 15,
+        "version": "before",
+        "stdout": "set insert 29064\nset overwrite 44169\nset immediate 20258\nset boxed 34056\nset lookup 39644\nset concurrent 60812\nset concurrent_boxed 26461\nordered_set insert 45554\nordered_set overwrite 98542\nordered_set immediate 73145\nordered_set boxed 84924\nordered_set lookup 110909\nordered_set concurrent 63524\nordered_set concurrent_boxed 30914\n"
+      },
+      {
+        "pair": 16,
+        "version": "before",
+        "stdout": "set insert 29972\nset overwrite 44942\nset immediate 20213\nset boxed 33621\nset lookup 39231\nset concurrent 66370\nset concurrent_boxed 28489\nordered_set insert 46008\nordered_set overwrite 99037\nordered_set immediate 84456\nordered_set boxed 95284\nordered_set lookup 125640\nordered_set concurrent 63086\nordered_set concurrent_boxed 30181\n"
+      },
+      {
+        "pair": 16,
+        "version": "after",
+        "stdout": "set insert 31963\nset overwrite 44384\nset immediate 19382\nset boxed 34914\nset lookup 47654\nset concurrent 69235\nset concurrent_boxed 27958\nordered_set insert 49897\nordered_set overwrite 98916\nordered_set immediate 74309\nordered_set boxed 85620\nordered_set lookup 364309\nordered_set concurrent 67683\nordered_set concurrent_boxed 34363\n"
+      },
+      {
+        "pair": 17,
+        "version": "after",
+        "stdout": "set insert 35377\nset overwrite 47730\nset immediate 21789\nset boxed 34996\nset lookup 49145\nset concurrent 70812\nset concurrent_boxed 29921\nordered_set insert 51125\nordered_set overwrite 101980\nordered_set immediate 78298\nordered_set boxed 97082\nordered_set lookup 136902\nordered_set concurrent 86336\nordered_set concurrent_boxed 34996\n"
+      },
+      {
+        "pair": 17,
+        "version": "before",
+        "stdout": "set insert 38248\nset overwrite 66350\nset immediate 26367\nset boxed 46397\nset lookup 43393\nset concurrent 75213\nset concurrent_boxed 26478\nordered_set insert 46410\nordered_set overwrite 103886\nordered_set immediate 74911\nordered_set boxed 86227\nordered_set lookup 112118\nordered_set concurrent 66207\nordered_set concurrent_boxed 31189\n"
+      },
+      {
+        "pair": 18,
+        "version": "before",
+        "stdout": "set insert 31375\nset overwrite 46564\nset immediate 20918\nset boxed 34884\nset lookup 40697\nset concurrent 63129\nset concurrent_boxed 26154\nordered_set insert 57221\nordered_set overwrite 151474\nordered_set immediate 95911\nordered_set boxed 97184\nordered_set lookup 115764\nordered_set concurrent 73693\nordered_set concurrent_boxed 30572\n"
+      },
+      {
+        "pair": 18,
+        "version": "after",
+        "stdout": "set insert 29953\nset overwrite 45580\nset immediate 20124\nset boxed 32634\nset lookup 39627\nset concurrent 74142\nset concurrent_boxed 36228\nordered_set insert 121592\nordered_set overwrite 150756\nordered_set immediate 73332\nordered_set boxed 95227\nordered_set lookup 132119\nordered_set concurrent 66883\nordered_set concurrent_boxed 30740\n"
+      },
+      {
+        "pair": 19,
+        "version": "after",
+        "stdout": "set insert 30696\nset overwrite 44495\nset immediate 19809\nset boxed 31880\nset lookup 40434\nset concurrent 59766\nset concurrent_boxed 25990\nordered_set insert 45910\nordered_set overwrite 121280\nordered_set immediate 121769\nordered_set boxed 117270\nordered_set lookup 136892\nordered_set concurrent 76123\nordered_set concurrent_boxed 39591\n"
+      },
+      {
+        "pair": 19,
+        "version": "before",
+        "stdout": "set insert 39339\nset overwrite 72948\nset immediate 67581\nset boxed 57963\nset lookup 56274\nset concurrent 84527\nset concurrent_boxed 45857\nordered_set insert 49479\nordered_set overwrite 104038\nordered_set immediate 77568\nordered_set boxed 90814\nordered_set lookup 115589\nordered_set concurrent 66016\nordered_set concurrent_boxed 35957\n"
+      },
+      {
+        "pair": 20,
+        "version": "before",
+        "stdout": "set insert 36857\nset overwrite 51081\nset immediate 24078\nset boxed 36913\nset lookup 44774\nset concurrent 67329\nset concurrent_boxed 27295\nordered_set insert 47410\nordered_set overwrite 103774\nordered_set immediate 76710\nordered_set boxed 88499\nordered_set lookup 114891\nordered_set concurrent 63666\nordered_set concurrent_boxed 29672\n"
+      },
+      {
+        "pair": 20,
+        "version": "after",
+        "stdout": "set insert 34067\nset overwrite 49138\nset immediate 22561\nset boxed 36767\nset lookup 46335\nset concurrent 68870\nset concurrent_boxed 26206\nordered_set insert 47380\nordered_set overwrite 102868\nordered_set immediate 77030\nordered_set boxed 88986\nordered_set lookup 115946\nordered_set concurrent 67199\nordered_set concurrent_boxed 32645\n"
+      }
+    ],
+    "medians": {
+      "set insert": {
+        "before": 33410,
+        "after": 33302,
+        "change_percent": -0.32
+      },
+      "set overwrite": {
+        "before": 48513,
+        "after": 48042,
+        "change_percent": -0.97
+      },
+      "set immediate": {
+        "before": 23406,
+        "after": 21789,
+        "change_percent": -6.91
+      },
+      "set boxed": {
+        "before": 35887,
+        "after": 34996,
+        "change_percent": -2.48
+      },
+      "set lookup": {
+        "before": 43393,
+        "after": 43101,
+        "change_percent": -0.67
+      },
+      "set concurrent": {
+        "before": 67329,
+        "after": 68269,
+        "change_percent": 1.4
+      },
+      "set concurrent_boxed": {
+        "before": 27119,
+        "after": 26960,
+        "change_percent": -0.59
+      },
+      "ordered_set insert": {
+        "before": 47410,
+        "after": 47705,
+        "change_percent": 0.62
+      },
+      "ordered_set overwrite": {
+        "before": 101907,
+        "after": 102868,
+        "change_percent": 0.94
+      },
+      "ordered_set immediate": {
+        "before": 76081,
+        "after": 75128,
+        "change_percent": -1.25
+      },
+      "ordered_set boxed": {
+        "before": 88499,
+        "after": 87124,
+        "change_percent": -1.55
+      },
+      "ordered_set lookup": {
+        "before": 114891,
+        "after": 114667,
+        "change_percent": -0.19
+      },
+      "ordered_set concurrent": {
+        "before": 64760,
+        "after": 67199,
+        "change_percent": 3.77
+      },
+      "ordered_set concurrent_boxed": {
+        "before": 30572,
+        "after": 31476,
+        "change_percent": 2.96
+      }
+    }
+  },
+  "binary_send": {
+    "samples": [
+      {
+        "pair": 0,
+        "version": "before",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:19\n"
+      },
+      {
+        "pair": 0,
+        "version": "after",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:21\n"
+      },
+      {
+        "pair": 1,
+        "version": "after",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:25\n"
+      },
+      {
+        "pair": 1,
+        "version": "before",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:21\n"
+      },
+      {
+        "pair": 2,
+        "version": "before",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:23\n"
+      },
+      {
+        "pair": 2,
+        "version": "after",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:25\n"
+      },
+      {
+        "pair": 3,
+        "version": "after",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:25\n"
+      },
+      {
+        "pair": 3,
+        "version": "before",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:24\n"
+      },
+      {
+        "pair": 4,
+        "version": "before",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:23\n"
+      },
+      {
+        "pair": 4,
+        "version": "after",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:20\n"
+      },
+      {
+        "pair": 5,
+        "version": "after",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:20\n"
+      },
+      {
+        "pair": 5,
+        "version": "before",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:19\n"
+      },
+      {
+        "pair": 6,
+        "version": "before",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:21\n"
+      },
+      {
+        "pair": 6,
+        "version": "after",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:22\n"
+      },
+      {
+        "pair": 7,
+        "version": "after",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:24\n"
+      },
+      {
+        "pair": 7,
+        "version": "before",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:25\n"
+      },
+      {
+        "pair": 8,
+        "version": "before",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:25\n"
+      },
+      {
+        "pair": 8,
+        "version": "after",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:25\n"
+      },
+      {
+        "pair": 9,
+        "version": "after",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:22\n"
+      },
+      {
+        "pair": 9,
+        "version": "before",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:23\n"
+      },
+      {
+        "pair": 10,
+        "version": "before",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:19\n"
+      },
+      {
+        "pair": 10,
+        "version": "after",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:23\n"
+      },
+      {
+        "pair": 11,
+        "version": "after",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:17\n"
+      },
+      {
+        "pair": 11,
+        "version": "before",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:35\n"
+      },
+      {
+        "pair": 12,
+        "version": "before",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:31\n"
+      },
+      {
+        "pair": 12,
+        "version": "after",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:30\n"
+      },
+      {
+        "pair": 13,
+        "version": "after",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:38\n"
+      },
+      {
+        "pair": 13,
+        "version": "before",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:34\n"
+      },
+      {
+        "pair": 14,
+        "version": "before",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:40\n"
+      },
+      {
+        "pair": 14,
+        "version": "after",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:36\n"
+      },
+      {
+        "pair": 15,
+        "version": "after",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:39\n"
+      },
+      {
+        "pair": 15,
+        "version": "before",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:39\n"
+      },
+      {
+        "pair": 16,
+        "version": "before",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:35\n"
+      },
+      {
+        "pair": 16,
+        "version": "after",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:27\n"
+      },
+      {
+        "pair": 17,
+        "version": "after",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:23\n"
+      },
+      {
+        "pair": 17,
+        "version": "before",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:38\n"
+      },
+      {
+        "pair": 18,
+        "version": "before",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:28\n"
+      },
+      {
+        "pair": 18,
+        "version": "after",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:39\n"
+      },
+      {
+        "pair": 19,
+        "version": "after",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:40\n"
+      },
+      {
+        "pair": 19,
+        "version": "before",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:38\n"
+      },
+      {
+        "pair": 20,
+        "version": "before",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:31\n"
+      },
+      {
+        "pair": 20,
+        "version": "after",
+        "stdout": "bench_binary_send: 100000 messages of 10240 bytes\ntime_ms:24\n"
+      }
+    ],
+    "medians": {
+      "binary_send_ms": {
+        "before": 25,
+        "after": 25,
+        "change_percent": 0.0
+      }
+    }
+  }
+}

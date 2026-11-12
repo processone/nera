@@ -1,0 +1,115 @@
+{
+  "samples": {
+    "before": [
+      {
+        "binary": 6450,
+        "message": 23979,
+        "process_cpu_us": 33198
+      },
+      {
+        "binary": 3729,
+        "message": 18087,
+        "process_cpu_us": 23611
+      },
+      {
+        "binary": 3733,
+        "message": 18201,
+        "process_cpu_us": 23682
+      },
+      {
+        "binary": 3769,
+        "message": 18009,
+        "process_cpu_us": 23635
+      },
+      {
+        "binary": 3752,
+        "message": 18103,
+        "process_cpu_us": 23697
+      },
+      {
+        "binary": 3800,
+        "message": 18245,
+        "process_cpu_us": 23834
+      },
+      {
+        "binary": 3720,
+        "message": 18126,
+        "process_cpu_us": 23657
+      },
+      {
+        "binary": 3817,
+        "message": 18238,
+        "process_cpu_us": 23950
+      },
+      {
+        "binary": 3732,
+        "message": 18139,
+        "process_cpu_us": 23827
+      }
+    ],
+    "after": [
+      {
+        "binary": 4365,
+        "message": 19433,
+        "process_cpu_us": 26117
+      },
+      {
+        "binary": 3858,
+        "message": 18218,
+        "process_cpu_us": 23936
+      },
+      {
+        "binary": 3775,
+        "message": 18233,
+        "process_cpu_us": 23978
+      },
+      {
+        "binary": 3760,
+        "message": 18278,
+        "process_cpu_us": 23994
+      },
+      {
+        "binary": 3776,
+        "message": 18196,
+        "process_cpu_us": 23762
+      },
+      {
+        "binary": 3783,
+        "message": 18426,
+        "process_cpu_us": 23990
+      },
+      {
+        "binary": 3809,
+        "message": 18294,
+        "process_cpu_us": 23949
+      },
+      {
+        "binary": 3765,
+        "message": 18261,
+        "process_cpu_us": 23866
+      },
+      {
+        "binary": 3794,
+        "message": 18278,
+        "process_cpu_us": 24048
+      }
+    ]
+  },
+  "medians": {
+    "before": {
+      "binary": 3752,
+      "message": 18139,
+      "process_cpu_us": 23697
+    },
+    "after": {
+      "binary": 3783,
+      "message": 18278,
+      "process_cpu_us": 23978
+    }
+  },
+  "percent_change": {
+    "binary": 0.8262260127931853,
+    "message": 0.7663046474447377,
+    "process_cpu_us": 1.1858041102249306
+  }
+}

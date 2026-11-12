@@ -1,0 +1,367 @@
+{
+  "upstream": {
+    "name": "cowlib",
+    "version": "2.20.0",
+    "url": "https://github.com/ninenines/cowlib.git",
+    "commit": "c768a804565ff5b8178ed968a5921e469d6bd7b2"
+  },
+  "platform": "macOS-15.7.7-arm64-arm-64bit-Mach-O",
+  "otp_version": "Erlang/OTP 29 [erts-17.0.5] [source] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads:1] [jit] [dtrace]",
+  "nera_sha256": "f94052be2977aa4adb91965c1ba39a6b5bdcef76640c9bdc1370c35a1c815276",
+  "runtime_sha256": "9b24ba23c7ada6f67b3997e583108f33c9385d3732ec49a855af29b5fc3e0f36",
+  "nera_source_commit": "d8f243dbad52e8f7923a13d7125418f9833bed65",
+  "source_sha256": {
+    "src/cow_http3.erl": "cb8426277588906b49c78a42bfd8e2d214efd319d5cad6b4627b2cc94242a372",
+    "src/cow_multipart.erl": "2d684ed2229fd9d15d8941ad5cc1abd83a41f8bab0a7705e6093a7e112555d90",
+    "src/cow_http_struct_hd.erl": "bae6afed59d1395ad1234a0138c24736bc7ca8b8aca0425535fd9c06ce28aa84",
+    "src/cow_http2.erl": "edeb6bef50b963312e92021ed2edd029628c51752fa75b527557832912f452d6",
+    "src/cow_http1.erl": "e5851d0ad97a639458416d26f3b9d23ddfd09afe0dda8a356f33627ccc5b377c",
+    "src/cow_cookie.erl": "949f38c2aaa1fd30f690289a024429ea2d8a66e08b6c87a4436e51e568ddf88d",
+    "src/cow_mimetypes.erl": "bbdd5d794a0c970cdd0420109ceaf2aaeb4ec70294a5c8a053737e67e3e3779b",
+    "src/cow_ws.erl": "3d46948104e15194ffbe080a03299dd38e911857a9fc86f025a51ff76dab32c6",
+    "src/cow_hpack.erl": "6c9d5714790d8951fa57b793bb8f6c0f0433f7bbc15f33284e3b289b264bfa4d",
+    "src/cow_date.erl": "6f22428c9b1df2c59abe8b372f6a075c3d1b51ea6653cbf778a5bceeff813504",
+    "src/cow_capsule.erl": "b94fa3ee9242be4812ab631e30b71ff79b24112b538cbf304c735238e0683e80",
+    "src/cow_http2_machine.erl": "5ff9d6c3c520ca26d0a0090cc5d67ba6dc918fe7ee557083754e1d703cc14d3d",
+    "src/cow_http_hd.erl": "af8028340f58b2cf0a7bbaa734d6e1e9c61d48993454119e0df6c6cba6b82c2c",
+    "src/cow_base64url.erl": "3d68bd7d9d03230c99c298688bb9c804fe8ebdcf1ced3e64683de3b72a9436a2",
+    "src/cow_uri_template.erl": "589a363068a9f4bf77e29ef860792205d85541c71d76cd68ff5bd35686aca28b",
+    "src/cow_hpack_common.hrl": "c53242bd29cad93135050d5daf9f73e9b571da56a992dbc49870e7e53c1d164c",
+    "src/cow_uri.erl": "8a8627ec975e5597499385ce481760b751f80888aa7c55e915eedd31481da664",
+    "src/cow_qs.erl": "9d45e09874dd83ed42b02cdc7ce1aff5737f3ed968d7682c8b304ec853b61c91",
+    "src/cow_sse.erl": "180f35d763c003fc9b2304fed9da5244b6aa4497571dd6b73c92451e7e85f5ff",
+    "src/cow_http.erl": "cba1db8e6aace87f3f8772ea778b8088eedf8f7d54d84d767b46fcc02ea0e594",
+    "src/cow_iolists.erl": "ae976127c029af3e6a38dc5f406861a41f102c355d9077b1142abf3bba863df3",
+    "src/cow_http3_machine.erl": "a0e489819c72fb418920dbe2594b4ecbcc8aab72b5b2fdd809b419091ca2ba2d",
+    "src/cow_qpack.erl": "fe9adc05008b3b9e68bdb973b4486593bbaac665fcfb4de4679555a76d9ec99f",
+    "src/cow_mimetypes.erl.src": "b733e1a0defcc6402e4d9443db10334055738467c19a1765dc9c993ecea03612",
+    "src/cow_hpack_dec_huffman_lookup.hrl": "80fb656300ee1288bf34268e88c2b0886760ab6a794eeca60d84a94ae0f11652",
+    "src/cow_http_te.erl": "03676592aef761d7c623f814b324b4e15d4fb21889928b7474bc976c804de47a",
+    "src/cow_link.erl": "bcfec544ae3ca6796fece4c82a0c5061c282864c6e515ed89492238e02682c8c",
+    "src/cow_deflate.erl": "ba3b1bf977f0fda687c12d7195b6f143bae4f7ce26437736077c7b180a1261e8",
+    "include/cow_inline.hrl": "b6734610786a2d10ae82d9b9513e72d7a67396e1c5c1f3d6faa19e6350d580b6",
+    "include/cow_parse.hrl": "a366ad773962acdfea8b90cbc5499e6b3dc9148fb59d0bdd303dbbdae01a0177"
+  },
+  "etf_decoder_sha256": "7070107789f63da6b848eb584bac20950eafabde99386216efbd2d97ebc3db96",
+  "date": "2026-10-12",
+  "status": "cow_cookie 33/34; cow_date 26/26; strict runner exits 1",
+  "timezone": "Pacific/Honolulu",
+  "changed_source_sha256": {
+    "crates/nera-ir/src/bif_table.rs": "337d5924b62e1d2df4bfb7835eee14ec6c9da453935bd9502efa10f5bcb109eb",
+    "crates/nera-runtime/src/ffi/apply.rs": "ac6cdd0ec8c7d9db51506279357ea77a3cd1b7dfcdb182a13f7f07d8d5517cab",
+    "crates/nera-runtime/src/ffi/timer.rs": "7283b81d1ce3eb61b6987ff9436bf4526546ccc227a1d16ee87ce4e4d22e14ce",
+    "erlang/stdlib/calendar.erl": "6a1eefbac37daaf781ce2a5ac5ed281c73d2c58e3684477cc2eeaf650cd0d4eb",
+    "tests/universal_time.erl": "9ac121dcd0f1ea6172ef986a92a52af2e98949aeb721a37807089e29718137ee",
+    "tests/integration/cowlib/corpus.json": "4255013878f639f35f9d455d88a5287f2fe535cd27cf2e2190a610716b5c3e79",
+    "tests/integration/cowlib/runner.py": "d12420a5d972f08001a3ffbb37c998af4aadf094a43b51440994aff529db3f37"
+  },
+  "report_sha256": "de122666f717b3255d6d75874f45de6148d7a345ab0cfbbd5482707762671920",
+  "build_log_sha256": "e248cf46d94c6e3501c1877b093f4ae21baf22546841d1f96fa11fdb6a6b2dd2",
+  "regression": {
+    "BEAM": "passed with TZ=Pacific/Honolulu and Asia/Kolkata",
+    "Nera": "passed with TZ=Pacific/Honolulu and Asia/Kolkata",
+    "negative_control": "Before implementation, native universal_time regression failed to compile: calendar:universal_time/0 unresolved",
+    "rust_workspace": "1803 passed, 1 ignored; --test-threads=1",
+    "rust_utc_tests": "2 passed",
+    "clippy": "runtime and IR --all-targets -D warnings passed",
+    "harness_unit_tests": "19 passed"
+  },
+  "limitations": [
+    "One exact-wire mismatch remains: Set-Cookie attribute ordering, with matching values.",
+    "Positive Max-Age checks assert per-engine time-window invariants, not equality of timestamps across separate executions.",
+    "Clock checks assume no system-clock jumps during each call.",
+    "Upstream cookie/date suites, other Cowlib modules and other platforms were not rerun.",
+    "No Cowlib source was copied into the repository or modified."
+  ],
+  "modules": {
+    "cow_cookie": {
+      "build_returncode": 0,
+      "cases": [
+        {
+          "id": "cookie_simple",
+          "status": "passed"
+        },
+        {
+          "id": "cookie_spaces",
+          "status": "passed"
+        },
+        {
+          "id": "cookie_duplicate",
+          "status": "passed"
+        },
+        {
+          "id": "cookie_quoted",
+          "status": "passed"
+        },
+        {
+          "id": "cookie_equals",
+          "status": "passed"
+        },
+        {
+          "id": "cookie_empty",
+          "status": "passed"
+        },
+        {
+          "id": "cookie_empty_value",
+          "status": "passed"
+        },
+        {
+          "id": "cookie_separator",
+          "status": "passed"
+        },
+        {
+          "id": "cookie_nameless",
+          "status": "passed"
+        },
+        {
+          "id": "cookie_empty_name",
+          "status": "passed"
+        },
+        {
+          "id": "cookie_newline",
+          "status": "passed"
+        },
+        {
+          "id": "cookie_tab_value",
+          "status": "passed"
+        },
+        {
+          "id": "cookie_limit_0",
+          "status": "passed"
+        },
+        {
+          "id": "cookie_limit_1",
+          "status": "passed"
+        },
+        {
+          "id": "cookie_limit_2",
+          "status": "passed"
+        },
+        {
+          "id": "cookie_limit_3",
+          "status": "passed"
+        },
+        {
+          "id": "cookie_default_limit_99",
+          "status": "passed"
+        },
+        {
+          "id": "cookie_default_limit_100",
+          "status": "passed"
+        },
+        {
+          "id": "cookie_default_limit_101",
+          "status": "passed"
+        },
+        {
+          "id": "cookie_set_flags",
+          "status": "passed"
+        },
+        {
+          "id": "cookie_set_domain",
+          "status": "passed"
+        },
+        {
+          "id": "cookie_set_expiry",
+          "status": "passed"
+        },
+        {
+          "id": "cookie_set_zero_age",
+          "status": "passed"
+        },
+        {
+          "id": "cookie_set_negative_age",
+          "status": "passed"
+        },
+        {
+          "id": "cookie_set_bad_age",
+          "status": "passed"
+        },
+        {
+          "id": "cookie_set_empty",
+          "status": "passed"
+        },
+        {
+          "id": "cookie_set_control",
+          "status": "passed"
+        },
+        {
+          "id": "cookie_set_unknown",
+          "status": "passed"
+        },
+        {
+          "id": "cookie_build",
+          "status": "passed"
+        },
+        {
+          "id": "cookie_set_build",
+          "group": "valid",
+          "expect": "return",
+          "beam": [
+            "tuple",
+            [
+              [
+                "atom",
+                "return"
+              ],
+              [
+                "binary",
+                "7369643d6162633b20506174683d2f3b20487474704f6e6c793b2053616d65536974653d5374726963743b20536563757265"
+              ]
+            ]
+          ],
+          "nera": [
+            "tuple",
+            [
+              [
+                "atom",
+                "return"
+              ],
+              [
+                "binary",
+                "7369643d6162633b205365637572653b20487474704f6e6c793b2053616d65536974653d5374726963743b20506174683d2f"
+              ]
+            ]
+          ],
+          "status": "failed",
+          "error": "different result or exception class/reason"
+        },
+        {
+          "id": "cookie_set_delete",
+          "status": "passed"
+        },
+        {
+          "id": "cookie_set_bad_age_option",
+          "status": "passed"
+        },
+        {
+          "id": "cookie_positive_max_age_parse",
+          "status": "passed"
+        },
+        {
+          "id": "cookie_positive_max_age_build",
+          "status": "passed"
+        }
+      ],
+      "executable_sha256": "5fb3087a8e9428587662af69b87878d383bb55742f446f726b569c266d0d1c5d",
+      "passed": 33,
+      "total": 34,
+      "beam_passed": 34,
+      "blocked": 0
+    },
+    "cow_date": {
+      "build_returncode": 0,
+      "cases": [
+        {
+          "id": "date_imf",
+          "status": "passed"
+        },
+        {
+          "id": "date_rfc850",
+          "status": "passed"
+        },
+        {
+          "id": "date_asctime",
+          "status": "passed"
+        },
+        {
+          "id": "date_leap_second",
+          "status": "passed"
+        },
+        {
+          "id": "date_year_50",
+          "status": "passed"
+        },
+        {
+          "id": "date_year_51",
+          "status": "passed"
+        },
+        {
+          "id": "date_day_zero",
+          "status": "passed"
+        },
+        {
+          "id": "date_feb_30",
+          "status": "passed"
+        },
+        {
+          "id": "date_empty",
+          "status": "passed"
+        },
+        {
+          "id": "date_month",
+          "status": "passed"
+        },
+        {
+          "id": "date_day32",
+          "status": "passed"
+        },
+        {
+          "id": "date_hour24",
+          "status": "passed"
+        },
+        {
+          "id": "date_minute60",
+          "status": "passed"
+        },
+        {
+          "id": "date_second61",
+          "status": "passed"
+        },
+        {
+          "id": "date_trailing",
+          "status": "passed"
+        },
+        {
+          "id": "date_timezone",
+          "status": "passed"
+        },
+        {
+          "id": "date_rfc1123_leap",
+          "status": "passed"
+        },
+        {
+          "id": "date_rfc1123_century",
+          "status": "passed"
+        },
+        {
+          "id": "date_rfc1123_year_end",
+          "status": "passed"
+        },
+        {
+          "id": "date_rfc2109_leap",
+          "status": "passed"
+        },
+        {
+          "id": "date_rfc2109_century",
+          "status": "passed"
+        },
+        {
+          "id": "date_rfc2109_year_end",
+          "status": "passed"
+        },
+        {
+          "id": "date_rfc7231_leap",
+          "status": "passed"
+        },
+        {
+          "id": "date_rfc7231_century",
+          "status": "passed"
+        },
+        {
+          "id": "date_rfc7231_year_end",
+          "status": "passed"
+        },
+        {
+          "id": "date_bad_type",
+          "status": "passed"
+        }
+      ],
+      "executable_sha256": "197834ef2929cf86effe6d2949905e65ef1ac5e7e300dc02dd24a43bdf7ab678",
+      "passed": 26,
+      "total": 26,
+      "beam_passed": 26,
+      "blocked": 0
+    }
+  }
+}

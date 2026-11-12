@@ -1,0 +1,108 @@
+{
+  "base_ref": "origin/main",
+  "base_commit": "fa138d8f320c4660b48a4dd17f94ea974841851d",
+  "target": "uncommitted worktree: mr/tcp-timeout-diagnostics",
+  "divergence_commits": {
+    "ahead": 0,
+    "behind": 0
+  },
+  "platform": "macOS ARM64",
+  "rust": "1.99.0",
+  "dependencies_changed": false,
+  "checks": {
+    "rust_workspace": {
+      "passed": 1689,
+      "failed": 0,
+      "log": "nera-tcp-final-workspace-tests.log"
+    },
+    "erlang": {
+      "command": "./target/rust199-baseline/release/nera test -j 1 --timeout 30",
+      "passed": 286,
+      "failed": 0,
+      "skipped": 2,
+      "exit_code": 0,
+      "log": "nera-tcp-final-erlang.log"
+    },
+    "git_diff_check": "passed"
+  },
+  "stress_series": {
+    "final-paired-repeats.json": {
+      "runs": 200,
+      "timeouts": 0,
+      "nonzero_exits_excluding_timeouts": 0,
+      "sha256": "8cb3adf45c5bf4270e7e0a060e54d57a5e2b9a73653cb413b57bf6fd712ce39c"
+    },
+    "final-state-repeats.json": {
+      "runs": 400,
+      "timeouts": 0,
+      "nonzero_exits_excluding_timeouts": 0,
+      "sha256": "2d5a80dcde0b48086b2fd0d6038f82e6586e006485fa52c02ba96162de32da2e"
+    },
+    "fixed-repeats.json": {
+      "runs": 111,
+      "timeouts": 1,
+      "nonzero_exits_excluding_timeouts": 5,
+      "sha256": "3816c19aa6fab1915b0fa9d82513f35ae1fbcdd16f2ee67ed8a9bc9820e9f833"
+    },
+    "hang-repeats.json": {
+      "runs": 32,
+      "timeouts": 1,
+      "nonzero_exits_excluding_timeouts": 0,
+      "sha256": "2c1ff5fd41a7f3378abcfb442384f9dd36a370df71a5583d44a5924cd92ae7b8"
+    },
+    "perf-repeats.json": {
+      "runs": 6,
+      "timeouts": 0,
+      "nonzero_exits_excluding_timeouts": 1,
+      "sha256": "bc62b85926d581311c21879d88db465560815a4700656412f6519462ef6d0952"
+    },
+    "phase-repeats.json": {
+      "runs": 200,
+      "timeouts": 0,
+      "nonzero_exits_excluding_timeouts": 0,
+      "sha256": "7d64828a4b2be6e35c83c39d0a9ae1204e1833804c833a32559770621c6516a7"
+    },
+    "state-repeats.json": {
+      "runs": 200,
+      "timeouts": 0,
+      "nonzero_exits_excluding_timeouts": 0,
+      "sha256": "bfc09e7a83db1bd945316d53b3bceae80ead779f8f1093361418e2e90ef4b181"
+    },
+    "state-untraced-repeats.json": {
+      "runs": 600,
+      "timeouts": 0,
+      "nonzero_exits_excluding_timeouts": 0,
+      "sha256": "6e37a06cc232ca905bd4c21bd0da8f6154b95155199b09ca5db98ecd04c81008"
+    }
+  },
+  "limits": [
+    "Timer race proven independently; connection to the second TCP timeout not established.",
+    "Finite stress runs do not prove absence of every intermittent hang.",
+    "No remote CI or cross-platform execution for this worktree."
+  ],
+  "raw_evidence_directory": "target/tcp-diagnostic-2026-10-11",
+  "evidence_sha256": {
+    "nera-tcp-build.log": "a83dc86bab5037cc7f9080b70c23d68943bcafe6b2b758784303438f384a7f5e",
+    "nera-tcp-compiler-build.log": "aa40ebbd7eb156ee04b35cf830e9a89d7d7c1cfa4aa0a5b566398972b322adb9",
+    "nera-tcp-diagnostic-runtime-build.log": "cb67e60479a83815d1b38e72340d49ab8677f1ed8df5b5da43da5f7d61778ee6",
+    "nera-tcp-final-compiler-build.log": "f2662ecd0abc0b63c6dcbb29929ec0a456b4a9d126530b64555c67d67fb66d2a",
+    "nera-tcp-final-erlang.log": "246cf29d4a5adc85fdeb937d0902dced0d291e51d48c2dc0cd656874624eae89",
+    "nera-tcp-final-link.log": "a83dc86bab5037cc7f9080b70c23d68943bcafe6b2b758784303438f384a7f5e",
+    "nera-tcp-final-paired.log": "b6fa203ca7fb535ac9ff102d788f76720af07159f67837884b40f7784ce84496",
+    "nera-tcp-final-perf-build.log": "a83dc86bab5037cc7f9080b70c23d68943bcafe6b2b758784303438f384a7f5e",
+    "nera-tcp-final-runtime-build.log": "60c197c110c03680cf3de96abef427f40c34bdee6123ea001baf97cc006140ac",
+    "nera-tcp-final-workspace-tests.log": "9b6d5166cae6f798748647eda96f4ee8fcf119e52aff3028c9687b5aefe49a56",
+    "nera-tcp-fixed-link.log": "84bbdfec608378a4429bd93571fb74d87e93c10cd9fbbf84ea6fdbed0361bc74",
+    "nera-tcp-phase-build.log": "a83dc86bab5037cc7f9080b70c23d68943bcafe6b2b758784303438f384a7f5e",
+    "nera-tcp-reactor-build.log": "a83dc86bab5037cc7f9080b70c23d68943bcafe6b2b758784303438f384a7f5e",
+    "nera-tcp-runner-green.log": "70091deba34d0cd998a6461cbd9d6e88d9bd4c028ac969fa11e90c3bbe95d062",
+    "nera-tcp-runner-red.log": "fd57387405eb95f939cb74029714746c695b5e2cd392c717e2e0f3566b93ae24",
+    "nera-tcp-runtime-build.log": "caa993f02b4a10e4d3c985d5e64b5c821945074a4db59930c3b22e9dafbf65e2",
+    "nera-tcp-scheduler-green.log": "591a8cac41479683374855b514fd4ca9d8defcfeb4469af985b6d6822c56cc01",
+    "nera-tcp-scheduler-red.log": "98479dd6ca1c1619c66a6af7cc2e80dcb6ee7697c7dfbb92a8c0fa5587c778d8",
+    "nera-tcp-state-build.log": "a83dc86bab5037cc7f9080b70c23d68943bcafe6b2b758784303438f384a7f5e",
+    "nera-tcp-timer-green.log": "19b5914732ae873cd6757e4ddb550f5aa5f7351a1f07168fda5fd8718db7077d",
+    "nera-tcp-timer-red.log": "c3983536e171273a211c255b9a8d263adc5cbdf3938ee782f3a262d747e8508a",
+    "nera-tcp-workspace-tests.log": "d44d08b384b2d20cbaee28e46693d4e149683d7fadd1bf0dee42d2800fb083b3"
+  }
+}

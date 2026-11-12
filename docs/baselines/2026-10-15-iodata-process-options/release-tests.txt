@@ -1,0 +1,657 @@
+   Compiling nera-runtime v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-runtime)
+    Finished `release` profile [optimized] target(s) in 33.72s
+     Running unittests src/lib.rs (/tmp/nera-transfer-target/release/deps/nera_runtime-d1e13e6021944ea8)
+
+running 585 tests
+test atom_table::tests::distinct_atoms_get_distinct_ids ... ok
+test atom_table::tests::intern_is_idempotent ... ok
+test atom_table::tests::global_atom_table_intern ... ok
+test atom_table::tests::builtins_registered_at_expected_indices ... ok
+test atom_table::tests::intern_and_resolve ... ok
+test atom_table::tests::global_atom_table_has_builtins ... ok
+test atom_table::tests::count_tracks_atom_count ... ok
+test atom_table::tests::intern_panics_when_full - should panic ... ok
+test atom_table::tests::lookup_by_name_does_not_intern ... ok
+test atom_table::tests::lookup_by_name_returns_id_for_known ... ok
+test atom_table::tests::lookup_by_name_returns_none_for_unknown ... ok
+test atom_table::tests::network_builtins_registered ... ok
+test atom_table::tests::resolve_unknown_returns_none ... ok
+test atom_table::tests::try_intern_returns_none_when_full ... ok
+test atomics_module::tests::slots_use_actual_length_and_one_based_bounds ... ok
+test base64::decoder_tests::malformed_groups_preserve_error_precedence_across_slices ... ok
+test base64::tests::output_size_checks_overflow_and_header_capacity ... ok
+test base64::decoder_tests::quartets_padding_and_whitespace_span_arbitrary_slices ... ok
+test bif::tests::bif_abs_badarg ... ok
+test bif::tests::bif_abs_float ... ok
+test bif::tests::bif_abs_integer ... ok
+test bif::tests::bif_atom_to_list_badarg ... ok
+test bif::tests::bif_atom_to_list_ok ... ok
+test bif::tests::bif_byte_size_check ... ok
+test bif::tests::bif_ceil_badarg ... ok
+test bif::tests::bif_ceil_float ... ok
+test bif::tests::bif_ceil_integer ... ok
+test bif::tests::bif_element_basic ... ok
+test bif::tests::bif_element_out_of_range ... ok
+test bif::tests::bif_float_badarg ... ok
+test bif::tests::bif_float_float ... ok
+test bif::tests::bif_float_integer ... ok
+test bif::tests::bif_float_to_list_badarg ... ok
+test bif::tests::bif_float_to_list_ok ... ok
+test bif::tests::bif_floor_badarg ... ok
+test bif::tests::bif_hd_tl ... ok
+test bif::tests::bif_floor_float ... ok
+test bif::tests::bif_floor_integer ... ok
+test bif::tests::bif_hd_tl_badarg ... ok
+test bif::tests::bif_integer_to_list_badarg ... ok
+test bif::tests::bif_integer_to_list_negative ... ok
+test bif::tests::bif_integer_to_list_positive ... ok
+test bif::tests::bif_is_binary_check ... ok
+test bif::tests::bif_is_boolean_check ... ok
+test bif::tests::bif_is_map_check ... ok
+test bif::tests::bif_is_float_check ... ok
+test bif::tests::bif_is_number_check ... ok
+test bif::tests::bif_is_tuple_check ... ok
+test bif::tests::bif_length_empty_list ... ok
+test bif::tests::bif_length_improper_list_is_badarg ... ok
+test bif::tests::bif_length_proper_list ... ok
+test bif::tests::bif_list_to_atom_ok ... ok
+test bif::tests::bif_list_to_atom_badarg ... ok
+test bif::tests::bif_list_to_integer_badarg ... ok
+test bif::tests::bif_list_to_integer_negative ... ok
+test bif::tests::bif_list_to_integer_ok ... ok
+test bif::tests::bif_list_to_tuple_empty ... ok
+test bif::tests::bif_list_to_tuple_ok ... ok
+test bif::tests::bif_map_size_check ... ok
+test bif::tests::bif_max_min_floats ... ok
+test bif::tests::bif_max_min_mixed_int_float ... ok
+test bif::tests::bif_min_integers ... ok
+test bif::tests::bif_max_integers ... ok
+test bif::tests::bif_phash2_atom ... ok
+test bif::tests::bif_phash2_compound ... ok
+test bif::tests::bif_phash2_deterministic ... ok
+test bif::tests::bif_phash2_range_badarg ... ok
+test bif::tests::bif_phash2_range_check ... ok
+test bif::tests::bif_phash2_range_form ... ok
+test bif::tests::bif_round_badarg ... ok
+test bif::tests::bif_round_float ... ok
+test bif::tests::bif_round_integer ... ok
+test bif::tests::bif_setelement_badarg ... ok
+test bif::tests::bif_setelement_ok ... ok
+test bif::tests::bif_size_badarg ... ok
+test bif::tests::bif_size_binary ... ok
+test bif::tests::bif_size_tuple ... ok
+test bif::tests::bif_trunc_badarg ... ok
+test bif::tests::bif_trunc_float ... ok
+test bif::tests::bif_trunc_integer ... ok
+test bif::tests::bif_tuple_size_basic ... ok
+test bif::tests::bif_tuple_size_not_tuple ... ok
+test bif::tests::bif_tuple_to_list_badarg ... ok
+test bif::tests::bif_type_checks ... ok
+test bif::tests::bif_tuple_to_list_ok ... ok
+test bif::tests::etf_binary_to_term_badarg ... ok
+test bif::tests::etf_binary_to_term_only_version_byte ... ok
+test bif::tests::etf_binary_to_term_truncated_atom ... ok
+test bif::tests::etf_binary_to_term_truncated_binary ... ok
+test bif::tests::etf_binary_to_term_truncated_float ... ok
+test bif::tests::etf_binary_to_term_truncated_integer ... ok
+test bif::tests::etf_binary_to_term_truncated_list ... ok
+test bif::tests::etf_binary_to_term_truncated_map ... ok
+test bif::tests::etf_binary_to_term_truncated_small_big ... ok
+test bif::tests::etf_binary_to_term_truncated_small_int ... ok
+test bif::tests::etf_binary_to_term_truncated_string_ext ... ok
+test bif::tests::etf_binary_to_term_truncated_tuple ... ok
+test bif::tests::etf_binary_to_term_unknown_tag ... ok
+test bif::tests::etf_binary_to_term_wrong_arity ... ok
+test bif::tests::etf_idempotent_encode ... ok
+test bif::tests::etf_list_with_negative_uses_list_ext ... ok
+test bif::tests::etf_list_with_mixed_types_uses_list_ext ... ok
+test bif::tests::etf_list_with_non_byte_uses_list_ext ... ok
+test bif::tests::etf_output_starts_with_version_131 ... ok
+test bif::tests::etf_roundtrip_atom ... ok
+test bif::tests::etf_roundtrip_atom_true_false ... ok
+test bif::tests::etf_roundtrip_atom_empty ... ok
+test bif::tests::etf_roundtrip_atom_unicode ... ok
+test bif::tests::etf_roundtrip_below_i32_uses_bigext ... ok
+test bif::tests::etf_pid_preserves_domain_and_rejects_reserved_bits ... ok
+test bif::tests::etf_roundtrip_beyond_i32_uses_bigext ... ok
+test bif::tests::etf_roundtrip_bigint ... ok
+test bif::tests::etf_roundtrip_bigint_zero ... ok
+test bif::tests::etf_roundtrip_binary ... ok
+test bif::tests::etf_roundtrip_binary_all_byte_values ... ok
+test bif::tests::etf_roundtrip_binary_with_nulls ... ok
+test bif::tests::etf_roundtrip_deeply_nested ... ok
+test bif::tests::etf_roundtrip_empty_binary ... ok
+test bif::tests::etf_roundtrip_empty_map ... ok
+test bif::tests::etf_roundtrip_empty_tuple ... ok
+test bif::tests::etf_roundtrip_float ... ok
+test bif::tests::etf_roundtrip_float_infinity ... ok
+test bif::tests::etf_roundtrip_float_nan ... ok
+test bif::tests::etf_roundtrip_float_neg_infinity ... ok
+test bif::tests::etf_roundtrip_float_negative ... ok
+test bif::tests::etf_roundtrip_float_zero ... ok
+test bif::tests::etf_roundtrip_i32_max ... ok
+test bif::tests::etf_roundtrip_i32_min ... ok
+test bif::tests::etf_roundtrip_int_255 ... ok
+test bif::tests::etf_roundtrip_int_256 ... ok
+test bif::tests::etf_roundtrip_int_neg1 ... ok
+test bif::tests::etf_roundtrip_large_int ... ok
+test bif::tests::etf_roundtrip_list ... ok
+test bif::tests::etf_roundtrip_large_tuple ... ok
+test bif::tests::etf_roundtrip_list_of_tuples ... ok
+test bif::tests::etf_roundtrip_map ... ok
+test bif::tests::etf_roundtrip_long_list ... ok
+test bif::tests::etf_roundtrip_map_multiple_pairs ... ok
+test bif::tests::etf_roundtrip_map_with_complex_values ... ok
+test bif::tests::etf_roundtrip_negative_int ... ok
+test bif::tests::etf_roundtrip_nested ... ok
+test bif::tests::etf_roundtrip_nil ... ok
+test bif::tests::etf_roundtrip_pid ... ok
+test bif::tests::etf_roundtrip_pid_large ... ok
+test bif::tests::etf_roundtrip_pid_zero ... ok
+test bif::tests::etf_roundtrip_single_element_list ... ok
+test bif::tests::etf_roundtrip_small_int ... ok
+test bif::tests::etf_roundtrip_tuple ... ok
+test bif::tests::etf_roundtrip_very_large_bigint ... ok
+test bif::tests::etf_roundtrip_zero ... ok
+test bif::tests::etf_string_ext_optimization ... ok
+test bif::tests::etf_term_to_binary_wrong_arity ... ok
+test bif::tests::format_binary_bytes_helper ... ok
+test bif::tests::format_term_atom ... ok
+test bif::tests::format_term_binary ... ok
+test bif::tests::format_term_float ... ok
+test bif::tests::format_term_improper_list ... ok
+test bif::tests::format_term_list ... ok
+test bif::tests::format_term_map ... ok
+test bif::tests::format_term_nil ... ok
+test bif::tests::format_term_pid ... ok
+test bif::tests::format_term_reference ... ok
+test bif::tests::format_term_small_int ... ok
+test bif::tests::format_term_sub_byte_bitstring ... ok
+test bif::tests::format_term_tuple ... ok
+test bif::tests::phash2_refc_binary_matches_heap_binary ... ok
+test bif::tests::term_to_string_basic ... ok
+test bif::tests::term_to_string_not_a_list ... ok
+test bif::tests::term_to_string_empty ... ok
+test bigint::tests::bigint_to_term_negative_small ... ok
+test bigint::tests::bigint_to_term_promotes_large_value ... ok
+test bigint::tests::bigint_to_term_uses_small_int_when_possible ... ok
+test bigint::tests::borrowed_conversions_return_owned_values ... ok
+test bigint::tests::roundtrip_large_factorial ... ok
+test bigint::tests::roundtrip_negative_bigint ... ok
+test bigint::tests::roundtrip_partial_limbs_and_signs ... ok
+test bigint::tests::roundtrip_positive_bigint ... ok
+test bigint::tests::roundtrip_zero ... ok
+test bigint::tests::term_to_bigint_from_non_integer_returns_none ... ok
+test bigint::tests::term_to_bigint_from_small_int ... ok
+test binary::tests::abi_pointer_survives_moves_without_copying ... ok
+test binary::tests::binary_windows_check_bounds_and_retain_storage ... ok
+test counters::tests::slots_use_actual_length_and_one_based_bounds ... ok
+test entry::scheduler_count_tests::explicit_single_scheduler_and_invalid_counts ... ok
+test entry::tests::function_table_empty_lookup ... ok
+test entry::tests::function_table_register_and_lookup ... ok
+test entry::tests::nera_runtime_init_does_not_panic ... ok
+test ets::tests::compact_heap_binary_roundtrip ... ok
+test ets::tests::compact_heap_empty_allocation ... ok
+test ets::tests::boxed_update_preserves_lookup_snapshots_after_clear_and_gc ... ok
+test ets::tests::compact_heap_float_roundtrip ... ok
+test ets::tests::compact_heap_deeply_nested_roundtrip ... ok
+test ets::tests::compact_heap_list_roundtrip ... ok
+test ets::tests::compact_heap_map_roundtrip ... ok
+test ets::tests::compact_heap_nested_tuple_roundtrip ... ok
+test ets::tests::compact_heap_refc_binary_lifecycle ... ok
+test ets::tests::compact_heap_reference_roundtrip ... ok
+test ets::tests::compact_heap_rejects_capacity_overflow_without_mutation ... ok
+test ets::tests::counter_batch_failure_leaves_tuple_unchanged ... ok
+test ets::tests::delete_nonexistent_table_returns_false ... ok
+test ets::tests::counter_promotion_preserves_rollback_snapshots_and_ordered_keys ... ok
+test ets::tests::delete_all_objects_lookup_result_survives ... ok
+test ets::tests::delete_table_removes_from_registry ... ok
+test ets::tests::delete_table_by_name ... ok
+test ets::tests::delete_all_objects_releases_capacity ... ok
+test ets::tests::insert_after_delete_table_fails ... ok
+test ets::tests::insert_improper_list_fails ... ok
+test ets::tests::gc_after_lookup_preserves_result ... ok
+test ets::tests::deleted_table_lookup_survives_thread_transfer_and_full_gc ... ok
+test ets::tests::insert_list_with_non_tuple_element_fails ... ok
+test ets::tests::insert_list_of_tuples_inserts_all ... ok
+test ets::tests::insert_to_nonexistent_table_fails ... ok
+test ets::tests::lookup_result_independent_after_delete ... ok
+test ets::tests::invalid_selection_never_deletes_and_empty_selection_is_explicit ... ok
+test ets::tests::concurrent_delete_lookup_rust_threads ... ok
+test ets::tests::multiple_lookups_same_key_independent ... ok
+test ets::tests::new_duplicate_named_table_fails ... ok
+test ets::tests::concurrent_insert_lookup_rust_threads ... ok
+test ets::tests::new_without_named_table_allows_same_atom ... ok
+test ets::tests::numeric_order_key_equality_matches_order ... ok
+test ets::tests::ordered_replacement_keeps_comparison_key_alive ... ok
+test ets::tests::storage_auto_traits_follow_ownership ... ok
+test ets::tests::overwrite_then_lookup_returns_new ... ok
+test ets_pool::tests::allocation_returns_an_owning_handle ... ok
+test ets::tests::table_usable_after_delete_all_objects ... ok
+test ets_pool::tests::reservations_keep_their_bounds_and_do_not_overlap ... ok
+test ets_pool::tests::test_large_alloc_custom_region ... ok
+test ets_pool::tests::pool_drop_keeps_allocation_alive_across_threads ... ok
+test ets_pool::tests::test_pool_basic_alloc ... ok
+test ets_pool::tests::test_pool_clear ... ok
+test ets_pool::tests::test_pool_multi_region_growth ... ok
+test ets_pool::tests::test_pool_owners_and_reclaim ... ok
+test ets_pool::tests::test_region_alloc_exhaustion ... ok
+test ffi::alloc::tests::failed_match_start_preserves_inline_capacity ... ok
+test ffi::alloc::tests::fresh_binary_match_replenishes_exhausted_inline_capacity ... ok
+test ets_pool::tests::test_pool_pointer_stability ... ok
+test ffi::alloc::tests::reused_match_context_does_not_reserve_another_inline_region ... ok
+test ffi::atomics::tests::machine_integer_domains_match_storage_and_delta_rules ... ok
+test ffi::alloc::tests::tuple_adapters_accept_empty_null_array_and_publish_region ... ok
+test ffi::base64::tests::decoder_charges_whitespace_and_keeps_resumed_exception_reason ... ok
+test ffi::base64::tests::dropping_a_suspended_process_releases_its_input ... ok
+test ffi::base64::tests::encoding_charges_empty_small_and_final_chunks ... ok
+test ffi::base64::tests::encoding_respects_remaining_budget_before_work ... ok
+test ffi::base64::tests::large_encode_yields_and_resumes_without_losing_bytes ... ok
+test ffi::base64::tests::decoder_survives_gc_and_adopts_output ... ok
+test ffi::base64::tests::suspended_encoder_survives_full_gc_and_adopts_output ... ok
+test ffi::base64_list::tests::charges_empty_final_and_whitespace_chunks ... ok
+test ffi::binary_ops::binary_sharing_tests::binary_part_retains_backing_allocation ... ok
+test ffi::binary_ops::binary_sharing_tests::nested_view_survives_gc_and_copy_releases_parent ... ok
+test ffi::binary_ops::integer_domain_tests::boxed_binary_resize_preserves_subtype_and_rejects_growth ... ok
+test ffi::binary_ops::integer_domain_tests::wide_integer_extraction_preserves_sign_and_unsigned_range ... ok
+test ffi::binary_ops::iolist_size_tests::binary_tail_and_byte_tail_have_different_validity ... ok
+test ffi::binary_ops::iolist_size_tests::shared_payloads_are_counted_without_materializing_a_binary ... ok
+test ffi::binary_ops::last_match_tests::byte_values_and_longest_match_at_earliest_offset ... ok
+test ffi::binary_ops::last_match_tests::invalid_pattern_after_match_is_still_rejected ... ok
+test ffi::binary_ops::materialize_bits_tests::materialization_keeps_unaligned_offsets_and_partial_last_bytes ... ok
+test ffi::binary_ops::short_float_tests::short_float_boundaries_match_beam ... ok
+test ffi::binary_ops::short_float_tests::short_float_uses_compact_scientific_notation ... ok
+test ffi::closure::boundary_tests::closure_reentry_releases_heap_before_collection ... ok
+test ffi::compare::numeric_order_tests::numeric_order_compares_large_float_mantissas_exactly ... ok
+test ffi::compare::numeric_order_tests::numeric_order_handles_boundaries_and_fractional_values ... ok
+test ffi::compare::numeric_order_tests::numeric_order_is_transitive_across_representations ... ok
+test ffi::compare::numeric_order_tests::numeric_order_preserves_integer_precision ... ok
+test ffi::gen_tcp::argument_tests::ports_require_an_integer_in_the_u16_domain ... ok
+test ffi::gen_tcp::argument_tests::receive_lengths_require_nonnegative_representable_integers ... ok
+test ffi::helpers::heap_boundary_tests::fallback_borrow_is_released_on_unwind ... ok
+test ffi::helpers::heap_boundary_tests::heap_is_resolved_again_after_context_changes ... ok
+test ffi::helpers::iodata_tests::owned_iodata_checks_leaf_and_tail_domains ... ok
+test ffi::helpers::nested_tail_tests::nested_tail_resolution_preserves_caller_continuation ... ok
+test ffi::base64_list::tests::base64_list_decoder_roots_only_tail_across_full_gc ... ok
+test ffi::helpers::scheduler_scope_tests::local_scheduler_allows_reentry_and_rejects_pid_exhaustion ... ok
+test ffi::helpers::scheduler_scope_tests::null_context_and_runtime_preserve_global_fallback ... ok
+test ffi::io_format::integer_format_tests::date_fields_are_zero_padded ... ok
+test ffi::io_format::integer_format_tests::dynamic_integer_fields_consume_arguments_in_order ... ok
+test ffi::io_format::integer_format_tests::integer_width_radix_and_padding_match_beam ... ok
+test ffi::map_ops::tests::keys_equal_atoms ... ok
+test ffi::map_ops::tests::keys_equal_binary_different_allocs ... ok
+test ffi::map_ops::tests::keys_equal_binary_different_content ... ok
+test ffi::map_ops::tests::keys_equal_binary_different_lengths ... ok
+test ffi::map_ops::tests::keys_equal_binary_prefix ... ok
+test ffi::map_ops::tests::keys_equal_binary_vs_tuple ... ok
+test ffi::map_ops::tests::keys_equal_boxed_vs_immediate ... ok
+test ffi::map_ops::tests::keys_equal_different_small_ints ... ok
+test ffi::map_ops::tests::keys_equal_empty_binary ... ok
+test ffi::map_ops::tests::keys_equal_empty_tuple ... ok
+test ffi::map_ops::tests::keys_equal_float_different_allocs ... ok
+test ffi::map_ops::tests::keys_equal_float_different_values ... ok
+test ffi::map_ops::tests::keys_equal_float_vs_tuple ... ok
+test ffi::map_ops::tests::keys_equal_large_binary ... ok
+test ffi::map_ops::tests::keys_equal_large_binary_differ_last_byte ... ok
+test ffi::map_ops::tests::keys_equal_mixed_types ... ok
+test ffi::map_ops::tests::keys_equal_nil ... ok
+test ffi::map_ops::tests::keys_equal_tuple_differ_in_element ... ok
+test ffi::map_ops::tests::keys_equal_same_term ... ok
+test ffi::map_ops::tests::keys_equal_tuple_different_allocs ... ok
+test ffi::map_ops::tests::keys_equal_tuple_different_arity ... ok
+test ffi::map_ops::tests::keys_equal_tuple_with_binary_elements ... ok
+test ffi::process::send_tuple_tests::direct_tuple_copy_does_not_borrow_sender_heap ... ok
+test ffi::process::send_tuple_tests::self_tuple_send_keeps_sender_children_and_return_value ... ok
+test ffi::process::snapshot_tests::remote_snapshot_survives_source_collection_and_drop ... ok
+test ffi::process::snapshot_tests::spawn_options_require_proper_lists_and_checked_domains ... ok
+test ffi::string_ops::tests::graphemes_are_not_split_and_directions_are_independent ... ok
+test ffi::string_ops::tests::crlf_and_empty_results ... ok
+test ffi::tests::abs_raises_badarg_on_non_number ... ok
+test ffi::tests::apply_raises_badarg_on_non_atom_module ... ok
+test ffi::tests::atom_to_list_raises_badarg_on_non_atom ... ok
+test ffi::tests::element_raises_badarg_on_non_tuple ... ok
+test ffi::tests::ceil_raises_badarg_on_non_number ... ok
+test ffi::tests::ets_give_away_raises_badarg_on_non_pid ... ok
+test ffi::tests::ets_new_raises_badarg_on_non_atom_name ... ok
+test ffi::tests::exception_capture_snapshots_and_clears_trace ... ok
+test ffi::tests::float_to_list_raises_badarg_on_non_float ... ok
+test ffi::tests::float_raises_badarg_on_non_number ... ok
+test ffi::tests::hd_raises_badarg_on_empty_list ... ok
+test ffi::tests::floor_raises_badarg_on_non_number ... ok
+test ffi::tests::hd_raises_badarg_on_non_list ... ok
+test ffi::tests::io_format_1_raises_badarg_on_non_string ... ok
+test ffi::tests::integer_to_list_raises_badarg_on_non_integer ... ok
+test ffi::tests::io_format_raises_badarg_on_non_string_fmt ... ok
+test ffi::tests::length_raises_badarg_on_non_list ... ok
+test ffi::tests::list_to_atom_raises_badarg_on_non_list ... ok
+test ffi::tests::list_to_existing_atom_raises_badarg_on_non_list ... ok
+test ffi::tests::list_to_tuple_raises_badarg_on_non_list ... ok
+test ffi::tests::list_to_integer_raises_badarg_on_non_list ... ok
+test ffi::tests::monotonic_time_1_raises_badarg_on_non_atom_unit ... ok
+test ffi::tests::phash2_2_raises_badarg_on_invalid_range ... ok
+test ffi::tests::process_info_1_raises_badarg_on_non_pid ... ok
+test ffi::tests::process_info_1_returns_undefined_for_unknown_pid ... ok
+test ffi::tests::process_info_1_self_returns_list ... ok
+test ffi::tests::process_info_1_self_trap_exit_true ... ok
+test ffi::tests::process_info_1_self_status_is_running ... ok
+test ffi::tests::process_info_1_self_with_links ... ok
+test ffi::tests::process_info_1_self_with_registered_name ... ok
+test ffi::tests::raise_badarg_on_non_atom_class ... ok
+test ffi::tests::raise_badarg_on_invalid_class ... ok
+test ffi::tests::raise_does_not_capture_current_stack ... ok
+test ffi::tests::raise_badarg_on_non_list_stacktrace ... ok
+test ffi::tests::raise_error_sets_exception_class_1 ... ok
+test ffi::tests::raise_exit_sets_exception_class_2 ... ok
+test ffi::tests::raise_throw_sets_exception_class_0 ... ok
+test ffi::tests::raise_with_3_element_tuple_no_info ... ok
+test ffi::tests::raise_with_multi_frame_stacktrace ... ok
+test ffi::tests::round_raises_badarg_on_non_number ... ok
+test ffi::tests::raise_with_stacktrace_populates_trace ... ok
+test ffi::tests::send_raises_badarg_on_non_pid_non_atom ... ok
+test ffi::tests::setelement_raises_badarg_on_bad_index ... ok
+test ffi::tests::size_raises_badarg_on_non_tuple_non_binary ... ok
+test ffi::tests::spawn_closure_raises_badarg_on_non_closure ... ok
+test ffi::tests::spawn_link_closure_raises_badarg_on_non_closure ... ok
+test ffi::tests::spawn_link_raises_badarg_on_non_atom_module ... ok
+test ffi::tests::spawn_raises_badarg_on_non_atom_function ... ok
+test ffi::tests::stack_push_and_pop_updates_call_stack ... ok
+test ffi::tests::spawn_raises_badarg_on_non_atom_module ... ok
+test ffi::tests::tl_raises_badarg_on_non_list ... ok
+test ffi::tests::trunc_raises_badarg_on_non_number ... ok
+test ffi::tests::tuple_to_list_raises_badarg_on_non_tuple ... ok
+test ffi::timer::utc_tests::clock_seconds_floor_subseconds ... ok
+test heap::tests::alloc_binary_and_read ... ok
+test ffi::base64_list::tests::base64_list_decoder_exhausted_budget_errors_and_drop ... ok
+test heap::tests::alloc_binary_auto_large_is_refc_binary ... ok
+test heap::tests::alloc_binary_auto_small_is_heap_binary ... ok
+test heap::tests::alloc_binary_zeroed_and_fill ... ok
+test heap::tests::alloc_cons_and_read ... ok
+test heap::tests::alloc_empty_binary ... ok
+test heap::tests::alloc_empty_map ... ok
+test heap::tests::alloc_float_and_read ... ok
+test ffi::timer::utc_tests::known_utc_boundaries ... ok
+test heap::tests::alloc_list_from_slice ... ok
+test heap::tests::alloc_map_and_read ... ok
+test heap::tests::alloc_refc_binary_with_offset ... ok
+test heap::tests::binary_bytes_any_works_for_both_types ... ok
+test heap::tests::alloc_tuple_and_read ... ok
+test heap::tests::binary_header_stores_bit_count ... ok
+test heap::tests::binary_size_rejection_preserves_heap ... ok
+test heap::tests::binary_vheap_dedup_same_arc ... ok
+test heap::tests::binary_vheap_shrinks_after_sweep ... ok
+test heap::tests::binary_zeroed_header_stores_bit_count ... ok
+test heap::tests::chunk_rejects_wrapping_request_without_advancing ... ok
+test heap::tests::collect_dispatches_major_when_old_threshold_exceeded ... ok
+test heap::tests::fragment_adoption_moves_storage_and_binary_owners_without_copying ... ok
+test heap::tests::fragment_adoption_owns_binary_allocations_across_overflow_chunks ... ok
+test heap::tests::gc_preserves_binary ... ok
+test heap::tests::gc_preserves_binary_in_tuple ... ok
+test heap::tests::gc_preserves_float ... ok
+test heap::tests::gc_preserves_list ... ok
+test heap::tests::gc_preserves_map ... ok
+test heap::tests::gc_preserves_multiple_descriptors_sharing_one_arc ... ok
+test heap::tests::gc_preserves_refc_binary_descriptor ... ok
+test heap::tests::gc_preserves_reference ... ok
+test heap::tests::gc_preserves_reserved_bigint_layout ... ok
+test heap::tests::gc_preserves_sub_byte_binary ... ok
+test heap::tests::gc_preserves_tuple ... ok
+test heap::tests::gc_reduces_tracked_bytes ... ok
+test heap::tests::gc_rejects_wrapping_word_layout ... ok
+test heap::tests::gc_sweeps_stale_refc_binaries ... ok
+test heap::tests::binary_vheap_threshold_grows_with_live_binaries ... ok
+test heap::tests::gc_threshold_shrinks_after_data_drops ... ok
+test ets::tests::concurrent_element_updates_preserve_other_fields ... ok
+test heap::tests::binary_vheap_triggers_gc ... ok
+test ets::tests::element_update_cannot_resurrect_deleted_entry ... ok
+test heap::tests::major_gc_compacts_both_generations ... ok
+test heap::tests::map_pairs_typed_entries_preserve_binary_and_list_roots ... ok
+test heap::tests::map_pairs_validate_without_copying_or_heap_mutation ... ok
+test heap::tests::minor_gc_preserves_binary_behind_old_match_context ... ok
+test heap::tests::minor_gc_preserves_refc_binary_in_old_gen ... ok
+test heap::tests::minor_gc_promotes_young_to_old ... ok
+test heap::tests::minor_gc_retains_nested_old_binaries_but_sweeps_young_garbage ... ok
+test heap::tests::minor_gc_schedules_major_when_old_bloated ... ok
+test heap::tests::minor_gc_skips_old_gen_data ... ok
+test heap::tests::needs_gc_threshold ... ok
+test heap::tests::idle_gc_skips_unchanged_roots_but_reclaims_dropped_roots ... ok
+test heap::tests::oversized_process_request_preserves_existing_allocation ... ok
+test heap::tests::refc_binary_header_stores_bit_count ... ok
+test heap::tests::refc_binary_rejects_invalid_window_before_allocation ... ok
+test heap::tests::large_first_promotion_does_not_request_another_gc ... ok
+test heap::tests::sub_byte_binary_header ... ok
+test heap::tests::young_gen_basic ... ok
+test heap::tests::young_gen_contains_rejects_outside ... ok
+test io_pool::tests::shutdown_stops_workers ... ok
+test heap::tests::large_promotion_into_existing_old_gen_has_live_headroom ... ok
+test message::tests::borrowed_fragment_survives_source_drop ... ok
+test message::tests::copy_binary ... ok
+test message::tests::copy_float ... ok
+test message::tests::copy_immediate_is_identity ... ok
+test message::tests::copy_list_is_deep ... ok
+test message::tests::copy_map ... ok
+test message::tests::copy_refc_binary_clones_arc ... ok
+test message::tests::copy_reference ... ok
+test message::tests::copy_reserved_bigint_layout ... ok
+test message::tests::copy_shared_structure_uses_forwarding ... ok
+test message::tests::copy_tuple_containing_list ... ok
+test message::tests::fragment_batch_alloc_multiple_refc_binaries ... ok
+test message::tests::fragment_heap_for_complex_tuple ... ok
+test message::tests::fragment_immediate ... ok
+test message::tests::fragment_inline_tuple_duplicate_refc_binary ... ok
+test message::tests::fragment_inline_tuple_immediates ... ok
+test message::tests::fragment_inline_tuple_with_refc_binary ... ok
+test heap::tests::should_shrink_detects_oversized_old_gen ... ok
+test message::tests::fragment_refc_binary ... ok
+test message::tests::fragment_simple_tuple_large_arity ... ok
+test message::tests::fragment_roundtrip_preserves_binary_data ... ok
+test native_work::tests::exhausted_and_extreme_budgets_are_bounded_and_aligned ... ok
+test message::tests::invalid_fragment_components_are_rejected ... ok
+test process::tests::concurrent_try_wake_io_only_one_succeeds ... ok
+test process::tests::context_execution_status_domain_and_abi ... ok
+test process::tests::drain_inbox_skips_active_read_for_exited_process ... ok
+test process::tests::concurrent_wakers_claim_one_runnable_slot ... ok
+test process::tests::exit_reason_stays_owned_through_scan_and_collection ... ok
+test process::tests::exit_scan_handles_wrapping_tombstones_and_consecutive_normals ... ok
+test process::tests::exit_scan_keeps_next_signal_after_head_removal ... ok
+test process::tests::guard_drains_and_publishes_only_its_own_entry ... ok
+test process::tests::hibernate_arguments_own_their_source_storage ... ok
+test process::tests::hibernate_reclaims_heap_with_immediate_state ... ok
+test process::tests::hibernate_retains_external_storage ... ok
+test process::tests::hibernate_retains_mailbox_and_dictionary_graphs ... ok
+test process::tests::io_completion_keeps_cas_ownership_until_publication ... ok
+test process::tests::mailbox_accept_with_tombstones ... ok
+test process::tests::mailbox_compaction_trigger ... ok
+test process::tests::mailbox_gather_scatter_roots ... ok
+test process::tests::mailbox_gather_scatter_with_tombstones ... ok
+test process::tests::mailbox_get_rejects_empty_and_preserves_valid_slots ... ok
+test process::tests::mailbox_get_rejects_out_of_range_in_release ... ok
+test process::tests::mailbox_grow_with_tombstones ... ok
+test process::tests::mailbox_is_empty_all_tombstoned ... ok
+test process::tests::mailbox_iter_skips_tombstones ... ok
+test process::tests::mailbox_messages_iter ... ok
+test process::tests::mailbox_rejects_double_remove_without_mutation ... ok
+test process::tests::mailbox_rejects_overflowing_growth_without_mutation ... ok
+test process::tests::mailbox_rejects_tombstone_send_without_mutation ... ok
+test process::tests::mailbox_remove_at ... ok
+test process::tests::mailbox_reset_scan ... ok
+test process::tests::mailbox_ring_buffer_wrap ... ok
+test process::tests::mailbox_scan ... ok
+test process::tests::mailbox_send_and_len ... ok
+test process::tests::mailbox_send_during_active_scan_no_compact ... ok
+test process::tests::mailbox_tombstone_basic ... ok
+test process::tests::mailbox_tombstone_skip_during_scan ... ok
+test process::tests::mailbox_trim_head_tombstones ... ok
+test process::tests::no_double_wake_io_and_message ... ok
+test process::tests::process_identifier_allocator_saturates_without_reuse ... ok
+test process::tests::process_identifier_block_reservation_keeps_remaining_ids_private ... ok
+test process::tests::process_identifier_blocks_are_disjoint_across_threads_and_refills ... ok
+test process::tests::process_identifier_cache_tracks_allocator_identity_without_retaining_it ... ok
+test process::tests::process_identifier_final_partial_block_survives_global_exhaustion ... ok
+test process::tests::process_identifier_single_worker_path_is_bounded_under_external_contention ... ok
+test process::tests::process_new_defaults ... ok
+test process::tests::process_otp_relationship_helpers ... ok
+test process::tests::process_run_slice_no_fn_exits ... ok
+test process::tests::process_run_slice_with_rust_fn ... ok
+test process::tests::process_wait_transitions_preserve_timeout_fallback ... ok
+test process::tests::public_guard_observes_state_without_consuming_wake_ownership ... ok
+test process::tests::published_transitions_keep_wait_reason_and_wake_kind_together ... ok
+test process::tests::try_wake_io_fails_when_already_ready ... ok
+test process::tests::try_wake_io_only_wakes_io_wait_not_waiting ... ok
+test process::tests::try_wake_only_wakes_waiting_not_io_wait ... ok
+test reactor::accept_waiters::tests::cancellation_preserves_fifo_and_cleans_both_indexes ... ok
+test process::tests::idle_collection_retains_live_state_and_reclaims_it_after_root_drop ... ok
+test heap::tests::new_promotions_invalidate_idle_root_snapshot ... ok
+test reactor::tests::accept_cancellation_scaling ... ignored, release-only cancellation scaling measurement
+test heap::tests::idle_gc_cache_never_overrides_pressure_or_explicit_collection ... ok
+test reactor::tests::reactor_start_and_shutdown ... ok
+test reactor::tests::token_allocation_is_monotonic ... ok
+test resource::tests::resource_identity_survives_full_gc_message_copy_and_heap_drop ... ok
+test resource::tests::resource_kind_rejects_plain_and_cross_type_references_before_pointer_use ... ok
+test ffi::base64::tests::single_worker_repeated_small_encodes_share_cpu ... ok
+test reactor::accept_waiters::tests::large_peaks_release_spare_capacity_without_losing_survivors ... ok
+test ffi::base64::tests::single_worker_observer_runs_during_large_native_encoding ... ok
+test ffi::base64_list::tests::base64_list_decoder_single_scheduler_observer_runs_before_completion ... ok
+test io_pool::tests::submit_and_cancel ... ok
+test reactor::tests::concurrent_accepts_preserve_waiters ... ok
+test reactor::accept_waiters::tests::operations_match_fifo_reference ... ok
+test scheduler::tests::deadlock_detection ... ok
+test scheduler::tests::mailbox_message_passing_between_processes ... ok
+test scheduler::tests::worker_inbox_drain_leaves_time_for_execution ... ok
+test scheduler::tests::process_with_no_fn_exits_immediately ... ok
+test scheduler::tests::single_worker_global_queue_progresses_while_local_process_yields ... ok
+test scheduler::tests::receive_timeout_wakeup ... ok
+test socket::tests::accept_invalid_handle ... ok
+test socket::tests::accept_on_stream_handle_fails ... ok
+test socket::tests::exact_reader_stops_at_length_and_rejects_short_input ... ok
+test socket::tests::exhausted_socket_generation_never_reenters_free_list ... ok
+test socket::tests::final_socket_generation_is_usable_once_then_retired ... ok
+test socket::tests::handle_encoding_roundtrips ... ok
+test socket::tests::listen_accept_send_recv_roundtrip ... ok
+test socket::tests::listen_on_port_zero ... ok
+test socket::tests::recv_invalid_handle ... ok
+test socket::tests::register_and_remove_stream ... ok
+test socket::tests::register_listener ... ok
+test socket::tests::remove_all_for_pid_cleans_owned_sockets ... ok
+test socket::tests::remove_all_for_pid_noop_when_no_sockets ... ok
+test socket::tests::remove_nonexistent_handle ... ok
+test socket::tests::remove_sends_fin_with_outstanding_arc_ref ... ok
+test socket::tests::retiring_socket_preserves_other_free_slots_and_releases_owner ... ok
+test socket::tests::send_invalid_handle ... ok
+test scheduler::tests::spawn_and_run_single_process ... ok
+test socket::tests::socket_handle_domain_and_term_roundtrip ... ok
+test socket::tests::socket_modes_are_byte_sized_with_passive_raw_defaults ... ok
+test socket::tests::valid_handle_is_never_zero ... ok
+test socket::tests::stale_handle_after_reuse_returns_none ... ok
+test term::tests::atom_roundtrip ... ok
+test term::tests::borrowed_views_follow_gc_roots_and_binary_windows ... ok
+test term::tests::boxed_header_rejects_oversized_arity ... ok
+test term::tests::boxed_header_subtypes ... ok
+test term::tests::boxed_refc_binary_is_binary_without_inline_bytes ... ok
+test term::tests::boxed_roundtrip ... ok
+test term::tests::boxed_subtype_abi_and_checked_decoding ... ok
+test term::tests::boxed_header_resize_preserves_raw_tags_and_checks_arity ... ok
+test term::tests::checked_pointer_encoding_preserves_aligned_addresses_and_tags ... ok
+test term::tests::cons_roundtrip ... ok
+test term::tests::debug_formatting ... ok
+test term::tests::extractor_returns_none_on_wrong_tag ... ok
+test term::tests::negative_small_int ... ok
+test term::tests::nil_term ... ok
+test term::tests::pid_roundtrip ... ok
+test term::tests::process_id_domain_preserves_all_accepted_bits ... ok
+test term::tests::process_id_domain_rejects_reserved_or_truncated_bits ... ok
+test term::tests::pointer_encoding_rejects_every_misalignment_in_release ... ok
+test term::tests::proptests::atom_round_trip ... ok
+test term::tests::proptests::boxed_header_round_trip ... ok
+test term::tests::proptests::fits_small_int_consistent ... ok
+test term::tests::proptests::pid_round_trip ... ok
+test term::tests::proptests::small_int_preserves_sign ... ok
+test term::tests::proptests::small_int_round_trip ... ok
+test term::tests::proptests::tag_discrimination_atom ... ok
+test term::tests::proptests::tag_discrimination_pid ... ok
+test term::tests::raw_bits_and_debug_do_not_require_live_heap_objects ... ok
+test term::tests::small_int_rejects_out_of_domain_values ... ok
+test term::tests::small_int_roundtrip ... ok
+test term::tests::proptests::tag_discrimination_small_int ... ok
+test timer::tests::test_after_zero_no_timer ... ok
+test timer::tests::test_cancel_before_expiry ... ok
+test timer::tests::test_concurrent_insert_cancel ... ok
+test timer::tests::test_has_pending_timers ... ok
+test timer::tests::test_insert_and_pop_expired ... ok
+test timer::tests::test_next_deadline ... ok
+test timer::tests::test_pop_multiple_at_once ... ok
+test timer::tests::test_remove_for_pid ... ok
+test timer::tests::test_stale_entry_replaced ... ok
+test scheduler::tests::single_scheduler_does_not_recollect_unchanged_idle_heap ... ok
+test timer::tests::concurrent_expiration_does_not_lose_published_timers ... ok
+test scheduler::tests::spawn_many_processes_all_complete ... ok
+test scheduler::tests::stale_tcp_readiness_releases_runnable_slot ... ok
+test scheduler::tests::yield_and_reschedule ... ok
+test scheduler::tests::yield_fairness ... ok
+test scheduler::tests::yield_preserves_scheduling ... ok
+
+test result: ok. 584 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.37s
+
+     Running tests/exit_signal_contract.rs (/tmp/nera-transfer-target/release/deps/exit_signal_contract-35d82a12b6e50bfd)
+
+running 1 test
+test raw_exit_scan_requires_an_unsafe_call ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.17s
+
+     Running tests/fragment_heap_contract.rs (/tmp/nera-transfer-target/release/deps/fragment_heap_contract-fd6a8aedbb7c6d9f)
+
+running 1 test
+test fragment_heap_rejects_collection_mutable_access_and_general_heap_conversion ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.20s
+
+     Running tests/scheduler_borrow_scope.rs (/tmp/nera-transfer-target/release/deps/scheduler_borrow_scope-f46c9fca2dd6b900)
+
+running 1 test
+test scheduler_reference_cannot_escape_callback ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+
+   Doc-tests nera_runtime
+
+running 38 tests
+test crates/nera-runtime/src/heap.rs - heap::ProcessHeap (line 210) - compile fail ... ok
+test crates/nera-runtime/src/heap.rs - heap::ProcessHeap (line 216) - compile fail ... ok
+test crates/nera-runtime/src/bigint.rs - bigint::bigint_to_f64 (line 69) - compile fail ... ok
+test crates/nera-runtime/src/ets_pool.rs - ets_pool::EtsRegionPool::alloc (line 132) - compile fail ... ok
+test crates/nera-runtime/src/heap.rs - heap::ProcessHeap::collect (line 800) - compile fail ... ok
+test crates/nera-runtime/src/bigint.rs - bigint::term_to_bigint (line 21) - compile fail ... ok
+test crates/nera-runtime/src/heap.rs - heap::ProcessHeap::alloc_map (line 675) - compile fail ... ok
+test crates/nera-runtime/src/heap.rs - heap::ProcessHeap::adopt_fragment (line 652) - compile fail ... ok
+test crates/nera-runtime/src/message.rs - message::HeapFragment (line 150) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::Mailbox::scatter_roots (line 2530) - compile fail ... ok
+test crates/nera-runtime/src/heap.rs - heap::ProcessHeap::collect_full (line 823) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::Process::collect_garbage (line 1484) - compile fail ... ok
+test crates/nera-runtime/src/message.rs - message::deep_copy_term (line 402) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::ErlFn (line 1169) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::Process::collect_garbage_full (line 1567) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::Process::hibernate (line 1682) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::ProcessContext (line 982) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::ProcessEntry (line 279) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::Process::run_slice (line 1853) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::ProcessContext (line 992) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::ProcessEntry (line 294) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::ProcessEntry (line 269) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::ProcessEntry (line 285) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::ProcessEntry (line 300) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::ProcessEntry (line 306) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::process_exit_signals (line 2091) - compile fail ... ok
+test crates/nera-runtime/src/scheduler.rs - scheduler::Scheduler::run (line 403) - compile fail ... ok
+test crates/nera-runtime/src/term.rs - term::BorrowedTerm<'_>::copy_to_heap (line 844) - compile fail ... ok
+test crates/nera-runtime/src/term.rs - term::BorrowedTerm<'_>::to_bigint (line 863) - compile fail ... ok
+test crates/nera-runtime/src/term.rs - term::BoxedHeader::new (line 223) - compile fail ... ok
+test crates/nera-runtime/src/term.rs - term::BoxedHeader::new (line 227) - compile fail ... ok
+test crates/nera-runtime/src/term.rs - term::ErlTerm::borrow (line 316) - compile fail ... ok
+test crates/nera-runtime/src/socket.rs - socket::SocketHandle (line 132) - compile fail ... ok
+test crates/nera-runtime/src/term.rs - term::ErlTerm (line 284) - compile fail ... ok
+test crates/nera-runtime/src/term.rs - term::ErlTerm::borrow (line 327) - compile fail ... ok
+test crates/nera-runtime/src/term.rs - term::ErlTerm::pid (line 380) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::ProcessGuard (line 435) ... ok
+test crates/nera-runtime/src/term.rs - term::ErlTerm::borrow (line 305) ... ok
+
+test result: ok. 38 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.37s

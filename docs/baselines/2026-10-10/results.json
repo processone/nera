@@ -1,0 +1,376 @@
+{
+  "commit": "c5b89ee65d679da1f2fe257aef73f130859440bb",
+  "tree": "39856e395ff12a1548741a2cd895975e5e80a856",
+  "platform": "macOS 15.7.7 arm64",
+  "rustc": "1.97.1 (8bab26f4f 2026-07-14)",
+  "cargo": "1.97.1",
+  "beam": "OTP 29 / Homebrew 29.0.5",
+  "lock_sha256": "ad42464c59618c1e56a7102589e51a26ffac0f55401b8e4d7e24c039f110bb1d",
+  "rust_tests": {
+    "passed": 1671,
+    "failed": 6,
+    "ignored": 0
+  },
+  "e2e_initial": {
+    "passed": 282,
+    "failed": 2,
+    "skipped": 2,
+    "total": 286
+  },
+  "commands": {
+    "late-reply-beam": {
+      "command": [
+        "erl",
+        "-noshell",
+        "-pa",
+        ".",
+        "-s",
+        "late_reply_probe",
+        "start",
+        "-s",
+        "init",
+        "stop"
+      ],
+      "cwd": "$REPO/target/preview-baseline-2026-10-10/probes",
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.5
+    },
+    "thoas-deps": {
+      "command": [
+        "$REPO/target/release/nera",
+        "deps",
+        "get"
+      ],
+      "cwd": "$REPO/target/preview-baseline-2026-10-10/integrations/thoas",
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 1.02
+    },
+    "poolboy-build": {
+      "command": [
+        "$REPO/target/release/nera",
+        "build",
+        "-o",
+        "integration-test"
+      ],
+      "cwd": "$REPO/target/preview-baseline-2026-10-10/integrations/poolboy",
+      "exit_code": 1,
+      "timed_out": false,
+      "seconds": 0.4
+    },
+    "workspace-tests": {
+      "command": [
+        "env",
+        "RUSTC_WRAPPER=",
+        "cargo",
+        "test",
+        "--workspace",
+        "--locked",
+        "--offline"
+      ],
+      "cwd": "$REPO",
+      "exit_code": 101,
+      "timed_out": false,
+      "seconds": 0.99
+    },
+    "packaged-hello-build": {
+      "command": [
+        "env",
+        "TMPDIR=$REPO/target/preview-baseline-2026-10-10/install-smoke/work/runtime-cache",
+        "$REPO/target/preview-baseline-2026-10-10/install-smoke/nera-0.1.0-baseline-aarch64-apple-darwin/bin/nera",
+        "build",
+        "hello.erl",
+        "-e",
+        "hello:start",
+        "-o",
+        "hello",
+        "-v"
+      ],
+      "cwd": "$REPO/target/preview-baseline-2026-10-10/install-smoke/work",
+      "exit_code": 1,
+      "timed_out": false,
+      "seconds": 0.51
+    },
+    "clippy": {
+      "command": [
+        "env",
+        "RUSTC_WRAPPER=",
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "$REPO",
+      "exit_code": 101,
+      "timed_out": false,
+      "seconds": 15.71
+    },
+    "late-reply-beam-build": {
+      "command": [
+        "erlc",
+        "late_reply_probe.erl"
+      ],
+      "cwd": "$REPO/target/preview-baseline-2026-10-10/probes",
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.89
+    },
+    "reactor-trace-build": {
+      "command": [
+        "$REPO/target/release/nera",
+        "build",
+        "tcp_reactor_trace.erl",
+        "-e",
+        "tcp_reactor_trace:test",
+        "-o",
+        "tcp_reactor_trace"
+      ],
+      "cwd": "$REPO/target/preview-baseline-2026-10-10/probes",
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 1.05
+    },
+    "late-reply-trace-build": {
+      "command": [
+        "$REPO/target/release/nera",
+        "build",
+        "late_reply_trace.erl",
+        "-e",
+        "late_reply_trace:start",
+        "-o",
+        "late_reply_trace"
+      ],
+      "cwd": "$REPO/target/preview-baseline-2026-10-10/probes",
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 2.09
+    },
+    "late-reply-native": {
+      "command": [
+        "./late_reply_native"
+      ],
+      "cwd": "$REPO/target/preview-baseline-2026-10-10/probes",
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.35
+    },
+    "packaged-system-tar-build": {
+      "command": [
+        "env",
+        "TMPDIR=$REPO/target/preview-baseline-2026-10-10/install-system-tar/work/runtime-cache",
+        "$REPO/target/preview-baseline-2026-10-10/install-system-tar/nera-0.1.0-baseline-aarch64-apple-darwin/bin/nera",
+        "build",
+        "hello.erl",
+        "-e",
+        "hello:start",
+        "-o",
+        "hello",
+        "-v"
+      ],
+      "cwd": "$REPO/target/preview-baseline-2026-10-10/install-system-tar/work",
+      "exit_code": 1,
+      "timed_out": false,
+      "seconds": 3.74
+    },
+    "poolboy-deps": {
+      "command": [
+        "$REPO/target/release/nera",
+        "deps",
+        "get"
+      ],
+      "cwd": "$REPO/target/preview-baseline-2026-10-10/integrations/poolboy",
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.83
+    },
+    "thoas-run": {
+      "command": [
+        "./integration-test"
+      ],
+      "cwd": "$REPO/target/preview-baseline-2026-10-10/integrations/thoas",
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.29
+    },
+    "late-reply-trace": {
+      "command": [
+        "./late_reply_trace"
+      ],
+      "cwd": "$REPO/target/preview-baseline-2026-10-10/probes",
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.28
+    },
+    "e2e": {
+      "command": [
+        "./target/release/nera",
+        "test",
+        "-j",
+        "4",
+        "--timeout",
+        "30"
+      ],
+      "cwd": "$REPO",
+      "exit_code": 1,
+      "timed_out": false,
+      "seconds": 140.18
+    },
+    "reactor-trace-run": {
+      "command": [
+        "./tcp_reactor_trace"
+      ],
+      "cwd": "$REPO/target/preview-baseline-2026-10-10/probes",
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.46
+    },
+    "thoas-build": {
+      "command": [
+        "$REPO/target/release/nera",
+        "build",
+        "-o",
+        "integration-test"
+      ],
+      "cwd": "$REPO/target/preview-baseline-2026-10-10/integrations/thoas",
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 1.89
+    },
+    "late-reply-native-build": {
+      "command": [
+        "$REPO/target/release/nera",
+        "build",
+        "late_reply_probe.erl",
+        "-e",
+        "late_reply_probe:start",
+        "-o",
+        "late_reply_native"
+      ],
+      "cwd": "$REPO/target/preview-baseline-2026-10-10/probes",
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.93
+    },
+    "workspace-all-targets": {
+      "command": [
+        "env",
+        "RUSTC_WRAPPER=",
+        "cargo",
+        "test",
+        "--workspace",
+        "--locked",
+        "--offline",
+        "--no-fail-fast"
+      ],
+      "cwd": "$REPO",
+      "exit_code": 101,
+      "timed_out": false,
+      "seconds": 14.24
+    },
+    "clean-package": {
+      "command": [
+        "env",
+        "RUSTC_WRAPPER=",
+        "CARGO_NET_OFFLINE=true",
+        "bash",
+        "scripts/dist.sh",
+        "--version",
+        "0.1.0-baseline",
+        "--target",
+        "aarch64-apple-darwin"
+      ],
+      "cwd": "$CLEAN_COPY",
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 396.72
+    },
+    "packaged-runtime-path-hello": {
+      "command": [
+        "./hello"
+      ],
+      "cwd": "$REPO/target/preview-baseline-2026-10-10/install-system-tar/work",
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.5
+    },
+    "workspace-tests-online": {
+      "command": [
+        "env",
+        "RUSTC_WRAPPER=",
+        "cargo",
+        "test",
+        "--workspace",
+        "--locked"
+      ],
+      "cwd": "$REPO",
+      "exit_code": 101,
+      "timed_out": false,
+      "seconds": 149.72
+    },
+    "packaged-runtime-path-control": {
+      "command": [
+        "$REPO/target/preview-baseline-2026-10-10/install-system-tar/nera-0.1.0-baseline-aarch64-apple-darwin/bin/nera",
+        "build",
+        "hello.erl",
+        "-e",
+        "hello:start",
+        "-o",
+        "hello"
+      ],
+      "cwd": "$REPO/target/preview-baseline-2026-10-10/install-system-tar/work",
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.61
+    },
+    "e2e-repeat": {
+      "command": [
+        "./target/release/nera",
+        "test",
+        "-j",
+        "4",
+        "--timeout",
+        "30"
+      ],
+      "cwd": "$REPO",
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 68.59
+    }
+  },
+  "e2e_repeat": {
+    "passed": 284,
+    "failed": 0,
+    "skipped": 2,
+    "total": 286
+  },
+  "release_build": {
+    "exit_code": 0,
+    "command": [
+      "env",
+      "RUSTC_WRAPPER=",
+      "cargo",
+      "build",
+      "--release",
+      "--locked"
+    ],
+    "seconds": 262,
+    "log": "build.log"
+  },
+  "rustfmt": {
+    "result": "differences",
+    "affected_files": 123,
+    "command": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ]
+  }
+}

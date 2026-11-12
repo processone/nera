@@ -1,0 +1,5 @@
+   Compiling nera-runtime v0.1.0 (/home/user/AIProjects/nera/crates/nera-runtime)
+   Compiling nera-ir v0.1.0 (/home/user/AIProjects/nera/crates/nera-ir)
+   Compiling nera v0.1.0 (/home/user/AIProjects/nera/crates/nera)
+   Compiling nera-codegen v0.1.0 (/home/user/AIProjects/nera/crates/nera-codegen)
+    Finished `release` profile [optimized] target(s) in 2m 03s

@@ -1,0 +1,38 @@
+{
+  "before": {
+    "_nera_rt_atomics_add": {
+      "instructions": 66,
+      "panic_bounds_check": true
+    },
+    "_nera_rt_atomics_get": {
+      "instructions": 68,
+      "panic_bounds_check": true
+    },
+    "_nera_rt_counters_add": {
+      "instructions": 63,
+      "panic_bounds_check": true
+    },
+    "_nera_rt_counters_get": {
+      "instructions": 56,
+      "panic_bounds_check": true
+    }
+  },
+  "after": {
+    "_nera_rt_atomics_add": {
+      "instructions": 59,
+      "panic_bounds_check": false
+    },
+    "_nera_rt_atomics_get": {
+      "instructions": 61,
+      "panic_bounds_check": false
+    },
+    "_nera_rt_counters_add": {
+      "instructions": 56,
+      "panic_bounds_check": false
+    },
+    "_nera_rt_counters_get": {
+      "instructions": 49,
+      "panic_bounds_check": false
+    }
+  }
+}

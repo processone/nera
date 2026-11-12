@@ -1,0 +1,63 @@
+<idea-plugin>
+    <id>net.processone.nera</id>
+    <logo>pluginIcon.svg</logo>
+    <name>Nera Erlang</name>
+    <vendor url="https://www.process-one.net">ProcessOne</vendor>
+    <description><![CDATA[
+        Language support for Erlang projects using the nera compiler.
+        Provides syntax highlighting and LSP diagnostics.
+    ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.ultimate</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <fileType name="Erlang"
+                  implementationClass="net.processone.nera.ErlangFileType"
+                  fieldName="INSTANCE"
+                  language="Erlang"
+                  extensions="erl;hrl;xrl;yrl;escript;app"
+                  fileNamePatterns="*.app.src"/>
+        <lang.parserDefinition
+                language="Erlang"
+                implementationClass="net.processone.nera.ErlangParserDefinition"/>
+        <lang.commenter language="Erlang"
+                        implementationClass="net.processone.nera.ErlangCommenter"/>
+        <lang.syntaxHighlighterFactory
+                language="Erlang"
+                implementationClass="net.processone.nera.ErlangSyntaxHighlighterFactory"/>
+        <lang.psiStructureViewFactory
+                language="Erlang"
+                implementationClass="net.processone.nera.NeraStructureViewFactory"/>
+        <applicationConfigurable
+                parentId="language"
+                instance="net.processone.nera.NeraSettingsConfigurable"
+                id="net.processone.nera.settings"
+                displayName="Nera"/>
+        <applicationService
+                serviceImplementation="net.processone.nera.NeraSettings"/>
+        <platform.lsp.serverSupportProvider
+                implementation="net.processone.nera.NeraLspServerSupportProvider"/>
+        <lineIndentProvider
+                implementation="net.processone.nera.ErlangLineIndentProvider"/>
+        <postStartupActivity
+                implementation="net.processone.nera.ErlangTabActionHandler$Registration"/>
+        <iconProvider implementation="net.processone.nera.ErlangIconProvider"/>
+        <fileBreadcrumbsCollector implementation="net.processone.nera.NeraBreadcrumbsCollector"/>
+        <renameHandler implementation="net.processone.nera.NeraRenameHandler"/>
+        <additionalTextAttributes scheme="Darcula" file="colorSchemes/ErlangDark.xml"/>
+        <additionalTextAttributes scheme="Default" file="colorSchemes/ErlangLight.xml"/>
+
+        <!-- Bridge LSP diagnostics into the "Project Errors" tab -->
+        <projectService
+                serviceImplementation="net.processone.nera.NeraLspDiagnosticCache"/>
+        <localInspection
+                language="Erlang"
+                implementationClass="net.processone.nera.NeraLspInspection"
+                displayName="Nera LSP Diagnostics"
+                groupName="Erlang"
+                shortName="NeraLspDiagnostics"
+                enabledByDefault="true"
+                level="ERROR"/>
+    </extensions>
+</idea-plugin>

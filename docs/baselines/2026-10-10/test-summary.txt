@@ -1,0 +1,50 @@
+     Running unittests src/main.rs (target/debug/deps/nera-1410cd39fcdeaac4)
+test result: ok. 286 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.61s
+     Running unittests src/lib.rs (target/debug/deps/nera_codegen-88424bd6cccd9d70)
+test result: ok. 80 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+     Running unittests src/lib.rs (target/debug/deps/nera_fmt-99d5fcb4f5d39277)
+test result: ok. 121 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+     Running tests/integration.rs (target/debug/deps/integration-cf2da4778e1c468b)
+test result: ok. 92 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+     Running tests/proptest_format.rs (target/debug/deps/proptest_format-0b81f5f5686a51ba)
+test idempotent ... FAILED
+test result: FAILED. 3 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s
+     Running unittests src/lib.rs (target/debug/deps/nera_ir-ca46ec66e330dd45)
+test warnings::tests::deprecated_attribute_parsed ... FAILED
+test warnings::tests::deprecated_call_warns ... FAILED
+test warnings::tests::deprecated_multiple_functions ... FAILED
+test warnings::tests::deprecated_fun_ref_warns ... FAILED
+test warnings::tests::deprecated_call_has_correct_code ... FAILED
+test result: FAILED. 364 passed; 5 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+     Running unittests src/lib.rs (target/debug/deps/nera_runtime-73e5020f21af530c)
+test result: ok. 436 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.29s
+     Running unittests src/lib.rs (target/debug/deps/nera_syntax-2716aaf7351c0f73)
+test result: ok. 289 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+Initial Erlang end-to-end run:
+  PASS  xmod_bidir                                 2.5s  [284/286]
+  PASS  xmod_multi                                 1.9s  [285/286]
+  FAIL  tcp_reactor                               32.7s  [286/286]
+────────────────────────────────────────────────────────────
+Results: 282 passed, 2 failed (0 compile), 2 skipped / 286 total
+
+Failures:
+  tcp_reactor_perf: runtime crash, exit=1
+    Error in process <0.1.0>: error:{batch_variance_stall,165,25,[15,21,25,64,165]}
+    Stacktrace (most recent call last):
+      tcp_reactor_perf:test_active_once_batch_consistency/0 (tcp_reactor_perf.erl, line 34)
+    reactor stats: events=54459 missing_token=0 active_reads=1000 setopts_fastpath=0 pending=0 active_regs=0
+  tcp_reactor: timeout after 30s
+
+SOME TESTS FAILED
+
+Full end-to-end repeat after builds finished:
+────────────────────────────────────────────────────────────
+Results: 284 passed, 0 failed (0 compile), 2 skipped / 286 total
+
+ALL TESTS PASSED

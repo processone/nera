@@ -1,0 +1,22 @@
+   Compiling nera-runtime v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.59s
+   Doc-tests nera_runtime
+
+running 2 tests
+test crates/nera-runtime/src/term.rs - term::BoxedHeader::new (line 161) - compile fail ... FAILED
+test crates/nera-runtime/src/term.rs - term::BoxedHeader::new (line 157) - compile fail ... FAILED
+
+failures:
+
+---- crates/nera-runtime/src/term.rs - term::BoxedHeader::new (line 161) stdout ----
+Test compiled successfully, but it's marked `compile_fail`.
+---- crates/nera-runtime/src/term.rs - term::BoxedHeader::new (line 157) stdout ----
+Test compiled successfully, but it's marked `compile_fail`.
+
+failures:
+    crates/nera-runtime/src/term.rs - term::BoxedHeader::new (line 157)
+    crates/nera-runtime/src/term.rs - term::BoxedHeader::new (line 161)
+
+test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 32 filtered out; finished in 0.21s
+
+error: doctest failed, to rerun pass `-p nera-runtime --doc`

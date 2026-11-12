@@ -1,0 +1,54 @@
+# Rust
+/target/
+Cargo.lock
+!/Cargo.lock
+
+# IDE
+.idea/
+.vscode/
+!demo/editors/vscode/.vscode/
+!demo/editors/vscode/.vscode/**
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+dist/
+editors/jetbrains-nera/build/
+editors/jetbrains-nera/.gradle/
+editors/jetbrains-nera/.intellijPlatform/
+editors/jetbrains-nera/.kotlin/
+*.o
+*.a
+a.out
+*.crashdump
+demo/editors/vscode/vscode_demo
+demo/editors/vscode/vscode_demo.exe
+
+# private stuff
+private/
+
+# Tools
+.arbor/
+
+# Debug
+*.pdb
+
+# Fuzzing
+**/fuzz/corpus/
+**/fuzz/target/
+**/fuzz/artifacts/
+
+# Proptest
+**/*.proptest-regressions
+
+# Temp stuff
+erl_crash.dump
+profile.json.gz
+
+# Python integration/build helpers
+__pycache__/

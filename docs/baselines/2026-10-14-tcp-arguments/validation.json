@@ -1,0 +1,24 @@
+{
+  "workspace-tests.txt": {
+    "passed": 1961,
+    "failed": 0,
+    "ignored": 1
+  },
+  "release-tests.txt": {
+    "passed": 620,
+    "failed": 0,
+    "ignored": 1
+  },
+  "base": "8367d36cdb0aebb014ae172d043a998d2b0c75e5",
+  "target": "local worktree mr/tcp-argument-validation",
+  "native_tcp": {
+    "passed": 11,
+    "failed": 0,
+    "skipped": 0
+  },
+  "artifacts": {
+    "/tmp/nera-transfer-target/release/nera": "4b79c5dffac0cb8518f39812aeddb11ccf63b105c124975c484ff533a574de18",
+    "/tmp/nera-transfer-target/release/libnera_runtime.a": "0971735fbadc9b7a340941e8154e92ab1bde51860d96bce993b61ee1fc36030c",
+    "/tmp/nera-tcp-baseline-target/release/libnera_runtime.a": "97577901b35d79d5258aeaf871fbe8fac69598e68c7a8788fb872693521d0180"
+  }
+}

@@ -1,0 +1,1908 @@
+{
+  "operations": 500000,
+  "warmups": 500000,
+  "series": [
+    {
+      "before-aligned": [
+        {
+          "f32_write": 20999,
+          "f32_read": 10265,
+          "f64_write": 20463,
+          "f64_read": 9690,
+          "f32le_write": 21252,
+          "f32le_read": 10485,
+          "f64le_write": 22485,
+          "f64le_read": 10806,
+          "f32int_write": 20715,
+          "f32int_read": 10949,
+          "f64big_write": 39464,
+          "f64big_read": 10275,
+          "f64dynamic_write": 24667,
+          "f64dynamic_read": 11973
+        },
+        {
+          "f32_write": 20275,
+          "f32_read": 10402,
+          "f64_write": 21108,
+          "f64_read": 9789,
+          "f32le_write": 19477,
+          "f32le_read": 10084,
+          "f64le_write": 20507,
+          "f64le_read": 10195,
+          "f32int_write": 19488,
+          "f32int_read": 9752,
+          "f64big_write": 37287,
+          "f64big_read": 10345,
+          "f64dynamic_write": 153751,
+          "f64dynamic_read": 34791
+        },
+        {
+          "f32_write": 19722,
+          "f32_read": 10012,
+          "f64_write": 21987,
+          "f64_read": 9724,
+          "f32le_write": 20265,
+          "f32le_read": 11272,
+          "f64le_write": 21681,
+          "f64le_read": 10453,
+          "f32int_write": 20092,
+          "f32int_read": 9761,
+          "f64big_write": 37145,
+          "f64big_read": 10311,
+          "f64dynamic_write": 23444,
+          "f64dynamic_read": 11363
+        },
+        {
+          "f32_write": 23323,
+          "f32_read": 10192,
+          "f64_write": 21443,
+          "f64_read": 10183,
+          "f32le_write": 20065,
+          "f32le_read": 9809,
+          "f64le_write": 20811,
+          "f64le_read": 10112,
+          "f32int_write": 20173,
+          "f32int_read": 10386,
+          "f64big_write": 37271,
+          "f64big_read": 11560,
+          "f64dynamic_write": 23461,
+          "f64dynamic_read": 11705
+        },
+        {
+          "f32_write": 19788,
+          "f32_read": 10202,
+          "f64_write": 21089,
+          "f64_read": 9739,
+          "f32le_write": 21217,
+          "f32le_read": 10216,
+          "f64le_write": 21073,
+          "f64le_read": 10750,
+          "f32int_write": 19771,
+          "f32int_read": 9769,
+          "f64big_write": 38593,
+          "f64big_read": 10385,
+          "f64dynamic_write": 24460,
+          "f64dynamic_read": 13016
+        },
+        {
+          "f32_write": 64182,
+          "f32_read": 22679,
+          "f64_write": 79824,
+          "f64_read": 44554,
+          "f32le_write": 39129,
+          "f32le_read": 78455,
+          "f64le_write": 42674,
+          "f64le_read": 20721,
+          "f32int_write": 34298,
+          "f32int_read": 19192,
+          "f64big_write": 67173,
+          "f64big_read": 11721,
+          "f64dynamic_write": 31011,
+          "f64dynamic_read": 11238
+        },
+        {
+          "f32_write": 25965,
+          "f32_read": 13193,
+          "f64_write": 66063,
+          "f64_read": 56683,
+          "f32le_write": 47602,
+          "f32le_read": 33183,
+          "f64le_write": 61939,
+          "f64le_read": 21181,
+          "f32int_write": 31715,
+          "f32int_read": 47550,
+          "f64big_write": 47287,
+          "f64big_read": 18112,
+          "f64dynamic_write": 45046,
+          "f64dynamic_read": 11086
+        },
+        {
+          "f32_write": 19399,
+          "f32_read": 10550,
+          "f64_write": 19932,
+          "f64_read": 9404,
+          "f32le_write": 18913,
+          "f32le_read": 9532,
+          "f64le_write": 19742,
+          "f64le_read": 9640,
+          "f32int_write": 18789,
+          "f32int_read": 9421,
+          "f64big_write": 35332,
+          "f64big_read": 9871,
+          "f64dynamic_write": 22528,
+          "f64dynamic_read": 10947
+        },
+        {
+          "f32_write": 19730,
+          "f32_read": 9792,
+          "f64_write": 21169,
+          "f64_read": 9825,
+          "f32le_write": 19213,
+          "f32le_read": 9686,
+          "f64le_write": 20056,
+          "f64le_read": 9700,
+          "f32int_write": 19585,
+          "f32int_read": 9693,
+          "f64big_write": 35596,
+          "f64big_read": 9761,
+          "f64dynamic_write": 23823,
+          "f64dynamic_read": 11262
+        }
+      ],
+      "after-aligned": [
+        {
+          "f32_write": 24282,
+          "f32_read": 11703,
+          "f64_write": 27746,
+          "f64_read": 12153,
+          "f32le_write": 27817,
+          "f32le_read": 11547,
+          "f64le_write": 26211,
+          "f64le_read": 11838,
+          "f32int_write": 23264,
+          "f32int_read": 13286,
+          "f64big_write": 38780,
+          "f64big_read": 11171,
+          "f64dynamic_write": 26830,
+          "f64dynamic_read": 12452
+        },
+        {
+          "f32_write": 23446,
+          "f32_read": 11766,
+          "f64_write": 22703,
+          "f64_read": 11368,
+          "f32le_write": 28171,
+          "f32le_read": 11138,
+          "f64le_write": 25453,
+          "f64le_read": 11426,
+          "f32int_write": 20163,
+          "f32int_read": 11466,
+          "f64big_write": 36904,
+          "f64big_read": 11123,
+          "f64dynamic_write": 27488,
+          "f64dynamic_read": 12734
+        },
+        {
+          "f32_write": 25369,
+          "f32_read": 11649,
+          "f64_write": 23162,
+          "f64_read": 13115,
+          "f32le_write": 27712,
+          "f32le_read": 11375,
+          "f64le_write": 25670,
+          "f64le_read": 12423,
+          "f32int_write": 20733,
+          "f32int_read": 12227,
+          "f64big_write": 38229,
+          "f64big_read": 13172,
+          "f64dynamic_write": 26881,
+          "f64dynamic_read": 12889
+        },
+        {
+          "f32_write": 23525,
+          "f32_read": 12051,
+          "f64_write": 23341,
+          "f64_read": 13218,
+          "f32le_write": 27085,
+          "f32le_read": 13003,
+          "f64le_write": 31716,
+          "f64le_read": 17007,
+          "f32int_write": 26609,
+          "f32int_read": 12596,
+          "f64big_write": 46530,
+          "f64big_read": 13020,
+          "f64dynamic_write": 30039,
+          "f64dynamic_read": 12823
+        },
+        {
+          "f32_write": 26324,
+          "f32_read": 11296,
+          "f64_write": 22954,
+          "f64_read": 11343,
+          "f32le_write": 30509,
+          "f32le_read": 13552,
+          "f64le_write": 34484,
+          "f64le_read": 13353,
+          "f32int_write": 27994,
+          "f32int_read": 11537,
+          "f64big_write": 46381,
+          "f64big_read": 20714,
+          "f64dynamic_write": 39234,
+          "f64dynamic_read": 24603
+        },
+        {
+          "f32_write": 37429,
+          "f32_read": 14933,
+          "f64_write": 44276,
+          "f64_read": 38282,
+          "f32le_write": 92370,
+          "f32le_read": 31051,
+          "f64le_write": 45199,
+          "f64le_read": 22871,
+          "f32int_write": 41635,
+          "f32int_read": 25045,
+          "f64big_write": 70800,
+          "f64big_read": 23185,
+          "f64dynamic_write": 60376,
+          "f64dynamic_read": 34279
+        },
+        {
+          "f32_write": 46518,
+          "f32_read": 68191,
+          "f64_write": 39294,
+          "f64_read": 20591,
+          "f32le_write": 38170,
+          "f32le_read": 16162,
+          "f64le_write": 35915,
+          "f64le_read": 15301,
+          "f32int_write": 33799,
+          "f32int_read": 12573,
+          "f64big_write": 37580,
+          "f64big_read": 11705,
+          "f64dynamic_write": 28416,
+          "f64dynamic_read": 15746
+        },
+        {
+          "f32_write": 29763,
+          "f32_read": 11828,
+          "f64_write": 23227,
+          "f64_read": 12630,
+          "f32le_write": 26174,
+          "f32le_read": 10916,
+          "f64le_write": 24000,
+          "f64le_read": 10755,
+          "f32int_write": 19149,
+          "f32int_read": 10898,
+          "f64big_write": 34865,
+          "f64big_read": 10814,
+          "f64dynamic_write": 25029,
+          "f64dynamic_read": 12096
+        },
+        {
+          "f32_write": 23135,
+          "f32_read": 12001,
+          "f64_write": 23798,
+          "f64_read": 10970,
+          "f32le_write": 25730,
+          "f32le_read": 11042,
+          "f64le_write": 25305,
+          "f64le_read": 11015,
+          "f32int_write": 20176,
+          "f32int_read": 11351,
+          "f64big_write": 36674,
+          "f64big_read": 11296,
+          "f64dynamic_write": 25697,
+          "f64dynamic_read": 12610
+        }
+      ],
+      "after-shifted": [
+        {
+          "f32_write": 24216,
+          "f32_read": 13279,
+          "f64_write": 24440,
+          "f64_read": 13326,
+          "f32le_write": 23567,
+          "f32le_read": 15083,
+          "f64le_write": 24595,
+          "f64le_read": 15754,
+          "f32int_write": 23014,
+          "f32int_read": 13969,
+          "f64big_write": 42062,
+          "f64big_read": 12609,
+          "f64dynamic_write": 25355,
+          "f64dynamic_read": 13419
+        },
+        {
+          "f32_write": 24235,
+          "f32_read": 13824,
+          "f64_write": 25995,
+          "f64_read": 13350,
+          "f32le_write": 23774,
+          "f32le_read": 12917,
+          "f64le_write": 24345,
+          "f64le_read": 15640,
+          "f32int_write": 23354,
+          "f32int_read": 13808,
+          "f64big_write": 42515,
+          "f64big_read": 12912,
+          "f64dynamic_write": 25100,
+          "f64dynamic_read": 13365
+        },
+        {
+          "f32_write": 23461,
+          "f32_read": 13751,
+          "f64_write": 25183,
+          "f64_read": 13482,
+          "f32le_write": 25116,
+          "f32le_read": 13539,
+          "f64le_write": 27571,
+          "f64le_read": 15459,
+          "f32int_write": 23487,
+          "f32int_read": 14342,
+          "f64big_write": 43376,
+          "f64big_read": 13855,
+          "f64dynamic_write": 27200,
+          "f64dynamic_read": 13923
+        },
+        {
+          "f32_write": 30818,
+          "f32_read": 17752,
+          "f64_write": 49702,
+          "f64_read": 15375,
+          "f32le_write": 31917,
+          "f32le_read": 14920,
+          "f64le_write": 26236,
+          "f64le_read": 15878,
+          "f32int_write": 23730,
+          "f32int_read": 13424,
+          "f64big_write": 42065,
+          "f64big_read": 13411,
+          "f64dynamic_write": 25736,
+          "f64dynamic_read": 13863
+        },
+        {
+          "f32_write": 25942,
+          "f32_read": 45098,
+          "f64_write": 43985,
+          "f64_read": 22738,
+          "f32le_write": 51335,
+          "f32le_read": 26271,
+          "f64le_write": 72400,
+          "f64le_read": 30253,
+          "f32int_write": 50396,
+          "f32int_read": 34554,
+          "f64big_write": 84017,
+          "f64big_read": 51045,
+          "f64dynamic_write": 51883,
+          "f64dynamic_read": 33318
+        },
+        {
+          "f32_write": 50445,
+          "f32_read": 27336,
+          "f64_write": 48899,
+          "f64_read": 23762,
+          "f32le_write": 63734,
+          "f32le_read": 18135,
+          "f64le_write": 32783,
+          "f64le_read": 21383,
+          "f32int_write": 45789,
+          "f32int_read": 26808,
+          "f64big_write": 68054,
+          "f64big_read": 42906,
+          "f64dynamic_write": 53682,
+          "f64dynamic_read": 28626
+        },
+        {
+          "f32_write": 36696,
+          "f32_read": 13939,
+          "f64_write": 27223,
+          "f64_read": 12918,
+          "f32le_write": 23326,
+          "f32le_read": 13540,
+          "f64le_write": 24119,
+          "f64le_read": 30887,
+          "f32int_write": 32006,
+          "f32int_read": 18961,
+          "f64big_write": 42561,
+          "f64big_read": 17731,
+          "f64dynamic_write": 31433,
+          "f64dynamic_read": 17901
+        },
+        {
+          "f32_write": 33716,
+          "f32_read": 21579,
+          "f64_write": 32294,
+          "f64_read": 14975,
+          "f32le_write": 35370,
+          "f32le_read": 23801,
+          "f64le_write": 40057,
+          "f64le_read": 18145,
+          "f32int_write": 27409,
+          "f32int_read": 18972,
+          "f64big_write": 87380,
+          "f64big_read": 25225,
+          "f64dynamic_write": 30741,
+          "f64dynamic_read": 15784
+        },
+        {
+          "f32_write": 22303,
+          "f32_read": 13021,
+          "f64_write": 24612,
+          "f64_read": 12470,
+          "f32le_write": 22517,
+          "f32le_read": 12810,
+          "f64le_write": 31142,
+          "f64le_read": 17346,
+          "f32int_write": 24076,
+          "f32int_read": 14278,
+          "f64big_write": 45108,
+          "f64big_read": 13839,
+          "f64dynamic_write": 26911,
+          "f64dynamic_read": 14268
+        }
+      ],
+      "after-half-aligned": [
+        {
+          "f16_write": 21400,
+          "f16_read": 11452,
+          "f16le_write": 21421,
+          "f16le_read": 11868
+        },
+        {
+          "f16_write": 21340,
+          "f16_read": 11521,
+          "f16le_write": 20942,
+          "f16le_read": 11608
+        },
+        {
+          "f16_write": 21992,
+          "f16_read": 12501,
+          "f16le_write": 23048,
+          "f16le_read": 12068
+        },
+        {
+          "f16_write": 20970,
+          "f16_read": 12204,
+          "f16le_write": 22766,
+          "f16le_read": 11652
+        },
+        {
+          "f16_write": 126073,
+          "f16_read": 40440,
+          "f16le_write": 32133,
+          "f16le_read": 16540
+        },
+        {
+          "f16_write": 47850,
+          "f16_read": 16010,
+          "f16le_write": 57110,
+          "f16le_read": 25600
+        },
+        {
+          "f16_write": 39648,
+          "f16_read": 16027,
+          "f16le_write": 27856,
+          "f16le_read": 14327
+        },
+        {
+          "f16_write": 21286,
+          "f16_read": 11378,
+          "f16le_write": 21487,
+          "f16le_read": 11220
+        },
+        {
+          "f16_write": 21196,
+          "f16_read": 11781,
+          "f16le_write": 20455,
+          "f16le_read": 12479
+        }
+      ],
+      "after-half-shifted": [
+        {
+          "f16_write": 24020,
+          "f16_read": 11811,
+          "f16le_write": 23267,
+          "f16le_read": 11866
+        },
+        {
+          "f16_write": 22831,
+          "f16_read": 11892,
+          "f16le_write": 22884,
+          "f16le_read": 12465
+        },
+        {
+          "f16_write": 23657,
+          "f16_read": 12415,
+          "f16le_write": 22868,
+          "f16le_read": 11820
+        },
+        {
+          "f16_write": 22723,
+          "f16_read": 11611,
+          "f16le_write": 22999,
+          "f16le_read": 11651
+        },
+        {
+          "f16_write": 35519,
+          "f16_read": 20017,
+          "f16le_write": 37687,
+          "f16le_read": 16029
+        },
+        {
+          "f16_write": 38679,
+          "f16_read": 15253,
+          "f16le_write": 35647,
+          "f16le_read": 18490
+        },
+        {
+          "f16_write": 25408,
+          "f16_read": 12675,
+          "f16le_write": 34313,
+          "f16le_read": 15205
+        },
+        {
+          "f16_write": 27315,
+          "f16_read": 16894,
+          "f16le_write": 39972,
+          "f16le_read": 18467
+        },
+        {
+          "f16_write": 22825,
+          "f16_read": 12009,
+          "f16le_write": 23566,
+          "f16le_read": 11739
+        }
+      ]
+    },
+    {
+      "before-aligned": [
+        {
+          "f32_write": 19586,
+          "f32_read": 10058,
+          "f64_write": 19949,
+          "f64_read": 9647,
+          "f32le_write": 19076,
+          "f32le_read": 9592,
+          "f64le_write": 20371,
+          "f64le_read": 9586,
+          "f32int_write": 19279,
+          "f32int_read": 9708,
+          "f64big_write": 36001,
+          "f64big_read": 9624,
+          "f64dynamic_write": 23065,
+          "f64dynamic_read": 11412
+        },
+        {
+          "f32_write": 20104,
+          "f32_read": 10526,
+          "f64_write": 21325,
+          "f64_read": 10203,
+          "f32le_write": 20538,
+          "f32le_read": 10491,
+          "f64le_write": 21425,
+          "f64le_read": 10958,
+          "f32int_write": 34666,
+          "f32int_read": 10989,
+          "f64big_write": 42023,
+          "f64big_read": 13501,
+          "f64dynamic_write": 27107,
+          "f64dynamic_read": 12586
+        },
+        {
+          "f32_write": 19600,
+          "f32_read": 10756,
+          "f64_write": 21457,
+          "f64_read": 10272,
+          "f32le_write": 21103,
+          "f32le_read": 9654,
+          "f64le_write": 21100,
+          "f64le_read": 9770,
+          "f32int_write": 20350,
+          "f32int_read": 10818,
+          "f64big_write": 37172,
+          "f64big_read": 10269,
+          "f64dynamic_write": 24107,
+          "f64dynamic_read": 13046
+        },
+        {
+          "f32_write": 36091,
+          "f32_read": 13145,
+          "f64_write": 42259,
+          "f64_read": 19889,
+          "f32le_write": 40279,
+          "f32le_read": 19642,
+          "f64le_write": 42626,
+          "f64le_read": 20208,
+          "f32int_write": 40701,
+          "f32int_read": 17283,
+          "f64big_write": 72719,
+          "f64big_read": 19336,
+          "f64dynamic_write": 34109,
+          "f64dynamic_read": 22514
+        },
+        {
+          "f32_write": 22157,
+          "f32_read": 11457,
+          "f64_write": 23048,
+          "f64_read": 11528,
+          "f32le_write": 23072,
+          "f32le_read": 31552,
+          "f64le_write": 54588,
+          "f64le_read": 18389,
+          "f32int_write": 85534,
+          "f32int_read": 15505,
+          "f64big_write": 171014,
+          "f64big_read": 24170,
+          "f64dynamic_write": 54395,
+          "f64dynamic_read": 46826
+        },
+        {
+          "f32_write": 42544,
+          "f32_read": 17909,
+          "f64_write": 29646,
+          "f64_read": 17606,
+          "f32le_write": 21945,
+          "f32le_read": 11400,
+          "f64le_write": 33609,
+          "f64le_read": 17548,
+          "f32int_write": 31977,
+          "f32int_read": 14438,
+          "f64big_write": 61473,
+          "f64big_read": 21035,
+          "f64dynamic_write": 34810,
+          "f64dynamic_read": 18978
+        },
+        {
+          "f32_write": 28004,
+          "f32_read": 10917,
+          "f64_write": 35302,
+          "f64_read": 10536,
+          "f32le_write": 20619,
+          "f32le_read": 12024,
+          "f64le_write": 27695,
+          "f64le_read": 11548,
+          "f32int_write": 23486,
+          "f32int_read": 11142,
+          "f64big_write": 39852,
+          "f64big_read": 11428,
+          "f64dynamic_write": 27772,
+          "f64dynamic_read": 12179
+        },
+        {
+          "f32_write": 22107,
+          "f32_read": 10959,
+          "f64_write": 24864,
+          "f64_read": 11007,
+          "f32le_write": 24796,
+          "f32le_read": 11737,
+          "f64le_write": 25285,
+          "f64le_read": 11449,
+          "f32int_write": 20644,
+          "f32int_read": 12110,
+          "f64big_write": 42587,
+          "f64big_read": 10492,
+          "f64dynamic_write": 30652,
+          "f64dynamic_read": 12096
+        },
+        {
+          "f32_write": 20622,
+          "f32_read": 10571,
+          "f64_write": 22166,
+          "f64_read": 10304,
+          "f32le_write": 20808,
+          "f32le_read": 10592,
+          "f64le_write": 21508,
+          "f64le_read": 10700,
+          "f32int_write": 21193,
+          "f32int_read": 10863,
+          "f64big_write": 39076,
+          "f64big_read": 10498,
+          "f64dynamic_write": 24477,
+          "f64dynamic_read": 16007
+        }
+      ],
+      "after-aligned": [
+        {
+          "f32_write": 23924,
+          "f32_read": 11056,
+          "f64_write": 22932,
+          "f64_read": 11045,
+          "f32le_write": 25557,
+          "f32le_read": 11037,
+          "f64le_write": 26178,
+          "f64le_read": 11498,
+          "f32int_write": 21634,
+          "f32int_read": 11897,
+          "f64big_write": 39578,
+          "f64big_read": 12370,
+          "f64dynamic_write": 28481,
+          "f64dynamic_read": 12607
+        },
+        {
+          "f32_write": 24922,
+          "f32_read": 12304,
+          "f64_write": 25077,
+          "f64_read": 12525,
+          "f32le_write": 32148,
+          "f32le_read": 11251,
+          "f64le_write": 28912,
+          "f64le_read": 13215,
+          "f32int_write": 21118,
+          "f32int_read": 11372,
+          "f64big_write": 39411,
+          "f64big_read": 12019,
+          "f64dynamic_write": 28280,
+          "f64dynamic_read": 13127
+        },
+        {
+          "f32_write": 32312,
+          "f32_read": 16758,
+          "f64_write": 25146,
+          "f64_read": 11469,
+          "f32le_write": 26303,
+          "f32le_read": 15779,
+          "f64le_write": 25159,
+          "f64le_read": 11858,
+          "f32int_write": 20364,
+          "f32int_read": 11380,
+          "f64big_write": 38733,
+          "f64big_read": 11830,
+          "f64dynamic_write": 27132,
+          "f64dynamic_read": 13182
+        },
+        {
+          "f32_write": 31878,
+          "f32_read": 12075,
+          "f64_write": 29547,
+          "f64_read": 15419,
+          "f32le_write": 38723,
+          "f32le_read": 31869,
+          "f64le_write": 49223,
+          "f64le_read": 22022,
+          "f32int_write": 33921,
+          "f32int_read": 18254,
+          "f64big_write": 65123,
+          "f64big_read": 21016,
+          "f64dynamic_write": 38167,
+          "f64dynamic_read": 29280
+        },
+        {
+          "f32_write": 45584,
+          "f32_read": 27560,
+          "f64_write": 48392,
+          "f64_read": 31033,
+          "f32le_write": 38778,
+          "f32le_read": 20988,
+          "f64le_write": 58735,
+          "f64le_read": 28921,
+          "f32int_write": 25333,
+          "f32int_read": 12921,
+          "f64big_write": 39578,
+          "f64big_read": 12216,
+          "f64dynamic_write": 106957,
+          "f64dynamic_read": 14444
+        },
+        {
+          "f32_write": 35692,
+          "f32_read": 13477,
+          "f64_write": 24330,
+          "f64_read": 11579,
+          "f32le_write": 33780,
+          "f32le_read": 13984,
+          "f64le_write": 31539,
+          "f64le_read": 14424,
+          "f32int_write": 31154,
+          "f32int_read": 19076,
+          "f64big_write": 65817,
+          "f64big_read": 16718,
+          "f64dynamic_write": 38849,
+          "f64dynamic_read": 28416
+        },
+        {
+          "f32_write": 33761,
+          "f32_read": 11626,
+          "f64_write": 26535,
+          "f64_read": 13193,
+          "f32le_write": 43373,
+          "f32le_read": 17377,
+          "f64le_write": 33528,
+          "f64le_read": 12598,
+          "f32int_write": 22867,
+          "f32int_read": 22193,
+          "f64big_write": 69338,
+          "f64big_read": 17611,
+          "f64dynamic_write": 68947,
+          "f64dynamic_read": 14350
+        },
+        {
+          "f32_write": 27903,
+          "f32_read": 11608,
+          "f64_write": 27092,
+          "f64_read": 12894,
+          "f32le_write": 29826,
+          "f32le_read": 12705,
+          "f64le_write": 27060,
+          "f64le_read": 14864,
+          "f32int_write": 23738,
+          "f32int_read": 16580,
+          "f64big_write": 43132,
+          "f64big_read": 15737,
+          "f64dynamic_write": 30091,
+          "f64dynamic_read": 14768
+        },
+        {
+          "f32_write": 28233,
+          "f32_read": 17936,
+          "f64_write": 29791,
+          "f64_read": 12519,
+          "f32le_write": 32580,
+          "f32le_read": 12609,
+          "f64le_write": 30275,
+          "f64le_read": 13336,
+          "f32int_write": 26002,
+          "f32int_read": 14967,
+          "f64big_write": 42020,
+          "f64big_read": 18188,
+          "f64dynamic_write": 36173,
+          "f64dynamic_read": 13966
+        }
+      ],
+      "after-shifted": [
+        {
+          "f32_write": 22452,
+          "f32_read": 13023,
+          "f64_write": 25135,
+          "f64_read": 12861,
+          "f32le_write": 22650,
+          "f32le_read": 12958,
+          "f64le_write": 25783,
+          "f64le_read": 15497,
+          "f32int_write": 23127,
+          "f32int_read": 13495,
+          "f64big_write": 42869,
+          "f64big_read": 12866,
+          "f64dynamic_write": 24452,
+          "f64dynamic_read": 13172
+        },
+        {
+          "f32_write": 24907,
+          "f32_read": 13674,
+          "f64_write": 24667,
+          "f64_read": 13202,
+          "f32le_write": 38793,
+          "f32le_read": 13116,
+          "f64le_write": 26436,
+          "f64le_read": 16658,
+          "f32int_write": 26807,
+          "f32int_read": 15738,
+          "f64big_write": 44063,
+          "f64big_read": 13035,
+          "f64dynamic_write": 25004,
+          "f64dynamic_read": 16155
+        },
+        {
+          "f32_write": 44981,
+          "f32_read": 18812,
+          "f64_write": 26856,
+          "f64_read": 16165,
+          "f32le_write": 30736,
+          "f32le_read": 16055,
+          "f64le_write": 29387,
+          "f64le_read": 16868,
+          "f32int_write": 24467,
+          "f32int_read": 18361,
+          "f64big_write": 51662,
+          "f64big_read": 13130,
+          "f64dynamic_write": 26468,
+          "f64dynamic_read": 13198
+        },
+        {
+          "f32_write": 29152,
+          "f32_read": 18972,
+          "f64_write": 27072,
+          "f64_read": 19460,
+          "f32le_write": 27258,
+          "f32le_read": 14506,
+          "f64le_write": 32133,
+          "f64le_read": 16144,
+          "f32int_write": 29402,
+          "f32int_read": 20478,
+          "f64big_write": 61444,
+          "f64big_read": 19104,
+          "f64dynamic_write": 39371,
+          "f64dynamic_read": 17935
+        },
+        {
+          "f32_write": 30698,
+          "f32_read": 18956,
+          "f64_write": 33196,
+          "f64_read": 20711,
+          "f32le_write": 46457,
+          "f32le_read": 40625,
+          "f64le_write": 41375,
+          "f64le_read": 31123,
+          "f32int_write": 47616,
+          "f32int_read": 32402,
+          "f64big_write": 184040,
+          "f64big_read": 30121,
+          "f64dynamic_write": 57167,
+          "f64dynamic_read": 32496
+        },
+        {
+          "f32_write": 41174,
+          "f32_read": 15323,
+          "f64_write": 34102,
+          "f64_read": 15540,
+          "f32le_write": 37607,
+          "f32le_read": 22297,
+          "f64le_write": 36896,
+          "f64le_read": 35087,
+          "f32int_write": 48635,
+          "f32int_read": 22492,
+          "f64big_write": 112917,
+          "f64big_read": 26063,
+          "f64dynamic_write": 54816,
+          "f64dynamic_read": 22093
+        },
+        {
+          "f32_write": 27866,
+          "f32_read": 19210,
+          "f64_write": 31675,
+          "f64_read": 18885,
+          "f32le_write": 32826,
+          "f32le_read": 15532,
+          "f64le_write": 33791,
+          "f64le_read": 20883,
+          "f32int_write": 31013,
+          "f32int_read": 14565,
+          "f64big_write": 54381,
+          "f64big_read": 17313,
+          "f64dynamic_write": 39951,
+          "f64dynamic_read": 26001
+        },
+        {
+          "f32_write": 27926,
+          "f32_read": 16042,
+          "f64_write": 25981,
+          "f64_read": 15583,
+          "f32le_write": 24875,
+          "f32le_read": 13688,
+          "f64le_write": 26520,
+          "f64le_read": 16359,
+          "f32int_write": 34253,
+          "f32int_read": 14820,
+          "f64big_write": 48468,
+          "f64big_read": 15385,
+          "f64dynamic_write": 27284,
+          "f64dynamic_read": 15429
+        },
+        {
+          "f32_write": 28204,
+          "f32_read": 15397,
+          "f64_write": 27204,
+          "f64_read": 15542,
+          "f32le_write": 32632,
+          "f32le_read": 15030,
+          "f64le_write": 27212,
+          "f64le_read": 21148,
+          "f32int_write": 24276,
+          "f32int_read": 15706,
+          "f64big_write": 57683,
+          "f64big_read": 16190,
+          "f64dynamic_write": 27323,
+          "f64dynamic_read": 15495
+        }
+      ],
+      "after-half-aligned": [
+        {
+          "f16_write": 21781,
+          "f16_read": 11369,
+          "f16le_write": 20922,
+          "f16le_read": 11211
+        },
+        {
+          "f16_write": 21166,
+          "f16_read": 11161,
+          "f16le_write": 20160,
+          "f16le_read": 11203
+        },
+        {
+          "f16_write": 21020,
+          "f16_read": 12219,
+          "f16le_write": 23154,
+          "f16le_read": 12877
+        },
+        {
+          "f16_write": 21097,
+          "f16_read": 13024,
+          "f16le_write": 21602,
+          "f16le_read": 13635
+        },
+        {
+          "f16_write": 25703,
+          "f16_read": 15078,
+          "f16le_write": 26498,
+          "f16le_read": 12585
+        },
+        {
+          "f16_write": 24212,
+          "f16_read": 13639,
+          "f16le_write": 22531,
+          "f16le_read": 11632
+        },
+        {
+          "f16_write": 25707,
+          "f16_read": 12789,
+          "f16le_write": 24677,
+          "f16le_read": 11871
+        },
+        {
+          "f16_write": 22188,
+          "f16_read": 11982,
+          "f16le_write": 22088,
+          "f16le_read": 12898
+        },
+        {
+          "f16_write": 21017,
+          "f16_read": 11915,
+          "f16le_write": 24203,
+          "f16le_read": 12792
+        }
+      ],
+      "after-half-shifted": [
+        {
+          "f16_write": 22676,
+          "f16_read": 11710,
+          "f16le_write": 22145,
+          "f16le_read": 11521
+        },
+        {
+          "f16_write": 23375,
+          "f16_read": 13416,
+          "f16le_write": 26338,
+          "f16le_read": 19156
+        },
+        {
+          "f16_write": 25084,
+          "f16_read": 18759,
+          "f16le_write": 32394,
+          "f16le_read": 14413
+        },
+        {
+          "f16_write": 44195,
+          "f16_read": 25047,
+          "f16le_write": 45994,
+          "f16le_read": 22907
+        },
+        {
+          "f16_write": 26317,
+          "f16_read": 17165,
+          "f16le_write": 24552,
+          "f16le_read": 13779
+        },
+        {
+          "f16_write": 26712,
+          "f16_read": 24285,
+          "f16le_write": 37414,
+          "f16le_read": 16271
+        },
+        {
+          "f16_write": 28639,
+          "f16_read": 14979,
+          "f16le_write": 29173,
+          "f16le_read": 17396
+        },
+        {
+          "f16_write": 26512,
+          "f16_read": 13834,
+          "f16le_write": 25408,
+          "f16le_read": 13660
+        },
+        {
+          "f16_write": 23882,
+          "f16_read": 12694,
+          "f16le_write": 24807,
+          "f16le_read": 13579
+        }
+      ]
+    },
+    {
+      "before-aligned": [
+        {
+          "f32_write": 19782,
+          "f32_read": 10954,
+          "f64_write": 21124,
+          "f64_read": 10525,
+          "f32le_write": 25064,
+          "f32le_read": 11139,
+          "f64le_write": 22480,
+          "f64le_read": 11110,
+          "f32int_write": 28687,
+          "f32int_read": 11936,
+          "f64big_write": 40238,
+          "f64big_read": 11249,
+          "f64dynamic_write": 25661,
+          "f64dynamic_read": 11859
+        },
+        {
+          "f32_write": 21160,
+          "f32_read": 10921,
+          "f64_write": 25159,
+          "f64_read": 13708,
+          "f32le_write": 22422,
+          "f32le_read": 13143,
+          "f64le_write": 22505,
+          "f64le_read": 10541,
+          "f32int_write": 20476,
+          "f32int_read": 10633,
+          "f64big_write": 38819,
+          "f64big_read": 10550,
+          "f64dynamic_write": 27648,
+          "f64dynamic_read": 12326
+        },
+        {
+          "f32_write": 19722,
+          "f32_read": 13247,
+          "f64_write": 27572,
+          "f64_read": 9788,
+          "f32le_write": 20321,
+          "f32le_read": 10696,
+          "f64le_write": 22179,
+          "f64le_read": 10682,
+          "f32int_write": 30507,
+          "f32int_read": 10147,
+          "f64big_write": 37905,
+          "f64big_read": 11643,
+          "f64dynamic_write": 25371,
+          "f64dynamic_read": 12139
+        },
+        {
+          "f32_write": 23290,
+          "f32_read": 9930,
+          "f64_write": 24578,
+          "f64_read": 11154,
+          "f32le_write": 26783,
+          "f32le_read": 11581,
+          "f64le_write": 22857,
+          "f64le_read": 10434,
+          "f32int_write": 22995,
+          "f32int_read": 46796,
+          "f64big_write": 60652,
+          "f64big_read": 12654,
+          "f64dynamic_write": 31200,
+          "f64dynamic_read": 14110
+        },
+        {
+          "f32_write": 23379,
+          "f32_read": 11498,
+          "f64_write": 28713,
+          "f64_read": 12878,
+          "f32le_write": 25168,
+          "f32le_read": 12256,
+          "f64le_write": 26115,
+          "f64le_read": 13209,
+          "f32int_write": 26871,
+          "f32int_read": 12002,
+          "f64big_write": 59304,
+          "f64big_read": 17156,
+          "f64dynamic_write": 31178,
+          "f64dynamic_read": 12899
+        },
+        {
+          "f32_write": 22046,
+          "f32_read": 11835,
+          "f64_write": 23374,
+          "f64_read": 10840,
+          "f32le_write": 20048,
+          "f32le_read": 10278,
+          "f64le_write": 20922,
+          "f64le_read": 9912,
+          "f32int_write": 21120,
+          "f32int_read": 10300,
+          "f64big_write": 43216,
+          "f64big_read": 10097,
+          "f64dynamic_write": 29803,
+          "f64dynamic_read": 12879
+        },
+        {
+          "f32_write": 19403,
+          "f32_read": 10154,
+          "f64_write": 21496,
+          "f64_read": 10367,
+          "f32le_write": 19867,
+          "f32le_read": 9869,
+          "f64le_write": 21717,
+          "f64le_read": 10137,
+          "f32int_write": 20444,
+          "f32int_read": 10631,
+          "f64big_write": 38296,
+          "f64big_read": 10222,
+          "f64dynamic_write": 23966,
+          "f64dynamic_read": 12363
+        },
+        {
+          "f32_write": 21451,
+          "f32_read": 11609,
+          "f64_write": 24270,
+          "f64_read": 10676,
+          "f32le_write": 20965,
+          "f32le_read": 10296,
+          "f64le_write": 22207,
+          "f64le_read": 11791,
+          "f32int_write": 21511,
+          "f32int_read": 11102,
+          "f64big_write": 39216,
+          "f64big_read": 9820,
+          "f64dynamic_write": 23731,
+          "f64dynamic_read": 11469
+        },
+        {
+          "f32_write": 20126,
+          "f32_read": 9696,
+          "f64_write": 20516,
+          "f64_read": 9873,
+          "f32le_write": 19650,
+          "f32le_read": 9937,
+          "f64le_write": 20328,
+          "f64le_read": 9772,
+          "f32int_write": 19980,
+          "f32int_read": 9870,
+          "f64big_write": 39629,
+          "f64big_read": 10492,
+          "f64dynamic_write": 23087,
+          "f64dynamic_read": 11379
+        }
+      ],
+      "after-aligned": [
+        {
+          "f32_write": 26269,
+          "f32_read": 14270,
+          "f64_write": 25780,
+          "f64_read": 13946,
+          "f32le_write": 30913,
+          "f32le_read": 13821,
+          "f64le_write": 29089,
+          "f64le_read": 13019,
+          "f32int_write": 22828,
+          "f32int_read": 13897,
+          "f64big_write": 43120,
+          "f64big_read": 12121,
+          "f64dynamic_write": 29265,
+          "f64dynamic_read": 13441
+        },
+        {
+          "f32_write": 26007,
+          "f32_read": 12968,
+          "f64_write": 25380,
+          "f64_read": 12926,
+          "f32le_write": 28108,
+          "f32le_read": 13563,
+          "f64le_write": 26691,
+          "f64le_read": 12141,
+          "f32int_write": 21811,
+          "f32int_read": 11387,
+          "f64big_write": 39431,
+          "f64big_read": 13333,
+          "f64dynamic_write": 27467,
+          "f64dynamic_read": 13552
+        },
+        {
+          "f32_write": 24478,
+          "f32_read": 13329,
+          "f64_write": 23306,
+          "f64_read": 12792,
+          "f32le_write": 27961,
+          "f32le_read": 11308,
+          "f64le_write": 26945,
+          "f64le_read": 11781,
+          "f32int_write": 21737,
+          "f32int_read": 11660,
+          "f64big_write": 39738,
+          "f64big_read": 11952,
+          "f64dynamic_write": 27397,
+          "f64dynamic_read": 12921
+        },
+        {
+          "f32_write": 24812,
+          "f32_read": 11625,
+          "f64_write": 22760,
+          "f64_read": 12999,
+          "f32le_write": 27596,
+          "f32le_read": 12145,
+          "f64le_write": 28058,
+          "f64le_read": 14269,
+          "f32int_write": 25932,
+          "f32int_read": 13433,
+          "f64big_write": 39911,
+          "f64big_read": 11799,
+          "f64dynamic_write": 28121,
+          "f64dynamic_read": 13071
+        },
+        {
+          "f32_write": 26982,
+          "f32_read": 12911,
+          "f64_write": 24708,
+          "f64_read": 11868,
+          "f32le_write": 27711,
+          "f32le_read": 11583,
+          "f64le_write": 31990,
+          "f64le_read": 13390,
+          "f32int_write": 24400,
+          "f32int_read": 11723,
+          "f64big_write": 40303,
+          "f64big_read": 12192,
+          "f64dynamic_write": 28841,
+          "f64dynamic_read": 18625
+        },
+        {
+          "f32_write": 24522,
+          "f32_read": 17223,
+          "f64_write": 25749,
+          "f64_read": 11343,
+          "f32le_write": 27090,
+          "f32le_read": 13213,
+          "f64le_write": 29325,
+          "f64le_read": 12353,
+          "f32int_write": 23405,
+          "f32int_read": 12121,
+          "f64big_write": 38350,
+          "f64big_read": 12198,
+          "f64dynamic_write": 28463,
+          "f64dynamic_read": 14816
+        },
+        {
+          "f32_write": 25092,
+          "f32_read": 12555,
+          "f64_write": 26047,
+          "f64_read": 12535,
+          "f32le_write": 26421,
+          "f32le_read": 11781,
+          "f64le_write": 43261,
+          "f64le_read": 24274,
+          "f32int_write": 42685,
+          "f32int_read": 24759,
+          "f64big_write": 75397,
+          "f64big_read": 24061,
+          "f64dynamic_write": 54480,
+          "f64dynamic_read": 25213
+        },
+        {
+          "f32_write": 50867,
+          "f32_read": 28185,
+          "f64_write": 25344,
+          "f64_read": 11889,
+          "f32le_write": 28797,
+          "f32le_read": 12891,
+          "f64le_write": 26629,
+          "f64le_read": 13138,
+          "f32int_write": 23569,
+          "f32int_read": 13941,
+          "f64big_write": 42421,
+          "f64big_read": 11213,
+          "f64dynamic_write": 29324,
+          "f64dynamic_read": 13461
+        },
+        {
+          "f32_write": 23616,
+          "f32_read": 14071,
+          "f64_write": 23037,
+          "f64_read": 15563,
+          "f32le_write": 30387,
+          "f32le_read": 11119,
+          "f64le_write": 34468,
+          "f64le_read": 12777,
+          "f32int_write": 22024,
+          "f32int_read": 11562,
+          "f64big_write": 40699,
+          "f64big_read": 12701,
+          "f64dynamic_write": 26846,
+          "f64dynamic_read": 13065
+        }
+      ],
+      "after-shifted": [
+        {
+          "f32_write": 23957,
+          "f32_read": 14215,
+          "f64_write": 27638,
+          "f64_read": 14076,
+          "f32le_write": 25437,
+          "f32le_read": 13951,
+          "f64le_write": 26996,
+          "f64le_read": 17526,
+          "f32int_write": 25266,
+          "f32int_read": 15217,
+          "f64big_write": 44081,
+          "f64big_read": 13284,
+          "f64dynamic_write": 26562,
+          "f64dynamic_read": 15388
+        },
+        {
+          "f32_write": 26516,
+          "f32_read": 14143,
+          "f64_write": 28546,
+          "f64_read": 14361,
+          "f32le_write": 25609,
+          "f32le_read": 13455,
+          "f64le_write": 26755,
+          "f64le_read": 16760,
+          "f32int_write": 28452,
+          "f32int_read": 13706,
+          "f64big_write": 45448,
+          "f64big_read": 16555,
+          "f64dynamic_write": 28265,
+          "f64dynamic_read": 14465
+        },
+        {
+          "f32_write": 26045,
+          "f32_read": 16892,
+          "f64_write": 26226,
+          "f64_read": 13442,
+          "f32le_write": 24389,
+          "f32le_read": 14907,
+          "f64le_write": 26481,
+          "f64le_read": 16181,
+          "f32int_write": 25513,
+          "f32int_read": 15006,
+          "f64big_write": 51280,
+          "f64big_read": 16438,
+          "f64dynamic_write": 27951,
+          "f64dynamic_read": 16396
+        },
+        {
+          "f32_write": 25502,
+          "f32_read": 14601,
+          "f64_write": 25056,
+          "f64_read": 13874,
+          "f32le_write": 23571,
+          "f32le_read": 13304,
+          "f64le_write": 25152,
+          "f64le_read": 18129,
+          "f32int_write": 24166,
+          "f32int_read": 15364,
+          "f64big_write": 46191,
+          "f64big_read": 13380,
+          "f64dynamic_write": 26903,
+          "f64dynamic_read": 13758
+        },
+        {
+          "f32_write": 23841,
+          "f32_read": 15310,
+          "f64_write": 27784,
+          "f64_read": 13664,
+          "f32le_write": 25579,
+          "f32le_read": 15872,
+          "f64le_write": 29958,
+          "f64le_read": 17308,
+          "f32int_write": 27616,
+          "f32int_read": 16937,
+          "f64big_write": 59265,
+          "f64big_read": 15792,
+          "f64dynamic_write": 50509,
+          "f64dynamic_read": 19834
+        },
+        {
+          "f32_write": 24266,
+          "f32_read": 13902,
+          "f64_write": 25851,
+          "f64_read": 13515,
+          "f32le_write": 23614,
+          "f32le_read": 13387,
+          "f64le_write": 25930,
+          "f64le_read": 16973,
+          "f32int_write": 25234,
+          "f32int_read": 14900,
+          "f64big_write": 44568,
+          "f64big_read": 14175,
+          "f64dynamic_write": 25957,
+          "f64dynamic_read": 14416
+        },
+        {
+          "f32_write": 30215,
+          "f32_read": 16575,
+          "f64_write": 30183,
+          "f64_read": 26486,
+          "f32le_write": 25114,
+          "f32le_read": 13942,
+          "f64le_write": 35021,
+          "f64le_read": 18810,
+          "f32int_write": 24505,
+          "f32int_read": 14842,
+          "f64big_write": 46304,
+          "f64big_read": 13653,
+          "f64dynamic_write": 27514,
+          "f64dynamic_read": 17336
+        },
+        {
+          "f32_write": 49854,
+          "f32_read": 25705,
+          "f64_write": 47865,
+          "f64_read": 24517,
+          "f32le_write": 50782,
+          "f32le_read": 27377,
+          "f64le_write": 52995,
+          "f64le_read": 28944,
+          "f32int_write": 50319,
+          "f32int_read": 29813,
+          "f64big_write": 90260,
+          "f64big_read": 29682,
+          "f64dynamic_write": 52717,
+          "f64dynamic_read": 31568
+        },
+        {
+          "f32_write": 22969,
+          "f32_read": 13613,
+          "f64_write": 26635,
+          "f64_read": 13176,
+          "f32le_write": 23292,
+          "f32le_read": 13227,
+          "f64le_write": 24396,
+          "f64le_read": 15455,
+          "f32int_write": 22802,
+          "f32int_read": 13300,
+          "f64big_write": 41196,
+          "f64big_read": 12864,
+          "f64dynamic_write": 25390,
+          "f64dynamic_read": 13209
+        }
+      ],
+      "after-half-aligned": [
+        {
+          "f16_write": 29786,
+          "f16_read": 13493,
+          "f16le_write": 23598,
+          "f16le_read": 11820
+        },
+        {
+          "f16_write": 23788,
+          "f16_read": 13121,
+          "f16le_write": 22793,
+          "f16le_read": 11417
+        },
+        {
+          "f16_write": 23698,
+          "f16_read": 11656,
+          "f16le_write": 21542,
+          "f16le_read": 14155
+        },
+        {
+          "f16_write": 22285,
+          "f16_read": 12919,
+          "f16le_write": 26774,
+          "f16le_read": 20012
+        },
+        {
+          "f16_write": 36509,
+          "f16_read": 12546,
+          "f16le_write": 25598,
+          "f16le_read": 14272
+        },
+        {
+          "f16_write": 24100,
+          "f16_read": 14000,
+          "f16le_write": 47772,
+          "f16le_read": 23011
+        },
+        {
+          "f16_write": 23255,
+          "f16_read": 13183,
+          "f16le_write": 22987,
+          "f16le_read": 14645
+        },
+        {
+          "f16_write": 21928,
+          "f16_read": 11709,
+          "f16le_write": 22096,
+          "f16le_read": 11746
+        },
+        {
+          "f16_write": 28287,
+          "f16_read": 12857,
+          "f16le_write": 20721,
+          "f16le_read": 11526
+        }
+      ],
+      "after-half-shifted": [
+        {
+          "f16_write": 23844,
+          "f16_read": 12809,
+          "f16le_write": 24008,
+          "f16le_read": 13397
+        },
+        {
+          "f16_write": 26551,
+          "f16_read": 13477,
+          "f16le_write": 24767,
+          "f16le_read": 15726
+        },
+        {
+          "f16_write": 27066,
+          "f16_read": 13967,
+          "f16le_write": 25940,
+          "f16le_read": 12152
+        },
+        {
+          "f16_write": 41781,
+          "f16_read": 13499,
+          "f16le_write": 29799,
+          "f16le_read": 19777
+        },
+        {
+          "f16_write": 29213,
+          "f16_read": 24063,
+          "f16le_write": 31282,
+          "f16le_read": 14890
+        },
+        {
+          "f16_write": 23536,
+          "f16_read": 13150,
+          "f16le_write": 27470,
+          "f16le_read": 12587
+        },
+        {
+          "f16_write": 24930,
+          "f16_read": 13764,
+          "f16le_write": 25529,
+          "f16le_read": 13308
+        },
+        {
+          "f16_write": 22645,
+          "f16_read": 12659,
+          "f16le_write": 24560,
+          "f16le_read": 12502
+        },
+        {
+          "f16_write": 22542,
+          "f16_read": 11828,
+          "f16le_write": 22806,
+          "f16le_read": 11863
+        }
+      ]
+    }
+  ],
+  "start_load": [
+    5.74267578125,
+    8.123046875,
+    7.02783203125
+  ],
+  "time": 1792094267.693722,
+  "executables": {
+    "before-aligned": "d502e422af8afbd8e87309bb9c8c69370b5e26768df1e1bb0688673ee2ff743a",
+    "after-aligned": "b2ed4659b2843456337615b1a392735cfd658ced0de5c85e040725eb862ebf1f",
+    "after-shifted": "c79d8d1eb68c3e6482c0288f10e10b9f08b4efc756ad585536328ca3aa78f2f3",
+    "after-half-aligned": "4afb75280a69cd46e61465dcc0fe19ce9b0c33492f6ebb0cb672a8acf7841fb4",
+    "after-half-shifted": "1bab37f8329d80ed25730e512d7afe4debecd3496535ec7454e02016f53016ec"
+  },
+  "summary": {
+    "f32_write": {
+      "median_us": {
+        "before-aligned": 20999,
+        "after-aligned": 26269,
+        "after-shifted": 26516
+      },
+      "aligned_pct": 25.09643316348398,
+      "shifted_vs_aligned_pct": 0.9402718032662127,
+      "aligned_series_pct": [
+        25.124537607891483,
+        44.19867010449179,
+        18.582230623818518
+      ]
+    },
+    "f32_read": {
+      "median_us": {
+        "before-aligned": 10756,
+        "after-aligned": 12555,
+        "after-shifted": 15323
+      },
+      "aligned_pct": 16.725548531052436,
+      "shifted_vs_aligned_pct": 22.046993229788935,
+      "aligned_series_pct": [
+        15.226497808085737,
+        12.704955573875608,
+        21.681577505933912
+      ]
+    },
+    "f64_write": {
+      "median_us": {
+        "before-aligned": 22166,
+        "after-aligned": 25146,
+        "after-shifted": 27204
+      },
+      "aligned_pct": 13.444013353785067,
+      "shifted_vs_aligned_pct": 8.18420424719637,
+      "aligned_series_pct": [
+        10.260286267655538,
+        15.129295383547369,
+        4.425216316440039
+      ]
+    },
+    "f64_read": {
+      "median_us": {
+        "before-aligned": 10367,
+        "after-aligned": 12630,
+        "after-shifted": 14361
+      },
+      "aligned_pct": 21.828880100318315,
+      "shifted_vs_aligned_pct": 13.70546318289787,
+      "aligned_series_pct": [
+        29.022372050260504,
+        18.87813211845102,
+        19.820157362307977
+      ]
+    },
+    "f32le_write": {
+      "median_us": {
+        "before-aligned": 20965,
+        "after-aligned": 28171,
+        "after-shifted": 25579
+      },
+      "aligned_pct": 34.371571667064146,
+      "shifted_vs_aligned_pct": -9.200951332931028,
+      "aligned_series_pct": [
+        37.26622255119665,
+        54.3856323745439,
+        33.36990221798235
+      ]
+    },
+    "f32le_read": {
+      "median_us": {
+        "before-aligned": 10592,
+        "after-aligned": 12705,
+        "after-shifted": 14506
+      },
+      "aligned_pct": 19.949018126888205,
+      "shifted_vs_aligned_pct": 14.175521448248718,
+      "aligned_series_pct": [
+        13.02858261550508,
+        22.666666666666657,
+        13.547120418848158
+      ]
+    },
+    "f64le_write": {
+      "median_us": {
+        "before-aligned": 22179,
+        "after-aligned": 29089,
+        "after-shifted": 27212
+      },
+      "aligned_pct": 31.155597637404743,
+      "shifted_vs_aligned_pct": -6.452610952593762,
+      "aligned_series_pct": [
+        24.381910501589708,
+        19.735020763298404,
+        30.990228306389866
+      ]
+    },
+    "f64le_read": {
+      "median_us": {
+        "before-aligned": 10700,
+        "after-aligned": 13138,
+        "after-shifted": 17308
+      },
+      "aligned_pct": 22.78504672897197,
+      "shifted_vs_aligned_pct": 31.739990866189682,
+      "aligned_series_pct": [
+        18.846264230364483,
+        16.481788802515496,
+        23.50820605255668
+      ]
+    },
+    "f32int_write": {
+      "median_us": {
+        "before-aligned": 21120,
+        "after-aligned": 23405,
+        "after-shifted": 25513
+      },
+      "aligned_pct": 10.819128787878785,
+      "shifted_vs_aligned_pct": 9.006622516556284,
+      "aligned_series_pct": [
+        15.787378060919766,
+        1.0729796474495457,
+        8.804797545441856
+      ]
+    },
+    "f32int_read": {
+      "median_us": {
+        "before-aligned": 10863,
+        "after-aligned": 12573,
+        "after-shifted": 15217
+      },
+      "aligned_pct": 15.741507870753946,
+      "shifted_vs_aligned_pct": 21.029189533126534,
+      "aligned_series_pct": [
+        25.16122428088852,
+        34.32956381260097,
+        13.99416909620992
+      ]
+    },
+    "f64big_write": {
+      "median_us": {
+        "before-aligned": 39464,
+        "after-aligned": 39911,
+        "after-shifted": 46304
+      },
+      "aligned_pct": 1.1326778836407758,
+      "shifted_vs_aligned_pct": 16.018140362306134,
+      "aligned_series_pct": [
+        2.526349666103478,
+        -0.007138947719109723,
+        1.7007746852052863
+      ]
+    },
+    "f64big_read": {
+      "median_us": {
+        "before-aligned": 10498,
+        "after-aligned": 12216,
+        "after-shifted": 15385
+      },
+      "aligned_pct": 16.365021908935027,
+      "shifted_vs_aligned_pct": 25.94138834315651,
+      "aligned_series_pct": [
+        13.146447559207353,
+        37.705635281764096,
+        15.563981042654017
+      ]
+    },
+    "f64dynamic_write": {
+      "median_us": {
+        "before-aligned": 25661,
+        "after-aligned": 28481,
+        "after-shifted": 27323
+      },
+      "aligned_pct": 10.98943922684228,
+      "shifted_vs_aligned_pct": -4.065868473719325,
+      "aligned_series_pct": [
+        12.379394930498776,
+        30.24989197753132,
+        10.919293870075219
+      ]
+    },
+    "f64dynamic_read": {
+      "median_us": {
+        "before-aligned": 12179,
+        "after-aligned": 13461,
+        "after-shifted": 15495
+      },
+      "aligned_pct": 10.526315789473696,
+      "shifted_vs_aligned_pct": 15.110318698462223,
+      "aligned_series_pct": [
+        12.848719528293584,
+        9.99540088916142,
+        9.208177835469744
+      ]
+    }
+  },
+  "half": {
+    "f16_write": {
+      "median_us": {
+        "after-half-aligned": 22285,
+        "after-half-shifted": 25084
+      },
+      "shifted_vs_aligned_pct": 12.560017949293245
+    },
+    "f16_read": {
+      "median_us": {
+        "after-half-aligned": 12546,
+        "after-half-shifted": 13477
+      },
+      "shifted_vs_aligned_pct": 7.420691853977357
+    },
+    "f16le_write": {
+      "median_us": {
+        "after-half-aligned": 22793,
+        "after-half-shifted": 25529
+      },
+      "shifted_vs_aligned_pct": 12.003685341990966
+    },
+    "f16le_read": {
+      "median_us": {
+        "after-half-aligned": 12479,
+        "after-half-shifted": 13660
+      },
+      "shifted_vs_aligned_pct": 9.463899350909522
+    }
+  },
+  "end_load": [
+    13.59765625,
+    10.47119140625,
+    8.04248046875
+  ]
+}

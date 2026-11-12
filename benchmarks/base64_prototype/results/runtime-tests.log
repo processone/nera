@@ -1,0 +1,10 @@
+   Compiling nera-runtime v0.1.0 (/private/var/folders/yk/hpylg6r976qgbphydj66gt9h0000gn/T/nera-base64-d7njehd1/crates/nera-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.67s
+     Running unittests src/lib.rs (/home/user/AIProjects/nera/target/base64-prototype/debug/deps/nera_runtime-27bb0f9fcbc2d668)
+
+running 3 tests
+test ffi::base64_prototype::codec::tests::malformed_inputs_delegate ... ok
+test ffi::base64_prototype::codec::tests::known_vectors_and_noncanonical_tails ... ok
+test ffi::base64_prototype::codec::tests::all_lengths_and_options_roundtrip ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 494 filtered out; finished in 1.59s

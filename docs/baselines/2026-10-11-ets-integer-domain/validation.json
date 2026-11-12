@@ -1,0 +1,124 @@
+{
+  "base_ref": "origin/main at worktree creation",
+  "base_commit": "7527140f4af215dcdcb6c2d293dc0b5944406bf5",
+  "target": "uncommitted worktree on mr/ets-errors-small-integers",
+  "current_origin_main": "7615c429effb39681ba7ba77f68884cbefb6b4e8",
+  "ahead_behind_current_origin_main": [
+    "0",
+    "7"
+  ],
+  "source_manifest_sha256": "818cc448a3709ee649112f168a8be0d679f1c3bcfacf621891775010e55e43dc",
+  "sources": {
+    "crates/nera-codegen/src/func_translator/instructions.rs": "5e0de17a54e603d2c674dc0500e498d3a5ae98dd71e635d13442e6cbf76c6620",
+    "crates/nera-runtime/src/ets.rs": "a390b2e5184a415c26c43c9cd1aead128b51a86c02014eda611357eb6a47e4f8",
+    "crates/nera-runtime/src/ffi/binary_ops.rs": "c68c4147d630f638849a6c1dfbb917107cf389d0fac194e1438e02a8386725ea",
+    "crates/nera-runtime/src/ffi/counters.rs": "026b0d54ce954450b00581e748ad167688954c7a5681330b8104b15a4605a9af",
+    "crates/nera-runtime/src/ffi/ets.rs": "46ce4c5f3042e2b7cc9d1965ca66aed1ff8a7d3a606bf612188be076ee6f24c4",
+    "crates/nera-runtime/src/ffi/helpers.rs": "f63962b20a2f730b21fe9b39692d5e5180505b6e5161054a294bb7422b15259a",
+    "crates/nera-runtime/src/ffi/misc.rs": "11e3ca83b9ae5ebbe548818f1c55e967d35629824a2e58e21f442e5134c45241",
+    "crates/nera-runtime/src/ffi/timer.rs": "a306375a6e0d7fee556a041d3b85f35e257d1db366b1919e0e5def21f4fce2eb",
+    "crates/nera-runtime/src/term.rs": "a24221613b989e2f4a257308003b53158f40600d9741ea2e10543352df462e73",
+    "docs/baselines/2026-10-11-ets-integer-domain/bench_ets_selection.erl": "362970469edeacd651081774d2895e50cce516887a06c10b5984a69d6388c7fb",
+    "tests/ets_counter_integer_domain.erl": "421c00a499fe6f96b864d5472b9a7c21bca02621e478849a1aec4babe818f1ab",
+    "tests/ets_select_delete_errors.erl": "eeff547abe345f6cc4d79237aa30e0bf99ae2e08bdba9f32b6db47d2ef21e2e4",
+    "tests/integer_source_domain.erl": "57a8f5055473143efd0fc2dd140d72014c3ab1b3d041e9fc46b7685eca7cc7c9",
+    "Cargo.lock": "2b23030c542224604bc14c0b2b0bceff36dcde82391ab8ebe6a7d7b575802e3e",
+    "rust-toolchain.toml": "2ad6f15416572b4836585087f1d4abc53b8fa2dbd616f8dacfaa587ed6714228"
+  },
+  "artifacts": {
+    "functional_compiler": "7ad910a9ca60c933901f346395716aaf09beadb3eb58938fc16d0a62f1089165",
+    "final_runtime": "a5e0a56eac919b3e4dabd076c67171495402ffbb82d6d6cf2b3e9c1150b43596",
+    "baseline_runtime": "9db5c254e2e63850a3def397282b775ec87076ad8c097132f01d3a5be75a5770",
+    "shared_benchmark_compiler": "4d4d280daf8bbb9c47ef1ee5fd6e9121f2a25403a2ff194e45d21ff8fa1bb42d",
+    "shared_benchmark_compiler_after": "4d4d280daf8bbb9c47ef1ee5fd6e9121f2a25403a2ff194e45d21ff8fa1bb42d"
+  },
+  "checks": [
+    {
+      "command": "cargo test --workspace --locked --no-fail-fast",
+      "passed": 1768,
+      "failed": 0,
+      "ignored": 1,
+      "note": "Followed by runtime and release tests after final parser optimization."
+    },
+    {
+      "command": "cargo test -p nera-runtime --locked --lib",
+      "passed": 463,
+      "failed": 0,
+      "ignored": 1
+    },
+    {
+      "command": "cargo test -p nera-runtime --release --locked --lib",
+      "passed": 463,
+      "failed": 0,
+      "ignored": 1
+    },
+    {
+      "command": "cargo clippy --workspace --all-targets --locked -- -D warnings",
+      "status": "passed"
+    },
+    {
+      "command": "cargo build --release --locked; cargo build --release --locked -p nera-runtime",
+      "status": "passed",
+      "note": "Runtime rebuilt after final parser optimization; pinned compiler and archive used together."
+    },
+    {
+      "command": "nera test -j 4 --timeout 30",
+      "passed": 291,
+      "failed": 0,
+      "skipped": 2,
+      "total": 293,
+      "note": "Followed by 34 passing affected Erlang tests after final parser tuning."
+    },
+    {
+      "command": "BEAM OTP 29: integer_source_domain:test(), ets_counter_integer_domain:test()",
+      "passed": 2,
+      "failed": 0
+    },
+    {
+      "command": "git diff --check",
+      "status": "passed"
+    },
+    {
+      "command": "nera test 'ets_*' integer_source_domain -j 4 --timeout 30",
+      "passed": 34,
+      "failed": 0,
+      "skipped": 2,
+      "total": 36,
+      "note": "After final parser tuning; all affected Erlang surfaces rerun."
+    }
+  ],
+  "limits": [
+    "macOS ARM64 only; no Linux, Windows, Miri or sanitizers",
+    "No remote CI, commit, push or PR for this change",
+    "Current origin/main contains seven later TCP-related commits; not integrated into this worktree",
+    "Known independent constant-folding/left-shift issues documented in README",
+    "BEAM emits existing catch-syntax deprecation warnings for the counter test",
+    "Performance is not unchanged: CPU medians show overhead and elapsed samples remain noisy."
+  ],
+  "log_sha256": {
+    "nera-typed-workspace-complete.log": "5e435c6436e5b1aab968a09cb23664bbd0d9afff128ff97935ebdb0e164aad4f",
+    "nera-typed-runtime-complete.log": "37744b27b55cb232c70788774dca8f95e00268c0ce43c0aee41ff6e3dec57df0",
+    "nera-typed-release-final-tests.log": "8d994c9f091e649a8ad7cb9fe11f8632a192fc79095db659119272b752f141c0",
+    "nera-typed-clippy-last.log": "97728f848e459bf29882d62a345e9840f787981f52d6ff7081d355cc232d6242",
+    "nera-typed-all-final.log": "496e2de0dd6140e2eb8ab86c521f07322ba2ec9f7f77578b0bfc735438827fdd",
+    "run-final.log": "d17f60db7f973bcffb737e4757b4e43574a9de382cb9f8598cbffc675a592e89",
+    "nera-typed-runtime-tuned.log": "5a2664888338c2cd9355068b41c7b6297384fa89133d3c0bf4e05cd295013de2",
+    "nera-typed-release-tuned.log": "29c4a8b2daeb36176bf599e4cb46224102a2a8241fab22cd95ad5a4f919ec87d",
+    "nera-typed-clippy-tuned.log": "323e15895ca41f2c937df1a4e2fbae037588526dc55d5b84c44bc5b333f19af7",
+    "nera-typed-ets-tuned.log": "c53158b8983443224c11a19f91ee92790b7c4e5e71046024bddecc8f3ca3d47f"
+  },
+  "initial_busy_runtime_sha256": "8f24a957be580115dd87743e211fe579017cf25e78e1ea02a23e9442fcd1cacb",
+  "performance": {
+    "pairs": 9,
+    "warmups_per_fixture_binary": 1,
+    "order": "alternating before-after and after-before",
+    "samples": "benchmarks.json",
+    "cpu_samples": "benchmarks-cpu.json",
+    "cpu_percent_changes": {
+      "counters": 5.46,
+      "updates": 1.99,
+      "selection": 14.81
+    },
+    "assessment": "Fast-path allocations retained; measured CPU overhead remains. Elapsed samples too dispersed to establish unchanged performance."
+  }
+}

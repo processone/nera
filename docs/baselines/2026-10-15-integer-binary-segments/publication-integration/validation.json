@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-16",
+  "base": "99a16f0db82e51b867faf04498da2204265d2785",
+  "tested_code_commit": "9ee81ceaa5fa5524bb3a0c1f4e93a893ec82e7cc",
+  "tested_tree": "c417bf4c5b39859bba315e53342031ccc436ed1f",
+  "follow_up": "documentation-only evidence commit",
+  "checks": {
+    "workspace": 0,
+    "build": 0,
+    "clippy": 0,
+    "release": 0,
+    "native": 0
+  },
+  "counts_passed_failed_ignored": {
+    "workspace": [
+      1997,
+      0,
+      1
+    ],
+    "release": [
+      651,
+      0,
+      1
+    ]
+  },
+  "native_passed_failed_skipped": [
+    73,
+    0,
+    0
+  ],
+  "cross": "Intel macOS and Windows MSVC runtime checks passed; 6 existing Windows fallback warnings",
+  "performance": "Original measurements at 902702e preserved; not rerun on the scheduler/timer integration from PR #105."
+}

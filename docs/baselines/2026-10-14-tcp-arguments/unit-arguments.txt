@@ -1,0 +1,9 @@
+   Compiling nera-runtime v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.58s
+     Running unittests src/lib.rs (/tmp/nera-transfer-target/debug/deps/nera_runtime-27bb0f9fcbc2d668)
+
+running 2 tests
+test ffi::gen_tcp::argument_tests::receive_lengths_require_nonnegative_representable_integers ... ok
+test ffi::gen_tcp::argument_tests::ports_require_an_integer_in_the_u16_domain ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 578 filtered out; finished in 0.00s

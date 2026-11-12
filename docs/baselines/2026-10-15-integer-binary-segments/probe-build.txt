@@ -1,0 +1,8 @@
+Linking with runtime: /private/tmp/nera-integer-segment-evidence/libnera_runtime.a
+Linking with runtime: /private/tmp/nera-transfer-target/release/libnera_runtime.a
+Linking with runtime: /private/tmp/nera-transfer-target/release/libnera_runtime.a
+offset 0 verified
+Linking with runtime: /private/tmp/nera-integer-segment-evidence/libnera_runtime.a
+Linking with runtime: /private/tmp/nera-transfer-target/release/libnera_runtime.a
+Linking with runtime: /private/tmp/nera-transfer-target/release/libnera_runtime.a
+offset 3 verified

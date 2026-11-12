@@ -1,0 +1,19 @@
+   Compiling nera-runtime v0.1.0 (/home/user/.codex/worktrees/tcp-rearm-timeout/nera/crates/nera-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.71s
+     Running unittests src/lib.rs (target/debug/deps/nera_runtime-6875a2b6191707c1)
+
+running 1 test
+
+thread 'reactor::accept_waiters::tests::large_peaks_release_spare_capacity_without_losing_survivors' (1533962538) panicked at crates/nera-runtime/src/reactor/accept_waiters.rs:131:13:
+cancel: PID index retained peak capacity
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test reactor::accept_waiters::tests::large_peaks_release_spare_capacity_without_losing_survivors ... FAILED
+
+failures:
+
+failures:
+    reactor::accept_waiters::tests::large_peaks_release_spare_capacity_without_losing_survivors
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 460 filtered out; finished in 0.75s
+
+error: test failed, to rerun pass `-p nera-runtime --lib`

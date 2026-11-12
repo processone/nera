@@ -1,0 +1,19 @@
+Running 13 tests (1 threads)
+────────────────────────────────────────────────────────────
+  PASS  gc_receive_compact                        874ms  [1/13]
+  PASS  link_basic                                757ms  [2/13]
+  PASS  link_cascade                               1.1s  [3/13]
+  PASS  link_normal                               975ms  [4/13]
+  PASS  monitor_exit_reason                       826ms  [5/13]
+  PASS  nested_receive                             1.2s  [6/13]
+  PASS  receive_after                             836ms  [7/13]
+  PASS  receive_bound_var                          1.4s  [8/13]
+  PASS  selective_receive                         911ms  [9/13]
+  PASS  selective_receive_stress                   1.2s  [10/13]
+  PASS  selective_receive_tombstone_stress         2.0s  [11/13]
+  PASS  spawn_link_basic                           3.5s  [12/13]
+  PASS  spawn_monitor_basic                        1.6s  [13/13]
+────────────────────────────────────────────────────────────
+Results: 13 passed, 0 failed (0 compile), 0 skipped / 13 total
+
+ALL TESTS PASSED

@@ -1,0 +1,7 @@
+{
+  "crates/nera-syntax/src/parser.rs": "39bd3a12caf2a6fb0f735b462f34282712ec555d018536eb291e01dba9ad5821",
+  "crates/nera-ir/src/warnings/tests.rs": "00950282450a517c3d905ccccd7e7414504020a3b7228fbdd346cb599d447863",
+  "crates/nera-syntax/tests/deprecated_attributes.rs": "5ac43689431fd385209873e8cc85bd8e291560e10b07909b50c66a84ddc3b0ef",
+  "Cargo.lock": "2b23030c542224604bc14c0b2b0bceff36dcde82391ab8ebe6a7d7b575802e3e",
+  "rust-toolchain.toml": "2ad6f15416572b4836585087f1d4abc53b8fa2dbd616f8dacfaa587ed6714228"
+}

@@ -1,0 +1,36 @@
+Results: 285 passed, 1 failed (0 compile), 2 skipped / 288 total
+
+Failures:
+  tcp_reactor_perf: runtime crash, exit=1
+    stderr:
+    Error in process <0.1.0>: error:{throughput_regression,70,7}
+    Stacktrace (most recent call last):
+      tcp_reactor_perf:test_sustained_throughput_ratio/0 (tcp_reactor_perf.erl, line 78)
+    reactor stats: events=37949 missing_token=2 active_reads=1801 setopts_fastpath=0 pending=0 active_regs=0
+
+SOME TESTS FAILED
+
+Isolated reruns:
+Running 1 tests (1 threads)
+────────────────────────────────────────────────────────────
+  PASS  tcp_reactor_perf                           1.2s  [1/1]
+────────────────────────────────────────────────────────────
+Results: 1 passed, 0 failed (0 compile), 0 skipped / 1 total
+
+ALL TESTS PASSED
+
+Running 1 tests (1 threads)
+────────────────────────────────────────────────────────────
+  PASS  tcp_reactor_perf                           1.2s  [1/1]
+────────────────────────────────────────────────────────────
+Results: 1 passed, 0 failed (0 compile), 0 skipped / 1 total
+
+ALL TESTS PASSED
+
+Running 1 tests (1 threads)
+────────────────────────────────────────────────────────────
+  PASS  tcp_reactor_perf                           1.2s  [1/1]
+────────────────────────────────────────────────────────────
+Results: 1 passed, 0 failed (0 compile), 0 skipped / 1 total
+
+ALL TESTS PASSED

@@ -1,0 +1,14 @@
+{
+  "base": "b772a5501ed9a190f20f6fbba1dc4ae76a9fbb4b",
+  "branch": "mr/typed-atomics-integers",
+  "platform": "macOS-15.7.7-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "cpu": "Apple M1",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "load": [
+    2.00390625,
+    2.888671875,
+    2.9404296875
+  ],
+  "otp": "29"
+}

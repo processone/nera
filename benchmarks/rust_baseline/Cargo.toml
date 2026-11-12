@@ -1,0 +1,11 @@
+[package]
+name = "rust_mcached_baseline"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "net", "io-util", "sync", "macros"] }
+
+[profile.release]
+lto = "thin"
+codegen-units = 1

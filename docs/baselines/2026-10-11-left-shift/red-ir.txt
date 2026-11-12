@@ -1,0 +1,25 @@
+   Compiling nera-syntax v0.1.0 (/private/tmp/nera-left-shift/crates/nera-syntax)
+   Compiling nera-ir v0.1.0 (/private/tmp/nera-left-shift/crates/nera-ir)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.21s
+     Running unittests src/lib.rs (/home/user/AIProjects/nera/target/debug/deps/nera_ir-16eb14135c137a3d)
+
+running 1 test
+test passes::constant_folding::tests::left_shift_folding_matches_wide_arithmetic ... FAILED
+
+failures:
+
+---- passes::constant_folding::tests::left_shift_folding_matches_wide_arithmetic stdout ----
+
+thread 'passes::constant_folding::tests::left_shift_folding_matches_wide_arithmetic' (129124) panicked at crates/nera-ir/src/passes/constant_folding.rs:230:17:
+assertion `left == right` failed: -9223372036854775808 bsl 1
+  left: Some(0)
+ right: None
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    passes::constant_folding::tests::left_shift_folding_matches_wide_arithmetic
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 401 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p nera-ir --lib`

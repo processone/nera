@@ -1,0 +1,271 @@
+{
+  "date": "2026-10-12",
+  "status": "large_integer_literal_fixed_http_still_blocked",
+  "base_commit": "bb8a71f20c3dd45787de408b0926c5733f127b28",
+  "base_tree": "1522a62afebd2b1640fca024c2fc7d7353d1e1e7",
+  "target": "Uncommitted large-literal changes on the PR 53 head, including merged main e739528; compiler/runtime and exact changed source hashes below.",
+  "source_sha256": {
+    "Cargo.lock": "a210f397cb773d07c39ed4827a9aea44092f56ee7c2a438f708784dfa5769f80",
+    "crates/nera-codegen/src/func_translator/instructions.rs": "494a767ca6fc9f720bf37d61bfdb0875807a4148e34a875a49de63c7160ef77a",
+    "crates/nera-codegen/src/func_translator/mod.rs": "39af31a7127c5c55aa9783a4e84001170167ee63c5dfa42e24aa64837d99e3f4",
+    "crates/nera-codegen/src/func_translator/terminators.rs": "baf5b87e51aa745d9fde39c8cc5b2629acf5f01768b2cede910b5aeee7857732",
+    "crates/nera-fmt/src/format.rs": "2bea7c1606aaa4ff2a67a7123a5a8de46eae01deb69a77a048712c303cd5d8bb",
+    "crates/nera-ir/src/display.rs": "67cb46592aba5f462d3771fd23a3108b6a80b77ceadfc3da9b2b0ce79c401dde",
+    "crates/nera-ir/src/ir.rs": "828c98045706ecdaa9b55835689b5d0f70495dff5063f9c24de50ddd884539f6",
+    "crates/nera-ir/src/lower/expr.rs": "e6fee9c4e092a37e6660c103caf4ee8cd27c4eb88018848934f2a89c4506731b",
+    "crates/nera-ir/src/lower/pattern_lower.rs": "fff1c775bdb2dcc10fa27fab9786e70dd36d29a5f813e77283eb9b03554ee519",
+    "crates/nera-ir/src/passes/dead_code.rs": "5ba01e3ca326500f9560e89df79113dfb047e9f71adb1ef73920ecd869f2b1d8",
+    "crates/nera-ir/src/pattern.rs": "9b1b0c3513931016ccdf49d7fdc086e6cd5dd38754d3d3dbc954b9d3eaf5d616",
+    "crates/nera-ir/src/validate.rs": "cd56d16b84400ce1ba89c2537ea3822d6080db7108a0fce60ed3242749f203ae",
+    "crates/nera-ir/src/warnings/ast_walkers.rs": "6755cfbc49597b7b5bd14458338b9288c774f240b7d89f8252780d6b88ab1311",
+    "crates/nera-ir/src/warnings/deprecated.rs": "c249f5d171e683d02229c71b5408732dd949cecb6764145cba2333bd3e26961b",
+    "crates/nera-ir/src/warnings/exported_vars.rs": "11cd9754a3d822d9ad7a3f0fadd46e1e9780fd5b04866a69653f9c23b76bdf67",
+    "crates/nera-ir/src/warnings/format_strings.rs": "66535ae91fb39f115945b1921f985ee22b9183ba9dea9c5080a4c2b511ae786d",
+    "crates/nera-ir/src/warnings/illegal_guards.rs": "55573d70e3095c69e3b77cf554777cf23db2d95e419f7163a18f846c5a472b4e",
+    "crates/nera-ir/src/warnings/match_underscore_var.rs": "78ed9185a2e11e875799180b43ddf6b16553d8619326f8d2d6fbe1711406582d",
+    "crates/nera-ir/src/warnings/non_tail_recursion.rs": "d46418b8839a016f2bdc764d5d67931d582311fab8cd966079627246d04f04a2",
+    "crates/nera-ir/src/warnings/shadowed.rs": "7509fcb9d0cc95fe93d5067dc74b75720eea69e94da7ac861716b3d4d7d63341",
+    "crates/nera-ir/src/warnings/unbound_vars.rs": "5a2cdc1d7d613daea734531f95543c763594dd49073797b41345c906bcc9f9e6",
+    "crates/nera-ir/src/warnings/undefined_functions.rs": "abc690147cc4f12abb22f26a1acc5ee2debcf93b511ee15f9a65927fcb07018b",
+    "crates/nera-ir/src/warnings/undefined_record_fields.rs": "de3e33233625c4f2c730656b896a04ff40e744f5e415c0d99f33f6386e522389",
+    "crates/nera-ir/src/warnings/unreachable.rs": "6389af3c9be72da94055f0f5414d59a8e39605011b1209c8b4563f401bbaa2fb",
+    "crates/nera-ir/src/warnings/unsafe_vars.rs": "c54f1a04d43af9f64c34802c0e304c9c465cb9b6754cd4621fdf757ef4c874aa",
+    "crates/nera-ir/src/warnings/unused_funcs.rs": "97003c137641072abab487c92b3c9d12cc4ddbec17a6560507aef75295c49b96",
+    "crates/nera-ir/src/warnings/unused_records.rs": "164efe2e444642311ce616d8751d8046d038ffbde8c1bd199cbc323fa597e229",
+    "crates/nera-ir/src/warnings/unused_vars.rs": "d90a2cb517ebadb3c3d9dd0dd7a50c8df0a7c19c3b646518f6e7d55909887fd0",
+    "crates/nera-runtime/src/ffi/alloc.rs": "dbe52cb4cf7b19e02f06ddb658474a0b5055844ba96825b32845f8c5043a53ed",
+    "crates/nera-runtime/src/ffi/binary_ops.rs": "b00b0c977cc5ec9f85f0f9f1145917e3a6a333340f437b56b8908af26b5735c0",
+    "crates/nera-syntax/Cargo.toml": "4f5735f9466a4c642a00d472887c80d56250bf5bae29d4192ba6e0938de73170",
+    "crates/nera-syntax/src/ast.rs": "e5f59919ff1135220948a696815e92130d3b35935eed64cf53a3c407bb2dbc1d",
+    "crates/nera-syntax/src/lexer.rs": "137e398b6426dd5ed1ac87043086ec54f974850fb34e18835d668985dd36531a",
+    "crates/nera-syntax/src/parser.rs": "6064362542150b4c59a1bf961d9e9609e20d2187cea19525ebe4bb1f18ca8305",
+    "crates/nera-syntax/src/preproc.rs": "da0f7229ca0aecd46498f8b5508e89c9c3e3080462d12f6e1b27682456c2ff12",
+    "crates/nera-syntax/src/semantic_tokens.rs": "87ebda24423f651ab5f5ea417253f4a9e5cae5b752e7154218182a9bcaec6aa2",
+    "crates/nera-syntax/src/token.rs": "3b2a5d5ec341039048116cd9be14be3ebe7320e7d6f33c8ce610a6951ce1bc52",
+    "crates/nera/src/lsp/references.rs": "9a2bf45644e8a12092c3624fcc95ee3f3b8d3442d66cce97d6d3bd384bdd9daf",
+    "crates/nera/src/lsp/type_infer.rs": "1aaddab99d6e044a59d2a5465ddf7e7690a2e8c6e40907ee4e5d14aba41007bf",
+    "crates/nera/src/lsp/util.rs": "55d9469af11fd7b86dcfa930a2159d72cb2f0daae8657b71851a0b4616e7b386",
+    "crates/nera-codegen/src/func_translator/constants.rs": "67a7a643f2d0e9f44638466e9ae8fb9ba6366b0e73213e711c53bf0a99dd03c4",
+    "tests/integer_large_literal.erl": "fb046638455eb4f7a134ca881a9b256a1438896112eea954a545f894b23fe84c"
+  },
+  "nera_sha256": "d4bbfac8af2ffd9bed6ebee321873256f1e4a50541b10f60fc054f6260621bdf",
+  "runtime_sha256": "3ccb061b7ea72f72de593997318c54417d6f74b79847add1af7c8d9b6d145b50",
+  "upstream": {
+    "name": "cowlib",
+    "version": "2.20.0",
+    "url": "https://github.com/ninenines/cowlib.git",
+    "commit": "c768a804565ff5b8178ed968a5921e469d6bd7b2"
+  },
+  "platform": "macOS-15.7.7-arm64-arm-64bit-Mach-O",
+  "otp_version": "Erlang/OTP 29 [erts-17.0.5] [source] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads:1] [jit] [dtrace]",
+  "implementation": [
+    "Retain an allocation-free i64 lexer fast path; fall back to num-bigint for decimal and Base#Digits and normalize larger values as exact decimal strings.",
+    "Carry large integers through AST expressions/patterns, macro stringification, formatting, analysis and IR. Normalize negative i64 minimum back to Integer.",
+    "Materialize constants from immutable object data using the existing arbitrary-precision runtime, with exact comparisons for boxed switch constants.",
+    "Write boxed integer binary segments from owned two\u2019s-complement bytes, preserving truncation, sign extension, endianness and non-byte-aligned segments."
+  ],
+  "regression": {
+    "native_fixture": "tests/integer_large_literal.erl",
+    "beam_exit_code": 0,
+    "beam_stdout": "ok\n",
+    "before_lexer_test_exit_code": 101,
+    "before_lexer_test_log_sha256": "7d1fc793007c25a3fbcc1e9250a347ecf670737a75f650aefa51d0307675ddcc",
+    "before_native_lexer_exit_code": 1,
+    "before_native_lexer_stderr_sha256": "59243c8317825817ea4d3919d4fc91bb802713ace8af4b27febe6bc6191ba4b8",
+    "boxed_binary_before": "{badmatch,<<0>>}; boxed integer construction had silently substituted zero",
+    "boxed_binary_before_log_sha256": "37d770898efc177f2cde1fec991594aa493f9186499c51e16eac1c7e23eacda7",
+    "native_after": {
+      "passed": 4,
+      "failed": 0,
+      "tests": [
+        "integer_large_literal",
+        "char_escaped_ordinary",
+        "char_octal",
+        "binary_bound_match"
+      ],
+      "log_sha256": "f6958b1caabdc65464a731bcb7cb24e9871e2e4f286e0118b719529715879dda"
+    },
+    "formatter_roundtrip_beam": "passed",
+    "formatted_source_sha256": "8b0d77daf77b2bb2ea7c46e4b84c44fd5351e89d69d3900a7f7a7d7205b1f7c5",
+    "inactive_TEST_probe_nera_check_exit_code": 0
+  },
+  "workspace_serial": {
+    "passed": 1822,
+    "failed": 0,
+    "ignored": 1,
+    "log_sha256": "28c8baf7465ef3f62a2437710c7af906bfd6c73040de7f8549d7956f62224537"
+  },
+  "workspace_clippy_all_targets_warnings_denied": {
+    "status": "passed",
+    "log_sha256": "8cd148728a4d0984ebf91c2d5111a0d5d98c22162fabf9768decab57b8c15781"
+  },
+  "build": {
+    "exit_code": 0,
+    "log_sha256": "c18115061bd22c17f09a0c4dabcfaa68e893e3b33475b1430ec9175a5a6a3aaa",
+    "command": "RUSTC_WRAPPER= CARGO_TARGET_DIR=/private/tmp/nera-main-cowlib-target cargo build --release --locked --offline"
+  },
+  "http_rerun": {
+    "status": "failed",
+    "runner_exit_code": 1,
+    "command": "python3 tests/integration/cowlib/runner.py --module cow_http_hd --module cow_http --nera /private/tmp/nera-main-cowlib-target/release/nera --work-dir /private/tmp/nera-cow-http-big-literals --offline",
+    "execution_order": [
+      "cow_http_hd",
+      "cow_http"
+    ],
+    "report_sha256": "92f2543fb4b7580d50108ddb63971018befe83655b2d0a0591f4a6f54432cef8",
+    "modules": {
+      "cow_http_hd": {
+        "beam_passed": 63,
+        "native_passed": 0,
+        "native_executed": 0,
+        "native_blocked": 63,
+        "total": 63,
+        "native_build_exit_code": 1,
+        "native_sources": [
+          "src/cow_http_hd.erl",
+          "src/cow_http.erl",
+          "src/cow_http1.erl",
+          "src/cow_cookie.erl",
+          "src/cow_date.erl",
+          "src/cow_http2.erl",
+          "src/cow_http_struct_hd.erl",
+          "src/cow_link.erl"
+        ],
+        "build_stderr_sha256": "811dd94622ab333356cb67a711956d8cfca9f666cc3b67abbfffb3e8e0326535"
+      },
+      "cow_http": {
+        "beam_passed": 136,
+        "native_passed": 0,
+        "native_executed": 0,
+        "native_blocked": 136,
+        "total": 136,
+        "native_build_exit_code": 1,
+        "native_sources": [
+          "src/cow_http.erl",
+          "src/cow_http1.erl",
+          "src/cow_http_hd.erl",
+          "src/cow_cookie.erl",
+          "src/cow_date.erl",
+          "src/cow_http2.erl",
+          "src/cow_http_struct_hd.erl",
+          "src/cow_link.erl"
+        ],
+        "build_stderr_sha256": "811dd94622ab333356cb67a711956d8cfca9f666cc3b67abbfffb3e8e0326535"
+      }
+    },
+    "next_blocker": {
+      "stage": "semantic validation",
+      "function": "iolist_size/1",
+      "source": "src/cow_http2.erl",
+      "line": 412,
+      "diagnostic": "function 'iolist_size/1' is undefined"
+    }
+  },
+  "core_rerun": {
+    "status": "passed",
+    "runner_exit_code": 0,
+    "passed": 122,
+    "total": 122,
+    "modules": {
+      "cow_qs": {
+        "passed": 29,
+        "total": 29
+      },
+      "cow_cookie": {
+        "passed": 34,
+        "total": 34
+      },
+      "cow_date": {
+        "passed": 26,
+        "total": 26
+      },
+      "cow_base64url": {
+        "passed": 33,
+        "total": 33
+      }
+    },
+    "report_sha256": "4f058af2efbfe6cc5d7920bb00b0af42b4981c47d2abaf59bef09206edf0d4a6",
+    "timezone": "Pacific/Honolulu"
+  },
+  "harness_tests": {
+    "passed": 37,
+    "failed": 0,
+    "log_sha256": "fac0334047ff57ff627d485da0acd29e7c80762b75d4d5e3f3aeed43ffd199f3"
+  },
+  "limitations": [
+    "HTTP targets retain full unchanged upstream dependency closures; all 199 native cases remain blocked before execution.",
+    "cow_http_hd scope is still 12/68 public functions.",
+    "No Cowlib source or tests copied into the repository; probes and builds stay external.",
+    "Native EUnit/PropEr frameworks and the full upstream HTTP suites are not validated.",
+    "Base64url property replay was not rerun for this change; the 33 base64url corpus cases passed.",
+    "No publication or remote CI run for this uncommitted change."
+  ],
+  "publication_validation": {
+    "integration_base": "fd364b5",
+    "validated_commit": "ffaab4432fb800cd890383a14ae1409a6468f482",
+    "validated_tree": "75e9f8fcb633f64949fc48f2686e2b3d4fee7258",
+    "note": "Revalidated after integrating main; subsequent edits are documentation/evidence only. Earlier evidence remains historical on PR 53 head bb8a71f.",
+    "nera_sha256": "e8fae6290b9860fba5c33dc0692d27b6c6b90d607e880841c59029df71f675f3",
+    "runtime_sha256": "f5456c75324ba275f07a7c7ee309bfd40e5161d654ffe48f90f455453b5e10d3",
+    "workspace_serial": {
+      "passed": 1825,
+      "failed": 0,
+      "ignored": 1,
+      "log_sha256": "50e1de4867afabb42b7a4cef2b7499339e113d72c4b09e281ed8617184e233ea"
+    },
+    "workspace_clippy_all_targets_warnings_denied": {
+      "status": "passed",
+      "log_sha256": "0cb3f52ad0119ec8432fa7374ab32fe19971d2c1f5190ec1ade190e1240dc76d"
+    },
+    "native_suite": {
+      "passed": 317,
+      "failed": 0,
+      "skipped": 2,
+      "total": 319,
+      "command": "nera test -j 1 --timeout 30",
+      "skips": {
+        "ets_onecached_full_startup": "requires external onecached modules",
+        "ets_onecached_pattern": "requires external onecached_storage module"
+      },
+      "log_sha256": "8c8f7e877f1e0b19380f766633531526421b0894eb0ce3fb0de1067d192525f3"
+    },
+    "core_corpus": {
+      "passed": 122,
+      "total": 122,
+      "runner_exit_code": 0,
+      "report_sha256": "036d08aac54ec3809a4a13b6c799ec2e857ee250783237a00104cc34a4a75c8e"
+    },
+    "http_corpora": {
+      "runner_exit_code": 1,
+      "report_sha256": "db971721d1b406cb2cf4425f0adf872b890642f402c9e021885ac76423afa0bd",
+      "modules": {
+        "cow_http_hd": {
+          "beam_passed": 63,
+          "native_passed": 0,
+          "blocked": 63,
+          "total": 63
+        },
+        "cow_http": {
+          "beam_passed": 136,
+          "native_passed": 0,
+          "blocked": 136,
+          "total": 136
+        }
+      },
+      "next_blocker": "iolist_size/1 in cow_http2.erl:412"
+    },
+    "harness_tests": {
+      "passed": 37,
+      "failed": 0,
+      "log_sha256": "76e5eb029cbbdf17dc4c31d2c846d8d23eb23b8a351d4fc8916c9f3fcdeb78b9"
+    },
+    "build_log_sha256": "3582a3bd20e47c0c1c5bf478a3be5917a5692e31448c31ed322670626190257b",
+    "actionlint": "passed",
+    "diff_check": "passed",
+    "remote_ci": "GitHub CI/Release workflows disabled_manually during private pause; no remote run requested.",
+    "omissions": [
+      "Linux/Windows execution and cross-target/installed-archive checks not performed in this local macOS validation.",
+      "Independent review and separate merge approval remain required before merging."
+    ]
+  }
+}

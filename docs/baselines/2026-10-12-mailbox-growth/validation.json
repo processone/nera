@@ -1,0 +1,29 @@
+{
+  "base": "4b612a7fced36642059b4ef3251cd2bb693f7640",
+  "sources": {
+    "CHANGELOG.md": "1fd9fff8e17bceb8d5c51b86574205c948563868c2a8b5a5ddf9369495aae802",
+    "crates/nera-runtime/src/process.rs": "88bbfa4605116bdf750624eba483c5a4513b235f162c60073f7abf744a53f788",
+    "docs/baselines/2026-10-12-mailbox-growth/measure.py": "7f5983ecbbb6c5082084000842959687e980cf2c2dcb8ee8c89fa85e0457838d",
+    "docs/baselines/2026-10-12-mailbox-growth/results-repeat.json": "0ff8c84fbea9eccae850fe7e08241013eaee6d4ffb78aafc29cd9e8751ee8a91",
+    "docs/baselines/2026-10-12-mailbox-growth/results-during-validation.json": "a9c7f14d2483329bfed04ced58e6125603a2f96a2dd1b84dd7d01c179fce6c06",
+    "docs/baselines/2026-10-12-mailbox-growth/results.json": "76f6272c8321a09ef63930e49490481bb753d2aae19aa35ebbd71be885c38fc1",
+    "docs/baselines/2026-10-12-mailbox-growth/README.md": "876234afce1c2a82f1e21ddc38048e5223abe188f8af57c3ac141b25547a151a",
+    "docs/baselines/2026-10-12-mailbox-growth/results-during-validation-repeat.json": "c0b92cba1660d174204d194d69d02f6c800a652f40cd2c09db5018bb97aa170f",
+    "docs/baselines/2026-10-12-mailbox-growth/red-release.txt": "dc83737d7d82e0e7764aea44aa9d11f6ded7927ab864850dbf299f38ef90ba9f",
+    "docs/baselines/2026-10-12-mailbox-growth/probe.rs": "d8a06d12487d172705341c4a7ab268fd2d1df573dbd81f9eb534fe3260d5e159"
+  },
+  "artifacts": {
+    "before/probe": "838f44a6022fcd850b4c35866b594a377546d252c90c8133eb75d31139142431",
+    "before/nera": "296b612d5548e97ed8130dd1c3cbaa549801d06060fc72cb7945862e0f832e49",
+    "before/libnera_runtime.a": "80677cb0361978292c59ef5522ebd28ba35a1171d8079a79871d9d01a2124889",
+    "after/probe": "ec8f0a01476f4fb72ed1870793b9d657dfd59a6f7a26b211892827da9080e102",
+    "after/nera": "296b612d5548e97ed8130dd1c3cbaa549801d06060fc72cb7945862e0f832e49",
+    "after/libnera_runtime.a": "2efa05f06d16ad2d2615fd3f187e0d33cda4d30c3e1e8fba1f958bf43434e9e3"
+  },
+  "logs": {
+    "nera-mailbox-release-tests.log": "40d13184f6fa66dc3548b3169ebc7733b8c2f764c71cd3256bde523b559325cd",
+    "nera-mailbox-clippy.log": "2583072344d9532478f31aeb87983990808ae13ea7fc7750d688fb5f11bdb074",
+    "nera-mailbox-e2e.log": "41a9f68acb7bb6be96370d60dddd0061c8ed41bc58f71926de7c77fa54b07116",
+    "nera-mailbox-after-build.log": "0b5fe2277fd2b29cc111b76604c482f8ec516047dbc0954657203c5614f4e4db"
+  }
+}

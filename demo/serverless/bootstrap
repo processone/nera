@@ -1,0 +1,43 @@
+#!/bin/sh
+#
+# UNQUALIFIED SKETCH of an AWS Lambda custom runtime bootstrap.
+#
+# Nobody has deployed this script to AWS Lambda. It polls the Runtime API
+# for events, runs the nera-compiled handler once per event, and posts the
+# handler's output back. Known gaps, observed against a local fake Runtime
+# API:
+#   - ./handler reads no input: every event gets the same response.
+#   - The response is the handler's Erlang-term text, stdout and stderr
+#     together, posted with curl's default form content type, not JSON.
+#   - The error body is not JSON-escaped. /next HTTP errors, init errors,
+#     the trace header and the deadline are not handled.
+#   - It relies on curl being present in the runtime image (not checked).
+# The handler must be a Linux executable for the function's architecture;
+# a macOS build cannot run in Lambda. See docs/SERVERLESS_ERLANG.md.
+#
+set -eu
+
+HANDLER="./handler"
+API="http://${AWS_LAMBDA_RUNTIME_API}/2018-06-01/runtime"
+
+# --- Event loop --------------------------------------------------------------
+while true; do
+    # 1. Get next invocation
+    HEADERS=$(mktemp)
+    EVENT=$(curl -sS -LD "$HEADERS" "${API}/invocation/next")
+    REQUEST_ID=$(grep -Fi Lambda-Runtime-Aws-Request-Id "$HEADERS" | tr -d '[:space:]' | cut -d: -f2)
+    rm -f "$HEADERS"
+
+    # 2. Run the handler. It does a fixed computation and ignores EVENT.
+    if RESPONSE=$("$HANDLER" 2>&1); then
+        # 3a. Success — post response
+        curl -sS -X POST \
+            "${API}/invocation/${REQUEST_ID}/response" \
+            -d "$RESPONSE"
+    else
+        # 3b. Error — post error
+        curl -sS -X POST \
+            "${API}/invocation/${REQUEST_ID}/error" \
+            -d "{\"errorType\":\"HandlerError\",\"errorMessage\":\"$(echo "$RESPONSE" | head -1)\"}"
+    fi
+done

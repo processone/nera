@@ -1,0 +1,26 @@
+{
+  "base": "a5dafc332cf853f7539a7ffd0887a4c917aef1d7",
+  "branch": "mr/process-entry-guard",
+  "target": "uncommitted worktree; production sources frozen before final validation",
+  "files": {
+    "CHANGELOG.md": "64d4f3ee2cc5ce319af2b3ca296f17570b07adcacb6bec694803df81a3bdf64e",
+    "crates/nera-runtime/src/process.rs": "98c5ab3ee137e31ca666e362ce48ad6fb2f04590900b9aa0126ddade62094a7d",
+    "crates/nera-runtime/src/scheduler.rs": "b2330d8a1a69022e74452d3e46bddb5c4f091909e2e20e35828bb4328536ab92",
+    "crates/nera-runtime/src/io_pool.rs": "179e1d35071ea2bdf2f8305cd8e94430200a661d887359f8a55da8527fbd0f61",
+    "crates/nera-runtime/src/ffi/process.rs": "ea8b14afeec96acabe407bcbdc0b24f2fcdd41bd0b4519a534c6bf4587d622ee",
+    "crates/nera-runtime/src/ffi/base64.rs": "cf8cab50e70a4955027b52a947e9161a66f813f661d17f8ac6a630783678d43b",
+    "crates/nera-runtime/tests/exit_signal_contract.rs": "594bb358636665c699fc18a0b7e2c768228b3b7fae04a8ba060b0ffe9941a13f",
+    "Cargo.lock": "a210f397cb773d07c39ed4827a9aea44092f56ee7c2a438f708784dfa5769f80",
+    "rust-toolchain.toml": "2ad6f15416572b4836585087f1d4abc53b8fa2dbd616f8dacfaa587ed6714228"
+  },
+  "probe_binaries": {
+    "/tmp/nera-entry-before": "f6f0d6f4363877edd7d4db5fabd4bd32e092bce30a91b45f5745a0520b1ae768",
+    "/tmp/nera-entry-after-final": "72558e44650f1ad1968aa306145b9562f32eafc17779c14a4eec428286214cd5"
+  },
+  "probe_sources": {
+    "probe-before.rs": "37dcb7aaa42ae4633be336bba63655e2c7af63b1a7ef241236038335ed37fbfb",
+    "probe.rs": "32d356dfdfb88e997b394b0dac1c5965d00e55be7f92f82f93b2e18ad124e05b"
+  },
+  "source_snapshot_sha256": "7187de396ee61485bf1b08fbdaae185e3f50949391673962cc4d8f512446cbb1",
+  "native_binary_sha256": "9e95355558ef893ddbbb92e779aa5c8af44278cf7277aa3638a286e7e1c1bdbc"
+}

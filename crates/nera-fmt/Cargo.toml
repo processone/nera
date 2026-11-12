@@ -1,0 +1,16 @@
+[package]
+name = "nera-fmt"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "Erlang code formatter for the nera compiler"
+
+[dependencies]
+nera-syntax = { path = "../nera-syntax" }
+string-interner = "0.17"
+
+[dev-dependencies]
+proptest = "1"

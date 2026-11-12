@@ -1,0 +1,39 @@
+{
+  "base_commit": "211b1fbcb62d03ec01b1960ffc8a6d42509d0ed7",
+  "branch": "mr/unicode-bit-access",
+  "target": "uncommitted worktree; source-hashes.json binds production sources and regression fixture",
+  "toolchain": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "platform": "macOS 15.7.7 ARM64 / Apple M1",
+  "otp_reference": "29",
+  "tests": {
+    "workspace-tests.txt": [
+      1985,
+      0,
+      1
+    ],
+    "release-tests.txt": [
+      639,
+      0,
+      1
+    ]
+  },
+  "native_tests": {
+    "passed": 60,
+    "failed": 0,
+    "skipped": 0
+  },
+  "clippy": "passed, workspace/all-targets -D warnings",
+  "cross_checks": {
+    "x86_64-apple-darwin": "passed",
+    "x86_64-pc-windows-msvc": "passed; six existing fallback unused-code warnings"
+  },
+  "binary_sha256": {
+    "nera-before": "79b15245ed5cf7c061c393d4b133b0119475b5726b9190c2fa595cfc6bf5ba5c",
+    "libnera_runtime.a": "3bd55ea1d912def4d492404191d2e9d194e0d2d7073b4f320d30fe3fd7437d21",
+    "before-aligned": "75b48e4a0683ae63b6f7c0e84aa0d16c4f08dbc274ae7205febb07cabfb1c897",
+    "after-aligned": "8cedcce05bcb143b381e70ae89615cda25c58f93ea5d376d08831a592d7a29f6",
+    "after-shifted": "a73af4bed93bc9c287847767b01d2774d794adcb71c917cd2b1c201bcdc5e07b"
+  },
+  "final_compiler_sha256": "669b7df39e0e814c5b1c55a52c5509c9325dae298a3190b5c00691799404689a",
+  "final_runtime_sha256": "a63b23d7005f92e99358723f5c4648df48491d3f74a3e4c8390a29421c0ce21f"
+}

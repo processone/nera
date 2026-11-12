@@ -1,0 +1,19 @@
+{
+  "CHANGELOG.md": "2a7922d172bc7275d7ef0bb6d7a183c4d7095bdf228377196b0149ad0d6d4c78",
+  "crates/nera-codegen/src/func_translator/ffi_emit.rs": "01f825c22c79dc7248595c564e32efff4b0a1e23b37f2d32aa84e5c8564225fa",
+  "crates/nera-codegen/src/func_translator/instructions.rs": "c749be27b4dbda98d73f99612569451da08a680cd2c9a819a8de158c138ba82f",
+  "crates/nera-ir/src/lower/expr.rs": "5fc08c69b55b402b2eea9d039fac74f5b47253d7416a048d18475fde6e6fd785",
+  "crates/nera-ir/src/lower/mod.rs": "497dfdcceee172240fbf607e62cfc7dd1433417e9fece357e3316c3bb9f4a338",
+  "crates/nera-ir/src/lower/tests.rs": "64fec0abb93f5bc515444ba1354b2b20b198df748ec4148728d2aaeba6330b8d",
+  "crates/nera-runtime/src/ffi/binary_ops.rs": "2fce224f1fcd5825d7562908dedade8c887c9463df327a605921c1c482c820b1",
+  "crates/nera-runtime/src/ffi/compare.rs": "20f85878dc619649d6bd000049a30715f7f21d8ad256ed3343542210302b1f6e",
+  "crates/nera-runtime/src/ffi/list_ops.rs": "ff4fdfee172e83b7b40aadb6405bd88e22e4a0f8c765ec1ab743da812b140744",
+  "crates/nera-syntax/src/parser.rs": "3b312c0d75261dcb986cc16e73f0218784e55d8871f677b67fe2c7ee15e7210e",
+  "Cargo.lock": "a210f397cb773d07c39ed4827a9aea44092f56ee7c2a438f708784dfa5769f80",
+  "Cargo.toml": "8d8f30e39479037b8f2cb82dbcc3f4705503423f0a6db6237003281cf25d24b3",
+  "rust-toolchain.toml": "2ad6f15416572b4836585087f1d4abc53b8fa2dbd616f8dacfaa587ed6714228",
+  "tests/binary_segment_domain.erl": "9f7448a7f5a7486e9925ce059d5b77264dbc82b9730f62c0e0aea9e81f0f6ecf",
+  "tests/list_operator_contracts.erl": "001a975fdfb3efc071a51db39806ac99af1f042a37fe52ca6787626d29ae3edc",
+  "docs/baselines/2026-10-15-tuple-subtraction/probe.erl": "ef2092d5b35ebb37372bacc88b392d24692cad9c73977acb168a736e33481877",
+  "docs/baselines/2026-10-15-tuple-subtraction/measure.py": "beb7c409917f1bc7abc0568092359fdc1fee22a231f634deb6438e0b5ad22a90"
+}

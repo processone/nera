@@ -1,0 +1,166 @@
+{
+  "date": "2026-10-12",
+  "base_commit": "5f1d9e3",
+  "change": "uncommitted case_clause reason correction",
+  "platform": "macOS-15.7.7-arm64-arm-64bit-Mach-O",
+  "otp_version": "Erlang/OTP 29 [erts-17.0.5] [source] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads:1] [jit] [dtrace]",
+  "upstream": {
+    "name": "cowlib",
+    "version": "2.20.0",
+    "url": "https://github.com/ninenines/cowlib.git",
+    "commit": "c768a804565ff5b8178ed968a5921e469d6bd7b2"
+  },
+  "nera_sha256": "47069e9f2db13f3c5c2a64da6488621162d690a488c42dbfcc447c66cb9b8d37",
+  "runtime_sha256": "39d1fd9049f142c107176505d17ad60a1cebb6b2a497d1f5ff70dc237397802b",
+  "source_sha256": {
+    "crates/nera-ir/src/lower/expr.rs": "d52866ebfaab68f7afbf0bb449031b423f7734497d18578f8cd6a56d98616207",
+    "tests/case_clause_reason.erl": "43be3c9045db19a9c513cfe7c5a61e3380ccd60489d25adea2d9f97e687c5847",
+    "tests/integration/cowlib/runner.py": "d12420a5d972f08001a3ffbb37c998af4aadf094a43b51440994aff529db3f37",
+    "tests/integration/cowlib/corpus.json": "b08539b285ec8911f1095ecd4246b8a082f6240acc590eca14a13a7e264c0323"
+  },
+  "regression_red": "Nera returned case_clause; regression expected {case_clause,71} and failed with badmatch",
+  "regression_green": "BEAM and Nera completion markers passed",
+  "checks": {
+    "nera_ir_tests_passed": 428,
+    "clippy": "passed",
+    "native_tests": [
+      "case_clause_reason",
+      "exception_basic",
+      "match_case",
+      "tco_trampoline_exception",
+      "resume_exception"
+    ]
+  },
+  "cow_qs": {
+    "build_returncode": 0,
+    "total": 29,
+    "passed": 29,
+    "beam_passed": 29,
+    "cases": [
+      {
+        "id": "qs_simple",
+        "status": "passed"
+      },
+      {
+        "id": "qs_flag",
+        "status": "passed"
+      },
+      {
+        "id": "qs_duplicate",
+        "status": "passed"
+      },
+      {
+        "id": "qs_escaped",
+        "status": "passed"
+      },
+      {
+        "id": "qs_plus",
+        "status": "passed"
+      },
+      {
+        "id": "qs_utf8",
+        "status": "passed"
+      },
+      {
+        "id": "qs_nul",
+        "status": "passed"
+      },
+      {
+        "id": "qs_empty",
+        "status": "passed"
+      },
+      {
+        "id": "qs_empty_values",
+        "status": "passed"
+      },
+      {
+        "id": "qs_separators",
+        "status": "passed"
+      },
+      {
+        "id": "qs_extra_equal",
+        "status": "passed"
+      },
+      {
+        "id": "qs_hex_case",
+        "status": "passed"
+      },
+      {
+        "id": "qs_bare_percent",
+        "status": "passed"
+      },
+      {
+        "id": "qs_short_percent",
+        "status": "passed"
+      },
+      {
+        "id": "qs_bad_hex",
+        "status": "passed"
+      },
+      {
+        "id": "qs_limit_0",
+        "status": "passed"
+      },
+      {
+        "id": "qs_limit_1",
+        "status": "passed"
+      },
+      {
+        "id": "qs_limit_2",
+        "status": "passed"
+      },
+      {
+        "id": "qs_limit_3",
+        "status": "passed"
+      },
+      {
+        "id": "qs_default_limit_99",
+        "status": "passed"
+      },
+      {
+        "id": "qs_default_limit_100",
+        "status": "passed"
+      },
+      {
+        "id": "qs_default_limit_101",
+        "status": "passed"
+      },
+      {
+        "id": "qs_build",
+        "status": "passed"
+      },
+      {
+        "id": "qs_build_empty",
+        "status": "passed"
+      },
+      {
+        "id": "qs_encode_bytes",
+        "status": "passed"
+      },
+      {
+        "id": "qs_decode_bytes",
+        "status": "passed"
+      },
+      {
+        "id": "qs_decode_bad",
+        "status": "passed"
+      },
+      {
+        "id": "qs_bad_type",
+        "status": "passed"
+      },
+      {
+        "id": "qs_empty_value",
+        "status": "passed"
+      }
+    ]
+  },
+  "full_report_sha256": "2d1b5d570893a265be990c03a6085de86bb839326c5e2f468d6cac3e5e9243e5",
+  "full_report_path": "/private/tmp/nera-cowlib-validation/report.json",
+  "build_log_sha256": "31535f14df84ff6f55023ad666fc0b8f8049f8a6e180de6d1ea025fe9b946e0a",
+  "vendored": false,
+  "limitations": [
+    "Other Cowlib modules and upstream EUnit/PropEr suites not rerun.",
+    "Local macOS evidence; separate from PR 33 CI."
+  ]
+}

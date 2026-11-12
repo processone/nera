@@ -1,0 +1,45 @@
+{
+  "base": "5b24148ce3281db26795adbc07956f86186abdb6",
+  "platform": "macOS 15.7.7 arm64 / Apple M1 / 16 GiB",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "otp": "29.0.5",
+  "sources": {
+    "CHANGELOG.md": "64fa78fe6ab6990e9b11b290f726661389eb376d72a92afa956e75fe2cb186b8",
+    "COMPATIBILITY.md": "26261b5a29c549e17aa258581c591697eb004c7d0ede1cc651aaf165b93a3961",
+    "crates/nera-ir/src/bif_table.rs": "0e20a533a90059696a7eac7a22df17e9335ee1efd4e9062eeecbb0e018f2eec0",
+    "crates/nera-runtime/src/base64.rs": "2fccc36a7c1ea1c6e8cb24c6383c6773dd48e0a5033af8687e56ddbd981db040",
+    "crates/nera-runtime/src/ffi/apply.rs": "6761ef3f94ea349e5a812d32911a7c13bb7ad9d554bf357d3dd6a45e16a11f09",
+    "crates/nera-runtime/src/ffi/base64_list.rs": "cdc7050fee6e91f872e33e54dd64da54eaa61e436c552f0a0bc46621cdf0700d",
+    "crates/nera-runtime/src/ffi/mod.rs": "bdebd0b148f1da7599f6eb2fe2a48f31da984e25f5ce92fb77e3c5468d339d72",
+    "crates/nera-runtime/src/ffi/native_work.rs": "40803afc6dd18693b6f6eb06bf8a893408b48a120c8f405aff6c2c3dade2b6ab",
+    "crates/nera-runtime/src/process.rs": "4b7f4b55a3bb7fcbbef51cc88754e2790457d3712c0b6bce39b7772ee9c4207b",
+    "erlang/stdlib/base64.erl": "6770f9f3da2cbfbbb2c4a6efad5cb9fdb7e584665e1dd5632bcd25a010a2c579",
+    "scripts/fixtures/base64_list_corpus.erl": "b9385a3399fa689f08fa6918bbc7aa1b43f332a1e5df58cfcdc2ab65098a5a58",
+    "scripts/test-base64-scheduler.py": "71826e703c439c76b66b4b140b3b7c775c5acb14ae60c6d433a8dcac33480285",
+    "scripts/test-base64.py": "41103006c254a18caba913b1d555c4ea030e8a0fcb65f364600b3b3e3df0c235",
+    "scripts/test-cross.sh": "c6c623d820d5cf24cf02bfb74e2f9c508c2d6d801066a2de3d2b64918c5e9eae",
+    "scripts/test-dist.py": "f8c3690b02188e0992c09a3d937eb03af895f06d76c0b130f07cbb7b468046e0",
+    "tests/README.md": "a2702ac11be1aaee598c281187a6607f4b1a923b5a8f5bbd4b3a38131cdd90de",
+    "tests/base64_list_decode.erl": "8a9d233946797fab5894537d6c27a8c6cf7b37d454bcffaa231230c9094392b8",
+    "tests/base64_list_fairness.erl": "b7386f4c63e24dcd13365eef9f3a77a2c7da673871e5101eef02e1ae22b67dbc",
+    "tests/base64_native_decode.erl": "22ce9007fa292dfbb8acae3bf70507f213a5ebe54cdd50bbf239f074c7faa930"
+  },
+  "artifacts": {
+    "nera": "10e65a85cc419817bcc5b239b8814f6b074ef5a6f0be63fd81cbd54b00fe727c",
+    "libnera_runtime.a": "73b7c08d124b4c94bb21d584d09956340d9d1f9c4411039f083f7b6398d581f7"
+  },
+  "validation_note": "Final PR commit adds only these evidence files to the validated sources; source SHA-256 values bind the checks to the implementation.",
+  "evidence_sha256": {
+    "cross-macos.log": "fb096f1f72045f800c2ca07f33483f8632d9e95e4dbc49fbec5083477c5d51cd",
+    "clippy.log": "6db772beeacaa37259261182bf9c93995fe74329f12cb04c27ec3043d89f4e18",
+    "scheduler.log": "c74aee43bbb15043ae3a6746dd797d2249d3e4d8eb03e53531eb2869243c37b2",
+    "red-beam.log": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22",
+    "cross-linux.log": "9565564c082dee00f8436dbe27be1dcd405449ef15ccc8bdec2225bc840f4fd2",
+    "dist-test.log": "1a323c4dfb0d2fb2edcb7118559302171ee155749e75646bb6810e4be2fab8a0",
+    "erlang-tests.log": "68137331ce69c3ada145050b1d0b11014b693888810ab6fc184aca94aabbb6cf",
+    "red-nera.log": "c53c7fc26d0efa25f547c2ef4544ffbc6eb7c89f1c3d0a909ae6b28dad10137a",
+    "dist-build.log": "4f9164bdfe89d0cc6eeab03b572b6837bcf41a1f2f2c01f5e2a8f0cff95ff81d",
+    "workspace-tests.log": "bf17f6cdb1eb0fac0bf619ef79899f0c13de0ee45c5d76ceb6022c3761f32a0e",
+    "beam.log": "317e874d97696819333c11e4966808bfe8fc6fa23af739c4b2671686f975062b"
+  }
+}

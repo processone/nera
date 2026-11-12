@@ -1,0 +1,197 @@
+{
+  "base_ref": "origin/main (cached)",
+  "base_commit": "c5b89ee65d679da1f2fe257aef73f130859440bb",
+  "base_tree": "39856e395ff12a1548741a2cd895975e5e80a856",
+  "target": "uncommitted working tree; scoped source hashes in source-manifest.json",
+  "platform": "macOS 15.7.7 arm64",
+  "rustc": "1.97.1",
+  "beam": "OTP 29",
+  "lock_sha256": "ad42464c59618c1e56a7102589e51a26ffac0f55401b8e4d7e24c039f110bb1d",
+  "rust_tests": {
+    "passed": 1677,
+    "failed": 5
+  },
+  "erlang_tests": {
+    "passed": 285,
+    "failed": 0,
+    "skipped": 2,
+    "total": 287
+  },
+  "artifact": {
+    "path": "$REPO/dist/nera-0.1.0-repaired-aarch64-apple-darwin.tar.gz",
+    "sha256": "d57d65d3a456fb59254608aac437fb48f900b9824026e5646c6d7f1110a7a540",
+    "compiler_arch": "arm64",
+    "runtime_arch": "arm64"
+  },
+  "commands": {
+    "release-build-final": {
+      "command": [
+        "env",
+        "RUSTC_WRAPPER=",
+        "cargo",
+        "build",
+        "--release",
+        "--locked",
+        "--offline"
+      ],
+      "cwd": "$REPO",
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 125.81
+    },
+    "workspace-tests-final": {
+      "command": [
+        "env",
+        "RUSTC_WRAPPER=",
+        "cargo",
+        "test",
+        "--workspace",
+        "--locked",
+        "--offline",
+        "--no-fail-fast"
+      ],
+      "cwd": "$REPO",
+      "exit_code": 101,
+      "timed_out": false,
+      "seconds": 16.92
+    },
+    "erlang-suite": {
+      "command": [
+        "./target/release/nera",
+        "test",
+        "-j",
+        "4",
+        "--timeout",
+        "30"
+      ],
+      "cwd": "$REPO",
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 62.13
+    },
+    "clean-distribution": {
+      "command": [
+        "env",
+        "RUSTC_WRAPPER=",
+        "CARGO_NET_OFFLINE=true",
+        "./scripts/dist.sh",
+        "--version",
+        "0.1.0-repaired",
+        "--target",
+        "aarch64-apple-darwin"
+      ],
+      "cwd": "$CLEAN_COPY",
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 323.95
+    },
+    "clean-distribution-final": {
+      "command": [
+        "env",
+        "RUSTC_WRAPPER=",
+        "CARGO_NET_OFFLINE=true",
+        "./scripts/dist.sh",
+        "--version",
+        "0.1.0-repaired",
+        "--target",
+        "aarch64-apple-darwin"
+      ],
+      "cwd": "$CLEAN_COPY",
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 117.98
+    },
+    "installed-archive": {
+      "command": [
+        "python3",
+        "scripts/test-dist.py",
+        "$CLEAN_COPY/dist/nera-0.1.0-repaired-aarch64-apple-darwin.tar.gz"
+      ],
+      "cwd": "$REPO",
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 2.04
+    },
+    "formatter-beam-final": {
+      "command": [
+        "python3",
+        "docs/baselines/2026-10-10-repairs/format_semantics.py"
+      ],
+      "cwd": "$REPO",
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 2.88
+    },
+    "beam-probes": {
+      "command": [
+        "python3",
+        "docs/baselines/2026-10-10/reproduce.py"
+      ],
+      "cwd": "$REPO",
+      "exit_code": 1,
+      "timed_out": false,
+      "seconds": 2.99
+    },
+    "thoas-build": {
+      "command": [
+        "$REPO/target/release/nera",
+        "build"
+      ],
+      "cwd": "$REPO/tests/integration/thoas",
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 2.06
+    },
+    "thoas-run": {
+      "command": [
+        "./a.out"
+      ],
+      "cwd": "$REPO/tests/integration/thoas",
+      "exit_code": 0,
+      "timed_out": false,
+      "seconds": 0.34
+    },
+    "poolboy-build": {
+      "command": [
+        "$REPO/target/release/nera",
+        "build"
+      ],
+      "cwd": "$REPO/tests/integration/poolboy",
+      "exit_code": 1,
+      "timed_out": false,
+      "seconds": 0.73
+    },
+    "formatting-check-final": {
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "cwd": "$REPO",
+      "exit_code": 1,
+      "timed_out": false,
+      "seconds": 1.59
+    },
+    "clippy": {
+      "command": [
+        "env",
+        "RUSTC_WRAPPER=",
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--offline",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "cwd": "$REPO",
+      "exit_code": 101,
+      "timed_out": false,
+      "seconds": 7.03
+    }
+  }
+}

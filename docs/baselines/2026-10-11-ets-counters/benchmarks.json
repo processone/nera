@@ -1,0 +1,96 @@
+{
+  "samples": [
+    {
+      "pair": 0,
+      "version": "before",
+      "stdout": "set single 59811\nset batch 96512\nordered_set single 53462\nordered_set batch 68078\n"
+    },
+    {
+      "pair": 0,
+      "version": "after",
+      "stdout": "set single 66318\nset batch 88690\nordered_set single 44028\nordered_set batch 70124\n"
+    },
+    {
+      "pair": 1,
+      "version": "after",
+      "stdout": "set single 64098\nset batch 84890\nordered_set single 43405\nordered_set batch 68606\n"
+    },
+    {
+      "pair": 1,
+      "version": "before",
+      "stdout": "set single 61280\nset batch 85607\nordered_set single 43269\nordered_set batch 65608\n"
+    },
+    {
+      "pair": 2,
+      "version": "before",
+      "stdout": "set single 61334\nset batch 108034\nordered_set single 67420\nordered_set batch 107797\n"
+    },
+    {
+      "pair": 2,
+      "version": "after",
+      "stdout": "set single 63505\nset batch 102823\nordered_set single 49452\nordered_set batch 78388\n"
+    },
+    {
+      "pair": 3,
+      "version": "after",
+      "stdout": "set single 67929\nset batch 107778\nordered_set single 45814\nordered_set batch 69198\n"
+    },
+    {
+      "pair": 3,
+      "version": "before",
+      "stdout": "set single 64154\nset batch 87501\nordered_set single 53983\nordered_set batch 70654\n"
+    },
+    {
+      "pair": 4,
+      "version": "before",
+      "stdout": "set single 63394\nset batch 87732\nordered_set single 44958\nordered_set batch 66447\n"
+    },
+    {
+      "pair": 4,
+      "version": "after",
+      "stdout": "set single 62543\nset batch 86988\nordered_set single 43471\nordered_set batch 73020\n"
+    },
+    {
+      "pair": 5,
+      "version": "after",
+      "stdout": "set single 71058\nset batch 100898\nordered_set single 58586\nordered_set batch 73129\n"
+    },
+    {
+      "pair": 5,
+      "version": "before",
+      "stdout": "set single 62739\nset batch 91610\nordered_set single 49645\nordered_set batch 68397\n"
+    },
+    {
+      "pair": 6,
+      "version": "before",
+      "stdout": "set single 63051\nset batch 88521\nordered_set single 48463\nordered_set batch 81422\n"
+    },
+    {
+      "pair": 6,
+      "version": "after",
+      "stdout": "set single 62984\nset batch 87512\nordered_set single 46819\nordered_set batch 73474\n"
+    }
+  ],
+  "medians_us": {
+    "set single": {
+      "before": 62739,
+      "after": 64098,
+      "change_percent": 2.17
+    },
+    "set batch": {
+      "before": 88521,
+      "after": 88690,
+      "change_percent": 0.19
+    },
+    "ordered_set single": {
+      "before": 49645,
+      "after": 45814,
+      "change_percent": -7.72
+    },
+    "ordered_set batch": {
+      "before": 68397,
+      "after": 73020,
+      "change_percent": 6.76
+    }
+  }
+}

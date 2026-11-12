@@ -1,0 +1,13 @@
+run:
+  id: 38074383034
+  title: Fix preview blockers and pin validated Rust and Cranelift versions
+  status: completed
+  conclusion: failure
+  workflow: CI
+  branch: mr/preview-reliability-refresh
+  created: 9m ago
+jobs[4]{id,name,status,conclusion}:
+  114278169283,macOS arm64,completed,failure
+  114278169447,Cross-compile x86_64-apple-darwin,completed,failure
+  114278169453,Linux x86_64,completed,failure
+  114278169518,Cross-compile aarch64-unknown-linux-gnu,completed,failure

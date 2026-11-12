@@ -1,0 +1,1 @@
+after: /tmp/nera-socket-after; extracted registry: /tmp/nera-socket-after.rs; dependencies: (PosixPath('/tmp/nera-transfer-target/release/deps/libparking_lot-2c29adc6fe46beab.rlib'), PosixPath('/tmp/nera-transfer-target/release/deps/libmio-a966957cb21af191.rlib'))

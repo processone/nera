@@ -1,0 +1,30 @@
+Running 24 tests (1 threads)
+────────────────────────────────────────────────────────────
+  PASS  atomics_basic                             832ms  [1/24]
+  PASS  counters_basic                            757ms  [2/24]
+  PASS  ets_complex_terms                         771ms  [3/24]
+  PASS  ets_gc_survival                           777ms  [4/24]
+  PASS  ets_message_passing                       817ms  [5/24]
+  PASS  hibernate_basic                           783ms  [6/24]
+  PASS  hibernate_gc_args                         818ms  [7/24]
+  PASS  hibernate_heap_args                       815ms  [8/24]
+  PASS  hibernate_retained_roots                  859ms  [9/24]
+  PASS  link_basic                                716ms  [10/24]
+  PASS  link_cascade                               1.1s  [11/24]
+  PASS  link_normal                               854ms  [12/24]
+  PASS  map_binary_keys                           926ms  [13/24]
+  PASS  map_exact_update                          739ms  [14/24]
+  PASS  map_pattern_match                         826ms  [15/24]
+  PASS  map_update                                795ms  [16/24]
+  PASS  maps_stdlib                               881ms  [17/24]
+  PASS  match_map                                 956ms  [18/24]
+  PASS  monitor_exit_reason                       740ms  [19/24]
+  PASS  persistent_term_basic                     785ms  [20/24]
+  PASS  selective_receive                         726ms  [21/24]
+  PASS  selective_receive_stress                  976ms  [22/24]
+  PASS  selective_receive_tombstone_stress         1.2s  [23/24]
+  PASS  self_send                                 913ms  [24/24]
+────────────────────────────────────────────────────────────
+Results: 24 passed, 0 failed (0 compile), 0 skipped / 24 total
+
+ALL TESTS PASSED

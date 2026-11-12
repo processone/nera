@@ -1,0 +1,834 @@
+{
+  "confirmation": {
+    "cases": [
+      "tuple2",
+      "atom"
+    ],
+    "schedulers": [
+      1
+    ],
+    "repetitions": 11,
+    "medians": {
+      "1-tuple2-before": {
+        "median_batch_us": 1304.0,
+        "mean_batch_us": 1317.3333333333333,
+        "messages_per_second": 15182186.234817814,
+        "p50_us": 127,
+        "p99_us": 1391,
+        "max_us": 1457,
+        "rss_bytes": 6569984,
+        "latency_samples": 225,
+        "cpu_seconds": 0.13,
+        "host_cpu_percent": 172.9
+      },
+      "1-tuple2-after": {
+        "median_batch_us": 1275.5,
+        "mean_batch_us": 1284.0777777777778,
+        "messages_per_second": 15575380.515198976,
+        "p50_us": 127,
+        "p99_us": 1343,
+        "max_us": 1417,
+        "rss_bytes": 6635520,
+        "latency_samples": 225,
+        "cpu_seconds": 0.13,
+        "host_cpu_percent": 190.7
+      },
+      "1-atom-before": {
+        "median_batch_us": 1114.0,
+        "mean_batch_us": 1130.7666666666667,
+        "messages_per_second": 17687114.936768565,
+        "p50_us": 94,
+        "p99_us": 1201,
+        "max_us": 1275,
+        "rss_bytes": 5390336,
+        "latency_samples": 225,
+        "cpu_seconds": 0.11,
+        "host_cpu_percent": 192.70000000000002
+      },
+      "1-atom-after": {
+        "median_batch_us": 1113.0,
+        "mean_batch_us": 1121.8,
+        "messages_per_second": 17828489.926903192,
+        "p50_us": 87,
+        "p99_us": 1177,
+        "max_us": 1214,
+        "rss_bytes": 5373952,
+        "latency_samples": 225,
+        "cpu_seconds": 0.11,
+        "host_cpu_percent": 178.8
+      }
+    },
+    "paired_batch_change_percent": {
+      "1-tuple2": {
+        "all": [
+          -2.379125095932466,
+          -2.1521906225980048,
+          -6.485507246376809,
+          -2.092846270928461,
+          -3.187855787476279,
+          0.23006134969325576,
+          4.929322218194998,
+          -2.2605363984674276,
+          -2.225633154259399,
+          0.15420200462605838,
+          -1.926040061633283
+        ],
+        "median": -2.1521906225980048,
+        "min": -6.485507246376809,
+        "max": 4.929322218194998,
+        "faster_pairs": 8,
+        "slower_pairs": 3
+      },
+      "1-atom": {
+        "all": [
+          -0.13501350135013412,
+          0.13519603424965165,
+          0.1345291479820654,
+          1.735647530040052,
+          -0.17937219730941312,
+          -0.22471910112359383,
+          -10.330912025827278,
+          0.4050405040504135,
+          -3.796376186367556,
+          -0.04488330341113622,
+          0.09025270758122872
+        ],
+        "median": -0.04488330341113622,
+        "min": -10.330912025827278,
+        "max": 1.735647530040052,
+        "faster_pairs": 6,
+        "slower_pairs": 5
+      }
+    }
+  },
+  "matrix": {
+    "cases": [
+      "atom",
+      "tuple2",
+      "tuple3",
+      "tuple4"
+    ],
+    "schedulers": [
+      1,
+      4
+    ],
+    "repetitions": 7,
+    "medians": {
+      "1-atom-before": {
+        "median_batch_us": 1117.0,
+        "mean_batch_us": 1126.2888888888888,
+        "messages_per_second": 17757433.458950732,
+        "p50_us": 79,
+        "p99_us": 1192,
+        "max_us": 1231,
+        "rss_bytes": 5390336,
+        "latency_samples": 225,
+        "cpu_seconds": 0.11,
+        "host_cpu_percent": 157.79999999999998
+      },
+      "1-atom-after": {
+        "median_batch_us": 1110.0,
+        "mean_batch_us": 1120.9444444444443,
+        "messages_per_second": 17842097.437676564,
+        "p50_us": 80,
+        "p99_us": 1192,
+        "max_us": 1252,
+        "rss_bytes": 5390336,
+        "latency_samples": 225,
+        "cpu_seconds": 0.11,
+        "host_cpu_percent": 157.5
+      },
+      "1-tuple2-before": {
+        "median_batch_us": 1299.0,
+        "mean_batch_us": 1326.6444444444444,
+        "messages_per_second": 15075629.407527763,
+        "p50_us": 131,
+        "p99_us": 1395,
+        "max_us": 1768,
+        "rss_bytes": 6635520,
+        "latency_samples": 225,
+        "cpu_seconds": 0.13,
+        "host_cpu_percent": 188.6
+      },
+      "1-tuple2-after": {
+        "median_batch_us": 1273.0,
+        "mean_batch_us": 1279.1888888888889,
+        "messages_per_second": 15634907.536894038,
+        "p50_us": 121,
+        "p99_us": 1408,
+        "max_us": 1432,
+        "rss_bytes": 6668288,
+        "latency_samples": 225,
+        "cpu_seconds": 0.13,
+        "host_cpu_percent": 201.0
+      },
+      "1-tuple3-before": {
+        "median_batch_us": 1639.5,
+        "mean_batch_us": 1656.6888888888889,
+        "messages_per_second": 12072272.67239876,
+        "p50_us": 169,
+        "p99_us": 1746,
+        "max_us": 1804,
+        "rss_bytes": 6799360,
+        "latency_samples": 225,
+        "cpu_seconds": 0.16,
+        "host_cpu_percent": 135.3
+      },
+      "1-tuple3-after": {
+        "median_batch_us": 1634.0,
+        "mean_batch_us": 1639.4333333333334,
+        "messages_per_second": 12199337.169347132,
+        "p50_us": 179,
+        "p99_us": 1690,
+        "max_us": 1817,
+        "rss_bytes": 6799360,
+        "latency_samples": 225,
+        "cpu_seconds": 0.16,
+        "host_cpu_percent": 157.2
+      },
+      "1-tuple4-before": {
+        "median_batch_us": 2033.5,
+        "mean_batch_us": 2036.6333333333334,
+        "messages_per_second": 9820127.989001457,
+        "p50_us": 188,
+        "p99_us": 2085,
+        "max_us": 2205,
+        "rss_bytes": 7225344,
+        "latency_samples": 225,
+        "cpu_seconds": 0.2,
+        "host_cpu_percent": 87.0
+      },
+      "1-tuple4-after": {
+        "median_batch_us": 2040.0,
+        "mean_batch_us": 2045.8666666666666,
+        "messages_per_second": 9775808.133472366,
+        "p50_us": 193,
+        "p99_us": 2105,
+        "max_us": 2129,
+        "rss_bytes": 7176192,
+        "latency_samples": 225,
+        "cpu_seconds": 0.2,
+        "host_cpu_percent": 109.3
+      },
+      "4-atom-before": {
+        "median_batch_us": 1169,
+        "mean_batch_us": 1180.8,
+        "messages_per_second": 16937669.376693767,
+        "p50_us": 1.0,
+        "p99_us": 12,
+        "max_us": 1192,
+        "rss_bytes": 11501568,
+        "latency_samples": 10380,
+        "cpu_seconds": 0.060000000000000005,
+        "host_cpu_percent": 165.7
+      },
+      "4-atom-after": {
+        "median_batch_us": 1158,
+        "mean_batch_us": 1172.28,
+        "messages_per_second": 17060770.46439417,
+        "p50_us": 1,
+        "p99_us": 7,
+        "max_us": 1139,
+        "rss_bytes": 11698176,
+        "latency_samples": 12148,
+        "cpu_seconds": 0.060000000000000005,
+        "host_cpu_percent": 157.9
+      },
+      "4-tuple2-before": {
+        "median_batch_us": 1404,
+        "mean_batch_us": 1436,
+        "messages_per_second": 13927576.601671308,
+        "p50_us": 1.0,
+        "p99_us": 11,
+        "max_us": 1210,
+        "rss_bytes": 23937024,
+        "latency_samples": 8367,
+        "cpu_seconds": 0.06999999999999999,
+        "host_cpu_percent": 155.6
+      },
+      "4-tuple2-after": {
+        "median_batch_us": 1325,
+        "mean_batch_us": 1348.52,
+        "messages_per_second": 14831074.066383887,
+        "p50_us": 1.0,
+        "p99_us": 14,
+        "max_us": 1336,
+        "rss_bytes": 24117248,
+        "latency_samples": 7357,
+        "cpu_seconds": 0.06999999999999999,
+        "host_cpu_percent": 166.6
+      },
+      "4-tuple3-before": {
+        "median_batch_us": 1769,
+        "mean_batch_us": 1858.76,
+        "messages_per_second": 10759861.412985,
+        "p50_us": 1,
+        "p99_us": 12,
+        "max_us": 868,
+        "rss_bytes": 31440896,
+        "latency_samples": 20895,
+        "cpu_seconds": 0.11,
+        "host_cpu_percent": 178.6
+      },
+      "4-tuple3-after": {
+        "median_batch_us": 1744,
+        "mean_batch_us": 1823.12,
+        "messages_per_second": 10970204.92342797,
+        "p50_us": 1.0,
+        "p99_us": 7,
+        "max_us": 855,
+        "rss_bytes": 31555584,
+        "latency_samples": 22112,
+        "cpu_seconds": 0.11,
+        "host_cpu_percent": 221.9
+      },
+      "4-tuple4-before": {
+        "median_batch_us": 2159,
+        "mean_batch_us": 2166.96,
+        "messages_per_second": 9229519.695795031,
+        "p50_us": 1.0,
+        "p99_us": 7,
+        "max_us": 1913,
+        "rss_bytes": 33570816,
+        "latency_samples": 30125,
+        "cpu_seconds": 0.14,
+        "host_cpu_percent": 198.0
+      },
+      "4-tuple4-after": {
+        "median_batch_us": 2169,
+        "mean_batch_us": 2245.8,
+        "messages_per_second": 8905512.51224508,
+        "p50_us": 1.0,
+        "p99_us": 7,
+        "max_us": 1922,
+        "rss_bytes": 34488320,
+        "latency_samples": 30165,
+        "cpu_seconds": 0.14,
+        "host_cpu_percent": 152.0
+      }
+    },
+    "paired_batch_change_percent": {
+      "1-atom": {
+        "all": [
+          0.0,
+          2.0768890852850275,
+          -2.887139107611547,
+          0.09107468123861207,
+          -0.3577817531305927,
+          0.3631411711302768,
+          2.2381378692927445
+        ],
+        "median": 0.09107468123861207,
+        "min": -2.887139107611547,
+        "max": 2.2381378692927445,
+        "faster_pairs": 2,
+        "slower_pairs": 4
+      },
+      "1-tuple2": {
+        "all": [
+          -2.3398542385884125,
+          -1.8475750577367167,
+          -4.3313069908814565,
+          -1.7187500000000022,
+          -1.2519561815336422,
+          5.277349768875195,
+          11.855300859598849
+        ],
+        "median": -1.7187500000000022,
+        "min": -4.3313069908814565,
+        "max": 11.855300859598849,
+        "faster_pairs": 5,
+        "slower_pairs": 2
+      },
+      "1-tuple3": {
+        "all": [
+          -3.1990521327014187,
+          0.030646644192455774,
+          2.1528198908429275,
+          0.7568876778686118,
+          -0.676923076923075,
+          2.2036002482929806,
+          -0.33546813052760527
+        ],
+        "median": 0.030646644192455774,
+        "min": -3.1990521327014187,
+        "max": 2.2036002482929806,
+        "faster_pairs": 3,
+        "slower_pairs": 4
+      },
+      "1-tuple4": {
+        "all": [
+          0.5655274157855938,
+          0.14727540500736325,
+          0.43636363636363473,
+          0.049788399302963526,
+          0.3996003996004083,
+          0.024515812699199557,
+          0.5693069306930587
+        ],
+        "median": 0.3996003996004083,
+        "min": 0.024515812699199557,
+        "max": 0.5693069306930587,
+        "faster_pairs": 0,
+        "slower_pairs": 7
+      },
+      "4-atom": {
+        "all": [
+          33.73287671232876,
+          -1.384083044982698,
+          0.08547008547008517,
+          0.17467248908296096,
+          -1.6253207869974307,
+          -2.6050420168067245,
+          -1.9475021168501305
+        ],
+        "median": -1.384083044982698,
+        "min": -2.6050420168067245,
+        "max": 33.73287671232876,
+        "faster_pairs": 4,
+        "slower_pairs": 3
+      },
+      "4-tuple2": {
+        "all": [
+          -39.29046563192905,
+          1.9230769230769162,
+          -4.206642066420663,
+          -0.8975317875841382,
+          -6.765327695560252,
+          -1.85459940652819,
+          56.06896551724139
+        ],
+        "median": -1.85459940652819,
+        "min": -39.29046563192905,
+        "max": 56.06896551724139,
+        "faster_pairs": 5,
+        "slower_pairs": 2
+      },
+      "4-tuple3": {
+        "all": [
+          -1.3574660633484115,
+          1.8654607122668088,
+          -13.686746987951803,
+          -1.9852524106636404,
+          -2.7932960893854775,
+          -1.037463976945241,
+          -22.48333917923535
+        ],
+        "median": -1.9852524106636404,
+        "min": -22.48333917923535,
+        "max": 1.8654607122668088,
+        "faster_pairs": 6,
+        "slower_pairs": 1
+      },
+      "4-tuple4": {
+        "all": [
+          -0.04608294930875667,
+          -0.7874015748031482,
+          2.0332717190388205,
+          3.9355144618302473,
+          3.477443609022557,
+          -14.690618762475049,
+          1.2717852096090443
+        ],
+        "median": 1.2717852096090443,
+        "min": -14.690618762475049,
+        "max": 3.9355144618302473,
+        "faster_pairs": 3,
+        "slower_pairs": 4
+      }
+    }
+  },
+  "complex": {
+    "cases": [
+      "tuple2"
+    ],
+    "schedulers": [
+      1
+    ],
+    "repetitions": 11,
+    "medians": {
+      "1-tuple2-before": {
+        "median_batch_us": 4058.5,
+        "mean_batch_us": 4806.6,
+        "messages_per_second": 4160945.366787334,
+        "p50_us": 1414,
+        "p99_us": 8800,
+        "max_us": 12089,
+        "rss_bytes": 7274496,
+        "latency_samples": 225,
+        "cpu_seconds": 0.44,
+        "host_cpu_percent": 434.7
+      },
+      "1-tuple2-after": {
+        "median_batch_us": 4072.0,
+        "mean_batch_us": 4893.622222222222,
+        "messages_per_second": 4086952.178118458,
+        "p50_us": 1405,
+        "p99_us": 9190,
+        "max_us": 11104,
+        "rss_bytes": 7225344,
+        "latency_samples": 225,
+        "cpu_seconds": 0.44,
+        "host_cpu_percent": 423.2
+      }
+    },
+    "paired_batch_change_percent": {
+      "1-tuple2": {
+        "all": [
+          -23.006766696087087,
+          22.04368566407231,
+          10.740690953085096,
+          44.72095601823334,
+          -4.289575743330587,
+          -4.739713571266202,
+          -17.14563526361279,
+          -6.209850107066384,
+          1.1111111111111072,
+          -6.3120911073418995,
+          13.297942932979435
+        ],
+        "median": -4.289575743330587,
+        "min": -23.006766696087087,
+        "max": 44.72095601823334,
+        "faster_pairs": 6,
+        "slower_pairs": 5
+      }
+    }
+  },
+  "tuple4-confirmation": {
+    "cases": [
+      "tuple4",
+      "atom"
+    ],
+    "schedulers": [
+      1
+    ],
+    "repetitions": 11,
+    "medians": {
+      "1-tuple4-before": {
+        "median_batch_us": 2314.5,
+        "mean_batch_us": 2662.1222222222223,
+        "messages_per_second": 7512803.068562675,
+        "p50_us": 840,
+        "p99_us": 4377,
+        "max_us": 5859,
+        "rss_bytes": 7225344,
+        "latency_samples": 225,
+        "cpu_seconds": 0.25,
+        "host_cpu_percent": 268.2
+      },
+      "1-tuple4-after": {
+        "median_batch_us": 2345.0,
+        "mean_batch_us": 2768.0222222222224,
+        "messages_per_second": 7225375.518822103,
+        "p50_us": 866,
+        "p99_us": 4911,
+        "max_us": 6303,
+        "rss_bytes": 7241728,
+        "latency_samples": 225,
+        "cpu_seconds": 0.26,
+        "host_cpu_percent": 300.0
+      },
+      "1-atom-before": {
+        "median_batch_us": 1241.5,
+        "mean_batch_us": 1398.7444444444445,
+        "messages_per_second": 14298537.577351116,
+        "p50_us": 307,
+        "p99_us": 2138,
+        "max_us": 2628,
+        "rss_bytes": 5406720,
+        "latency_samples": 225,
+        "cpu_seconds": 0.13,
+        "host_cpu_percent": 217.8
+      },
+      "1-atom-after": {
+        "median_batch_us": 1197.5,
+        "mean_batch_us": 1335.0333333333333,
+        "messages_per_second": 14980899.353324512,
+        "p50_us": 450,
+        "p99_us": 2122,
+        "max_us": 3365,
+        "rss_bytes": 5390336,
+        "latency_samples": 225,
+        "cpu_seconds": 0.12,
+        "host_cpu_percent": 263.7
+      }
+    },
+    "paired_batch_change_percent": {
+      "1-tuple4": {
+        "all": [
+          8.142726440988103,
+          8.773562950895975,
+          -6.310380267214799,
+          0.8368200836819994,
+          -1.5986174119680285,
+          -0.572397710409156,
+          20.751341681574242,
+          -9.420423183072678,
+          -4.697307147195784,
+          -0.6125574272588086,
+          -2.8405797101449304
+        ],
+        "median": -0.6125574272588086,
+        "min": -9.420423183072678,
+        "max": 20.751341681574242,
+        "faster_pairs": 7,
+        "slower_pairs": 4
+      },
+      "1-atom": {
+        "all": [
+          -20.158238734090126,
+          -0.0402738622633958,
+          3.8983050847457568,
+          3.2383419689119064,
+          -6.711675933280381,
+          3.0550774526678204,
+          -12.219730941704032,
+          12.652068126520689,
+          -4.185110663983904,
+          -3.5341365461847407,
+          -2.5060630557801167
+        ],
+        "median": -2.5060630557801167,
+        "min": -20.158238734090126,
+        "max": 12.652068126520689,
+        "faster_pairs": 7,
+        "slower_pairs": 4
+      }
+    }
+  },
+  "quiet-confirmation": {
+    "cases": [
+      "tuple2",
+      "tuple4",
+      "atom"
+    ],
+    "schedulers": [
+      1
+    ],
+    "repetitions": 21,
+    "medians": {
+      "1-tuple2-before": {
+        "median_batch_us": 1291.5,
+        "mean_batch_us": 1304.2333333333333,
+        "messages_per_second": 15334679.377412017,
+        "p50_us": 137,
+        "p99_us": 1377,
+        "max_us": 1471,
+        "rss_bytes": 6635520,
+        "latency_samples": 225,
+        "cpu_seconds": 0.13,
+        "host_cpu_percent": 86.8
+      },
+      "1-tuple2-after": {
+        "median_batch_us": 1262.0,
+        "mean_batch_us": 1280.0555555555557,
+        "messages_per_second": 15624321.861030336,
+        "p50_us": 124,
+        "p99_us": 1362,
+        "max_us": 1435,
+        "rss_bytes": 6635520,
+        "latency_samples": 225,
+        "cpu_seconds": 0.13,
+        "host_cpu_percent": 76.3
+      },
+      "1-tuple4-before": {
+        "median_batch_us": 2012.0,
+        "mean_batch_us": 2032.1666666666667,
+        "messages_per_second": 9841712.457967686,
+        "p50_us": 210,
+        "p99_us": 2111,
+        "max_us": 2255,
+        "rss_bytes": 7241728,
+        "latency_samples": 225,
+        "cpu_seconds": 0.2,
+        "host_cpu_percent": 78.8
+      },
+      "1-tuple4-after": {
+        "median_batch_us": 2028.0,
+        "mean_batch_us": 2046.4555555555555,
+        "messages_per_second": 9772995.042919736,
+        "p50_us": 202,
+        "p99_us": 2162,
+        "max_us": 2367,
+        "rss_bytes": 7225344,
+        "latency_samples": 225,
+        "cpu_seconds": 0.2,
+        "host_cpu_percent": 64.9
+      },
+      "1-atom-before": {
+        "median_batch_us": 1105.5,
+        "mean_batch_us": 1117.9444444444443,
+        "messages_per_second": 17889976.643641606,
+        "p50_us": 84,
+        "p99_us": 1227,
+        "max_us": 1247,
+        "rss_bytes": 5390336,
+        "latency_samples": 225,
+        "cpu_seconds": 0.11,
+        "host_cpu_percent": 86.6
+      },
+      "1-atom-after": {
+        "median_batch_us": 1112.0,
+        "mean_batch_us": 1127.0222222222221,
+        "messages_per_second": 17745879.012540422,
+        "p50_us": 91,
+        "p99_us": 1229,
+        "max_us": 1328,
+        "rss_bytes": 5406720,
+        "latency_samples": 225,
+        "cpu_seconds": 0.11,
+        "host_cpu_percent": 79.5
+      }
+    },
+    "paired_batch_change_percent": {
+      "1-tuple2": {
+        "all": [
+          -2.172226532195498,
+          -1.7550702028081178,
+          -1.9066147859922222,
+          -1.8662519440124425,
+          -3.3448673587081923,
+          -1.9103313840155955,
+          -49.75203332672089,
+          -2.856040138942495,
+          -1.9305019305019266,
+          -2.1747572815533966,
+          -2.597906165180297,
+          -0.42834890965731676,
+          -1.200154858691449,
+          -2.213592233009709,
+          -3.063540090771555,
+          -2.2524271844660215,
+          -2.443680794196257,
+          -3.033750474023511,
+          0.3423354887789998,
+          -3.5213934115865153,
+          -1.9877675840978548
+        ],
+        "median": -2.1747572815533966,
+        "min": -49.75203332672089,
+        "max": 0.3423354887789998,
+        "faster_pairs": 20,
+        "slower_pairs": 1
+      },
+      "1-tuple4": {
+        "all": [
+          4.971414367387528,
+          4.406273338312183,
+          0.3486055776892538,
+          1.4691235059760999,
+          0.6450012403869998,
+          -5.482661668228683,
+          -0.07457121551081025,
+          0.09945300845350946,
+          1.1431411530815172,
+          0.32226078334158803,
+          -0.17296763034346796,
+          4.627374573794452,
+          -0.09852216748768017,
+          1.0000000000000009,
+          0.6959980114342512,
+          0.5221282943808969,
+          0.522388059701484,
+          -3.4613560929350418,
+          0.12135922330096527,
+          6.572541382667962,
+          2.374474400197868
+        ],
+        "median": 0.522388059701484,
+        "min": -5.482661668228683,
+        "max": 6.572541382667962,
+        "faster_pairs": 5,
+        "slower_pairs": 16
+      },
+      "1-atom": {
+        "all": [
+          0.44802867383513245,
+          2.858439201451901,
+          -0.04541326067211138,
+          3.812982296867906,
+          0.0,
+          2.452316076294281,
+          -0.09086778736937529,
+          -0.49909255898367144,
+          -0.9467989179440917,
+          -1.4311270125223596,
+          -1.076233183856501,
+          -0.9329187027987573,
+          -0.8148483476686286,
+          -0.13568521031207537,
+          0.13623978201635634,
+          -0.22716946842344932,
+          0.6323396567299078,
+          0.31432420296362285,
+          -1.1115861479264688,
+          0.1790510295434089,
+          3.00272975432212
+        ],
+        "median": -0.04541326067211138,
+        "min": -1.4311270125223596,
+        "max": 3.812982296867906,
+        "faster_pairs": 11,
+        "slower_pairs": 9
+      }
+    }
+  },
+  "quiet-complex": {
+    "cases": [
+      "tuple2"
+    ],
+    "schedulers": [
+      1
+    ],
+    "repetitions": 11,
+    "medians": {
+      "1-tuple2-before": {
+        "median_batch_us": 3349.0,
+        "mean_batch_us": 3386.0777777777776,
+        "messages_per_second": 5906538.866666448,
+        "p50_us": 180,
+        "p99_us": 3596,
+        "max_us": 3956,
+        "rss_bytes": 7208960,
+        "latency_samples": 225,
+        "cpu_seconds": 0.33,
+        "host_cpu_percent": 105.7
+      },
+      "1-tuple2-after": {
+        "median_batch_us": 3331.0,
+        "mean_batch_us": 3376.8555555555554,
+        "messages_per_second": 5922669.676260294,
+        "p50_us": 197,
+        "p99_us": 3542,
+        "max_us": 3952,
+        "rss_bytes": 7241728,
+        "latency_samples": 225,
+        "cpu_seconds": 0.33,
+        "host_cpu_percent": 78.5
+      }
+    },
+    "paired_batch_change_percent": {
+      "1-tuple2": {
+        "all": [
+          15.857269766064563,
+          8.629441624365475,
+          1.5169541939321851,
+          -0.2853709822769557,
+          0.4205467107239347,
+          -0.53715308863026,
+          -1.2196935891715,
+          -0.4944560982918844,
+          -0.4036477799372107,
+          -0.8040500297796349,
+          -0.34436292858212036
+        ],
+        "median": -0.34436292858212036,
+        "min": -1.2196935891715,
+        "max": 15.857269766064563,
+        "faster_pairs": 7,
+        "slower_pairs": 4
+      }
+    }
+  }
+}

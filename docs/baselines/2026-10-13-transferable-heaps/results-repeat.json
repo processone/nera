@@ -1,0 +1,115 @@
+{
+  "samples": {
+    "before": [
+      {
+        "small": 203089,
+        "large": 620040,
+        "process_cpu_us": 791580
+      },
+      {
+        "small": 188503,
+        "large": 548221,
+        "process_cpu_us": 737430
+      },
+      {
+        "small": 192027,
+        "large": 544494,
+        "process_cpu_us": 737404
+      },
+      {
+        "small": 188858,
+        "large": 537140,
+        "process_cpu_us": 727033
+      },
+      {
+        "small": 186682,
+        "large": 537324,
+        "process_cpu_us": 725624
+      },
+      {
+        "small": 186088,
+        "large": 534560,
+        "process_cpu_us": 722467
+      },
+      {
+        "small": 187859,
+        "large": 538760,
+        "process_cpu_us": 727648
+      },
+      {
+        "small": 186838,
+        "large": 535083,
+        "process_cpu_us": 723563
+      },
+      {
+        "small": 220656,
+        "large": 677534,
+        "process_cpu_us": 774038
+      }
+    ],
+    "after": [
+      {
+        "small": 203110,
+        "large": 551769,
+        "process_cpu_us": 752334
+      },
+      {
+        "small": 194070,
+        "large": 543591,
+        "process_cpu_us": 737975
+      },
+      {
+        "small": 187888,
+        "large": 534773,
+        "process_cpu_us": 724344
+      },
+      {
+        "small": 188167,
+        "large": 537510,
+        "process_cpu_us": 727203
+      },
+      {
+        "small": 188265,
+        "large": 534115,
+        "process_cpu_us": 724121
+      },
+      {
+        "small": 187807,
+        "large": 535697,
+        "process_cpu_us": 725197
+      },
+      {
+        "small": 189136,
+        "large": 535985,
+        "process_cpu_us": 726500
+      },
+      {
+        "small": 188675,
+        "large": 535504,
+        "process_cpu_us": 726007
+      },
+      {
+        "small": 189316,
+        "large": 553120,
+        "process_cpu_us": 739034
+      }
+    ]
+  },
+  "medians": {
+    "before": {
+      "small": 188503,
+      "large": 538760,
+      "process_cpu_us": 727648
+    },
+    "after": {
+      "small": 188675,
+      "large": 535985,
+      "process_cpu_us": 726500
+    }
+  },
+  "percent_change": {
+    "small": 0.09124523217136637,
+    "large": -0.51507164600193,
+    "process_cpu_us": -0.1577685914068372
+  }
+}

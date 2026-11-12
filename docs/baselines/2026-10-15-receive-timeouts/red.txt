@@ -1,0 +1,22 @@
+Running 2 tests (1 threads)
+────────────────────────────────────────────────────────────
+  FAIL  receive_infinity                           1.1s  [1/2]
+  FAIL  receive_timeout_domain                    889ms  [2/2]
+────────────────────────────────────────────────────────────
+Results: 0 passed, 2 failed (0 compile), 0 skipped / 2 total
+
+Failures:
+  receive_infinity: runtime crash, exit=1
+    stderr:
+    Error in process <0.1.0>: error:infinite_timed_out
+    Stacktrace (most recent call last):
+      receive_infinity:wait/1 (receive_infinity.erl, line 12)
+      receive_infinity:test/0 (receive_infinity.erl, line 8)
+  receive_timeout_domain: runtime crash, exit=1
+    stderr:
+    Error in process <0.1.0>: error:{badmatch,consumed}
+    Stacktrace (most recent call last):
+      receive_timeout_domain:bad/1 (receive_timeout_domain.erl, line 18)
+      lists:foreach/2 (lists.erl, line 61)
+
+SOME TESTS FAILED

@@ -1,0 +1,265 @@
+{
+  "validation_date": "2026-10-15",
+  "status": "passed",
+  "scope": "native seeded integer/list/binary generation, shrinking and counterexample replay",
+  "platform": "macOS-15.7.7-arm64-arm-64bit-Mach-O",
+  "candidate": {
+    "nera_source": "4e14b653182484b5c30c385f7d548506bb759c65",
+    "source_snapshot_sha256": "36e61df4f739d4e6756b663683403fc6c2f476f5373cb1a54fb1cb2f5cca1ac7",
+    "nera_sha256": "fb6441414d6588d47e925af0213ecb134f857c8014b7074fc83ea13ac9430700",
+    "runtime_sha256": "e326c26a0813e3207e21357afef00a0ea31b6fa82a9365b9d5944fb583c1c0e0",
+    "runner_sha256": "8945df05430fea71f3f717b6e107f09f50ff903dc77b7fa9071f85fbae171701",
+    "generation_runner_sha256": "734d8062cf04d3ebc384405e7b3180ee967a4de8720905c1be4a7b122a628f02",
+    "preparation_helper_sha256": "02689434aec0c0505b3cd2fb9ec4cea631f8e5bc3b8b27944adc08ca95e6dcb2"
+  },
+  "core_source_diff": "diff --git a/erlang/stdlib/lists.erl b/erlang/stdlib/lists.erl\nindex 6fc58ac..b998f23 100644\n--- a/erlang/stdlib/lists.erl\n+++ b/erlang/stdlib/lists.erl\n@@ -28,7 +28,7 @@\n          usort/1,\n          max/1, min/1,\n          sum/1,\n-         split/2,\n+         split/2, sublist/2,\n          splitwith/2,\n          mapfoldl/3]).\n \n@@ -287,6 +287,15 @@ filtermap(F, [H|T], Acc) ->\n         false -> filtermap(F, T, Acc)\n     end.\n \n+%% sublist/2 \u2014 copy at most Count elements, without inspecting the unused tail.\n+sublist(List, Count) when is_list(List), is_integer(Count), Count >= 0 ->\n+    sublist_prefix(Count, List, []).\n+\n+sublist_prefix(0, _Rest, Acc) -> lists:reverse(Acc);\n+sublist_prefix(_Count, [], Acc) -> lists:reverse(Acc);\n+sublist_prefix(Count, [Head|Tail], Acc) ->\n+    sublist_prefix(Count - 1, Tail, [Head|Acc]).\n+\n %% split/2 \u2014 split a list into the first N elements and the rest.\n %% Errors with badarg if N is negative or larger than length(L).\n split(N, L) when is_integer(N), N >= 0 -> split(N, L, []).\n",
+  "dependencies": {
+    "proper_pin": "5640d0715d4b346676267504d8e84398e2a29f75",
+    "build_reference_otp": "29",
+    "otp_source_revision": "05737d130706c7189a8e6750d9c2252d2cc7987e",
+    "rand_sha256": "7f956b3658f5b2054fe5809b7db1221e76109339a27ca728184d5a90fc679b0d",
+    "ordsets_sha256": "064acc495f9a5ddf0c1bdc9d97fa7d1b1b975b10076495dbce4babf73900f17d",
+    "prepared_proper_modules": 26,
+    "source_mode": "beam_prepared"
+  },
+  "outcomes": {
+    "beam_passed": true,
+    "native_passed": true,
+    "traces_match": true,
+    "trace_sha256": {
+      "beam": "b87205431441a57eb1a1025a8df3240ba0a631f5df0057aee15a2519c329db1a",
+      "native": "b87205431441a57eb1a1025a8df3240ba0a631f5df0057aee15a2519c329db1a"
+    }
+  },
+  "generation": {
+    "seeds": [
+      [
+        101,
+        202,
+        303
+      ],
+      [
+        7,
+        11,
+        13
+      ],
+      [
+        999,
+        1001,
+        2027
+      ]
+    ],
+    "repetitions_per_seed": 2,
+    "generated_composite_trials_per_engine": 600,
+    "distinct_seeded_trial_positions_per_engine": 300,
+    "failing_shrinking_quickchecks_per_engine": 18,
+    "counterexample_and_passing_boundary_replays_per_engine": 36,
+    "seeding": "proper:setup/2 callback, rand:seed(exsplus, Seed), after PropEr initialization",
+    "cumulative": true,
+    "per_seed": [
+      {
+        "seed": [
+          101,
+          202,
+          303
+        ],
+        "generated_instances_per_repetition": 100,
+        "reductions": {
+          "integer": {
+            "initial_failure": 83,
+            "counterexample": 10,
+            "predicate_invocations_including_shrinking": 25,
+            "binary_encoding": null
+          },
+          "list": {
+            "initial_failure": [
+              68,
+              44,
+              47,
+              57,
+              37,
+              96,
+              21,
+              16,
+              36,
+              51
+            ],
+            "counterexample": [
+              0,
+              0,
+              0
+            ],
+            "predicate_invocations_including_shrinking": 15,
+            "binary_encoding": null
+          },
+          "binary": {
+            "initial_failure": "b48f4596377d635aec1e",
+            "counterexample": "000000",
+            "predicate_invocations_including_shrinking": 15,
+            "binary_encoding": "hex"
+          }
+        }
+      },
+      {
+        "seed": [
+          7,
+          11,
+          13
+        ],
+        "generated_instances_per_repetition": 100,
+        "reductions": {
+          "integer": {
+            "initial_failure": 56,
+            "counterexample": 10,
+            "predicate_invocations_including_shrinking": 25,
+            "binary_encoding": null
+          },
+          "list": {
+            "initial_failure": [
+              75,
+              83,
+              97,
+              74,
+              52,
+              87,
+              34,
+              4,
+              75,
+              36,
+              14,
+              66
+            ],
+            "counterexample": [
+              0,
+              0,
+              0
+            ],
+            "predicate_invocations_including_shrinking": 15,
+            "binary_encoding": null
+          },
+          "binary": {
+            "initial_failure": "33223889416c9e543ee73d39",
+            "counterexample": "000000",
+            "predicate_invocations_including_shrinking": 15,
+            "binary_encoding": "hex"
+          }
+        }
+      },
+      {
+        "seed": [
+          999,
+          1001,
+          2027
+        ],
+        "generated_instances_per_repetition": 100,
+        "reductions": {
+          "integer": {
+            "initial_failure": 77,
+            "counterexample": 10,
+            "predicate_invocations_including_shrinking": 25,
+            "binary_encoding": null
+          },
+          "list": {
+            "initial_failure": [
+              62,
+              1,
+              1,
+              22,
+              18,
+              21,
+              92
+            ],
+            "counterexample": [
+              0,
+              0,
+              0
+            ],
+            "predicate_invocations_including_shrinking": 18,
+            "binary_encoding": null
+          },
+          "binary": {
+            "initial_failure": "a0315ec4dfc590",
+            "counterexample": "000000",
+            "predicate_invocations_including_shrinking": 18,
+            "binary_encoding": "hex"
+          }
+        }
+      }
+    ]
+  },
+  "controls": {
+    "literal_true_false_bootstrap": "passed",
+    "initial_failure_must_differ_from_minimum": true,
+    "entire_trace_must_repeat_with_same_seed": true,
+    "different_seeds_must_produce_different_generation_traces": true,
+    "invalid_or_incomplete_protocol_rejected": true
+  },
+  "raw_sources": {
+    "returncode": 1,
+    "blocker": "proper_gen MAKE_FUN/3 requires original vararg parse transform; explicit generic BEAM preparation remains necessary"
+  },
+  "regression": {
+    "fixture": "tests/lists_sublist.erl",
+    "fixture_sha256": "d0ecdc31b1b411e1d7bb6a7abebe2766c0ebb8cfbd728b3c4fb9e6521cf985ad",
+    "red": "Nera: badmatch {exception,undef} at the prefix assertion before implementation; BEAM fixture passed",
+    "green": "Same fixture passes Nera and BEAM, including direct call and remote fun added after implementation",
+    "proper_harness_tests": 6,
+    "cowlib_harness_tests": 69,
+    "workspace_rust_tests": {
+      "passed": 1977,
+      "ignored": 1,
+      "failed": 0
+    },
+    "clippy": "passed; --workspace --all-targets --locked -- -D warnings",
+    "release_build": "passed; cargo build --release --locked",
+    "native_erlang_suite": {
+      "passed": 372,
+      "failed": 0,
+      "skipped": 2,
+      "total": 374,
+      "skips": "Existing external Onecached dependency exclusions"
+    },
+    "external_logs": {
+      "release_build": {
+        "path": "/private/tmp/nera-proper-generation-release2.log",
+        "sha256": "ad8f7fb2bd72011d20b2a8e203fe6dfed00cfaa90e8cd89aa4f32912887300e0"
+      },
+      "clippy": {
+        "path": "/private/tmp/nera-proper-generation-clippy.log",
+        "sha256": "deef139c5167590668513d02df31ab7038c71ff6966397392b45520313d7f1f3"
+      },
+      "workspace_rust": {
+        "path": "/private/tmp/nera-proper-generation-workspace.log",
+        "sha256": "e330547880e10a0cd0eeb34ed007072e4a31eecfe104aeff601a951090e6c573"
+      },
+      "native_erlang": {
+        "path": "/private/tmp/nera-proper-generation-native-suite.log",
+        "sha256": "ee01a53e6bba63965a33c1f76eda3a5865017335dd2284dbc2ef7668faf2ce5b"
+      },
+      "proper_harness": {
+        "path": "/private/tmp/nera-proper-generation-harness-final.log",
+        "sha256": "023a0fb326ba5779c3667bf9c2715fffea082bd681ddd43859b7a25439098625"
+      },
+      "cowlib_harness": {
+        "path": "/private/tmp/nera-proper-generation-cowlib-harness.log",
+        "sha256": "35339ccfc39f4f80db85ff9d000d9c890506b39a4eff0b8d6a06030c72b3f578"
+      },
+      "sublist_red": {
+        "path": "/private/tmp/nera-sublist-red.log",
+        "sha256": "3a97625bd6e28afcf7d0085c7bd2be3fdd1ee804647b3caccef654cb1739ee1f"
+      }
+    },
+    "proper_harness_sha256": "a7945e75f2e5776af31e5c5198dcc5daaf2923c6648985f9b5882ee541851c21"
+  },
+  "limits": [
+    "Bounded project-owned generator/shrinker probe, not full PropEr compatibility.",
+    "Cowlib upstream properties are not rerun under native PropEr in this milestone.",
+    "Build-time BEAM parse transforms and defer_undefined=true remain explicit requirements; no BEAM process is used by native execution.",
+    "OTP 28/29 rand sources remain blocked on zipped generators.",
+    "Only macOS arm64 validated."
+  ],
+  "full_external_report": {
+    "path": "/private/tmp/nera-proper-generation-final/report.json",
+    "sha256": "e131bd37f76db01f8f7ed30e1fe95dba622e32a76a06a55fe37930c7e164d65e"
+  }
+}

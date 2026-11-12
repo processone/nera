@@ -1,0 +1,10 @@
+Running 4 tests (1 threads)
+────────────────────────────────────────────────────────────
+  PASS  atomic_array_bounds                       881ms  [1/4]
+  PASS  atomics_basic                             905ms  [2/4]
+  PASS  atomics_integer_domain                    962ms  [3/4]
+  PASS  atomics_resource_kind                     962ms  [4/4]
+────────────────────────────────────────────────────────────
+Results: 4 passed, 0 failed (0 compile), 0 skipped / 4 total
+
+ALL TESTS PASSED

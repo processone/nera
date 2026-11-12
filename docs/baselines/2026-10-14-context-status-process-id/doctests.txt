@@ -1,0 +1,43 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.10s
+   Doc-tests nera_runtime
+
+running 37 tests
+test crates/nera-runtime/src/heap.rs - heap::ProcessHeap (line 216) - compile fail ... ok
+test crates/nera-runtime/src/bigint.rs - bigint::term_to_bigint (line 21) - compile fail ... ok
+test crates/nera-runtime/src/ets_pool.rs - ets_pool::EtsRegionPool::alloc (line 132) - compile fail ... ok
+test crates/nera-runtime/src/heap.rs - heap::ProcessHeap::collect (line 800) - compile fail ... ok
+test crates/nera-runtime/src/bigint.rs - bigint::bigint_to_f64 (line 69) - compile fail ... ok
+test crates/nera-runtime/src/heap.rs - heap::ProcessHeap::adopt_fragment (line 652) - compile fail ... ok
+test crates/nera-runtime/src/heap.rs - heap::ProcessHeap (line 210) - compile fail ... ok
+test crates/nera-runtime/src/heap.rs - heap::ProcessHeap::alloc_map (line 675) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::ErlFn (line 1072) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::Mailbox::scatter_roots (line 2433) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::Process::collect_garbage (line 1387) - compile fail ... ok
+test crates/nera-runtime/src/message.rs - message::HeapFragment (line 150) - compile fail ... ok
+test crates/nera-runtime/src/message.rs - message::deep_copy_term (line 402) - compile fail ... ok
+test crates/nera-runtime/src/heap.rs - heap::ProcessHeap::collect_full (line 823) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::Process::collect_garbage_full (line 1470) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::Process::hibernate (line 1585) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::ProcessEntry (line 201) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::ProcessEntry (line 211) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::Process::run_slice (line 1756) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::ProcessContext (line 885) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::ProcessContext (line 895) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::ProcessEntry (line 226) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::ProcessEntry (line 232) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::ProcessEntry (line 217) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::process_exit_signals (line 1994) - compile fail ... ok
+test crates/nera-runtime/src/scheduler.rs - scheduler::Scheduler::run (line 403) - compile fail ... ok
+test crates/nera-runtime/src/term.rs - term::BorrowedTerm<'_>::copy_to_heap (line 828) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::ProcessEntry (line 238) - compile fail ... ok
+test crates/nera-runtime/src/term.rs - term::BorrowedTerm<'_>::to_bigint (line 847) - compile fail ... ok
+test crates/nera-runtime/src/term.rs - term::BoxedHeader::new (line 207) - compile fail ... ok
+test crates/nera-runtime/src/term.rs - term::BoxedHeader::new (line 211) - compile fail ... ok
+test crates/nera-runtime/src/term.rs - term::ErlTerm (line 268) - compile fail ... ok
+test crates/nera-runtime/src/term.rs - term::ErlTerm::borrow (line 300) - compile fail ... ok
+test crates/nera-runtime/src/term.rs - term::ErlTerm::borrow (line 311) - compile fail ... ok
+test crates/nera-runtime/src/term.rs - term::ErlTerm::pid (line 364) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::ProcessGuard (line 356) ... ok
+test crates/nera-runtime/src/term.rs - term::ErlTerm::borrow (line 289) ... ok
+
+test result: ok. 37 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.75s

@@ -1,0 +1,346 @@
+{
+  "upstream": {
+    "name": "cowlib",
+    "version": "2.20.0",
+    "url": "https://github.com/ninenines/cowlib.git",
+    "commit": "c768a804565ff5b8178ed968a5921e469d6bd7b2"
+  },
+  "platform": "macOS-15.7.7-arm64-arm-64bit-Mach-O",
+  "otp_version": "Erlang/OTP 29 [erts-17.0.5] [source] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads:1] [jit] [dtrace]",
+  "nera_sha256": "9d9be7a797b95c890b48f0479de36e2b65bdd72057618ad2ae81bc75731b6a5e",
+  "runtime_sha256": "ab1e93b5f68fe12cd569753afc383f0e19e1cb32240d0db50cb7adc8f805699a",
+  "nera_source_commit": "ef5e43bc19c8a7182abec11d207b085160ffaba7",
+  "source_sha256": {
+    "src/cow_http3.erl": "cb8426277588906b49c78a42bfd8e2d214efd319d5cad6b4627b2cc94242a372",
+    "src/cow_multipart.erl": "2d684ed2229fd9d15d8941ad5cc1abd83a41f8bab0a7705e6093a7e112555d90",
+    "src/cow_http_struct_hd.erl": "bae6afed59d1395ad1234a0138c24736bc7ca8b8aca0425535fd9c06ce28aa84",
+    "src/cow_http2.erl": "edeb6bef50b963312e92021ed2edd029628c51752fa75b527557832912f452d6",
+    "src/cow_http1.erl": "e5851d0ad97a639458416d26f3b9d23ddfd09afe0dda8a356f33627ccc5b377c",
+    "src/cow_cookie.erl": "949f38c2aaa1fd30f690289a024429ea2d8a66e08b6c87a4436e51e568ddf88d",
+    "src/cow_mimetypes.erl": "bbdd5d794a0c970cdd0420109ceaf2aaeb4ec70294a5c8a053737e67e3e3779b",
+    "src/cow_ws.erl": "3d46948104e15194ffbe080a03299dd38e911857a9fc86f025a51ff76dab32c6",
+    "src/cow_hpack.erl": "6c9d5714790d8951fa57b793bb8f6c0f0433f7bbc15f33284e3b289b264bfa4d",
+    "src/cow_date.erl": "6f22428c9b1df2c59abe8b372f6a075c3d1b51ea6653cbf778a5bceeff813504",
+    "src/cow_capsule.erl": "b94fa3ee9242be4812ab631e30b71ff79b24112b538cbf304c735238e0683e80",
+    "src/cow_http2_machine.erl": "5ff9d6c3c520ca26d0a0090cc5d67ba6dc918fe7ee557083754e1d703cc14d3d",
+    "src/cow_http_hd.erl": "af8028340f58b2cf0a7bbaa734d6e1e9c61d48993454119e0df6c6cba6b82c2c",
+    "src/cow_base64url.erl": "3d68bd7d9d03230c99c298688bb9c804fe8ebdcf1ced3e64683de3b72a9436a2",
+    "src/cow_uri_template.erl": "589a363068a9f4bf77e29ef860792205d85541c71d76cd68ff5bd35686aca28b",
+    "src/cow_hpack_common.hrl": "c53242bd29cad93135050d5daf9f73e9b571da56a992dbc49870e7e53c1d164c",
+    "src/cow_uri.erl": "8a8627ec975e5597499385ce481760b751f80888aa7c55e915eedd31481da664",
+    "src/cow_qs.erl": "9d45e09874dd83ed42b02cdc7ce1aff5737f3ed968d7682c8b304ec853b61c91",
+    "src/cow_sse.erl": "180f35d763c003fc9b2304fed9da5244b6aa4497571dd6b73c92451e7e85f5ff",
+    "src/cow_http.erl": "cba1db8e6aace87f3f8772ea778b8088eedf8f7d54d84d767b46fcc02ea0e594",
+    "src/cow_iolists.erl": "ae976127c029af3e6a38dc5f406861a41f102c355d9077b1142abf3bba863df3",
+    "src/cow_http3_machine.erl": "a0e489819c72fb418920dbe2594b4ecbcc8aab72b5b2fdd809b419091ca2ba2d",
+    "src/cow_qpack.erl": "fe9adc05008b3b9e68bdb973b4486593bbaac665fcfb4de4679555a76d9ec99f",
+    "src/cow_mimetypes.erl.src": "b733e1a0defcc6402e4d9443db10334055738467c19a1765dc9c993ecea03612",
+    "src/cow_hpack_dec_huffman_lookup.hrl": "80fb656300ee1288bf34268e88c2b0886760ab6a794eeca60d84a94ae0f11652",
+    "src/cow_http_te.erl": "03676592aef761d7c623f814b324b4e15d4fb21889928b7474bc976c804de47a",
+    "src/cow_link.erl": "bcfec544ae3ca6796fece4c82a0c5061c282864c6e515ed89492238e02682c8c",
+    "src/cow_deflate.erl": "ba3b1bf977f0fda687c12d7195b6f143bae4f7ce26437736077c7b180a1261e8",
+    "include/cow_inline.hrl": "b6734610786a2d10ae82d9b9513e72d7a67396e1c5c1f3d6faa19e6350d580b6",
+    "include/cow_parse.hrl": "a366ad773962acdfea8b90cbc5499e6b3dc9148fb59d0bdd303dbbdae01a0177"
+  },
+  "etf_decoder_sha256": "7070107789f63da6b848eb584bac20950eafabde99386216efbd2d97ebc3db96",
+  "date": "2026-10-12",
+  "status": "passed",
+  "report_sha256": "69c67dab0ca8e6e939de4ce9597b908f8bde54df1a1ccd828a77a6efcc5a1025",
+  "changed_source_sha256": {
+    "erlang/stdlib/base64.erl": "c356a7ef87399132e7e6bf20ce4cb61938af370a5d1b1fdbb5b85e6c76aac42d",
+    "tests/base64_options.erl": "0821bd355bd0da7d196c575de914f628a8f909449c4239eb09d2c7f59c023990",
+    "tests/integration/cowlib/runner.py": "0a61e93be64923658d614638e3d5453e499b643b958850de5ebb64a7b2370787",
+    "tests/integration/cowlib/corpus.json": "505fd7ba167c2b499833898a722537934ce5d3816e2ffe386d5fc29115ba9e79"
+  },
+  "build_log_sha256": "04e6a390e34f6c16b334460ebe7a9a1acf9b84f3ff7ba1b6bc9b69d5b8da99d3",
+  "regression": {
+    "BEAM": "base64_options passed against OTP 29.0.5",
+    "Nera": "base64_options and binary_last_match passed with rebuilt compiler; 2/2",
+    "negative_control": "Pre-change compiler rejects base64_options with unresolved base64:encode/2 and decode/2",
+    "harness_tests": "30 passed",
+    "exploratory_decoder_check": "18,662 BEAM comparisons between OTP and the project implementation under a temporary module name: binary inputs length 0..5 over A,Z,=,*,space,newline, both padding options; zero differences"
+  },
+  "limitations": [
+    "Only encode/2 and decode/2 are implemented; no arity-1, MIME or string-returning APIs.",
+    "Out-of-range/non-byte list behavior is not claimed to match undocumented OTP internals.",
+    "Only the 33-case cow_base64url corpus was rerun; other modules and upstream EUnit/PropEr suites were not rerun.",
+    "No runtime/Rust production code changed; the full Rust suite was not rerun for this Erlang stdlib addition.",
+    "Cowlib source remains pristine and external; no OTP or Cowlib code copied into the repository."
+  ],
+  "modules": {
+    "cow_base64url": {
+      "build_returncode": 0,
+      "executable_sha256": "8ee2120e89c44aa32b7feaca10b0f570d4ab87782b6f8ddc4833e2430a516b3b",
+      "passed": 33,
+      "total": 33,
+      "beam_passed": 33,
+      "blocked": 0,
+      "cases": [
+        {
+          "id": "base64url_encode_empty_padded",
+          "group": "boundary",
+          "expect": "return",
+          "status": "passed",
+          "comparison": "exact",
+          "wire_equal": true
+        },
+        {
+          "id": "base64url_roundtrip_empty_padded",
+          "group": "boundary",
+          "expect": "return",
+          "status": "passed",
+          "comparison": "exact",
+          "wire_equal": true
+        },
+        {
+          "id": "base64url_encode_empty_raw",
+          "group": "boundary",
+          "expect": "return",
+          "status": "passed",
+          "comparison": "exact",
+          "wire_equal": true
+        },
+        {
+          "id": "base64url_roundtrip_empty_raw",
+          "group": "boundary",
+          "expect": "return",
+          "status": "passed",
+          "comparison": "exact",
+          "wire_equal": true
+        },
+        {
+          "id": "base64url_encode_one_padded",
+          "group": "boundary",
+          "expect": "return",
+          "status": "passed",
+          "comparison": "exact",
+          "wire_equal": true
+        },
+        {
+          "id": "base64url_roundtrip_one_padded",
+          "group": "boundary",
+          "expect": "return",
+          "status": "passed",
+          "comparison": "exact",
+          "wire_equal": true
+        },
+        {
+          "id": "base64url_encode_one_raw",
+          "group": "boundary",
+          "expect": "return",
+          "status": "passed",
+          "comparison": "exact",
+          "wire_equal": true
+        },
+        {
+          "id": "base64url_roundtrip_one_raw",
+          "group": "boundary",
+          "expect": "return",
+          "status": "passed",
+          "comparison": "exact",
+          "wire_equal": true
+        },
+        {
+          "id": "base64url_encode_two_padded",
+          "group": "boundary",
+          "expect": "return",
+          "status": "passed",
+          "comparison": "exact",
+          "wire_equal": true
+        },
+        {
+          "id": "base64url_roundtrip_two_padded",
+          "group": "boundary",
+          "expect": "return",
+          "status": "passed",
+          "comparison": "exact",
+          "wire_equal": true
+        },
+        {
+          "id": "base64url_encode_two_raw",
+          "group": "boundary",
+          "expect": "return",
+          "status": "passed",
+          "comparison": "exact",
+          "wire_equal": true
+        },
+        {
+          "id": "base64url_roundtrip_two_raw",
+          "group": "boundary",
+          "expect": "return",
+          "status": "passed",
+          "comparison": "exact",
+          "wire_equal": true
+        },
+        {
+          "id": "base64url_encode_three_padded",
+          "group": "boundary",
+          "expect": "return",
+          "status": "passed",
+          "comparison": "exact",
+          "wire_equal": true
+        },
+        {
+          "id": "base64url_roundtrip_three_padded",
+          "group": "boundary",
+          "expect": "return",
+          "status": "passed",
+          "comparison": "exact",
+          "wire_equal": true
+        },
+        {
+          "id": "base64url_encode_three_raw",
+          "group": "boundary",
+          "expect": "return",
+          "status": "passed",
+          "comparison": "exact",
+          "wire_equal": true
+        },
+        {
+          "id": "base64url_roundtrip_three_raw",
+          "group": "boundary",
+          "expect": "return",
+          "status": "passed",
+          "comparison": "exact",
+          "wire_equal": true
+        },
+        {
+          "id": "base64url_encode_urlsafe_padded",
+          "group": "boundary",
+          "expect": "return",
+          "status": "passed",
+          "comparison": "exact",
+          "wire_equal": true
+        },
+        {
+          "id": "base64url_roundtrip_urlsafe_padded",
+          "group": "boundary",
+          "expect": "return",
+          "status": "passed",
+          "comparison": "exact",
+          "wire_equal": true
+        },
+        {
+          "id": "base64url_encode_urlsafe_raw",
+          "group": "boundary",
+          "expect": "return",
+          "status": "passed",
+          "comparison": "exact",
+          "wire_equal": true
+        },
+        {
+          "id": "base64url_roundtrip_urlsafe_raw",
+          "group": "boundary",
+          "expect": "return",
+          "status": "passed",
+          "comparison": "exact",
+          "wire_equal": true
+        },
+        {
+          "id": "base64url_encode_all_bytes_padded",
+          "group": "boundary",
+          "expect": "return",
+          "status": "passed",
+          "comparison": "exact",
+          "wire_equal": true
+        },
+        {
+          "id": "base64url_roundtrip_all_bytes_padded",
+          "group": "boundary",
+          "expect": "return",
+          "status": "passed",
+          "comparison": "exact",
+          "wire_equal": true
+        },
+        {
+          "id": "base64url_encode_all_bytes_raw",
+          "group": "boundary",
+          "expect": "return",
+          "status": "passed",
+          "comparison": "exact",
+          "wire_equal": true
+        },
+        {
+          "id": "base64url_roundtrip_all_bytes_raw",
+          "group": "boundary",
+          "expect": "return",
+          "status": "passed",
+          "comparison": "exact",
+          "wire_equal": true
+        },
+        {
+          "id": "base64url_decode_default",
+          "group": "valid",
+          "expect": "return",
+          "status": "passed",
+          "comparison": "exact",
+          "wire_equal": true
+        },
+        {
+          "id": "base64url_decode_url_alphabet",
+          "group": "valid",
+          "expect": "return",
+          "status": "passed",
+          "comparison": "exact",
+          "wire_equal": true
+        },
+        {
+          "id": "base64url_decode_unpadded",
+          "group": "valid",
+          "expect": "return",
+          "status": "passed",
+          "comparison": "exact",
+          "wire_equal": true
+        },
+        {
+          "id": "base64url_bad_char",
+          "group": "errors",
+          "expect": "exception",
+          "status": "passed",
+          "comparison": "exact",
+          "wire_equal": true
+        },
+        {
+          "id": "base64url_one_sextet",
+          "group": "errors",
+          "expect": "exception",
+          "status": "passed",
+          "comparison": "exact",
+          "wire_equal": true
+        },
+        {
+          "id": "base64url_missing_padding",
+          "group": "errors",
+          "expect": "exception",
+          "status": "passed",
+          "comparison": "exact",
+          "wire_equal": true
+        },
+        {
+          "id": "base64url_bad_padding",
+          "group": "errors",
+          "expect": "exception",
+          "status": "passed",
+          "comparison": "exact",
+          "wire_equal": true
+        },
+        {
+          "id": "base64url_bad_type",
+          "group": "errors",
+          "expect": "exception",
+          "status": "passed",
+          "comparison": "exact",
+          "wire_equal": true
+        },
+        {
+          "id": "base64url_encode_default",
+          "group": "valid",
+          "expect": "return",
+          "status": "passed",
+          "comparison": "exact",
+          "wire_equal": true
+        }
+      ]
+    }
+  }
+}

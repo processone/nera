@@ -1,0 +1,14 @@
+Running 1 tests (1 threads)
+────────────────────────────────────────────────────────────
+  FAIL  process_fullsweep_domain                  983ms  [1/1]
+────────────────────────────────────────────────────────────
+Results: 0 passed, 1 failed (0 compile), 0 skipped / 1 total
+
+Failures:
+  process_fullsweep_domain: runtime crash, exit=1
+    stderr:
+    Error in process <0.1.0>: error:{badmatch,7}
+    Stacktrace (most recent call last):
+      process_fullsweep_domain:test/0 (process_fullsweep_domain.erl, line 5)
+
+SOME TESTS FAILED

@@ -1,0 +1,46 @@
+{
+  "base": "e0adafaf70f9699ae0cb54df1ea13552d1f4273d",
+  "branch": "mr/ets-counter-atomicity",
+  "worktree": "/tmp/nera-ets-counters",
+  "state": "uncommitted",
+  "source_sha256": {
+    "crates/nera-runtime/src/ets.rs": "d584b9777d300f06878a27b7870ec00fa3362e01e8dd0c54114170be201290c6",
+    "tests/ets_counter_atomicity.erl": "7bb3e40763f6338bd1a2bb244bf3a2ef0f2c33b78a0e7b6c3a165726e4af37c6",
+    "CHANGELOG.md": "7e7fc85c588b79fea08870eea4ff1f0af869840a7c1820a2d1112675e0138ca4",
+    "docs/baselines/2026-10-11-ets-counters/bench_ets_counters.erl": "f65dabbf8d77622ba2c66322d61101723b3cc43e1d7b656e77c6673ffdce7e16"
+  },
+  "logs": {
+    "red": {
+      "path": "/tmp/nera-counter-red.log",
+      "sha256": "6ab890257287e313abc353b3597b56929cedbce7a79523e7394fb538411fba44"
+    },
+    "green": {
+      "path": "/tmp/nera-counter-green.log",
+      "sha256": "e1f90a6fa69d1b6d295bd48f78fe282d242c213d11918e36b924b55154ed007e"
+    },
+    "tests-final": {
+      "path": "/tmp/nera-counter-tests-final.log",
+      "sha256": "1e42ea78e26c8936d85ac05b863e75960fea0939921f1d416709c8f0967a8dcb"
+    },
+    "clippy": {
+      "path": "/tmp/nera-counter-clippy.log",
+      "sha256": "a7b842ca242541b09a4af425ab405ebe09894a4ea054e23632fe67e5e8ddf153"
+    },
+    "release": {
+      "path": "/tmp/nera-counter-release.log",
+      "sha256": "440eb6423ecb839351bb19ae72b1deff0d7e6ec4d188374a6657d8b53d4067ec"
+    },
+    "e2e-red": {
+      "path": "/tmp/nera-counter-e2e-red.log",
+      "sha256": "ca63f744d882a8a363661ecca24b936cff76c0b861398ccb92420c0fd695559d"
+    },
+    "e2e": {
+      "path": "/tmp/nera-counter-e2e.log",
+      "sha256": "eeeaf015c3c78bbdd156fb59fa160bf3158a37e9f7a8a513b6ab6985e9ade42f"
+    }
+  },
+  "runtime_sha256": {
+    "before": "b13fa89fd1e6aa3aa4b1c62d7681334241189adc18496747e7913fc24b31a46a",
+    "after": "53cf1af8eda359908c8ce2dc1a678761e49d0092263936d14bf9dc350a22ab5d"
+  }
+}

@@ -1,0 +1,21 @@
+   Compiling nera-syntax v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-syntax)
+   Compiling nera-ir v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-ir)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.10s
+     Running unittests src/lib.rs (/tmp/nera-transfer-target/debug/deps/nera_ir-8b8945ec4992cdab)
+
+running 1 test
+test lower::tests::binary_construction_rejects_invalid_units ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 409 filtered out; finished in 0.00s
+
+     Running tests/passes.rs (/tmp/nera-transfer-target/debug/deps/passes-2546c5520b63f0dd)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/verify_lowered.rs (/tmp/nera-transfer-target/debug/deps/verify_lowered-ce36ec214f76cdf8)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 21 filtered out; finished in 0.00s

@@ -1,0 +1,15 @@
+Running 1 tests (1 threads)
+────────────────────────────────────────────────────────────
+  FAIL  unicode_list_scalar_domain                 1.8s  [1/1]
+────────────────────────────────────────────────────────────
+Results: 0 passed, 1 failed (0 compile), 0 skipped / 1 total
+
+Failures:
+  unicode_list_scalar_domain: runtime crash, exit=1
+    stderr:
+    Error in process <0.1.0>: error:expected_badarg
+    Stacktrace (most recent call last):
+      unicode_list_scalar_domain:expect_badarg/1 (unicode_list_scalar_domain.erl, line 22)
+      lists:foreach/2 (lists.erl, line 61)
+
+SOME TESTS FAILED

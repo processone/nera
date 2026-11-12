@@ -1,0 +1,15 @@
+Running 1 tests (1 threads)
+────────────────────────────────────────────────────────────
+  FAIL  binary_unicode_bits                        1.1s  [1/1]
+────────────────────────────────────────────────────────────
+Results: 0 passed, 1 failed (0 compile), 0 skipped / 1 total
+
+Failures:
+  binary_unicode_bits: runtime crash, exit=1
+    stderr:
+    Error in process <0.1.0>: error:{badmatch,<<65,3:2>>}
+    Stacktrace (most recent call last):
+      binary_unicode_bits:bad/1 (binary_unicode_bits.erl, line 65)
+      binary_unicode_bits:__lambda_0/1 (binary_unicode_bits.erl, line 6)
+
+SOME TESTS FAILED

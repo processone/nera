@@ -1,0 +1,14 @@
+Running 1 tests (1 threads)
+────────────────────────────────────────────────────────────
+  FAIL  multiplication_overflow                    7.7s  [1/1]
+────────────────────────────────────────────────────────────
+Results: 0 passed, 1 failed (0 compile), 0 skipped / 1 total
+
+Failures:
+  multiplication_overflow: runtime crash, exit=1
+    stderr:
+    Error in process <0.1.0>: error:{badmatch,0}
+    Stacktrace (most recent call last):
+      multiplication_overflow:test/0 (multiplication_overflow.erl, line 15)
+
+SOME TESTS FAILED

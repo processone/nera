@@ -1,0 +1,11 @@
+{
+  ".github/workflows/ci.yml": "86140de70f73c6ef4c8bfa2fb9c3e3054c4e5eb70eebb4edbb77add9d7a91f3d",
+  ".github/workflows/release.yml": "ed986aeb3194547129c423e74b653b055c4934ff51e4e0d03e687284ebbdc956",
+  ".gitignore": "fb00657b49efe0a9c516e23dbeec3bdea962d97a350eac812439b3f7a731b062",
+  "README.md": "6a9e1a70b0140f4acfaf872a3ba5c050d67948d77742d5fcbdee0634fe4adb25",
+  "CONTRIBUTING.md": "b0a3aa37c882e0b05769376f46aea749be295fca3bfaa07df3127eb2927bad28",
+  "scripts/dist.sh": "36ebf79461cd8ee38ff37070fe5dd795b82f1667769d73974a8ddb0b04adb5c2",
+  "docs/PROJECT_STATUS.md": "d9f50fd7c53fc4ddf01e24598f938f290da4e531d5dab2fab0c3d475cf436262",
+  "rust-toolchain.toml": "2ad6f15416572b4836585087f1d4abc53b8fa2dbd616f8dacfaa587ed6714228",
+  "Cargo.lock": "ad42464c59618c1e56a7102589e51a26ffac0f55401b8e4d7e24c039f110bb1d"
+}

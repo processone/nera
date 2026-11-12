@@ -1,0 +1,15 @@
+Running 1 tests (1 threads)
+────────────────────────────────────────────────────────────
+  FAIL  tcp_accept_concurrent                      5.7s  [1/1]
+────────────────────────────────────────────────────────────
+Results: 0 passed, 1 failed (0 compile), 0 skipped / 1 total
+
+Failures:
+  tcp_accept_concurrent: runtime crash, exit=1
+    stdout:
+    acceptor_lost: <0.2.0>
+
+    stderr:
+    TRACE accept wait pid=2 listener=4294967296
+
+SOME TESTS FAILED

@@ -1,0 +1,35 @@
+{
+  "base_ref": "main",
+  "base": "9e2ddcebaf725e6ea649ffcaafa98ccc682986cc",
+  "base_tree": "1572ba044e831da4a0026b4df9a6acc1b6fbfcb1",
+  "divergence_from_origin_main": {
+    "ahead": 1,
+    "behind": 0
+  },
+  "target": "working tree; production adapter, regression, changelog and this evidence directory",
+  "source_sha256": {
+    "CHANGELOG.md": "de51e74f0ba6baeed542e526d167b3d3bd226e3079d8a59801ca7f49d9c718d3",
+    "crates/nera-runtime/src/ffi/alloc.rs": "bdd31baf9e093c976f8e97ece0cd789349606ef34e14baf282a8a44f60114178",
+    "tests/binary_match_reuse_alloc.erl": "a153f95ccd2c18dc7fc63b40014da8afc0ebab718a2a1715357c287a4ae7cec5"
+  },
+  "normal_release_artifacts": {
+    "target/release/nera": "d31701fff53d17a3ef122e1fd0d6fc8004145e7e321850ebf97920a1b5669c32",
+    "target/release/libnera_runtime.a": "cf41daa2ab0bfb474937c42ceb20c1e22f9210ed3857860a9d91406818a30c18"
+  },
+  "allocation_fix_verdict": "scoped fix verified locally; pre-existing unrelated sub-byte correctness gap preserved",
+  "validation": "validation.json plus network-validation.json; restricted socket failures resolved by network-enabled reruns",
+  "known_failure": "known-bit-offset.json",
+  "omissions": [
+    "Linux",
+    "Windows",
+    "installed archive",
+    "long concurrent soak",
+    "remote CI"
+  ],
+  "excluded_preexisting_work": [
+    ".claude/",
+    ".lavish/",
+    "benchmarks/base64_prototype/"
+  ],
+  "publication": "not staged, committed, pushed or merged"
+}

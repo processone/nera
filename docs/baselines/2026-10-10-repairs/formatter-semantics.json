@@ -1,0 +1,47 @@
+{
+  "format_semantics": {
+    "variants": {
+      "original": {
+        "exit": 0,
+        "stdout": "formatter semantics ok\n",
+        "stderr": ""
+      },
+      "formatted": {
+        "exit": 0,
+        "stdout": "formatter semantics ok\n",
+        "stderr": ""
+      }
+    },
+    "pass": true
+  },
+  "guard_not": {
+    "variants": {
+      "original": {
+        "exit": 0,
+        "stdout": "ok\n",
+        "stderr": ""
+      },
+      "formatted": {
+        "exit": 0,
+        "stdout": "ok\n",
+        "stderr": ""
+      }
+    },
+    "pass": true
+  },
+  "fun_parallel_scopes": {
+    "variants": {
+      "original": {
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "formatted": {
+        "exit": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    "pass": true
+  }
+}

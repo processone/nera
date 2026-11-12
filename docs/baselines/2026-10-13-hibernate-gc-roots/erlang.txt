@@ -1,0 +1,22 @@
+Running 16 tests (1 threads)
+────────────────────────────────────────────────────────────
+  PASS  ets_complex_terms                         758ms  [1/16]
+  PASS  ets_delete_reader                         767ms  [2/16]
+  PASS  ets_gc_survival                           755ms  [3/16]
+  PASS  ets_message_passing                       743ms  [4/16]
+  PASS  ets_overwrite_reader                      777ms  [5/16]
+  PASS  gc_receive_compact                        792ms  [6/16]
+  PASS  hibernate_basic                           788ms  [7/16]
+  PASS  hibernate_gc_args                         759ms  [8/16]
+  PASS  hibernate_heap_args                       798ms  [9/16]
+  PASS  hibernate_retained_roots                  752ms  [10/16]
+  PASS  nested_dynamic_tail_call                  743ms  [11/16]
+  PASS  process_dict                              728ms  [12/16]
+  PASS  process_info                              926ms  [13/16]
+  PASS  scheduler_yield                           766ms  [14/16]
+  PASS  self_send                                 732ms  [15/16]
+  PASS  tcp_active_once                            1.0s  [16/16]
+────────────────────────────────────────────────────────────
+Results: 16 passed, 0 failed (0 compile), 0 skipped / 16 total
+
+ALL TESTS PASSED

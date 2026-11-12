@@ -1,0 +1,9 @@
+{
+  "Cargo.lock": "a210f397cb773d07c39ed4827a9aea44092f56ee7c2a438f708784dfa5769f80",
+  "crates/nera-runtime/src/bif.rs": "9269a0eed556002efa031bf5372ef81d95323219cd2f23af679582e3f40538e6",
+  "crates/nera-runtime/src/ffi/binary_ops.rs": "f6e589d948defdf567bdcdcaa567d203aa0b6470310c8a4efee5cc6e17566736",
+  "rust-toolchain.toml": "2ad6f15416572b4836585087f1d4abc53b8fa2dbd616f8dacfaa587ed6714228",
+  "tests/README.md": "1d01e4b1209922e21dac7595d509c4a8075bc101e9e7291081ce8f154b3abb87",
+  "tests/unicode_integer_scalar_domain.erl": "ffbcae5ffe9e998613f32043e0b240238827f6bd556809a825cd05b60f796196",
+  "tests/unicode_list_scalar_domain.erl": "9f71a05ed90415bf4728d2db16625c95f263f1d42d458c3d6fe527c7076a8ba3"
+}

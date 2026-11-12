@@ -1,0 +1,173 @@
+Completed series 1
+Completed series 2
+Completed series 3
+{
+  "u8_ascii_write": {
+    "median_us": {
+      "before-aligned": 6207,
+      "after-aligned": 6231,
+      "after-shifted": 6765
+    },
+    "aligned_change_pct": 0.3866602223296267,
+    "shifted_vs_aligned_pct": 8.57005296100144,
+    "aligned_series_pct": [
+      3.1443385181468386,
+      0.6506903666084751,
+      -1.9221604447974605
+    ]
+  },
+  "u8_ascii_read": {
+    "median_us": {
+      "before-aligned": 2792,
+      "after-aligned": 2659,
+      "after-shifted": 2716
+    },
+    "aligned_change_pct": -4.76361031518625,
+    "shifted_vs_aligned_pct": 2.1436630312147376,
+    "aligned_series_pct": [
+      -2.3827252419955314,
+      -1.0965688008489516,
+      -6.247806247806242
+    ]
+  },
+  "u8_multi_write": {
+    "median_us": {
+      "before-aligned": 5273,
+      "after-aligned": 5317,
+      "after-shifted": 5631
+    },
+    "aligned_change_pct": 0.8344395979518193,
+    "shifted_vs_aligned_pct": 5.905585856686102,
+    "aligned_series_pct": [
+      3.523194362889015,
+      0.50391937290033,
+      0.5499715531955163
+    ]
+  },
+  "u8_multi_read": {
+    "median_us": {
+      "before-aligned": 2450,
+      "after-aligned": 2466,
+      "after-shifted": 2631
+    },
+    "aligned_change_pct": 0.6530612244898037,
+    "shifted_vs_aligned_pct": 6.690997566909984,
+    "aligned_series_pct": [
+      3.062080536912748,
+      -0.5575467941059342,
+      0.0
+    ]
+  },
+  "u16_bmp_write": {
+    "median_us": {
+      "before-aligned": 4246,
+      "after-aligned": 4433,
+      "after-shifted": 4787
+    },
+    "aligned_change_pct": 4.404145077720201,
+    "shifted_vs_aligned_pct": 7.985562824272496,
+    "aligned_series_pct": [
+      5.815909637106476,
+      4.812455767869772,
+      3.5222766503382408
+    ]
+  },
+  "u16_bmp_read": {
+    "median_us": {
+      "before-aligned": 2029,
+      "after-aligned": 2163,
+      "after-shifted": 2150
+    },
+    "aligned_change_pct": 6.6042385411532845,
+    "shifted_vs_aligned_pct": -0.6010171058714708,
+    "aligned_series_pct": [
+      5.591939546599489,
+      6.381934216985763,
+      6.554953178905865
+    ]
+  },
+  "u16_pair_write": {
+    "median_us": {
+      "before-aligned": 4055,
+      "after-aligned": 4214,
+      "after-shifted": 4637
+    },
+    "aligned_change_pct": 3.921085080147968,
+    "shifted_vs_aligned_pct": 10.037968675842436,
+    "aligned_series_pct": [
+      3.354554358472095,
+      4.167694204685568,
+      5.16983016983017
+    ]
+  },
+  "u16_pair_read": {
+    "median_us": {
+      "before-aligned": 1985,
+      "after-aligned": 2077,
+      "after-shifted": 2284
+    },
+    "aligned_change_pct": 4.6347607052896755,
+    "shifted_vs_aligned_pct": 9.966297544535397,
+    "aligned_series_pct": [
+      4.793138244197781,
+      4.216867469879526,
+      4.529441368897835
+    ]
+  },
+  "u16_le_write": {
+    "median_us": {
+      "before-aligned": 3833,
+      "after-aligned": 4075,
+      "after-shifted": 4460
+    },
+    "aligned_change_pct": 6.313592486303166,
+    "shifted_vs_aligned_pct": 9.447852760736186,
+    "aligned_series_pct": [
+      6.373056994818649,
+      6.069288877311796,
+      6.3284518828451874
+    ]
+  },
+  "u16_le_read": {
+    "median_us": {
+      "before-aligned": 1907,
+      "after-aligned": 1995,
+      "after-shifted": 2156
+    },
+    "aligned_change_pct": 4.614577871001568,
+    "shifted_vs_aligned_pct": 8.070175438596493,
+    "aligned_series_pct": [
+      4.612159329140453,
+      4.674369747899165,
+      4.776902887139101
+    ]
+  },
+  "u32_write": {
+    "median_us": {
+      "before-aligned": 4477,
+      "after-aligned": 4441,
+      "after-shifted": 4096
+    },
+    "aligned_change_pct": -0.8041098950189896,
+    "shifted_vs_aligned_pct": -7.768520603467688,
+    "aligned_series_pct": [
+      -0.4568196649989087,
+      -1.9007155635062611,
+      -0.878378378378375
+    ]
+  },
+  "u32_read": {
+    "median_us": {
+      "before-aligned": 1830,
+      "after-aligned": 1886,
+      "after-shifted": 1969
+    },
+    "aligned_change_pct": 3.0601092896174853,
+    "shifted_vs_aligned_pct": 4.40084835630965,
+    "aligned_series_pct": [
+      2.5488069414316694,
+      2.6186579378068675,
+      3.1728665207877427
+    ]
+  }
+}

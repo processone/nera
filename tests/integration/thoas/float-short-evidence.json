@@ -1,0 +1,119 @@
+{
+  "date": "2026-10-11",
+  "platform": "macOS arm64",
+  "otp": "29.0.5",
+  "target": "uncommitted worktree over HEAD",
+  "base_ref": "HEAD",
+  "base_commit": "1e7b5a4b1855325d0af5e36122954d50fab084b4",
+  "base_tree": "4c7cedfcd5b58b83dcd69bf15ceef76ccf51f4d9",
+  "upstream": {
+    "url": "https://github.com/lpil/thoas.git",
+    "version": "1.2.1",
+    "commit": "7cdcec7e52b80d2869900893b2acf47199d84190",
+    "dependencies": []
+  },
+  "source_sha256": {
+    "Cargo.lock": "1db3d1eb4c4998be8dfa9ab55c14c25f5893d730403c96a308a6444589a77455",
+    "crates/nera-runtime/Cargo.toml": "e162852ddf3991c90c9bf3716969e574167ac1cb09264350d5a000e077da9a32",
+    "crates/nera-runtime/src/ffi/binary_ops.rs": "cbf20d047ef0be73b5eb51581b8e11cace7f9433bd549f34d7eca1bdc7f62222",
+    "tests/float_to_binary_short.erl": "7f349fb855af2f04dbd72039a66fed03644894b954d5519e3bdb614ea166e275"
+  },
+  "compiler": {
+    "source_commit": "0a150dc12080526774dda73ed23ea4d320b54cdd",
+    "sha256": "86df1795c8240dc009787a379ced6b7283165bab529a4834878e2540743a8209",
+    "note": "Frozen compiler from preceding PR validation; compiler sources unchanged. Linked against the freshly rebuilt adjacent release runtime below."
+  },
+  "runtime_sha256": "16d7e2d61091d2724404528aad470b3aad3c78f3c157f71fd5092a754d8eb584",
+  "native_thoas_sha256": "45b2e7d2dedcd5e279167caa33009c1ad9c32f6e002483670236031126701066",
+  "red": "Rust FFI assertion and native Erlang regression fail on 9.9e100 before the fix; BEAM passes.",
+  "green": {
+    "runtime_tests_passed": 471,
+    "runtime_doctests_passed": 8,
+    "runtime_ignored": 1,
+    "ignored_reason": "opt-in cancellation scaling benchmark",
+    "runtime_clippy": "all targets, -D warnings passed",
+    "erlang_regression": "BEAM and Nera passed",
+    "engines": {
+      "beam": {
+        "eunit_passed": 36,
+        "encoding_tests_passed": 7,
+        "float_property_passed": 1,
+        "property_trials": 100,
+        "excluded_other_properties": 5,
+        "failures": 0,
+        "skipped": 0
+      },
+      "nera": {
+        "eunit_passed": 36,
+        "encoding_tests_passed": 7,
+        "float_property_passed": 1,
+        "property_trials": 100,
+        "excluded_other_properties": 5,
+        "failures": 0,
+        "skipped": 0
+      }
+    },
+    "differential_cases_passed": 80
+  },
+  "float_sample": {
+    "count": 21889,
+    "exact_native_beam_text_agreement": true,
+    "generation": "Python Random(0), 20000 getrandbits(64) values; add IEEE bits of 10.0**e and bits-1/bits+1 for e in range(-323,309); remove nonfinite exponent patterns; retain order and duplicates.",
+    "native_input": "ETF list of binary64 values",
+    "input_sha256": "b326e54e41028141174cf32453dcb6297ef7a8e9f1ea6ff19fe5f4338a7b0ad0",
+    "output_sha256": "7862be9fac481ce490ead3b7d93d8f25779c1862e239ba7e258b3658737ef8f5",
+    "probe_sha256": "06c77be4ae4510e30dcb5426e84c1777a911bb8f1808d1d7e5a394025c18ecd1"
+  },
+  "selection": {
+    "files": [
+      "test/encode_test.exs",
+      "test/property_test.exs"
+    ],
+    "exclude": [
+      "test"
+    ],
+    "include": [
+      "module: Jason.EncoderTest",
+      "test: property float roundtrip"
+    ],
+    "seed": 0,
+    "max_runs": 100,
+    "launcher_sha256": "9c494e94f8ec78932af4e7aea7a21eb47a9cca8f396a4159df064aaf25610d5f",
+    "script_sha256": "c78ce0954793fb71f262b7d1bb84952cbf566f09d8a7f3a64350effdf9cfb933"
+  },
+  "local_logs": "/private/tmp/nera-float-validation",
+  "additional_logs": [
+    "/private/tmp/nera-float-rust-red.log",
+    "/private/tmp/nera-float-red.log",
+    "/private/tmp/nera-float-runtime.log",
+    "/private/tmp/nera-float-clippy.log",
+    "/private/tmp/nera-float-e2e.log",
+    "/private/tmp/nera-float-build-final.log",
+    "/private/tmp/nera-float-corpus/report.json"
+  ],
+  "not_rerun": [
+    "full Erlang suite",
+    "full upstream ExUnit/JSONTestSuite and five other properties",
+    "Linux"
+  ],
+  "remaining_known_thoas_blockers": [
+    "binary backing-storage sharing and binary:referenced_byte_size/1",
+    "direct native EUnit include resolution"
+  ],
+  "publication": "Prepared for publication on mr/float-to-binary-short; original targeted results above are unchanged.",
+  "publication_checks": {
+    "base_ref": "origin/main",
+    "base_commit": "e15bd09e2a77b131029e85a4f9ef7816d207dfb6",
+    "base_tree": "4c7cedfcd5b58b83dcd69bf15ceef76ccf51f4d9",
+    "base_note": "Same tree as the original validation base 1e7b5a4; no source changes during publication preparation.",
+    "workspace_passed": 1777,
+    "workspace_failed": 0,
+    "workspace_ignored": 1,
+    "ignored_test": "reactor::tests::accept_cancellation_scaling (opt-in benchmark)",
+    "workspace_clippy": "all targets, warnings denied: passed",
+    "logs": [
+      "/private/tmp/nera-float-pr-workspace.log",
+      "/private/tmp/nera-float-pr-clippy.log"
+    ]
+  }
+}

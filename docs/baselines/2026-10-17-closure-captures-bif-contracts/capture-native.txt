@@ -1,0 +1,7 @@
+Running 1 tests (1 threads)
+────────────────────────────────────────────────────────────
+  PASS  closure_binary_captures                    1.2s  [1/1]
+────────────────────────────────────────────────────────────
+Results: 1 passed, 0 failed (0 compile), 0 skipped / 1 total
+
+ALL TESTS PASSED

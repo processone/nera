@@ -1,0 +1,38 @@
+{
+  "base": "fd364b50f881d273594a5e2e51c7e158aa0ef91b",
+  "sources": {
+    "CHANGELOG.md": "9acf92a7fbfd11cc34f78498b10867332a04588fdfb9f27fe5aa9adee85b0abe",
+    "crates/nera-runtime/src/binary.rs": "e6daee198a94e21461c561ba0758522f772625560d4a981d61ee488093e191bb",
+    "crates/nera-runtime/src/ffi/gen_tcp.rs": "3d96f513062b0609a98fa754b39a7e5315aae9bf51b606c66ebe3606dbcfac8f",
+    "crates/nera-runtime/src/ffi/process.rs": "60268241ae8098163c59fad638ab7f35ae4e9ad29d038d834f8821aee1c34763",
+    "crates/nera-runtime/src/heap.rs": "ae665abdfc232344307b5c664c03e941a7aa4bae7a7ad6a4bb50f5cad2b80d3e",
+    "crates/nera-runtime/src/message.rs": "7c99385aac1cf0ded0641feba7ca2c6e7a64d7331c64b7ba776615bb57939997",
+    "crates/nera-runtime/src/process.rs": "49f32496b2d90f8e9f3d0a925c97d63e4b9e2a03a65f8b0f97bc6919733c5b8c",
+    "crates/nera-runtime/src/scheduler.rs": "96b32cf67bd91aec542c02735acabfb41fb0431a5f0444bc1d2f0e462c25c9aa",
+    "crates/nera-runtime/src/term.rs": "e0c527b4b045f9b7f4c152ad8ef082e7c5596a40133d4b92532830286902a3ce",
+    "docs/baselines/2026-10-12-message-binary/measure.py": "7f5983ecbbb6c5082084000842959687e980cf2c2dcb8ee8c89fa85e0457838d",
+    "docs/baselines/2026-10-12-message-binary/results-repeat.json": "31ae198dad13e951864a23501b8135998b4f7ec6b54cbe7932262be3b2a1f590",
+    "docs/baselines/2026-10-12-message-binary/results-short.json": "f15dc78c8557e8227023aaaccdeb3878a66696213749089f172eb843d34d4446",
+    "docs/baselines/2026-10-12-message-binary/red-fragment-api.txt": "b845c4adb92512c52ce93cd85f699bb8fbd1dd0188e001aeb8c87f2a82c71e53",
+    "docs/baselines/2026-10-12-message-binary/results.json": "0d223c4987839f8193ca9fdf7ef75c86ada93e2e4c76ecc97f455915b4855013",
+    "docs/baselines/2026-10-12-message-binary/results-short-repeat.json": "4bb24f2c6c1ca1267cd7021eab24e81bbe0cb7e857275d89ba65a681a6e904f1",
+    "docs/baselines/2026-10-12-message-binary/red-header-release.txt": "b05b34b6a9d62c369f008dd2658ee1e74350c62f90fbbffd8c9068af0d7d498e",
+    "docs/baselines/2026-10-12-message-binary/README.md": "d84cfa9fd69c312a328eedc44604337e595b0f7746b91ee1892b56e99f1b7fa1",
+    "docs/baselines/2026-10-12-message-binary/probe.rs": "e481f47ac285b887985befee6070002991da06e862c0b3cfd84af4ce3f7e9580"
+  },
+  "artifacts": {
+    "before/nera": "75ec45d306317eb75bdaa283ae259cd386f9082ce3d6aa7514c0a45f7916d95f",
+    "before/libnera_runtime.a": "a5508283d76a4e376c4cc4f7260359f7bd836c75bb011188b3f8980123e936d4",
+    "before/probe": "8599dd33b4d089781b98bc027b4f7e472b56d0e498da0c96c71f6245b9509e17",
+    "after/nera": "75ec45d306317eb75bdaa283ae259cd386f9082ce3d6aa7514c0a45f7916d95f",
+    "after/libnera_runtime.a": "a734bcf3d47ab774b1c4141eb838be9780ab7be9c2f86d937f8dc45040a452eb",
+    "after/probe": "9b8b9e43e6faa8898b465a0d290bf7f92af30548ade0e03925be911f09be9273"
+  },
+  "logs": {
+    "nera-contract-final-workspace.log": "b652c03c1f0d289c8917a59e127af3a1832f9eead024a93f3e51e00dd5b8ac82",
+    "nera-contract-final-clippy.log": "e33bd3e00ac0d9771c54e3689a6214e544a6a04f0b0dcd889b21482645230aee",
+    "nera-contract-final-release.log": "6564139a729eb40a241fcbcb6c4cbbedbd3f222d03f810eadbf0ce006d7285e7",
+    "nera-contract-final-e2e.log": "fab786df4a254a2f80bfd28da1199ea27b3fb22c90a7199c6d6a10a28b8d422e",
+    "nera-contract-after-build.log": "b3f77f3111faeefb4ea48c8b5278e7b8326da994855ec08a1728d9387e39793e"
+  }
+}

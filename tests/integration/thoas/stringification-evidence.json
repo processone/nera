@@ -1,0 +1,116 @@
+{
+  "date": "2026-10-11",
+  "base_commit": "b3e2fce395fb0255e04124015cef4eab3b984067",
+  "target": "uncommitted macro-stringification changes",
+  "platform": "macOS arm64",
+  "otp": "29.0.5",
+  "upstream": {
+    "url": "https://github.com/lpil/thoas.git",
+    "version": "1.2.1",
+    "commit": "7cdcec7e52b80d2869900893b2acf47199d84190",
+    "dependencies": []
+  },
+  "status": "stringification_validated_native_thoas_eunit_still_blocked",
+  "source_sha256": {
+    "crates/nera-syntax/src/preproc.rs": "88d6dabc76d9dff05c13fdd630055755edc75acb245b424e70f0ac3936c7404a",
+    "crates/nera-syntax/src/parser.rs": "2d0f9adaa64310e49134ccc49c002920a11e24a210e9d0a299e4a5da3c8ae029",
+    "crates/nera-syntax/src/token.rs": "809c242e6d8b3848c594da4fb225247325ae3d8c1219cf0b4833d38a9e9fe832",
+    "crates/nera-fmt/src/format.rs": "8fd88ba707a613af4b8cae355a4499d74e9da3ba67d5f8ab233b0df5b0457ebf",
+    "tests/macro_stringify.erl": "02731d4ec22c694508801829f618eb57cb102ed73c297de1235979363d588c9e",
+    "tests/integration/thoas/eunit/assertion_probe.erl": "f593e1390b10637a4ad18a5b989c419686dd61f5c88d7f872faa20f841eae6e3"
+  },
+  "compiler_sha256": "89dd3efab735d3a5e88d11ccad8d122208b4650acd99f4d0976aa1a4ed39a33f",
+  "runtime_sha256": "1c3e358153fe7f529e943d172781a6fc812d2e24ff6405a66aa49dd2fbbf491a",
+  "compiler_profile": "debug",
+  "runtime_profile": "release (unchanged)",
+  "checks": {
+    "workspace": {
+      "passed": 1784,
+      "failed": 0,
+      "ignored": 1
+    },
+    "clippy": "passed",
+    "erlang": {
+      "passed": 3
+    },
+    "otp_assertion_probe": {
+      "beam": "OTP_ASSERTIONS_OK",
+      "nera": "OTP_ASSERTIONS_OK",
+      "checks": [
+        "successful assertEqual",
+        "intentional assertion failure",
+        "expression text",
+        "expected value",
+        "actual value"
+      ]
+    },
+    "formatted_regression": "ok",
+    "direct_thoas": {
+      "compile_exit": 1,
+      "preprocessing": "passed",
+      "blocker": "unsupported -import; null/0 and string/1 reported undefined",
+      "native_eunit_tests_executed": 0
+    }
+  },
+  "limitations": [
+    "Full upstream suite and 80-case corpus not rerun.",
+    "No EUnit runner or autoexport transform validation.",
+    "Workspace check precedes a Clippy-only conditional simplification; syntax and formatter tests rerun afterward."
+  ],
+  "commands": [
+    "RUSTC_WRAPPER= CARGO_TARGET_DIR=/private/tmp/nera-thoas-date-target cargo test --workspace --locked --offline --no-fail-fast",
+    "RUSTC_WRAPPER= CARGO_TARGET_DIR=/private/tmp/nera-thoas-date-target cargo test -p nera-syntax -p nera-fmt --locked --offline",
+    "RUSTC_WRAPPER= CARGO_TARGET_DIR=/private/tmp/nera-thoas-date-target cargo clippy --workspace --all-targets --locked --offline -- -D warnings",
+    "/private/tmp/nera-stringify-validation/compiler/nera test 'macro*' include_record --no-warnings"
+  ],
+  "native_probe_command": {
+    "cwd": "/private/tmp/nera-stringify-validation",
+    "argv": [
+      "/private/tmp/nera-stringify-validation/compiler/nera",
+      "build",
+      "/home/user/AIProjects/nera/tests/integration/thoas/eunit/assertion_probe.erl",
+      "/home/user/AIProjects/nera/tests/macro_stringify.erl",
+      "-e",
+      "assertion_probe:test",
+      "-o",
+      "assertion-probe"
+    ]
+  },
+  "direct_build_command": {
+    "cwd": "/private/tmp/nera-stringify-validation",
+    "argv": [
+      "/private/tmp/nera-stringify-validation/compiler/nera",
+      "build",
+      "/private/tmp/nera-thoas-final-validation/upstream/src/thoas.erl",
+      "/private/tmp/nera-thoas-final-validation/upstream/src/thoas_decode.erl",
+      "/private/tmp/nera-thoas-final-validation/upstream/src/thoas_encode.erl",
+      "/private/tmp/nera-thoas-final-validation/upstream/test/thoas_encode_test.erl",
+      "-e",
+      "thoas_encode_test:test",
+      "-o",
+      "direct-eunit"
+    ]
+  },
+  "logs_sha256": {
+    "/private/tmp/nera-stringify-validation/direct.stderr": "9729340a5f19ac35c1346950fa267f734736c7a3eb156401a3a8e7a60c835f49",
+    "/private/tmp/nera-stringify-validation/assertion-run.stdout": "0192142f58487f810260281be6f2eafda500f16de18d3e113011b91792150df3",
+    "/private/tmp/nera-stringify-validation/beam-regressions.stdout": "014219744f2e0e205e7902dbe46968abf45411056934cd77c1e4837d3ddb05ea",
+    "/private/tmp/nera-stringify-validation/formatted-run.stdout": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22",
+    "/private/tmp/nera-stringify-workspace-final.log": "f63c6ede62a782a2d5723646fd979a93d10f93845dbd649fdf9385695da782eb",
+    "/private/tmp/nera-stringify-focused-final.log": "039a73b4610d951f3fcabd61bd3501c8f08607c5f77431cc1638180969938957",
+    "/private/tmp/nera-stringify-clippy-final.log": "e665abfc0feb92d103544e98584bf3af34c5bd6904418af48159d3e98d6aaf56"
+  },
+  "publication": {
+    "base_ref": "origin/main",
+    "base_commit": "26a303fcd4f6c7b0254d3a67325ddf176e26ba2c",
+    "base_tree": "08c6be9001ac1c944f2cf3ba0a05dac143574c0b",
+    "branch": "mr/macro-stringification",
+    "workspace_passed": 1784,
+    "workspace_ignored": 1,
+    "clippy": "passed",
+    "logs_sha256": {
+      "/private/tmp/nera-stringify-pr-workspace.log": "5d6188a28517b213cfb092ed222ff7eb7928ecc8acd7b7a89e6337f5142f148a",
+      "/private/tmp/nera-stringify-pr-clippy.log": "3e43b255d4b20a7b309afeb5012d5088aa471e53c75606d9df8a98bab335f40e"
+    }
+  }
+}

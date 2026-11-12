@@ -1,0 +1,66 @@
+-module(atomics_resource_kind).
+-export([test/0]).
+test() ->
+    R = make_ref(),
+    bad(fun() -> atomics:get(R, 1) end),
+    bad(fun() -> atomics:put(R, 1, 1) end),
+    bad(fun() -> atomics:add(R, 1, 1) end),
+    bad(fun() -> atomics:sub(R, 1, 1) end),
+    bad(fun() -> atomics:add_get(R, 1, 1) end),
+    bad(fun() -> atomics:sub_get(R, 1, 1) end),
+    bad(fun() -> atomics:exchange(R, 1, 1) end),
+    bad(fun() -> atomics:compare_exchange(R, 1, 0, 1) end),
+    bad(fun() -> atomics:info(R) end),
+    A = atomics:new(1, []), C = counters:new(1, []),
+    bad(fun() -> atomics:get(C, 1) end),
+    bad(fun() -> atomics:put(C, 1, 1) end),
+    bad(fun() -> atomics:info(C) end),
+    bad(fun() -> counters:get(A, 1) end),
+    bad(fun() -> counters:put(A, 1, 1) end),
+    bad(fun() -> counters:get(R, 1) end),
+    bad(fun() -> counters:info(A) end),
+    0 = atomics:get(A, 1), 0 = counters:get(C, 1),
+    check_ref(A), check_ref(C),
+    T = ets:new(resources, [set]),
+    true = ets:insert(T, {resource, A}),
+    [{resource, EtsA}] = ets:lookup(T, resource),
+    true = A =:= EtsA,
+    ok = atomics:put(EtsA, 1, 7),
+    7 = atomics:get(A, 1),
+    churn(2000),
+    7 = atomics:get(EtsA, 1),
+    Parent = self(),
+    spawn(fun() -> 7 = atomics:get(EtsA, 1), Parent ! {copied, EtsA} end),
+    receive {copied, Copied} -> true = A =:= Copied, 7 = atomics:get(Copied, 1)
+    after 1000 -> error(resource_copy_timeout) end,
+    true = ets:insert(T, {A, 11}),
+    [{EtsA, 11}] = ets:lookup(T, EtsA),
+    O = ets:new(ordered_resources, [ordered_set]),
+    true = ets:insert(O, {A, 12}),
+    [{A, 12}] = ets:lookup(O, EtsA),
+    U = atomics:new(1, [{signed, false}]),
+    ok = atomics:put(U, 1, 18446744073709551615),
+    true = ets:insert(T, {unsigned, U}),
+    [{unsigned, EtsU}] = ets:lookup(T, unsigned),
+    churn(2000),
+    18446744073709551615 = atomics:get(EtsU, 1),
+    spawn(fun() -> Parent ! {unsigned_copy, EtsU} end),
+    receive {unsigned_copy, CopiedU} ->
+        true = U =:= CopiedU,
+        18446744073709551615 = atomics:get(CopiedU, 1)
+    after 1000 -> error(unsigned_copy_timeout) end,
+    true = ets:insert(T, {U, 14}),
+    [{U, 14}] = ets:lookup(T, EtsU),
+    true = ets:insert(O, {U, 15}),
+    [{U, 15}] = ets:lookup(O, EtsU),
+    true = ets:insert(T, {ordinary, R}),
+    [{ordinary, EtsR}] = ets:lookup(T, ordinary),
+    true = R =:= EtsR,
+    true = ets:insert(T, {R, 16}),
+    [{R, 16}] = ets:lookup(T, EtsR),
+    ets:delete(O), ets:delete(T), ok.
+check_ref(R) when is_reference(R) -> ok.
+bad(F) -> {'EXIT', {badarg, _}} = (catch F()), ok.
+
+churn(0) -> ok;
+churn(N) -> 128 = length(lists:duplicate(128, N)), churn(N - 1).

@@ -1,0 +1,33 @@
+series 1 group 1 complete
+series 1 group 2 complete
+series 1 group 3 complete
+series 1 group 4 complete
+series 1 group 5 complete
+series 2 group 1 complete
+series 2 group 2 complete
+series 2 group 3 complete
+series 2 group 4 complete
+series 2 group 5 complete
+series 3 group 1 complete
+series 3 group 2 complete
+series 3 group 3 complete
+series 3 group 4 complete
+series 3 group 5 complete
+group unicode
+ascii12 27785 27829 0.16 %
+ascii128 42469 43128 1.55 %
+unicode32 56456 56814 0.63 %
+unicode128 65720 66051 0.5 %
+group 0
+partial13 25215 21220 -15.84 %
+bytes16 18310 18686 2.05 %
+bytes64 7629 7744 1.51 %
+bytes65 76942 76787 -0.2 %
+bytes256 177873 176992 -0.5 %
+group 3
+partial13 25378 20918 -17.57 %
+bytes16 36104 30023 -16.84 %
+bytes64 31199 27069 -13.24 %
+bytes65 36242 31047 -14.33 %
+bytes256 114502 99980 -12.68 %
+load (7.6806640625, 15.44921875, 13.021484375) (4.5595703125, 13.2626953125, 12.35693359375)

@@ -1,0 +1,1521 @@
+{
+  "date": "2026-10-14",
+  "status": "uri_and_compiler_fixes_http_executes_with_12_mismatches",
+  "base_commit": "20afa67b6d9454f7d703fa82bb47d35de55cbae3",
+  "base_tree": "cd2cc3aba9c69fcd893f794a123b767311a78495",
+  "target": "Uncommitted URI stdlib, lexical try and missing-map-key pattern corrections on merged main 20afa67 in an isolated worktree. Documentation/evidence edits follow validation.",
+  "source_sha256": {
+    "crates/nera-codegen/src/func_translator/instructions.rs": "03f8ce59905e90296f1657985fdd7ef085385e39785f54f8937908ff06222f1f",
+    "crates/nera-codegen/src/func_translator/mod.rs": "b0b72aa5055aae9e1fe38876822a90169e2855b57a16aff1103f485b4380e5af",
+    "crates/nera-ir/src/ir.rs": "6ebd3b6d794473831b7491dcd3fd881b8ed06df3f91fc64788dbc2e021bda733",
+    "crates/nera-ir/src/lower/closure.rs": "ec8dcc06628e8ad6920ef84f564077aad878b0efff2af7ddff11044b7ecc613a",
+    "crates/nera-ir/src/lower/list_comp.rs": "3a994807fd60849fd49676d59c3b08c134673f753e32a2e295f63ec8b674e533",
+    "crates/nera-ir/src/lower/mod.rs": "12c67b067b8e871ba531f83c4082334072202f4917d5f60d12f73ce75209c7bd",
+    "crates/nera-ir/src/lower/tests.rs": "cdd6540268a4e3138c501eb7e89337560c3550ba7604a0b45e6144009f096be1",
+    "crates/nera-ir/src/passes/tests.rs": "48b637f4052122aa0b24eb85e3f73c5b79de0ce7ed1a01e2903764c606faecbc",
+    "crates/nera-ir/src/pattern.rs": "d1dce9ad6f20b804481842ca021cd9ae57769c74d8f5e45dd72bdaeed72c6114",
+    "crates/nera-ir/src/validate.rs": "09fb66428fd47f5281da1726f75124561f4280646d9f160121c78f70ddc8235c",
+    "crates/nera-ir/src/verify/tests.rs": "1ab60a2468ca76ff60aaeb96e7b18c1669916e01bacc37df807205bfaec2ad90",
+    "crates/nera-ir/tests/passes.rs": "06e8e6799219c7e5b8a750e4d41e4d558dae7b49952d95fa9a85dcef421e6e9f",
+    "tests/integration/cowlib/runner.py": "10b1bd9b82bce6a391d86b1beb5cfb9f0131380899c79502d52378e116a7d6fc",
+    "tests/integration/cowlib/test_runner.py": "227edd70ff3418016363a534fdef4762a2878fa4009588b3527cf53271749d1d",
+    "erlang/stdlib/uri_string.erl": "c54acf9f19b797f476240b9f52c26cf51d82fe7e3aee4da72d6bde348bee79ee",
+    "scripts/fixtures/uri_cases.erl": "4dbe7131dd753f22bb03990c65ef9d522a3dc5e054bb7d980f1da06250cfec38",
+    "scripts/generate-uri-regression.escript": "cb6f8a81e1b98ec1223a168306a72d63afb016b39f1833b7da679ba5d0c03399",
+    "tests/uri_string_regression.erl": "06b4ba8f826398cce8e80df14da9460b834350ddbd7ebdcfad462dd0accb0cc5",
+    "tests/exception_before_guard.erl": "258885ee90e1591008b475f5c69c38755a74df7dd8cb8c43a0440f6a55738d74",
+    "tests/map_missing_key_pattern.erl": "19e03035e62ae7d7831dfc87b0a38aa6ee8b78532263dc17f2a479132bbe85d7",
+    "tests/integration/cowlib/cowlib_uri_probe.erl": "cef93a96e3b90a8d963c35b0fd5c15b22fd7cf3d782ad3298b173fbedbcdb846",
+    "tests/integration/cowlib/uri_probe.py": "131e17713e0a892df9d8668291a6cfd11823f616d567976d8cf1b0468fe9f65c"
+  },
+  "nera_sha256": "7518f722b5a11c2c124d25e5531e3e7923dad2d6cfcbd9f006ee0908103480ce",
+  "runtime_sha256": "7f08ce0f99e0e0cd73fe9e40def6c235df867c22876ad37f31ee1a9915a491af",
+  "platform": "macOS-15.7.7-arm64-arm-64bit-Mach-O",
+  "otp_version": "Erlang/OTP 29 [erts-17.0.5] [source] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads:1] [jit] [dtrace]",
+  "upstream": {
+    "name": "cowlib",
+    "version": "2.20.0",
+    "url": "https://github.com/ninenines/cowlib.git",
+    "commit": "c768a804565ff5b8178ed968a5921e469d6bd7b2"
+  },
+  "upstream_source_sha256": {
+    "src/cow_http3.erl": "cb8426277588906b49c78a42bfd8e2d214efd319d5cad6b4627b2cc94242a372",
+    "src/cow_multipart.erl": "2d684ed2229fd9d15d8941ad5cc1abd83a41f8bab0a7705e6093a7e112555d90",
+    "src/cow_http_struct_hd.erl": "bae6afed59d1395ad1234a0138c24736bc7ca8b8aca0425535fd9c06ce28aa84",
+    "src/cow_http2.erl": "edeb6bef50b963312e92021ed2edd029628c51752fa75b527557832912f452d6",
+    "src/cow_http1.erl": "e5851d0ad97a639458416d26f3b9d23ddfd09afe0dda8a356f33627ccc5b377c",
+    "src/cow_cookie.erl": "949f38c2aaa1fd30f690289a024429ea2d8a66e08b6c87a4436e51e568ddf88d",
+    "src/cow_mimetypes.erl": "bbdd5d794a0c970cdd0420109ceaf2aaeb4ec70294a5c8a053737e67e3e3779b",
+    "src/cow_ws.erl": "3d46948104e15194ffbe080a03299dd38e911857a9fc86f025a51ff76dab32c6",
+    "src/cow_hpack.erl": "6c9d5714790d8951fa57b793bb8f6c0f0433f7bbc15f33284e3b289b264bfa4d",
+    "src/cow_date.erl": "6f22428c9b1df2c59abe8b372f6a075c3d1b51ea6653cbf778a5bceeff813504",
+    "src/cow_capsule.erl": "b94fa3ee9242be4812ab631e30b71ff79b24112b538cbf304c735238e0683e80",
+    "src/cow_http2_machine.erl": "5ff9d6c3c520ca26d0a0090cc5d67ba6dc918fe7ee557083754e1d703cc14d3d",
+    "src/cow_http_hd.erl": "af8028340f58b2cf0a7bbaa734d6e1e9c61d48993454119e0df6c6cba6b82c2c",
+    "src/cow_base64url.erl": "3d68bd7d9d03230c99c298688bb9c804fe8ebdcf1ced3e64683de3b72a9436a2",
+    "src/cow_uri_template.erl": "589a363068a9f4bf77e29ef860792205d85541c71d76cd68ff5bd35686aca28b",
+    "src/cow_hpack_common.hrl": "c53242bd29cad93135050d5daf9f73e9b571da56a992dbc49870e7e53c1d164c",
+    "src/cow_uri.erl": "8a8627ec975e5597499385ce481760b751f80888aa7c55e915eedd31481da664",
+    "src/cow_qs.erl": "9d45e09874dd83ed42b02cdc7ce1aff5737f3ed968d7682c8b304ec853b61c91",
+    "src/cow_sse.erl": "180f35d763c003fc9b2304fed9da5244b6aa4497571dd6b73c92451e7e85f5ff",
+    "src/cow_http.erl": "cba1db8e6aace87f3f8772ea778b8088eedf8f7d54d84d767b46fcc02ea0e594",
+    "src/cow_iolists.erl": "ae976127c029af3e6a38dc5f406861a41f102c355d9077b1142abf3bba863df3",
+    "src/cow_http3_machine.erl": "a0e489819c72fb418920dbe2594b4ecbcc8aab72b5b2fdd809b419091ca2ba2d",
+    "src/cow_qpack.erl": "fe9adc05008b3b9e68bdb973b4486593bbaac665fcfb4de4679555a76d9ec99f",
+    "src/cow_mimetypes.erl.src": "b733e1a0defcc6402e4d9443db10334055738467c19a1765dc9c993ecea03612",
+    "src/cow_hpack_dec_huffman_lookup.hrl": "80fb656300ee1288bf34268e88c2b0886760ab6a794eeca60d84a94ae0f11652",
+    "src/cow_http_te.erl": "03676592aef761d7c623f814b324b4e15d4fb21889928b7474bc976c804de47a",
+    "src/cow_link.erl": "bcfec544ae3ca6796fece4c82a0c5061c282864c6e515ed89492238e02682c8c",
+    "src/cow_deflate.erl": "ba3b1bf977f0fda687c12d7195b6f143bae4f7ce26437736077c7b180a1261e8",
+    "include/cow_inline.hrl": "b6734610786a2d10ae82d9b9513e72d7a67396e1c5c1f3d6faa19e6350d580b6",
+    "include/cow_parse.hrl": "a366ad773962acdfea8b90cbc5499e6b3dc9148fb59d0bdd303dbbdae01a0177"
+  },
+  "implementation": [
+    "Project-owned Erlang uri_string module exports parse/1, normalize/1, recompose/1, resolve/3; preserve map/list/binary representations, percent quoting, IPv6, dot segments and RFC relative resolution.",
+    "IR stores lexical protection for calls and potentially raising operations; codegen no longer infers protection from a later guard or catch.",
+    "Map pattern compilation checks key presence before extraction, selecting the next clause on an absent key.",
+    "Harness prefers gmake, explicitly builds all and rejects missing BEAM modules before executing differential cases."
+  ],
+  "regressions": {
+    "uri": {
+      "fixture": "tests/uri_string_regression.erl",
+      "cases": 172,
+      "beam": "passed",
+      "native": "passed in full native suite",
+      "generator": "escript scripts/generate-uri-regression.escript tests/uri_string_regression.erl",
+      "reproducible": "Regeneration byte-for-byte identical on installed OTP 29.0.5",
+      "red_counterverification": {
+        "command": "nera build --no-stdlib uri_string_regression.erl -e uri_string_regression:test -o native; ./native",
+        "cwd": "/private/tmp/nera-uri-red",
+        "native_exit_code": 1,
+        "stderr_sha256": "bbb87c570878c7c595d294c1f5a0d1e1c4b089607defd13537053c10517cda17",
+        "note": "Same final fixture and compiler, URI implementation excluded; first URI parse call is undef."
+      },
+      "prior_build_blocker_evidence": "http-keytake-evidence.json"
+    },
+    "exception_before_guard": {
+      "fixture": "tests/exception_before_guard.erl",
+      "beam": "passed",
+      "native": "passed",
+      "before_native_exit_code": 1,
+      "before_stderr_sha256": "dadbd7313f3d0e2e534231a9d6e345c215a876e9aa93353be84aea52a5e1c614",
+      "before": "throw is replaced by a later case_clause; reproduced with the pre-fix compiler."
+    },
+    "map_missing_key": {
+      "fixture": "tests/map_missing_key_pattern.erl",
+      "beam": "passed",
+      "native": "passed",
+      "before_native_exit_code": 1,
+      "before_stderr_sha256": "dcd52eee8c7206f18418fc315bc158c5dce6939711d17045d92a22d186d428f2",
+      "before": "Absent wanted key raises badkey instead of selecting fallback."
+    },
+    "beam_log_sha256": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22",
+    "map_pattern_beam_log_sha256": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22"
+  },
+  "cow_link_direct": {
+    "fixture": "tests/integration/cowlib/cowlib_uri_probe.erl",
+    "assertions": 9,
+    "beam_exit_code": 0,
+    "native_exit_code": 0,
+    "beam_stdout": "ok\n",
+    "native_stdout": "ok\n",
+    "beam_stdout_sha256": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22",
+    "native_stdout_sha256": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22",
+    "native_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build_stderr_sha256": "a4896f904ae7d018b05cace11d2f39a8c5d5fca965b1c75bce7f3c3ee274e2a8",
+    "note": "Calls unchanged external cow_link with complete eight-module HTTP closure; no adapter modifies its logic.",
+    "commands": [
+      {
+        "argv": [
+          "erlc",
+          "-o",
+          "/private/tmp/nera-cow-http-uri-final/uri-probe",
+          "/private/tmp/nera-cow-http-uri-final/uri-probe/cowlib_uri_probe.erl"
+        ],
+        "label": "beam-compile",
+        "returncode": 0
+      },
+      {
+        "argv": [
+          "erl",
+          "-noshell",
+          "-pa",
+          "/private/tmp/nera-cow-http-uri-final/beam-source/ebin",
+          "/private/tmp/nera-cow-http-uri-final/uri-probe",
+          "-eval",
+          "ok=cowlib_uri_probe:test(),halt()."
+        ],
+        "label": "beam",
+        "returncode": 0
+      },
+      {
+        "argv": [
+          "/private/tmp/nera-base64-one-target/release/nera",
+          "build",
+          "/private/tmp/nera-cow-http-uri-final/uri-probe/cowlib_uri_probe.erl",
+          "/private/tmp/nera-cow-http-uri-final/upstream/src/cow_link.erl",
+          "/private/tmp/nera-cow-http-uri-final/upstream/src/cow_http.erl",
+          "/private/tmp/nera-cow-http-uri-final/upstream/src/cow_http1.erl",
+          "/private/tmp/nera-cow-http-uri-final/upstream/src/cow_http_hd.erl",
+          "/private/tmp/nera-cow-http-uri-final/upstream/src/cow_http2.erl",
+          "/private/tmp/nera-cow-http-uri-final/upstream/src/cow_http_struct_hd.erl",
+          "/private/tmp/nera-cow-http-uri-final/upstream/src/cow_cookie.erl",
+          "/private/tmp/nera-cow-http-uri-final/upstream/src/cow_date.erl",
+          "-I",
+          "/private/tmp/nera-cow-http-uri-final/upstream/include",
+          "-e",
+          "cowlib_uri_probe:test",
+          "-o",
+          "/private/tmp/nera-cow-http-uri-final/uri-probe/native"
+        ],
+        "label": "native-build",
+        "returncode": 0
+      },
+      {
+        "argv": [
+          "/private/tmp/nera-cow-http-uri-final/uri-probe/native"
+        ],
+        "label": "native",
+        "returncode": 0
+      }
+    ],
+    "report_path": "/private/tmp/nera-cow-http-uri-final/uri-probe/report.json",
+    "report_sha256": "a886e4e1b91b0de1285d98a5f8d89c5679cebebf048d7ea73997223c307293bf",
+    "reproduce": "python3 tests/integration/cowlib/uri_probe.py --nera /private/tmp/nera-base64-one-target/release/nera --work-dir /private/tmp/nera-cow-http-uri-final",
+    "native_executable_sha256": "014f1ce03f1d0d9c5e918fdfbca5683140a55e57dd24d394b136186eed687807"
+  },
+  "build": {
+    "exit_code": 0,
+    "command": "RUSTC_WRAPPER= CARGO_TARGET_DIR=/private/tmp/nera-base64-one-target cargo build --release --locked --offline"
+  },
+  "workspace_serial": {
+    "passed": 1912,
+    "failed": 0,
+    "ignored": 1,
+    "command": "RUSTC_WRAPPER= CARGO_TARGET_DIR=/private/tmp/nera-case-clause-target cargo test --workspace --locked --offline --no-fail-fast -- --test-threads=1"
+  },
+  "workspace_clippy": {
+    "status": "passed",
+    "command": "RUSTC_WRAPPER= CARGO_TARGET_DIR=/private/tmp/nera-case-clause-target cargo clippy --workspace --all-targets --locked --offline -- -D warnings"
+  },
+  "native_suite": {
+    "passed": 335,
+    "failed": 0,
+    "skipped": 2,
+    "total": 337,
+    "command": "nera test -j 1 --timeout 30",
+    "skips": [
+      "ets_onecached_full_startup: external onecached modules absent",
+      "ets_onecached_pattern: external onecached_storage module absent"
+    ],
+    "execution": "Outside sandbox for socket tests"
+  },
+  "harness_tests": {
+    "passed": 39,
+    "failed": 0
+  },
+  "http_rerun": {
+    "runner_exit_code": 1,
+    "execution_order": [
+      "cow_http_hd",
+      "cow_http"
+    ],
+    "command": "python3 tests/integration/cowlib/runner.py --module cow_http_hd --module cow_http --nera /private/tmp/nera-base64-one-target/release/nera --work-dir /private/tmp/nera-cow-http-uri-final --offline",
+    "report_path": "/private/tmp/nera-cow-http-uri-final/report.json",
+    "report_sha256": "2f4a430c273c791fc124401a8117a985d858c6800dff4cef6f948d5bec428770",
+    "beam_build_command": [
+      "/opt/homebrew/bin/gmake",
+      "-j2",
+      "all"
+    ],
+    "modules": {
+      "cow_http_hd": {
+        "beam_passed": 63,
+        "native_passed": 56,
+        "native_executed": 63,
+        "native_blocked": 0,
+        "total": 63,
+        "build_exit_code": 0,
+        "native_sources": [
+          "src/cow_http_hd.erl",
+          "src/cow_http.erl",
+          "src/cow_http1.erl",
+          "src/cow_cookie.erl",
+          "src/cow_date.erl",
+          "src/cow_http2.erl",
+          "src/cow_http_struct_hd.erl",
+          "src/cow_link.erl"
+        ],
+        "native_executable_sha256": "81fe046b526d7c305b1cc3d66cd14b2a7e6971874c7f14f61ff400304d77744c"
+      },
+      "cow_http": {
+        "beam_passed": 136,
+        "native_passed": 131,
+        "native_executed": 136,
+        "native_blocked": 0,
+        "total": 136,
+        "build_exit_code": 0,
+        "native_sources": [
+          "src/cow_http.erl",
+          "src/cow_http1.erl",
+          "src/cow_http_hd.erl",
+          "src/cow_cookie.erl",
+          "src/cow_date.erl",
+          "src/cow_http2.erl",
+          "src/cow_http_struct_hd.erl",
+          "src/cow_link.erl"
+        ],
+        "native_executable_sha256": "17c7ca81aa4fafdfe88ee96477453c7b3b79c40d67e106c9f3de60ce2f6bda53"
+      }
+    },
+    "remaining_mismatches": [
+      {
+        "module": "cow_http_hd",
+        "id": "hd_length_float",
+        "group": "error",
+        "expect": "exception",
+        "comparison": "exact",
+        "beam": [
+          "tuple",
+          [
+            [
+              "atom",
+              "exception"
+            ],
+            [
+              "atom",
+              "error"
+            ],
+            [
+              "tuple",
+              [
+                [
+                  "atom",
+                  "badmatch"
+                ],
+                [
+                  "tuple",
+                  [
+                    [
+                      "integer",
+                      3
+                    ],
+                    [
+                      "binary",
+                      "2e30"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "nera": [
+          "tuple",
+          [
+            [
+              "atom",
+              "exception"
+            ],
+            [
+              "atom",
+              "error"
+            ],
+            [
+              "tuple",
+              [
+                [
+                  "atom",
+                  "badmatch"
+                ],
+                [
+                  "tuple",
+                  [
+                    [
+                      "integer",
+                      3
+                    ],
+                    [
+                      "atom",
+                      "undefined"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "wire_equal": false,
+        "status": "failed",
+        "error": "different result or exception class/reason"
+      },
+      {
+        "module": "cow_http_hd",
+        "id": "hd_length_space",
+        "group": "error",
+        "expect": "exception",
+        "comparison": "exact",
+        "beam": [
+          "tuple",
+          [
+            [
+              "atom",
+              "exception"
+            ],
+            [
+              "atom",
+              "error"
+            ],
+            [
+              "tuple",
+              [
+                [
+                  "atom",
+                  "badmatch"
+                ],
+                [
+                  "tuple",
+                  [
+                    [
+                      "integer",
+                      3
+                    ],
+                    [
+                      "binary",
+                      "20"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "nera": [
+          "tuple",
+          [
+            [
+              "atom",
+              "exception"
+            ],
+            [
+              "atom",
+              "error"
+            ],
+            [
+              "tuple",
+              [
+                [
+                  "atom",
+                  "badmatch"
+                ],
+                [
+                  "tuple",
+                  [
+                    [
+                      "integer",
+                      3
+                    ],
+                    [
+                      "atom",
+                      "undefined"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "wire_equal": false,
+        "status": "failed",
+        "error": "different result or exception class/reason"
+      },
+      {
+        "module": "cow_http_hd",
+        "id": "hd_length_list",
+        "group": "error",
+        "expect": "exception",
+        "comparison": "exact",
+        "beam": [
+          "tuple",
+          [
+            [
+              "atom",
+              "exception"
+            ],
+            [
+              "atom",
+              "error"
+            ],
+            [
+              "tuple",
+              [
+                [
+                  "atom",
+                  "badmatch"
+                ],
+                [
+                  "tuple",
+                  [
+                    [
+                      "integer",
+                      3
+                    ],
+                    [
+                      "binary",
+                      "2c2033"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "nera": [
+          "tuple",
+          [
+            [
+              "atom",
+              "exception"
+            ],
+            [
+              "atom",
+              "error"
+            ],
+            [
+              "tuple",
+              [
+                [
+                  "atom",
+                  "badmatch"
+                ],
+                [
+                  "tuple",
+                  [
+                    [
+                      "integer",
+                      3
+                    ],
+                    [
+                      "atom",
+                      "undefined"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "wire_equal": false,
+        "status": "failed",
+        "error": "different result or exception class/reason"
+      },
+      {
+        "module": "cow_http_hd",
+        "id": "hd_length_control",
+        "group": "error",
+        "expect": "exception",
+        "comparison": "exact",
+        "beam": [
+          "tuple",
+          [
+            [
+              "atom",
+              "exception"
+            ],
+            [
+              "atom",
+              "error"
+            ],
+            [
+              "tuple",
+              [
+                [
+                  "atom",
+                  "badmatch"
+                ],
+                [
+                  "tuple",
+                  [
+                    [
+                      "integer",
+                      3
+                    ],
+                    [
+                      "binary",
+                      "0d0a"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "nera": [
+          "tuple",
+          [
+            [
+              "atom",
+              "exception"
+            ],
+            [
+              "atom",
+              "error"
+            ],
+            [
+              "tuple",
+              [
+                [
+                  "atom",
+                  "badmatch"
+                ],
+                [
+                  "tuple",
+                  [
+                    [
+                      "integer",
+                      3
+                    ],
+                    [
+                      "atom",
+                      "undefined"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "wire_equal": false,
+        "status": "failed",
+        "error": "different result or exception class/reason"
+      },
+      {
+        "module": "cow_http_hd",
+        "id": "hd_range_one",
+        "group": "valid",
+        "expect": "return",
+        "comparison": "exact",
+        "beam": [
+          "tuple",
+          [
+            [
+              "atom",
+              "return"
+            ],
+            [
+              "tuple",
+              [
+                [
+                  "atom",
+                  "bytes"
+                ],
+                [
+                  "list",
+                  [
+                    [
+                      "tuple",
+                      [
+                        [
+                          "integer",
+                          0
+                        ],
+                        [
+                          "integer",
+                          10
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "nera": [
+          "tuple",
+          [
+            [
+              "atom",
+              "exception"
+            ],
+            [
+              "atom",
+              "error"
+            ],
+            [
+              "atom",
+              "badarg"
+            ]
+          ]
+        ],
+        "nera_error": "expected return, got ('tuple', (('atom', 'exception'), ('atom', 'error'), ('atom', 'badarg')))",
+        "status": "failed",
+        "error": "missing or invalid engine result"
+      },
+      {
+        "module": "cow_http_hd",
+        "id": "hd_range_open",
+        "group": "valid",
+        "expect": "return",
+        "comparison": "exact",
+        "beam": [
+          "tuple",
+          [
+            [
+              "atom",
+              "return"
+            ],
+            [
+              "tuple",
+              [
+                [
+                  "atom",
+                  "bytes"
+                ],
+                [
+                  "list",
+                  [
+                    [
+                      "tuple",
+                      [
+                        [
+                          "integer",
+                          100
+                        ],
+                        [
+                          "atom",
+                          "infinity"
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "nera": [
+          "tuple",
+          [
+            [
+              "atom",
+              "exception"
+            ],
+            [
+              "atom",
+              "error"
+            ],
+            [
+              "atom",
+              "badarg"
+            ]
+          ]
+        ],
+        "nera_error": "expected return, got ('tuple', (('atom', 'exception'), ('atom', 'error'), ('atom', 'badarg')))",
+        "status": "failed",
+        "error": "missing or invalid engine result"
+      },
+      {
+        "module": "cow_http_hd",
+        "id": "hd_range_multi",
+        "group": "valid",
+        "expect": "return",
+        "comparison": "exact",
+        "beam": [
+          "tuple",
+          [
+            [
+              "atom",
+              "return"
+            ],
+            [
+              "tuple",
+              [
+                [
+                  "atom",
+                  "bytes"
+                ],
+                [
+                  "list",
+                  [
+                    [
+                      "tuple",
+                      [
+                        [
+                          "integer",
+                          0
+                        ],
+                        [
+                          "integer",
+                          1
+                        ]
+                      ]
+                    ],
+                    [
+                      "tuple",
+                      [
+                        [
+                          "integer",
+                          4
+                        ],
+                        [
+                          "integer",
+                          7
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "nera": [
+          "tuple",
+          [
+            [
+              "atom",
+              "exception"
+            ],
+            [
+              "atom",
+              "error"
+            ],
+            [
+              "atom",
+              "badarg"
+            ]
+          ]
+        ],
+        "nera_error": "expected return, got ('tuple', (('atom', 'exception'), ('atom', 'error'), ('atom', 'badarg')))",
+        "status": "failed",
+        "error": "missing or invalid engine result"
+      },
+      {
+        "module": "cow_http",
+        "id": "http_request_spaces",
+        "group": "valid",
+        "expect": "return",
+        "comparison": "exact",
+        "beam": [
+          "tuple",
+          [
+            [
+              "atom",
+              "return"
+            ],
+            [
+              "tuple",
+              [
+                [
+                  "binary",
+                  "474554"
+                ],
+                [
+                  "binary",
+                  "2f78"
+                ],
+                [
+                  "atom",
+                  "HTTP/1.1"
+                ],
+                [
+                  "binary",
+                  ""
+                ]
+              ]
+            ]
+          ]
+        ],
+        "nera": [
+          "tuple",
+          [
+            [
+              "atom",
+              "exception"
+            ],
+            [
+              "atom",
+              "error"
+            ],
+            [
+              "tuple",
+              [
+                [
+                  "atom",
+                  "badmatch"
+                ],
+                [
+                  "list",
+                  [
+                    [
+                      "binary",
+                      "474554"
+                    ],
+                    [
+                      "binary",
+                      ""
+                    ],
+                    [
+                      "binary",
+                      "2f78"
+                    ],
+                    [
+                      "binary",
+                      ""
+                    ],
+                    [
+                      "binary",
+                      "485454502f312e31"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "nera_error": "expected return, got ('tuple', (('atom', 'exception'), ('atom', 'error'), ('tuple', (('atom', 'badmatch'), ('list', (('binary', '474554'), ('binary', ''), ('binary', '2f78'), ('binary', ''), ('binary', '485454502f312e31')))))))",
+        "status": "failed",
+        "error": "missing or invalid engine result"
+      },
+      {
+        "module": "cow_http",
+        "id": "http_merge_request",
+        "group": "valid",
+        "expect": "return",
+        "comparison": "exact",
+        "beam": [
+          "tuple",
+          [
+            [
+              "atom",
+              "return"
+            ],
+            [
+              "list",
+              [
+                [
+                  "tuple",
+                  [
+                    [
+                      "binary",
+                      "3a6d6574686f64"
+                    ],
+                    [
+                      "binary",
+                      "474554"
+                    ]
+                  ]
+                ],
+                [
+                  "tuple",
+                  [
+                    [
+                      "binary",
+                      "3a70617468"
+                    ],
+                    [
+                      "binary",
+                      "2f"
+                    ]
+                  ]
+                ],
+                [
+                  "tuple",
+                  [
+                    [
+                      "binary",
+                      "3a736368656d65"
+                    ],
+                    [
+                      "binary",
+                      "6874747073"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "nera": [
+          "tuple",
+          [
+            [
+              "atom",
+              "return"
+            ],
+            [
+              "list",
+              [
+                [
+                  "tuple",
+                  [
+                    [
+                      "binary",
+                      "3a70617468"
+                    ],
+                    [
+                      "binary",
+                      "2f"
+                    ]
+                  ]
+                ],
+                [
+                  "tuple",
+                  [
+                    [
+                      "binary",
+                      "3a736368656d65"
+                    ],
+                    [
+                      "binary",
+                      "6874747073"
+                    ]
+                  ]
+                ],
+                [
+                  "tuple",
+                  [
+                    [
+                      "binary",
+                      "3a6d6574686f64"
+                    ],
+                    [
+                      "binary",
+                      "474554"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "wire_equal": false,
+        "status": "failed",
+        "error": "different result or exception class/reason"
+      },
+      {
+        "module": "cow_http",
+        "id": "http_h2_get",
+        "group": "valid",
+        "expect": "return",
+        "comparison": "exact",
+        "beam": [
+          "tuple",
+          [
+            [
+              "atom",
+              "return"
+            ],
+            [
+              "tuple",
+              [
+                [
+                  "atom",
+                  "headers"
+                ],
+                [
+                  "list",
+                  [
+                    [
+                      "tuple",
+                      [
+                        [
+                          "binary",
+                          "616363657074"
+                        ],
+                        [
+                          "binary",
+                          "2a2f2a"
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "map",
+                  [
+                    [
+                      [
+                        "atom",
+                        "method"
+                      ],
+                      [
+                        "binary",
+                        "474554"
+                      ]
+                    ],
+                    [
+                      [
+                        "atom",
+                        "path"
+                      ],
+                      [
+                        "binary",
+                        "2f"
+                      ]
+                    ],
+                    [
+                      [
+                        "atom",
+                        "scheme"
+                      ],
+                      [
+                        "binary",
+                        "6874747073"
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "atom",
+                  "undefined"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "nera": [
+          "tuple",
+          [
+            [
+              "atom",
+              "return"
+            ],
+            [
+              "tuple",
+              [
+                [
+                  "atom",
+                  "error"
+                ],
+                [
+                  "atom",
+                  "invalid_content_length_header"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "wire_equal": false,
+        "status": "failed",
+        "error": "different result or exception class/reason"
+      },
+      {
+        "module": "cow_http",
+        "id": "http_h2_cookie_duplicate",
+        "group": "valid",
+        "expect": "return",
+        "comparison": "exact",
+        "beam": [
+          "tuple",
+          [
+            [
+              "atom",
+              "return"
+            ],
+            [
+              "tuple",
+              [
+                [
+                  "atom",
+                  "headers"
+                ],
+                [
+                  "list",
+                  [
+                    [
+                      "tuple",
+                      [
+                        [
+                          "binary",
+                          "636f6f6b6965"
+                        ],
+                        [
+                          "binary",
+                          "613d31"
+                        ]
+                      ]
+                    ],
+                    [
+                      "tuple",
+                      [
+                        [
+                          "binary",
+                          "636f6f6b6965"
+                        ],
+                        [
+                          "binary",
+                          "623d32"
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "map",
+                  [
+                    [
+                      [
+                        "atom",
+                        "method"
+                      ],
+                      [
+                        "binary",
+                        "474554"
+                      ]
+                    ],
+                    [
+                      [
+                        "atom",
+                        "path"
+                      ],
+                      [
+                        "binary",
+                        "2f"
+                      ]
+                    ],
+                    [
+                      [
+                        "atom",
+                        "scheme"
+                      ],
+                      [
+                        "binary",
+                        "6874747073"
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "atom",
+                  "undefined"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "nera": [
+          "tuple",
+          [
+            [
+              "atom",
+              "return"
+            ],
+            [
+              "tuple",
+              [
+                [
+                  "atom",
+                  "error"
+                ],
+                [
+                  "atom",
+                  "multiple_content_length_headers"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "wire_equal": false,
+        "status": "failed",
+        "error": "different result or exception class/reason"
+      },
+      {
+        "module": "cow_http",
+        "id": "http_h2_te",
+        "group": "valid",
+        "expect": "return",
+        "comparison": "exact",
+        "beam": [
+          "tuple",
+          [
+            [
+              "atom",
+              "return"
+            ],
+            [
+              "tuple",
+              [
+                [
+                  "atom",
+                  "headers"
+                ],
+                [
+                  "list",
+                  [
+                    [
+                      "tuple",
+                      [
+                        [
+                          "binary",
+                          "7465"
+                        ],
+                        [
+                          "binary",
+                          "747261696c657273"
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "map",
+                  [
+                    [
+                      [
+                        "atom",
+                        "method"
+                      ],
+                      [
+                        "binary",
+                        "474554"
+                      ]
+                    ],
+                    [
+                      [
+                        "atom",
+                        "path"
+                      ],
+                      [
+                        "binary",
+                        "2f"
+                      ]
+                    ],
+                    [
+                      [
+                        "atom",
+                        "scheme"
+                      ],
+                      [
+                        "binary",
+                        "6874747073"
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "atom",
+                  "undefined"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "nera": [
+          "tuple",
+          [
+            [
+              "atom",
+              "return"
+            ],
+            [
+              "tuple",
+              [
+                [
+                  "atom",
+                  "error"
+                ],
+                [
+                  "atom",
+                  "invalid_content_length_header"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "wire_equal": false,
+        "status": "failed",
+        "error": "different result or exception class/reason"
+      }
+    ]
+  },
+  "core_rerun": {
+    "runner_exit_code": 0,
+    "passed": 122,
+    "total": 122,
+    "command": "TZ=Pacific/Honolulu python3 tests/integration/cowlib/runner.py --nera /private/tmp/nera-base64-one-target/release/nera --work-dir /private/tmp/nera-cow-uri-final-core --offline",
+    "report_path": "/private/tmp/nera-cow-uri-final-core/report.json",
+    "report_sha256": "f86c4b22694b12b64d390a08cbf4da7cab9efa30671eb4dfa1950daca302959f",
+    "modules": {
+      "cow_qs": {
+        "passed": 29,
+        "total": 29
+      },
+      "cow_cookie": {
+        "passed": 34,
+        "total": 34
+      },
+      "cow_date": {
+        "passed": 26,
+        "total": 26
+      },
+      "cow_base64url": {
+        "passed": 33,
+        "total": 33
+      }
+    }
+  },
+  "logs": {
+    "build": {
+      "path": "/private/tmp/nera-uri-map-build.log",
+      "sha256": "6e4e40a248821e7f7bf96cebea0cc9134ee71f702ba08b1d34877d4a38d88576"
+    },
+    "workspace": {
+      "path": "/private/tmp/nera-uri-map-workspace.log",
+      "sha256": "652943b4e2e18e549915f1502fb8e56fa3c9529b986447353cd73401628c2ded"
+    },
+    "clippy": {
+      "path": "/private/tmp/nera-uri-map-clippy.log",
+      "sha256": "afdb803679ae2f2c3c1a4fd04d1efa89edae4ad158cd1e224e973846660b0716"
+    },
+    "native": {
+      "path": "/private/tmp/nera-uri-map-full-native.log",
+      "sha256": "c222f2eafdf6f36fd3f8116cd9613931a1b9d15da2857f0b31dc19d1082bb795"
+    },
+    "harness": {
+      "path": "/private/tmp/nera-uri-harness-final.log",
+      "sha256": "b234c35788b08f5df167d1e574b4da6b3d54d7a38712923439f0760f69ffb302"
+    },
+    "http": {
+      "path": "/private/tmp/nera-uri-final-http.log",
+      "sha256": "a195630975e50de722bc00d6e3532cdf15cc2affb01f7135837e865168568ff0"
+    },
+    "core": {
+      "path": "/private/tmp/nera-uri-final-core.log",
+      "sha256": "e8b31ea24d1d0fff512579df43e1db5e9d1561e243774962099c7e731321f2b0"
+    }
+  },
+  "intermediate_runs": {
+    "before_map_fix": {
+      "report_sha256": "85fddf3cdebea2f52cf2d093b778a565a848f4348e0e8a92bad376540f096d41",
+      "cow_http_hd_passed": 56,
+      "cow_http_passed": 92,
+      "all_native_cases_executed": true
+    },
+    "invalid_beam_build": {
+      "excluded_from_verdict": true,
+      "reason": "make exited 0 without .beam modules; all BEAM outcomes were undef, while native outputs existed.",
+      "http_report_sha256": "1cd8d9cfe22ac900cf6bf2d47742f5931da514c62981962a72037b29325c54d8",
+      "core_report_sha256": "608a3e3658c6be66e49ae1772587b794937694c82e18abfed5ff1638f5e99cbf",
+      "corrective_action": "Explicit all target, GNU gmake when available and module-output prerequisite checks; new fresh checkouts for final comparison."
+    }
+  },
+  "limitations": [
+    "Twelve exact native HTTP mismatches remain; none is normalized away.",
+    "cow_http_hd covers 12/68 public functions; no full upstream HTTP EUnit/PropEr framework or suite execution.",
+    "URI coverage is scoped to 172 cases; other APIs and exhaustive malformed-input/scheme equivalence are not claimed.",
+    "Base64url properties, cross-platform and installed-archive/cross-target checks not rerun.",
+    "No Cowlib/OTP code or tests vendored; all pinned Cowlib builds and original modules stay external.",
+    "No publication or remote CI; CI/Release remain manually paused.",
+    "Original checkout and unrelated binary modifications preserved."
+  ],
+  "publication_validation": {
+    "integration_base": "2cf9df0f560e40c07cbf2a1b6abafe273cbd6024",
+    "validated_commit": "deacc8564ad98d59cd94eb32645fbb299cecf48c",
+    "validated_tree": "c97cfaa8edbdf8b0a5803c48c9b21f4a3e5ea565",
+    "note": "Revalidated after rebasing onto main 2cf9df0 (PR 76 fused-send isolation). Subsequent changes are documentation/evidence only. Earlier results remain historical on main 20afa67.",
+    "nera_sha256": "7518f722b5a11c2c124d25e5531e3e7923dad2d6cfcbd9f006ee0908103480ce",
+    "runtime_sha256": "c1b1a59c60c46756cc58b5920ad8e105ab062cfac3dda9ec50b6c4174d5da1bb",
+    "source_sha256": {
+      "crates/nera-codegen/src/func_translator/instructions.rs": "03f8ce59905e90296f1657985fdd7ef085385e39785f54f8937908ff06222f1f",
+      "crates/nera-codegen/src/func_translator/mod.rs": "b0b72aa5055aae9e1fe38876822a90169e2855b57a16aff1103f485b4380e5af",
+      "crates/nera-ir/src/ir.rs": "6ebd3b6d794473831b7491dcd3fd881b8ed06df3f91fc64788dbc2e021bda733",
+      "crates/nera-ir/src/lower/closure.rs": "ec8dcc06628e8ad6920ef84f564077aad878b0efff2af7ddff11044b7ecc613a",
+      "crates/nera-ir/src/lower/list_comp.rs": "3a994807fd60849fd49676d59c3b08c134673f753e32a2e295f63ec8b674e533",
+      "crates/nera-ir/src/lower/mod.rs": "12c67b067b8e871ba531f83c4082334072202f4917d5f60d12f73ce75209c7bd",
+      "crates/nera-ir/src/lower/tests.rs": "cdd6540268a4e3138c501eb7e89337560c3550ba7604a0b45e6144009f096be1",
+      "crates/nera-ir/src/passes/tests.rs": "48b637f4052122aa0b24eb85e3f73c5b79de0ce7ed1a01e2903764c606faecbc",
+      "crates/nera-ir/src/pattern.rs": "d1dce9ad6f20b804481842ca021cd9ae57769c74d8f5e45dd72bdaeed72c6114",
+      "crates/nera-ir/src/validate.rs": "09fb66428fd47f5281da1726f75124561f4280646d9f160121c78f70ddc8235c",
+      "crates/nera-ir/src/verify/tests.rs": "1ab60a2468ca76ff60aaeb96e7b18c1669916e01bacc37df807205bfaec2ad90",
+      "crates/nera-ir/tests/passes.rs": "06e8e6799219c7e5b8a750e4d41e4d558dae7b49952d95fa9a85dcef421e6e9f",
+      "tests/integration/cowlib/runner.py": "10b1bd9b82bce6a391d86b1beb5cfb9f0131380899c79502d52378e116a7d6fc",
+      "tests/integration/cowlib/test_runner.py": "227edd70ff3418016363a534fdef4762a2878fa4009588b3527cf53271749d1d",
+      "erlang/stdlib/uri_string.erl": "c54acf9f19b797f476240b9f52c26cf51d82fe7e3aee4da72d6bde348bee79ee",
+      "scripts/fixtures/uri_cases.erl": "4dbe7131dd753f22bb03990c65ef9d522a3dc5e054bb7d980f1da06250cfec38",
+      "scripts/generate-uri-regression.escript": "cb6f8a81e1b98ec1223a168306a72d63afb016b39f1833b7da679ba5d0c03399",
+      "tests/uri_string_regression.erl": "06b4ba8f826398cce8e80df14da9460b834350ddbd7ebdcfad462dd0accb0cc5",
+      "tests/exception_before_guard.erl": "258885ee90e1591008b475f5c69c38755a74df7dd8cb8c43a0440f6a55738d74",
+      "tests/map_missing_key_pattern.erl": "19e03035e62ae7d7831dfc87b0a38aa6ee8b78532263dc17f2a479132bbe85d7",
+      "tests/integration/cowlib/cowlib_uri_probe.erl": "cef93a96e3b90a8d963c35b0fd5c15b22fd7cf3d782ad3298b173fbedbcdb846",
+      "tests/integration/cowlib/uri_probe.py": "131e17713e0a892df9d8668291a6cfd11823f616d567976d8cf1b0468fe9f65c"
+    },
+    "main_runtime_process_sha256": "15d5a36017dd956cd5dff751c17fab918151a2cbc9968c8d5b957dd3b1307d0d",
+    "build": {
+      "exit_code": 0,
+      "log_sha256": "1ec2ac5d46ce210d371f73e634c953cae5a72cfe963ff4027b754119eb6fee3c"
+    },
+    "workspace_serial": {
+      "passed": 1914,
+      "failed": 0,
+      "ignored": 1,
+      "log_sha256": "b9572c1dd96e83125db3823bef6e0235b907b2e43c3f299ea93ec30fb53e8fc6"
+    },
+    "workspace_clippy": {
+      "status": "passed",
+      "log_sha256": "f2cd1101bdd3d820f7950d98e2627e8782a28a93d72cfa404ede81bd3da57f4d"
+    },
+    "native_suite": {
+      "passed": 336,
+      "failed": 0,
+      "skipped": 2,
+      "total": 338,
+      "command": "nera test -j 1 --timeout 30",
+      "log_sha256": "00568b6def236d8571d7ed00c738592b50bcabef97f8546d9232538c25807ede",
+      "skips": [
+        "ets_onecached_full_startup",
+        "ets_onecached_pattern"
+      ]
+    },
+    "core_rerun": {
+      "passed": 122,
+      "total": 122,
+      "runner_exit_code": 0,
+      "report_sha256": "d66953eef23ff56b2a45bf5b2c9afa78f491e2785d235d78ced202ff1397206a",
+      "report_path": "/private/tmp/nera-cow-uri-pr-core/report.json"
+    },
+    "http_rerun": {
+      "runner_exit_code": 1,
+      "report_sha256": "68b55c6f31e83774427204fc3eb483474e122f3fb1ad40d94a8e7d2e16fc351a",
+      "report_path": "/private/tmp/nera-cow-uri-pr-http/report.json",
+      "execution_order": [
+        "cow_http_hd",
+        "cow_http"
+      ],
+      "modules": {
+        "cow_http_hd": {
+          "beam_passed": 63,
+          "native_passed": 56,
+          "native_executed": 63,
+          "total": 63,
+          "build_exit_code": 0
+        },
+        "cow_http": {
+          "beam_passed": 136,
+          "native_passed": 131,
+          "native_executed": 136,
+          "total": 136,
+          "build_exit_code": 0
+        }
+      }
+    },
+    "cow_link_direct": {
+      "passed": 9,
+      "total": 9,
+      "report_sha256": "4d8d3d675898408acb1e68df01e97a2750518babbd178c70126e65f08c663e6d",
+      "report_path": "/private/tmp/nera-cow-uri-pr-http/uri-probe/report.json"
+    },
+    "harness_tests": {
+      "passed": 39,
+      "failed": 0,
+      "log_sha256": "ef94632760c92f643289a4723758eeeb32434cbd0f7e67a16a8c5a15ee6305a8"
+    },
+    "remote_ci": "CI and Release confirmed disabled_manually; no remote run requested.",
+    "omissions": [
+      "Linux/Windows, cross-target and installed-archive checks not run.",
+      "Base64url properties and full upstream HTTP suites not rerun.",
+      "Independent review and explicit merge approval remain required."
+    ]
+  }
+}

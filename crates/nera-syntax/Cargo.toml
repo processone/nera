@@ -1,0 +1,16 @@
+[package]
+name = "nera-syntax"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "Erlang lexer, parser, and AST for the nera compiler"
+
+[dependencies]
+logos = "0.16"
+num-bigint = "0.4"
+string-interner = "0.17"
+thiserror = { workspace = true }
+codespan-reporting = { workspace = true }

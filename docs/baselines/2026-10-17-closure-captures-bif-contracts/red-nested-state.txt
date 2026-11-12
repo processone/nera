@@ -1,0 +1,22 @@
+   Compiling nera-ir v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-ir)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.08s
+     Running unittests src/lib.rs (/tmp/nera-transfer-target/debug/deps/nera_ir-8b8945ec4992cdab)
+
+running 1 test
+test lower::tests::nested_functions_isolate_deferred_binary_registers ... FAILED
+
+failures:
+
+---- lower::tests::nested_functions_isolate_deferred_binary_registers stdout ----
+
+thread 'lower::tests::nested_functions_isolate_deferred_binary_registers' (11162900) panicked at crates/nera-ir/src/lower/tests.rs:1849:5:
+nested register IDs must not inherit parent windows
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    lower::tests::nested_functions_isolate_deferred_binary_registers
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 412 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p nera-ir --lib`

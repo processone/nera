@@ -1,0 +1,33 @@
+   Compiling nera-runtime v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.92s
+   Doc-tests nera_runtime
+
+running 10 tests
+test crates/nera-runtime/src/process.rs - process::Process::hibernate (line 1276) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::Process::run_slice (line 1447) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::Process::collect_garbage (line 1096) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::ProcessContext (line 629) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::Mailbox::scatter_roots (line 2096) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::ProcessEntry (line 94) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::Process::collect_garbage_full (line 1179) - compile fail ... ok
+test crates/nera-runtime/src/process.rs - process::ProcessEntry (line 110) - compile fail ... FAILED
+test crates/nera-runtime/src/process.rs - process::ProcessEntry (line 104) - compile fail ... FAILED
+test crates/nera-runtime/src/process.rs - process::process_exit_signals (line 1669) - compile fail ... FAILED
+
+failures:
+
+---- crates/nera-runtime/src/process.rs - process::ProcessEntry (line 110) stdout ----
+Test compiled successfully, but it's marked `compile_fail`.
+---- crates/nera-runtime/src/process.rs - process::ProcessEntry (line 104) stdout ----
+Test compiled successfully, but it's marked `compile_fail`.
+---- crates/nera-runtime/src/process.rs - process::process_exit_signals (line 1669) stdout ----
+Test compiled successfully, but it's marked `compile_fail`.
+
+failures:
+    crates/nera-runtime/src/process.rs - process::ProcessEntry (line 104)
+    crates/nera-runtime/src/process.rs - process::ProcessEntry (line 110)
+    crates/nera-runtime/src/process.rs - process::process_exit_signals (line 1669)
+
+test result: FAILED. 7 passed; 3 failed; 0 ignored; 0 measured; 18 filtered out; finished in 0.65s
+
+error: doctest failed, to rerun pass `-p nera-runtime --doc`

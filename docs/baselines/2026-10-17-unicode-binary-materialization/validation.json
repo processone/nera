@@ -1,0 +1,36 @@
+{
+  "base_ref": "origin/main",
+  "base": "67b2ccfbf69e95e888585c21c373e9e62247ae96",
+  "target": "uncommitted worktree mr/unicode-binary-materialization",
+  "source_manifest_sha256": "375748c74d8780f5bb575fce4833bef8960551d00ace7416a74ddb8128fa4380",
+  "checks": {
+    "release_build": 0,
+    "clippy": 0,
+    "workspace": {
+      "exit": 0,
+      "passed": 2017,
+      "ignored": 1
+    },
+    "runtime_release": {
+      "exit": 0,
+      "passed": 668,
+      "ignored": 1
+    },
+    "native_broad": {
+      "exit": 0,
+      "passed": 117
+    },
+    "native_strict_numeric": {
+      "exit": 0,
+      "passed": 1
+    },
+    "otp_shared_fixture": 0,
+    "intel_runtime_check": 0,
+    "windows_runtime_check": 0,
+    "performance": 0,
+    "source_hashes_match": true,
+    "tracked_and_new_whitespace": 0
+  },
+  "compatibility": "Strict malformed numeric lists deliberately differ from OTP29; see COMPATIBILITY.md and otp-numeric-difference.txt.",
+  "publication": "Not requested; no stage, commit, push or PR."
+}

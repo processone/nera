@@ -1,0 +1,26 @@
+{
+  "workspace-tests.txt": {
+    "passed": 1964,
+    "failed": 0,
+    "ignored": 1
+  },
+  "release-tests.txt": {
+    "passed": 623,
+    "failed": 0,
+    "ignored": 1
+  },
+  "base": "9cd08b8a58ff2138eb99f23be8dd5bfd20bca34f",
+  "target": "local worktree mr/socket-modes-atomic-arrays",
+  "platform": "macOS-15.7.7-arm64-arm-64bit-Mach-O",
+  "native": {
+    "tcp_passed": 11,
+    "atomics_passed": 4,
+    "counters_passed": 1,
+    "failed": 0,
+    "skipped": 0
+  },
+  "artifacts": {
+    "/tmp/nera-transfer-target/release/nera": "213532ae244deb87826a94408b10dbed52d952c488604733463b666418d51cb7",
+    "/tmp/nera-transfer-target/release/libnera_runtime.a": "883d083ffed4422a0733c98af4c87d1ec2c2b0b6feee7e8c7185c60f60dfa0c9"
+  }
+}

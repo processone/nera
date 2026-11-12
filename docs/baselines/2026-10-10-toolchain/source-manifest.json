@@ -1,0 +1,21 @@
+{
+  ".github/workflows/ci.yml": "86140de70f73c6ef4c8bfa2fb9c3e3054c4e5eb70eebb4edbb77add9d7a91f3d",
+  ".github/workflows/release.yml": "ed986aeb3194547129c423e74b653b055c4934ff51e4e0d03e687284ebbdc956",
+  ".gitignore": "fb00657b49efe0a9c516e23dbeec3bdea962d97a350eac812439b3f7a731b062",
+  "CONTRIBUTING.md": "b0a3aa37c882e0b05769376f46aea749be295fca3bfaa07df3127eb2927bad28",
+  "Cargo.lock": "2b23030c542224604bc14c0b2b0bceff36dcde82391ab8ebe6a7d7b575802e3e",
+  "README.md": "6a9e1a70b0140f4acfaf872a3ba5c050d67948d77742d5fcbdee0634fe4adb25",
+  "crates/nera-codegen/Cargo.toml": "028355984a306c91ff431d97c47c4aae192e90071dbcd6ff39da46e8c10f7901",
+  "crates/nera-codegen/src/func_translator/ffi_emit.rs": "867f9a31363b3d754d2773305f3141cb3a9d571a1a119b18c6f6f9941bc8dec0",
+  "crates/nera-codegen/src/func_translator/mod.rs": "c751499fbdd702ce8eb44da0493e787514a927e26b372437d0ba5668635cf20f",
+  "crates/nera-codegen/src/linker.rs": "31eb9f627616f521f23d12319108b53b019647482c78b97d770e2c49dca01ec1",
+  "crates/nera-fmt/src/format.rs": "62325b32172363fc4087cedf1d08b282c155ffbcfe0d29e38ffb1112fdc9ac26",
+  "crates/nera-fmt/tests/operator_precedence.rs": "6234c653c3d9b95f63f15a99c4e599bdf4a126406084f6bb9cdf4d65ab1233d0",
+  "crates/nera-runtime/src/process.rs": "2f7aae0f51f043af3e805543249edbc8ed3889bc9dfc586a88b2ad07dcaef9c3",
+  "crates/nera/build.rs": "59b85d7b5b31a9996e0438c771cd26ef6048b1153b5d0194105246341dcf998a",
+  "docs/PROJECT_STATUS.md": "d9f50fd7c53fc4ddf01e24598f938f290da4e531d5dab2fab0c3d475cf436262",
+  "rust-toolchain.toml": "2ad6f15416572b4836585087f1d4abc53b8fa2dbd616f8dacfaa587ed6714228",
+  "scripts/dist.sh": "36ebf79461cd8ee38ff37070fe5dd795b82f1667769d73974a8ddb0b04adb5c2",
+  "scripts/test-dist.py": "dfa9abdac3aa0ade9c26794ecdad59f4308c304e2a6b9601e94dadfb19beb47e",
+  "tests/resume_exception.erl": "a38f94eea22217ca30bd60a8054fe73da62d8f34470718cd6e94dfa2d4cf1ccb"
+}

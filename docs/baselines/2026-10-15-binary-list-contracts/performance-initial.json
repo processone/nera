@@ -1,0 +1,590 @@
+{
+  "start": {
+    "utc": "2026-10-15T16:33:28.975073+00:00",
+    "load": [
+      9.06591796875,
+      7.54345703125,
+      7.18115234375
+    ]
+  },
+  "cases": {
+    "binary_lists": {
+      "samples_us": [
+        {
+          "before": [
+            {
+              "constant": 1891,
+              "dynamic": 2682,
+              "unit": 2795,
+              "multi": 3711,
+              "append": 12508,
+              "subtract": 19885,
+              "structural": 5536
+            },
+            {
+              "constant": 1909,
+              "dynamic": 2312,
+              "unit": 2788,
+              "multi": 3689,
+              "append": 12363,
+              "subtract": 19501,
+              "structural": 5612
+            },
+            {
+              "constant": 2769,
+              "dynamic": 2305,
+              "unit": 2849,
+              "multi": 3685,
+              "append": 12591,
+              "subtract": 19837,
+              "structural": 5360
+            },
+            {
+              "constant": 1900,
+              "dynamic": 2307,
+              "unit": 2773,
+              "multi": 3696,
+              "append": 13107,
+              "subtract": 19817,
+              "structural": 5593
+            },
+            {
+              "constant": 1885,
+              "dynamic": 2300,
+              "unit": 2772,
+              "multi": 3685,
+              "append": 12214,
+              "subtract": 20017,
+              "structural": 5591
+            },
+            {
+              "constant": 1896,
+              "dynamic": 2297,
+              "unit": 2774,
+              "multi": 3705,
+              "append": 11968,
+              "subtract": 19371,
+              "structural": 5636
+            },
+            {
+              "constant": 1906,
+              "dynamic": 2297,
+              "unit": 2772,
+              "multi": 3688,
+              "append": 12637,
+              "subtract": 19845,
+              "structural": 5678
+            },
+            {
+              "constant": 2005,
+              "dynamic": 2300,
+              "unit": 2778,
+              "multi": 3726,
+              "append": 12861,
+              "subtract": 20571,
+              "structural": 5608
+            },
+            {
+              "constant": 1887,
+              "dynamic": 2301,
+              "unit": 2772,
+              "multi": 3861,
+              "append": 12604,
+              "subtract": 19464,
+              "structural": 5528
+            }
+          ],
+          "after": [
+            {
+              "constant": 1897,
+              "dynamic": 2420,
+              "unit": 2828,
+              "multi": 3906,
+              "append": 13048,
+              "subtract": 19396,
+              "structural": 32130
+            },
+            {
+              "constant": 1901,
+              "dynamic": 2434,
+              "unit": 2915,
+              "multi": 3895,
+              "append": 12317,
+              "subtract": 21252,
+              "structural": 34005
+            },
+            {
+              "constant": 2030,
+              "dynamic": 2422,
+              "unit": 2833,
+              "multi": 3858,
+              "append": 12418,
+              "subtract": 19923,
+              "structural": 31657
+            },
+            {
+              "constant": 1941,
+              "dynamic": 2623,
+              "unit": 2931,
+              "multi": 3883,
+              "append": 12892,
+              "subtract": 20252,
+              "structural": 32153
+            },
+            {
+              "constant": 1901,
+              "dynamic": 2451,
+              "unit": 4070,
+              "multi": 4237,
+              "append": 14190,
+              "subtract": 19720,
+              "structural": 32610
+            },
+            {
+              "constant": 1933,
+              "dynamic": 2446,
+              "unit": 2832,
+              "multi": 3866,
+              "append": 12120,
+              "subtract": 19998,
+              "structural": 33009
+            },
+            {
+              "constant": 1890,
+              "dynamic": 2609,
+              "unit": 2841,
+              "multi": 3874,
+              "append": 12093,
+              "subtract": 20134,
+              "structural": 31654
+            },
+            {
+              "constant": 1895,
+              "dynamic": 2420,
+              "unit": 2827,
+              "multi": 3849,
+              "append": 12090,
+              "subtract": 19282,
+              "structural": 31740
+            },
+            {
+              "constant": 1916,
+              "dynamic": 2437,
+              "unit": 2823,
+              "multi": 3853,
+              "append": 12149,
+              "subtract": 19963,
+              "structural": 32393
+            }
+          ]
+        },
+        {
+          "before": [
+            {
+              "constant": 1892,
+              "dynamic": 2294,
+              "unit": 2774,
+              "multi": 3684,
+              "append": 12350,
+              "subtract": 19785,
+              "structural": 5520
+            },
+            {
+              "constant": 1896,
+              "dynamic": 2281,
+              "unit": 2773,
+              "multi": 3707,
+              "append": 12013,
+              "subtract": 19946,
+              "structural": 5531
+            },
+            {
+              "constant": 1901,
+              "dynamic": 2368,
+              "unit": 2823,
+              "multi": 3721,
+              "append": 12918,
+              "subtract": 20830,
+              "structural": 5640
+            },
+            {
+              "constant": 1915,
+              "dynamic": 2359,
+              "unit": 2836,
+              "multi": 3684,
+              "append": 12381,
+              "subtract": 19683,
+              "structural": 5529
+            },
+            {
+              "constant": 1921,
+              "dynamic": 2295,
+              "unit": 2775,
+              "multi": 3688,
+              "append": 13472,
+              "subtract": 21089,
+              "structural": 5607
+            },
+            {
+              "constant": 1930,
+              "dynamic": 2310,
+              "unit": 2798,
+              "multi": 3734,
+              "append": 13377,
+              "subtract": 19582,
+              "structural": 5584
+            },
+            {
+              "constant": 1896,
+              "dynamic": 2305,
+              "unit": 2809,
+              "multi": 3691,
+              "append": 13321,
+              "subtract": 20048,
+              "structural": 5487
+            },
+            {
+              "constant": 2780,
+              "dynamic": 3840,
+              "unit": 3790,
+              "multi": 5947,
+              "append": 18793,
+              "subtract": 30207,
+              "structural": 8571
+            },
+            {
+              "constant": 1825,
+              "dynamic": 2225,
+              "unit": 2688,
+              "multi": 3559,
+              "append": 12709,
+              "subtract": 19346,
+              "structural": 5436
+            }
+          ],
+          "after": [
+            {
+              "constant": 1900,
+              "dynamic": 2434,
+              "unit": 2839,
+              "multi": 3860,
+              "append": 12247,
+              "subtract": 19715,
+              "structural": 31758
+            },
+            {
+              "constant": 1914,
+              "dynamic": 2460,
+              "unit": 2867,
+              "multi": 3884,
+              "append": 12352,
+              "subtract": 19799,
+              "structural": 31603
+            },
+            {
+              "constant": 1915,
+              "dynamic": 2441,
+              "unit": 2858,
+              "multi": 3901,
+              "append": 12933,
+              "subtract": 20678,
+              "structural": 34603
+            },
+            {
+              "constant": 1900,
+              "dynamic": 2431,
+              "unit": 2788,
+              "multi": 3849,
+              "append": 12833,
+              "subtract": 21314,
+              "structural": 31994
+            },
+            {
+              "constant": 1952,
+              "dynamic": 2449,
+              "unit": 2862,
+              "multi": 4484,
+              "append": 13882,
+              "subtract": 19624,
+              "structural": 31575
+            },
+            {
+              "constant": 1959,
+              "dynamic": 2485,
+              "unit": 2915,
+              "multi": 3946,
+              "append": 14042,
+              "subtract": 20489,
+              "structural": 31635
+            },
+            {
+              "constant": 1889,
+              "dynamic": 2436,
+              "unit": 2860,
+              "multi": 3932,
+              "append": 14627,
+              "subtract": 21929,
+              "structural": 38097
+            },
+            {
+              "constant": 1959,
+              "dynamic": 2844,
+              "unit": 2860,
+              "multi": 4045,
+              "append": 18914,
+              "subtract": 20880,
+              "structural": 33734
+            },
+            {
+              "constant": 3204,
+              "dynamic": 3245,
+              "unit": 3408,
+              "multi": 4514,
+              "append": 14424,
+              "subtract": 19156,
+              "structural": 31068
+            }
+          ]
+        },
+        {
+          "before": [
+            {
+              "constant": 1834,
+              "dynamic": 2214,
+              "unit": 2679,
+              "multi": 3555,
+              "append": 11982,
+              "subtract": 19493,
+              "structural": 5452
+            },
+            {
+              "constant": 1899,
+              "dynamic": 2298,
+              "unit": 2774,
+              "multi": 3686,
+              "append": 13140,
+              "subtract": 19626,
+              "structural": 5428
+            },
+            {
+              "constant": 1832,
+              "dynamic": 2226,
+              "unit": 2683,
+              "multi": 3579,
+              "append": 12386,
+              "subtract": 18713,
+              "structural": 5456
+            },
+            {
+              "constant": 1850,
+              "dynamic": 2253,
+              "unit": 2686,
+              "multi": 3568,
+              "append": 11824,
+              "subtract": 19202,
+              "structural": 5617
+            },
+            {
+              "constant": 1818,
+              "dynamic": 2221,
+              "unit": 2680,
+              "multi": 3557,
+              "append": 11759,
+              "subtract": 18552,
+              "structural": 5339
+            },
+            {
+              "constant": 1833,
+              "dynamic": 2220,
+              "unit": 2677,
+              "multi": 3558,
+              "append": 11749,
+              "subtract": 18574,
+              "structural": 5306
+            },
+            {
+              "constant": 1840,
+              "dynamic": 2234,
+              "unit": 2679,
+              "multi": 3554,
+              "append": 11669,
+              "subtract": 18696,
+              "structural": 5374
+            },
+            {
+              "constant": 1844,
+              "dynamic": 2233,
+              "unit": 2692,
+              "multi": 3558,
+              "append": 12017,
+              "subtract": 18769,
+              "structural": 5354
+            },
+            {
+              "constant": 1845,
+              "dynamic": 2221,
+              "unit": 2678,
+              "multi": 3550,
+              "append": 12201,
+              "subtract": 19422,
+              "structural": 5373
+            }
+          ],
+          "after": [
+            {
+              "constant": 1963,
+              "dynamic": 2361,
+              "unit": 2885,
+              "multi": 3890,
+              "append": 12482,
+              "subtract": 21481,
+              "structural": 32207
+            },
+            {
+              "constant": 1826,
+              "dynamic": 2347,
+              "unit": 2775,
+              "multi": 3851,
+              "append": 12176,
+              "subtract": 20477,
+              "structural": 31706
+            },
+            {
+              "constant": 1832,
+              "dynamic": 2344,
+              "unit": 2731,
+              "multi": 3729,
+              "append": 11955,
+              "subtract": 19179,
+              "structural": 30505
+            },
+            {
+              "constant": 1862,
+              "dynamic": 2383,
+              "unit": 2732,
+              "multi": 3845,
+              "append": 12468,
+              "subtract": 19219,
+              "structural": 30949
+            },
+            {
+              "constant": 1854,
+              "dynamic": 2337,
+              "unit": 2731,
+              "multi": 3726,
+              "append": 11769,
+              "subtract": 19244,
+              "structural": 30527
+            },
+            {
+              "constant": 1836,
+              "dynamic": 2337,
+              "unit": 2733,
+              "multi": 3720,
+              "append": 12432,
+              "subtract": 19760,
+              "structural": 31309
+            },
+            {
+              "constant": 1915,
+              "dynamic": 2379,
+              "unit": 2740,
+              "multi": 3738,
+              "append": 11694,
+              "subtract": 18923,
+              "structural": 30671
+            },
+            {
+              "constant": 1843,
+              "dynamic": 2367,
+              "unit": 2787,
+              "multi": 3723,
+              "append": 11767,
+              "subtract": 18698,
+              "structural": 32153
+            },
+            {
+              "constant": 1838,
+              "dynamic": 2401,
+              "unit": 2731,
+              "multi": 3743,
+              "append": 12580,
+              "subtract": 19094,
+              "structural": 31150
+            }
+          ]
+        }
+      ],
+      "medians_us": {
+        "before": {
+          "append": 12386,
+          "constant": 1896,
+          "dynamic": 2297,
+          "multi": 3686,
+          "structural": 5529,
+          "subtract": 19626,
+          "unit": 2773
+        },
+        "after": {
+          "append": 12432,
+          "constant": 1901,
+          "dynamic": 2434,
+          "multi": 3866,
+          "structural": 31740,
+          "subtract": 19799,
+          "unit": 2833
+        }
+      },
+      "percent_change": {
+        "append": 0.37138704989503335,
+        "constant": 0.2637130801687704,
+        "dynamic": 5.964301262516325,
+        "multi": 4.883342376559963,
+        "structural": 474.0640260444927,
+        "subtract": 0.8814837460511482,
+        "unit": 2.1637216011539895
+      },
+      "series_percent_change": [
+        {
+          "append": -2.176157572869508,
+          "constant": 0.052631578947370805,
+          "dynamic": 5.910473707083885,
+          "multi": 4.816017316017307,
+          "structural": 474.8793134274987,
+          "subtract": 0.6351766900236866,
+          "unit": 2.1268925739005073
+        },
+        {
+          "append": 7.4624554884657135,
+          "constant": 0.7364544976328213,
+          "dynamic": 6.247288503253801,
+          "multi": 6.529395827688966,
+          "structural": 474.18188392695714,
+          "subtract": 2.7223503459340215,
+          "unit": 2.2158684774839177
+        },
+        {
+          "append": 1.6190953096311134,
+          "constant": 0.1630434782608603,
+          "dynamic": 6.064690026954178,
+          "multi": 5.059021922428331,
+          "structural": 479.6427242277633,
+          "subtract": 2.3975704619319194,
+          "unit": 1.977611940298507
+        }
+      ]
+    }
+  },
+  "binary_sha256": {
+    "/tmp/nera-binary-list-before": "45b29582a9795b83cef5051998cd539aec64125fd801f4a7edd5a15a1c03da54",
+    "/tmp/nera-binary-list-after": "f0958aa258816e86af8549f806dd85b4340ec4e7a07c5e0427fc1e3b3d462374"
+  },
+  "end": {
+    "utc": "2026-10-15T16:33:39.798612+00:00",
+    "load": [
+      8.04638671875,
+      7.37646484375,
+      7.1259765625
+    ]
+  }
+}

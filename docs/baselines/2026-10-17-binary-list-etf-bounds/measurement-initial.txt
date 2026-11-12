@@ -1,0 +1,26 @@
+series 1 group 1 complete
+series 1 group 2 complete
+series 1 group 3 complete
+series 1 group 4 complete
+series 1 group 5 complete
+series 2 group 1 complete
+series 2 group 2 complete
+series 2 group 3 complete
+series 2 group 4 complete
+series 2 group 5 complete
+series 3 group 1 complete
+series 3 group 2 complete
+series 3 group 3 complete
+series 3 group 4 complete
+series 3 group 5 complete
+binary0 11894 12945 8.84 %
+binary1 41324 41793 1.13 %
+binary16 40826 41427 1.47 %
+binary256 32787 35506 8.29 %
+binary4096 72086 69402 -3.72 %
+tuple0 40039 43943 9.75 %
+tuple16 27428 29230 6.57 %
+tuple256 31743 32757 3.19 %
+list16 58816 62316 5.95 %
+map16 57164 62591 9.49 %
+load (41.33154296875, 20.455078125, 12.9658203125) (27.11083984375, 19.00634765625, 12.69970703125)

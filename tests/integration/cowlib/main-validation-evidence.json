@@ -1,0 +1,324 @@
+{
+  "date": "2026-10-12",
+  "status": "passed",
+  "scope": "Four-module differential corpus and finite replay of original Base64url predicates; not whole Cowlib or native PropEr/EUnit",
+  "nera_source_commit": "4f5a266e291d5b4c3dc56cfc060663000bb59d9c",
+  "nera_source_tree": "3f3e1fee33f06abfbe2901656089b418905f1981",
+  "platform": "macOS-15.7.7-arm64-arm-64bit-Mach-O",
+  "otp_version": "Erlang/OTP 29 [erts-17.0.5] [source] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads:1] [jit] [dtrace]",
+  "rebar3_version": "3.27.0",
+  "nera_sha256": "d96d184ec20d883233e26b884d987b8398e99e8c2abc85db1549f7928325df69",
+  "runtime_sha256": "2fddde0178063e8f830d1d973848834787f951cfe110f3e937b556c3acf6322d",
+  "provenance": "Release compiler rebuilt from merged main after PRs 46 and 47. Only CI/docs/evidence changed in this follow-up. Cowlib, PropEr, adapted sources and binaries remain outside the repository.",
+  "worktree_status_at_property_run_start": "M .github/workflows/ci.yml\n?? .claude/\n?? .lavish/",
+  "upstream": {
+    "name": "cowlib",
+    "version": "2.20.0",
+    "url": "https://github.com/ninenines/cowlib.git",
+    "commit": "c768a804565ff5b8178ed968a5921e469d6bd7b2"
+  },
+  "proper_commit": "5640d0715d4b346676267504d8e84398e2a29f75",
+  "upstream_base64url_source_sha256": "3d68bd7d9d03230c99c298688bb9c804fe8ebdcf1ced3e64683de3b72a9436a2",
+  "adapted_source_sha256": "dd128c418d64640f32dbd224c0bb63b66e324b89b2d2eacc3d6f99585949ef23",
+  "validation_source_sha256": {
+    "tests/integration/cowlib/upstream_base64url.py": "0d87b512ca87e817c2b6f7c992b4e283eb036a7b588696561bc7f727ef9a51f9",
+    "tests/integration/cowlib/upstream_cookie_date.py": "796e496e293e13229e4f34ab145e125c10232c8ba9d55119d310b154e21c7d29",
+    "tests/integration/cowlib/runner.py": "0a61e93be64923658d614638e3d5453e499b643b958850de5ebb64a7b2370787",
+    "tests/integration/cowlib/corpus.json": "505fd7ba167c2b499833898a722537934ce5d3816e2ffe386d5fc29115ba9e79",
+    "tests/integration/cowlib/upstream.json": "0613632ac6c66c12fe7aee90471205697a68a6c0fdac369eea35c55c5c11d5e9",
+    ".github/workflows/ci.yml": "59edbfd86b8c26d649dc786d9c3633a2ffbee3b61c76b969131a527b63c00616"
+  },
+  "build": {
+    "command": "RUSTC_WRAPPER= CARGO_TARGET_DIR=/private/tmp/nera-main-cowlib-target cargo build --release --locked --offline",
+    "exit_code": 0,
+    "log_sha256": "9aee5a6ffc307cd94d3a4e2b1a232387aa0eac2ea526bdac123aff43262aec59",
+    "proper_build_exit_code": 0,
+    "proper_build_log_sha256": "4981f08766ce24bbd37a3d289e8ee99a55e5d844a5c3471d37d0efbded34812f"
+  },
+  "base64url_properties": {
+    "runner_exit_code": 0,
+    "report_sha256": "0eab06ee3309f35bc051e783eecc83e86528a5ed9c0dd70777867f5554bb9f2a",
+    "report_path": "/private/tmp/nera-base64url-main-final/report.json",
+    "run_command": "python3 tests/integration/cowlib/upstream_base64url.py --upstream /private/tmp/nera-cowlib-main-final/upstream --proper /private/tmp/nera-cowlib-main-proper --nera /private/tmp/nera-main-cowlib-target/release/nera --work-dir /private/tmp/nera-base64url-main-final",
+    "corpus": {
+      "seed": "nera-cow-base64url-v1",
+      "algorithm": "SHAKE-256 plus explicit byte/boundary patterns; framed with uint32 big-endian lengths",
+      "count": 1563,
+      "sha256": "0ea75031528097cb037ca7295e2a7ae416521d1e2c6a9b67e4e3c18d9e533ced"
+    },
+    "beam": {
+      "cases": 1563,
+      "passed_per_property": {
+        "prop_identity": 1563,
+        "prop_identity_no_padding": 1563
+      },
+      "passed_encodings": 1563,
+      "rfc7515_test": "passed",
+      "failures": [],
+      "returncode": 0,
+      "output_sha256": "e3c9d6b395ab5c88addd68a83f379279f4704759d0b0333f3a89f6aa8f9f0de0",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "nera_cumulative": {
+      "cases": 1563,
+      "passed_per_property": {
+        "prop_identity": 1563,
+        "prop_identity_no_padding": 1563
+      },
+      "passed_encodings": 1563,
+      "rfc7515_test": "passed",
+      "failures": [],
+      "returncode": 0,
+      "output_sha256": "e3c9d6b395ab5c88addd68a83f379279f4704759d0b0333f3a89f6aa8f9f0de0",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "nera_isolated": {
+      "cases": 1563,
+      "passed_per_property": {
+        "prop_identity": 1563,
+        "prop_identity_no_padding": 1563
+      },
+      "passed_encodings": 1563,
+      "rfc7515_test": "passed",
+      "failures": []
+    },
+    "negative_controls": {
+      "prop_identity-negative-beam": {
+        "returncode": 0,
+        "false_property_rejected": true
+      },
+      "prop_identity-negative-nera": {
+        "returncode": 0,
+        "false_property_rejected": true
+      },
+      "prop_identity_no_padding-negative-beam": {
+        "returncode": 0,
+        "false_property_rejected": true
+      },
+      "prop_identity_no_padding-negative-nera": {
+        "returncode": 0,
+        "false_property_rejected": true
+      }
+    },
+    "executable_sha256": "caf2bef9f5169488f181a9c35362c2b61126d6737135828fbbcfd277d8764b1f",
+    "proper_beam_sha256": {
+      "vararg.beam": "236bf65aca6b7c512080a38c42f19323df0a65cdc2565ca7c3a7a46aeaf53391",
+      "proper_gen.beam": "17645f592fe902904dbfe93d39af4a09be51b719e4b795c0dcd03fbebf2c283e",
+      "proper_unicode.beam": "ac7c405910f07d33eb92dab8d56bcc89b378ca0154b3abc15206c325111cd911",
+      "proper_typeserver.beam": "67263cc888d3629a5a2f0b6430f30743b0c3905a847637fd46f6b683c7e11951",
+      "proper_unused_imports_remover.beam": "cc7e851ae725289f9915188bf3b02108cf55b92e8bda493efda1133fb2e562a4",
+      "proper_dict.beam": "ad1297c533dab0b99bca9e8d8bbb1275727c12c063c1eff5e50ba17cb831cc53",
+      "proper_arith.beam": "16fd58d4e4809fabd4c14d1cd3174143a4a1677bd95f61737c36dae87986f441",
+      "proper_queue.beam": "0bd3df5a31ee41da8637d90f6f773529b506e51f5bd31b6bc2ede2bea87c138e",
+      "proper_symb.beam": "63f4c71f487804535db2943df227697e2044077a640ceba9a33b7b3cced0418d",
+      "proper.beam": "d6acca4cba58d31726e78135e3b2aca82bd683ed0406c4ca6b71c70fe11e032e",
+      "proper_transformer.beam": "e2457608e41f0145d3f078a0331e454e0f3785b12950b4bdb905b7f7fbfd3db3",
+      "proper_sa.beam": "cc186af9719725e0bb579c432b665bc8ea945801fccba987ad9e3115129165f0",
+      "proper_orddict.beam": "f20ceaa69cf84eb70ed2515d2a06e7b87e9bd5dfbb299520728b2735b05fdff2",
+      "proper_ordsets.beam": "4193de60814f9c54063bddf8eb8cade76f93a8a4c3c0c835b550fe62ac9203c2",
+      "proper_statem.beam": "332919b42efb3ada9c646231936d1f5d04f2525e8eb4b20fd4d7b5e84d62ff73",
+      "proper_erlang_abstract_code.beam": "6271a5fb8ce14755a9ab77beefe0faec4e8e4814c5025895c9585049c2967ec4",
+      "proper_shrink.beam": "6bd9bc482664b11fc3c1c2c68aedab3e1cb29afb52a350abcd7ab1a8ecb7e39e",
+      "proper_target.beam": "aa52fbf245186e89bbf1541651290b8ab0de58d968a752b4864f6db8dc7dd220",
+      "proper_fsm.beam": "b346909501150b818624358e19446c9871058e93022a1ac57441ff60d9a812f2",
+      "proper_sets.beam": "bd7f341b8ddd85e2f2fa4ad2c295e8dbc5a9db6f7a0e4d1b900448f4a93c1c43",
+      "proper_gb_sets.beam": "67ba5de497bd4c3cc3d23f07fd9e37f53c0e6b653496124e14ebe6ebc75bf908",
+      "proper_prop_remover.beam": "3391440dd7a99dc801b8805522dbe6422e11f42b09c8121ea692847ec0790941",
+      "proper_types.beam": "322f67dcb76a0061cfecd7626821814eef2b2151a741447721a128bb84a7b2b0",
+      "proper_gen_next.beam": "e219eaa730a35cab0301ec55edc07230e3b7ddd9c4c7a3d5df9dd1832e34bb16",
+      "proper_gb_trees.beam": "e562f5b3b61393f933c5fcbb34c599c5c8f1d0d344a8229d053e2d3c0ba2d407",
+      "proper_array.beam": "4fcf27de81746b8eb79bba310a50a7cd03b549c4e2a268fc3c5d00fb4d156ea2"
+    }
+  },
+  "differential_corpus": {
+    "runner_exit_code": 0,
+    "passed": 122,
+    "total": 122,
+    "blocked": 0,
+    "skipped": 0,
+    "timezone": "Pacific/Honolulu",
+    "report_sha256": "f1fd15596bfac14cf0c0c3d6f92e67c767d9f2eb12f5797dbb5118c285cebd5a",
+    "report_path": "/private/tmp/nera-cowlib-main-final/report.json",
+    "run_command": "TZ=Pacific/Honolulu python3 tests/integration/cowlib/runner.py --nera /private/tmp/nera-main-cowlib-target/release/nera --work-dir /private/tmp/nera-cowlib-main-final --offline",
+    "modules": {
+      "cow_qs": {
+        "passed": 29,
+        "total": 29,
+        "build_returncode": 0,
+        "cases": {
+          "qs_simple": "passed",
+          "qs_flag": "passed",
+          "qs_duplicate": "passed",
+          "qs_escaped": "passed",
+          "qs_plus": "passed",
+          "qs_utf8": "passed",
+          "qs_nul": "passed",
+          "qs_empty": "passed",
+          "qs_empty_values": "passed",
+          "qs_separators": "passed",
+          "qs_extra_equal": "passed",
+          "qs_hex_case": "passed",
+          "qs_bare_percent": "passed",
+          "qs_short_percent": "passed",
+          "qs_bad_hex": "passed",
+          "qs_limit_0": "passed",
+          "qs_limit_1": "passed",
+          "qs_limit_2": "passed",
+          "qs_limit_3": "passed",
+          "qs_default_limit_99": "passed",
+          "qs_default_limit_100": "passed",
+          "qs_default_limit_101": "passed",
+          "qs_build": "passed",
+          "qs_build_empty": "passed",
+          "qs_encode_bytes": "passed",
+          "qs_decode_bytes": "passed",
+          "qs_decode_bad": "passed",
+          "qs_bad_type": "passed",
+          "qs_empty_value": "passed"
+        }
+      },
+      "cow_cookie": {
+        "passed": 34,
+        "total": 34,
+        "build_returncode": 0,
+        "cases": {
+          "cookie_simple": "passed",
+          "cookie_spaces": "passed",
+          "cookie_duplicate": "passed",
+          "cookie_quoted": "passed",
+          "cookie_equals": "passed",
+          "cookie_empty": "passed",
+          "cookie_empty_value": "passed",
+          "cookie_separator": "passed",
+          "cookie_nameless": "passed",
+          "cookie_empty_name": "passed",
+          "cookie_newline": "passed",
+          "cookie_tab_value": "passed",
+          "cookie_limit_0": "passed",
+          "cookie_limit_1": "passed",
+          "cookie_limit_2": "passed",
+          "cookie_limit_3": "passed",
+          "cookie_default_limit_99": "passed",
+          "cookie_default_limit_100": "passed",
+          "cookie_default_limit_101": "passed",
+          "cookie_set_flags": "passed",
+          "cookie_set_domain": "passed",
+          "cookie_set_expiry": "passed",
+          "cookie_set_zero_age": "passed",
+          "cookie_set_negative_age": "passed",
+          "cookie_set_bad_age": "passed",
+          "cookie_set_empty": "passed",
+          "cookie_set_control": "passed",
+          "cookie_set_unknown": "passed",
+          "cookie_build": "passed",
+          "cookie_set_build": "passed",
+          "cookie_set_delete": "passed",
+          "cookie_set_bad_age_option": "passed",
+          "cookie_positive_max_age_parse": "passed",
+          "cookie_positive_max_age_build": "passed"
+        }
+      },
+      "cow_date": {
+        "passed": 26,
+        "total": 26,
+        "build_returncode": 0,
+        "cases": {
+          "date_imf": "passed",
+          "date_rfc850": "passed",
+          "date_asctime": "passed",
+          "date_leap_second": "passed",
+          "date_year_50": "passed",
+          "date_year_51": "passed",
+          "date_day_zero": "passed",
+          "date_feb_30": "passed",
+          "date_empty": "passed",
+          "date_month": "passed",
+          "date_day32": "passed",
+          "date_hour24": "passed",
+          "date_minute60": "passed",
+          "date_second61": "passed",
+          "date_trailing": "passed",
+          "date_timezone": "passed",
+          "date_rfc1123_leap": "passed",
+          "date_rfc1123_century": "passed",
+          "date_rfc1123_year_end": "passed",
+          "date_rfc2109_leap": "passed",
+          "date_rfc2109_century": "passed",
+          "date_rfc2109_year_end": "passed",
+          "date_rfc7231_leap": "passed",
+          "date_rfc7231_century": "passed",
+          "date_rfc7231_year_end": "passed",
+          "date_bad_type": "passed"
+        }
+      },
+      "cow_base64url": {
+        "passed": 33,
+        "total": 33,
+        "build_returncode": 0,
+        "cases": {
+          "base64url_encode_empty_padded": "passed",
+          "base64url_roundtrip_empty_padded": "passed",
+          "base64url_encode_empty_raw": "passed",
+          "base64url_roundtrip_empty_raw": "passed",
+          "base64url_encode_one_padded": "passed",
+          "base64url_roundtrip_one_padded": "passed",
+          "base64url_encode_one_raw": "passed",
+          "base64url_roundtrip_one_raw": "passed",
+          "base64url_encode_two_padded": "passed",
+          "base64url_roundtrip_two_padded": "passed",
+          "base64url_encode_two_raw": "passed",
+          "base64url_roundtrip_two_raw": "passed",
+          "base64url_encode_three_padded": "passed",
+          "base64url_roundtrip_three_padded": "passed",
+          "base64url_encode_three_raw": "passed",
+          "base64url_roundtrip_three_raw": "passed",
+          "base64url_encode_urlsafe_padded": "passed",
+          "base64url_roundtrip_urlsafe_padded": "passed",
+          "base64url_encode_urlsafe_raw": "passed",
+          "base64url_roundtrip_urlsafe_raw": "passed",
+          "base64url_encode_all_bytes_padded": "passed",
+          "base64url_roundtrip_all_bytes_padded": "passed",
+          "base64url_encode_all_bytes_raw": "passed",
+          "base64url_roundtrip_all_bytes_raw": "passed",
+          "base64url_decode_default": "passed",
+          "base64url_decode_url_alphabet": "passed",
+          "base64url_decode_unpadded": "passed",
+          "base64url_bad_char": "passed",
+          "base64url_one_sextet": "passed",
+          "base64url_missing_padding": "passed",
+          "base64url_bad_padding": "passed",
+          "base64url_bad_type": "passed",
+          "base64url_encode_default": "passed"
+        }
+      }
+    },
+    "comparison_contract": "Unchanged typed ETF comparator; Set-Cookie attribute-order normalization and two positive Max-Age time-window invariants retained."
+  },
+  "checks": {
+    "harness_tests": {
+      "passed": 37,
+      "failed": 0,
+      "log_sha256": "fac0334047ff57ff627d485da0acd29e7c80762b75d4d5e3f3aeed43ffd199f3"
+    },
+    "actionlint": "passed",
+    "diff_check": "passed"
+  },
+  "ci": {
+    "existing_corpus_gate": {
+      "url": "https://github.com/processone/nera/actions/runs/38255964315",
+      "head_sha": "e76d8938fac59e3503d819c214471e1296a90baf",
+      "conclusion": "success",
+      "linux_cowlib_step": "success"
+    },
+    "new_property_gate": "Added to Linux workflow; not yet executed remotely",
+    "required": true,
+    "timeout_minutes": 20,
+    "artifact": "cowlib-base64url-properties-linux"
+  },
+  "limits": [
+    "Upstream qs/cookie/date assertion suites not rerun: prior 72/72, 53/54 and 7/7 remain historical adapter results.",
+    "No native EUnit/PropEr framework validation; no native generation or shrinking.",
+    "New CI property step awaits publication and remote execution.",
+    "Compiler/runtime unchanged; Rust tests were not rerun for this workflow/documentation-only follow-up."
+  ]
+}

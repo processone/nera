@@ -1,0 +1,136 @@
+{
+  "samples": {
+    "before": [
+      {
+        "empty": 31210,
+        "immediate": 31115,
+        "gc": 97975,
+        "process_cpu_us": 162469
+      },
+      {
+        "empty": 31325,
+        "immediate": 30891,
+        "gc": 100212,
+        "process_cpu_us": 164645
+      },
+      {
+        "empty": 31208,
+        "immediate": 31244,
+        "gc": 98465,
+        "process_cpu_us": 163031
+      },
+      {
+        "empty": 31287,
+        "immediate": 31057,
+        "gc": 98282,
+        "process_cpu_us": 162744
+      },
+      {
+        "empty": 30958,
+        "immediate": 31195,
+        "gc": 98152,
+        "process_cpu_us": 162502
+      },
+      {
+        "empty": 31341,
+        "immediate": 31028,
+        "gc": 96564,
+        "process_cpu_us": 161182
+      },
+      {
+        "empty": 30327,
+        "immediate": 30303,
+        "gc": 95052,
+        "process_cpu_us": 157695
+      },
+      {
+        "empty": 29935,
+        "immediate": 29837,
+        "gc": 94292,
+        "process_cpu_us": 155883
+      },
+      {
+        "empty": 29879,
+        "immediate": 29856,
+        "gc": 94496,
+        "process_cpu_us": 156307
+      }
+    ],
+    "after": [
+      {
+        "empty": 29712,
+        "immediate": 31048,
+        "gc": 97325,
+        "process_cpu_us": 160266
+      },
+      {
+        "empty": 29756,
+        "immediate": 30755,
+        "gc": 97096,
+        "process_cpu_us": 159771
+      },
+      {
+        "empty": 29725,
+        "immediate": 31026,
+        "gc": 97001,
+        "process_cpu_us": 159927
+      },
+      {
+        "empty": 29536,
+        "immediate": 30793,
+        "gc": 96967,
+        "process_cpu_us": 159509
+      },
+      {
+        "empty": 29774,
+        "immediate": 31059,
+        "gc": 96901,
+        "process_cpu_us": 159883
+      },
+      {
+        "empty": 29744,
+        "immediate": 30740,
+        "gc": 97174,
+        "process_cpu_us": 159790
+      },
+      {
+        "empty": 28903,
+        "immediate": 29586,
+        "gc": 93477,
+        "process_cpu_us": 153814
+      },
+      {
+        "empty": 28653,
+        "immediate": 29589,
+        "gc": 92998,
+        "process_cpu_us": 153304
+      },
+      {
+        "empty": 29041,
+        "immediate": 30034,
+        "gc": 94557,
+        "process_cpu_us": 155613
+      }
+    ]
+  },
+  "medians": {
+    "before": {
+      "empty": 31208,
+      "immediate": 31028,
+      "gc": 97975,
+      "process_cpu_us": 162469
+    },
+    "after": {
+      "empty": 29712,
+      "immediate": 30755,
+      "gc": 96967,
+      "process_cpu_us": 159771
+    }
+  },
+  "percent_change": {
+    "empty": -4.793642655729302,
+    "immediate": -0.8798504576511545,
+    "gc": -1.0288338861954571,
+    "process_cpu_us": -1.6606244883639376
+  }
+}

@@ -1,0 +1,8 @@
+Running 2 tests (1 threads)
+────────────────────────────────────────────────────────────
+  PASS  receive_infinity                          952ms  [1/2]
+  PASS  receive_timeout_domain                    913ms  [2/2]
+────────────────────────────────────────────────────────────
+Results: 2 passed, 0 failed (0 compile), 0 skipped / 2 total
+
+ALL TESTS PASSED

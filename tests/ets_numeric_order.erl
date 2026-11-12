@@ -1,0 +1,46 @@
+-module(ets_numeric_order).
+-export([test/0]).
+
+lt(A, B) -> A < B.
+eq(A, B) -> A == B.
+
+test() ->
+    Exact = 9007199254740992,
+    Next = 9007199254740993,
+    Float = 9007199254740992.0,
+    true = eq(Exact, Float),
+    false = eq(Next, Float),
+    true = lt(Float, Next),
+    true = lt(-Next, -Float),
+    Big = 1267650600228229401496703205376,
+    BigFloat = 1.2676506002282294e30,
+    true = eq(Big, BigFloat),
+    false = eq(Big + 1, BigFloat),
+    true = lt(BigFloat, Big + 1),
+    Tab = ets:new(numeric_order, [ordered_set]),
+    true = ets:insert(Tab, {Exact, integer}),
+    true = ets:insert(Tab, {Float, float}),
+    1 = ets:info(Tab, size),
+    [{Float, float}] = ets:lookup(Tab, Exact),
+    true = ets:insert(Tab, {Next, next}),
+    true = ets:insert(Tab, {-Next, negative_next}),
+    true = ets:insert(Tab, {-Float, negative_float}),
+    true = ets:insert(Tab, {Big, big}),
+    true = ets:insert(Tab, {Big + 1, bigger}),
+    6 = ets:info(Tab, size),
+    NegativeNext = -Next,
+    NegativeFloat = -Float,
+    NegativeNext = ets:first(Tab),
+    NegativeFloat = ets:next(Tab, NegativeNext),
+    Float = ets:next(Tab, NegativeFloat),
+    Next = ets:next(Tab, Float),
+    Big = ets:next(Tab, Next),
+    Bigger = Big + 1,
+    Bigger = ets:next(Tab, Big),
+    Bigger = ets:last(Tab),
+    true = ets:member(Tab, BigFloat),
+    true = ets:delete(Tab, BigFloat),
+    false = ets:member(Tab, Big),
+    true = ets:member(Tab, Bigger),
+    true = ets:delete(Tab),
+    ok.

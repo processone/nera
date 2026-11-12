@@ -1,0 +1,878 @@
+{
+  "series": 3,
+  "groups_per_series": 5,
+  "scheduler_threads": 1,
+  "warmup": "same work as timed sample",
+  "operations": {
+    "binary0": 1000000,
+    "binary1": 1000000,
+    "binary16": 300000,
+    "binary256": 20000,
+    "binary4096": 2000,
+    "tuple0": 2000000,
+    "tuple16": 300000,
+    "tuple256": 30000,
+    "list16": 300000,
+    "map16": 100000,
+    "control_scalar": 2000000,
+    "control_bitstring16": 300000
+  },
+  "load_start": [
+    12.4794921875,
+    15.6123046875,
+    12.404296875
+  ],
+  "hashes": {
+    "before": "3cac98d193a970d204b6c082c576f52930b1487c274042789a766a5e84d90f23",
+    "after": "48691461ca4ef3eaf0cb52b0172155a753651b0681633398e447d17f9ae59267"
+  },
+  "observations": [
+    {
+      "series": 0,
+      "group": 0,
+      "executable": "before",
+      "values_us": {
+        "binary0": 11476,
+        "binary1": 38382,
+        "binary16": 37675,
+        "binary256": 30478,
+        "binary4096": 77552,
+        "tuple0": 39589,
+        "tuple16": 26048,
+        "tuple256": 29787,
+        "list16": 62153,
+        "map16": 52183,
+        "control_scalar": 24921,
+        "control_bitstring16": 40840
+      },
+      "load": [
+        12.4794921875,
+        15.6123046875,
+        12.404296875
+      ]
+    },
+    {
+      "series": 0,
+      "group": 0,
+      "executable": "after",
+      "values_us": {
+        "binary0": 12910,
+        "binary1": 47239,
+        "binary16": 46760,
+        "binary256": 32898,
+        "binary4096": 66667,
+        "tuple0": 36793,
+        "tuple16": 24985,
+        "tuple256": 27991,
+        "list16": 55116,
+        "map16": 52608,
+        "control_scalar": 24243,
+        "control_bitstring16": 40973
+      },
+      "load": [
+        12.4794921875,
+        15.6123046875,
+        12.404296875
+      ]
+    },
+    {
+      "series": 0,
+      "group": 1,
+      "executable": "after",
+      "values_us": {
+        "binary0": 11256,
+        "binary1": 38457,
+        "binary16": 39624,
+        "binary256": 30422,
+        "binary4096": 65481,
+        "tuple0": 39661,
+        "tuple16": 25771,
+        "tuple256": 28671,
+        "list16": 53335,
+        "map16": 56387,
+        "control_scalar": 32796,
+        "control_bitstring16": 40841
+      },
+      "load": [
+        11.72021484375,
+        15.40283203125,
+        12.34912109375
+      ]
+    },
+    {
+      "series": 0,
+      "group": 1,
+      "executable": "before",
+      "values_us": {
+        "binary0": 11465,
+        "binary1": 38616,
+        "binary16": 43531,
+        "binary256": 29832,
+        "binary4096": 63687,
+        "tuple0": 36325,
+        "tuple16": 25656,
+        "tuple256": 27438,
+        "list16": 53221,
+        "map16": 54189,
+        "control_scalar": 24138,
+        "control_bitstring16": 41472
+      },
+      "load": [
+        11.72021484375,
+        15.40283203125,
+        12.34912109375
+      ]
+    },
+    {
+      "series": 0,
+      "group": 2,
+      "executable": "before",
+      "values_us": {
+        "binary0": 11104,
+        "binary1": 37558,
+        "binary16": 37793,
+        "binary256": 31398,
+        "binary4096": 70987,
+        "tuple0": 46848,
+        "tuple16": 30080,
+        "tuple256": 30909,
+        "list16": 55728,
+        "map16": 56038,
+        "control_scalar": 26344,
+        "control_bitstring16": 43276
+      },
+      "load": [
+        11.72021484375,
+        15.40283203125,
+        12.34912109375
+      ]
+    },
+    {
+      "series": 0,
+      "group": 2,
+      "executable": "after",
+      "values_us": {
+        "binary0": 12121,
+        "binary1": 41362,
+        "binary16": 42070,
+        "binary256": 32513,
+        "binary4096": 63799,
+        "tuple0": 38213,
+        "tuple16": 25312,
+        "tuple256": 30911,
+        "list16": 53825,
+        "map16": 51072,
+        "control_scalar": 23568,
+        "control_bitstring16": 39448
+      },
+      "load": [
+        11.72021484375,
+        15.40283203125,
+        12.34912109375
+      ]
+    },
+    {
+      "series": 0,
+      "group": 3,
+      "executable": "after",
+      "values_us": {
+        "binary0": 10928,
+        "binary1": 36815,
+        "binary16": 36000,
+        "binary256": 29254,
+        "binary4096": 68505,
+        "tuple0": 50424,
+        "tuple16": 24741,
+        "tuple256": 29108,
+        "list16": 54759,
+        "map16": 50389,
+        "control_scalar": 23675,
+        "control_bitstring16": 39544
+      },
+      "load": [
+        11.72021484375,
+        15.40283203125,
+        12.34912109375
+      ]
+    },
+    {
+      "series": 0,
+      "group": 3,
+      "executable": "before",
+      "values_us": {
+        "binary0": 11047,
+        "binary1": 37037,
+        "binary16": 36011,
+        "binary256": 35914,
+        "binary4096": 59132,
+        "tuple0": 35184,
+        "tuple16": 24946,
+        "tuple256": 28790,
+        "list16": 53250,
+        "map16": 49852,
+        "control_scalar": 24289,
+        "control_bitstring16": 39552
+      },
+      "load": [
+        11.021484375,
+        15.19677734375,
+        12.2939453125
+      ]
+    },
+    {
+      "series": 0,
+      "group": 4,
+      "executable": "before",
+      "values_us": {
+        "binary0": 11040,
+        "binary1": 37303,
+        "binary16": 37076,
+        "binary256": 29006,
+        "binary4096": 80112,
+        "tuple0": 36458,
+        "tuple16": 25881,
+        "tuple256": 33765,
+        "list16": 52557,
+        "map16": 51238,
+        "control_scalar": 24407,
+        "control_bitstring16": 39753
+      },
+      "load": [
+        11.021484375,
+        15.19677734375,
+        12.2939453125
+      ]
+    },
+    {
+      "series": 0,
+      "group": 4,
+      "executable": "after",
+      "values_us": {
+        "binary0": 10910,
+        "binary1": 36810,
+        "binary16": 36122,
+        "binary256": 29976,
+        "binary4096": 59341,
+        "tuple0": 35594,
+        "tuple16": 23923,
+        "tuple256": 29815,
+        "list16": 56749,
+        "map16": 50034,
+        "control_scalar": 23847,
+        "control_bitstring16": 46002
+      },
+      "load": [
+        11.021484375,
+        15.19677734375,
+        12.2939453125
+      ]
+    },
+    {
+      "series": 1,
+      "group": 0,
+      "executable": "after",
+      "values_us": {
+        "binary0": 11001,
+        "binary1": 36806,
+        "binary16": 35947,
+        "binary256": 29121,
+        "binary4096": 59775,
+        "tuple0": 37348,
+        "tuple16": 28989,
+        "tuple256": 28697,
+        "list16": 53823,
+        "map16": 50977,
+        "control_scalar": 24086,
+        "control_bitstring16": 39715
+      },
+      "load": [
+        11.021484375,
+        15.19677734375,
+        12.2939453125
+      ]
+    },
+    {
+      "series": 1,
+      "group": 0,
+      "executable": "before",
+      "values_us": {
+        "binary0": 11096,
+        "binary1": 37082,
+        "binary16": 36176,
+        "binary256": 30555,
+        "binary4096": 63381,
+        "tuple0": 35181,
+        "tuple16": 24309,
+        "tuple256": 28091,
+        "list16": 51666,
+        "map16": 49760,
+        "control_scalar": 24099,
+        "control_bitstring16": 39741
+      },
+      "load": [
+        11.021484375,
+        15.19677734375,
+        12.2939453125
+      ]
+    },
+    {
+      "series": 1,
+      "group": 1,
+      "executable": "before",
+      "values_us": {
+        "binary0": 11119,
+        "binary1": 37206,
+        "binary16": 36152,
+        "binary256": 30625,
+        "binary4096": 61041,
+        "tuple0": 36514,
+        "tuple16": 25305,
+        "tuple256": 28728,
+        "list16": 54519,
+        "map16": 77356,
+        "control_scalar": 51427,
+        "control_bitstring16": 40815
+      },
+      "load": [
+        10.619140625,
+        15.0439453125,
+        12.2568359375
+      ]
+    },
+    {
+      "series": 1,
+      "group": 1,
+      "executable": "after",
+      "values_us": {
+        "binary0": 11405,
+        "binary1": 37894,
+        "binary16": 39263,
+        "binary256": 34224,
+        "binary4096": 61603,
+        "tuple0": 36881,
+        "tuple16": 25176,
+        "tuple256": 32810,
+        "list16": 53169,
+        "map16": 52265,
+        "control_scalar": 24346,
+        "control_bitstring16": 40853
+      },
+      "load": [
+        10.619140625,
+        15.0439453125,
+        12.2568359375
+      ]
+    },
+    {
+      "series": 1,
+      "group": 2,
+      "executable": "after",
+      "values_us": {
+        "binary0": 11235,
+        "binary1": 37605,
+        "binary16": 37084,
+        "binary256": 30248,
+        "binary4096": 79798,
+        "tuple0": 37364,
+        "tuple16": 25305,
+        "tuple256": 30279,
+        "list16": 75882,
+        "map16": 122888,
+        "control_scalar": 26708,
+        "control_bitstring16": 40774
+      },
+      "load": [
+        10.619140625,
+        15.0439453125,
+        12.2568359375
+      ]
+    },
+    {
+      "series": 1,
+      "group": 2,
+      "executable": "before",
+      "values_us": {
+        "binary0": 11421,
+        "binary1": 38561,
+        "binary16": 36670,
+        "binary256": 29750,
+        "binary4096": 60536,
+        "tuple0": 35120,
+        "tuple16": 24054,
+        "tuple256": 30333,
+        "list16": 58941,
+        "map16": 50321,
+        "control_scalar": 24355,
+        "control_bitstring16": 39438
+      },
+      "load": [
+        10.619140625,
+        15.0439453125,
+        12.2568359375
+      ]
+    },
+    {
+      "series": 1,
+      "group": 3,
+      "executable": "before",
+      "values_us": {
+        "binary0": 11135,
+        "binary1": 45817,
+        "binary16": 36326,
+        "binary256": 30907,
+        "binary4096": 63572,
+        "tuple0": 36409,
+        "tuple16": 24952,
+        "tuple256": 31757,
+        "list16": 52147,
+        "map16": 50698,
+        "control_scalar": 24042,
+        "control_bitstring16": 39872
+      },
+      "load": [
+        10.619140625,
+        15.0439453125,
+        12.2568359375
+      ]
+    },
+    {
+      "series": 1,
+      "group": 3,
+      "executable": "after",
+      "values_us": {
+        "binary0": 10923,
+        "binary1": 36816,
+        "binary16": 38326,
+        "binary256": 35999,
+        "binary4096": 62212,
+        "tuple0": 37987,
+        "tuple16": 24827,
+        "tuple256": 29495,
+        "list16": 55878,
+        "map16": 50696,
+        "control_scalar": 23723,
+        "control_bitstring16": 39599
+      },
+      "load": [
+        10.0087890625,
+        14.84375,
+        12.2021484375
+      ]
+    },
+    {
+      "series": 1,
+      "group": 4,
+      "executable": "after",
+      "values_us": {
+        "binary0": 10990,
+        "binary1": 36887,
+        "binary16": 37298,
+        "binary256": 31011,
+        "binary4096": 62498,
+        "tuple0": 42014,
+        "tuple16": 25427,
+        "tuple256": 27958,
+        "list16": 55335,
+        "map16": 52614,
+        "control_scalar": 27941,
+        "control_bitstring16": 42441
+      },
+      "load": [
+        10.0087890625,
+        14.84375,
+        12.2021484375
+      ]
+    },
+    {
+      "series": 1,
+      "group": 4,
+      "executable": "before",
+      "values_us": {
+        "binary0": 11434,
+        "binary1": 38505,
+        "binary16": 37434,
+        "binary256": 29820,
+        "binary4096": 60183,
+        "tuple0": 36785,
+        "tuple16": 26341,
+        "tuple256": 29211,
+        "list16": 56256,
+        "map16": 52970,
+        "control_scalar": 24963,
+        "control_bitstring16": 40747
+      },
+      "load": [
+        10.0087890625,
+        14.84375,
+        12.2021484375
+      ]
+    },
+    {
+      "series": 2,
+      "group": 0,
+      "executable": "before",
+      "values_us": {
+        "binary0": 11473,
+        "binary1": 37550,
+        "binary16": 37985,
+        "binary256": 29375,
+        "binary4096": 61802,
+        "tuple0": 53701,
+        "tuple16": 59194,
+        "tuple256": 33314,
+        "list16": 65933,
+        "map16": 75715,
+        "control_scalar": 30873,
+        "control_bitstring16": 45450
+      },
+      "load": [
+        10.0087890625,
+        14.84375,
+        12.2021484375
+      ]
+    },
+    {
+      "series": 2,
+      "group": 0,
+      "executable": "after",
+      "values_us": {
+        "binary0": 12922,
+        "binary1": 55609,
+        "binary16": 46645,
+        "binary256": 41143,
+        "binary4096": 67581,
+        "tuple0": 64967,
+        "tuple16": 30356,
+        "tuple256": 29580,
+        "list16": 54681,
+        "map16": 52023,
+        "control_scalar": 24290,
+        "control_bitstring16": 40770
+      },
+      "load": [
+        10.0087890625,
+        14.84375,
+        12.2021484375
+      ]
+    },
+    {
+      "series": 2,
+      "group": 1,
+      "executable": "after",
+      "values_us": {
+        "binary0": 11276,
+        "binary1": 38375,
+        "binary16": 37149,
+        "binary256": 29993,
+        "binary4096": 64008,
+        "tuple0": 40885,
+        "tuple16": 25546,
+        "tuple256": 43824,
+        "list16": 53689,
+        "map16": 52084,
+        "control_scalar": 24240,
+        "control_bitstring16": 41496
+      },
+      "load": [
+        9.607421875,
+        14.68017578125,
+        12.15966796875
+      ]
+    },
+    {
+      "series": 2,
+      "group": 1,
+      "executable": "before",
+      "values_us": {
+        "binary0": 11456,
+        "binary1": 38304,
+        "binary16": 37183,
+        "binary256": 30154,
+        "binary4096": 60594,
+        "tuple0": 35910,
+        "tuple16": 25092,
+        "tuple256": 31440,
+        "list16": 53205,
+        "map16": 55616,
+        "control_scalar": 24866,
+        "control_bitstring16": 60848
+      },
+      "load": [
+        9.607421875,
+        14.68017578125,
+        12.15966796875
+      ]
+    },
+    {
+      "series": 2,
+      "group": 2,
+      "executable": "before",
+      "values_us": {
+        "binary0": 11493,
+        "binary1": 38342,
+        "binary16": 37258,
+        "binary256": 30814,
+        "binary4096": 65190,
+        "tuple0": 51613,
+        "tuple16": 33110,
+        "tuple256": 35553,
+        "list16": 56387,
+        "map16": 52324,
+        "control_scalar": 25427,
+        "control_bitstring16": 72953
+      },
+      "load": [
+        9.607421875,
+        14.68017578125,
+        12.15966796875
+      ]
+    },
+    {
+      "series": 2,
+      "group": 2,
+      "executable": "after",
+      "values_us": {
+        "binary0": 12159,
+        "binary1": 39922,
+        "binary16": 43534,
+        "binary256": 34092,
+        "binary4096": 62789,
+        "tuple0": 51942,
+        "tuple16": 37636,
+        "tuple256": 36650,
+        "list16": 65514,
+        "map16": 56724,
+        "control_scalar": 25413,
+        "control_bitstring16": 43653
+      },
+      "load": [
+        9.607421875,
+        14.68017578125,
+        12.15966796875
+      ]
+    },
+    {
+      "series": 2,
+      "group": 3,
+      "executable": "after",
+      "values_us": {
+        "binary0": 11946,
+        "binary1": 40351,
+        "binary16": 51903,
+        "binary256": 30503,
+        "binary4096": 66044,
+        "tuple0": 36488,
+        "tuple16": 25242,
+        "tuple256": 29506,
+        "list16": 53376,
+        "map16": 51792,
+        "control_scalar": 24148,
+        "control_bitstring16": 43465
+      },
+      "load": [
+        9.607421875,
+        14.68017578125,
+        12.15966796875
+      ]
+    },
+    {
+      "series": 2,
+      "group": 3,
+      "executable": "before",
+      "values_us": {
+        "binary0": 11481,
+        "binary1": 38333,
+        "binary16": 37857,
+        "binary256": 32375,
+        "binary4096": 73119,
+        "tuple0": 37089,
+        "tuple16": 25699,
+        "tuple256": 29189,
+        "list16": 53538,
+        "map16": 75633,
+        "control_scalar": 25647,
+        "control_bitstring16": 67415
+      },
+      "load": [
+        9.478515625,
+        14.56884765625,
+        12.13525390625
+      ]
+    },
+    {
+      "series": 2,
+      "group": 4,
+      "executable": "before",
+      "values_us": {
+        "binary0": 12643,
+        "binary1": 38336,
+        "binary16": 36784,
+        "binary256": 29264,
+        "binary4096": 59971,
+        "tuple0": 35628,
+        "tuple16": 24653,
+        "tuple256": 27131,
+        "list16": 51350,
+        "map16": 49410,
+        "control_scalar": 24185,
+        "control_bitstring16": 39449
+      },
+      "load": [
+        9.478515625,
+        14.56884765625,
+        12.13525390625
+      ]
+    },
+    {
+      "series": 2,
+      "group": 4,
+      "executable": "after",
+      "values_us": {
+        "binary0": 10885,
+        "binary1": 36910,
+        "binary16": 36402,
+        "binary256": 29747,
+        "binary4096": 69895,
+        "tuple0": 36856,
+        "tuple16": 25039,
+        "tuple256": 32848,
+        "list16": 53621,
+        "map16": 52181,
+        "control_scalar": 24462,
+        "control_bitstring16": 41758
+      },
+      "load": [
+        9.478515625,
+        14.56884765625,
+        12.13525390625
+      ]
+    }
+  ],
+  "load_end": [
+    9.478515625,
+    14.56884765625,
+    12.13525390625
+  ],
+  "medians_us": {
+    "before": {
+      "binary0": 11434,
+      "binary1": 38333,
+      "binary16": 37183,
+      "binary256": 30478,
+      "binary4096": 63381,
+      "tuple0": 36458,
+      "tuple16": 25656,
+      "tuple256": 29787,
+      "list16": 53538,
+      "map16": 52324,
+      "control_scalar": 24866,
+      "control_bitstring16": 40815
+    },
+    "after": {
+      "binary0": 11256,
+      "binary1": 37894,
+      "binary16": 38326,
+      "binary256": 30503,
+      "binary4096": 64008,
+      "tuple0": 37987,
+      "tuple16": 25305,
+      "tuple256": 29580,
+      "list16": 54681,
+      "map16": 52084,
+      "control_scalar": 24243,
+      "control_bitstring16": 40853
+    }
+  },
+  "series_medians_us": {
+    "0": {
+      "before": {
+        "binary0": 11104,
+        "binary1": 37558,
+        "binary16": 37675,
+        "binary256": 30478,
+        "binary4096": 70987,
+        "tuple0": 36458,
+        "tuple16": 25881,
+        "tuple256": 29787,
+        "list16": 53250,
+        "map16": 52183,
+        "control_scalar": 24407,
+        "control_bitstring16": 40840
+      },
+      "after": {
+        "binary0": 11256,
+        "binary1": 38457,
+        "binary16": 39624,
+        "binary256": 30422,
+        "binary4096": 65481,
+        "tuple0": 38213,
+        "tuple16": 24985,
+        "tuple256": 29108,
+        "list16": 54759,
+        "map16": 51072,
+        "control_scalar": 23847,
+        "control_bitstring16": 40841
+      }
+    },
+    "1": {
+      "before": {
+        "binary0": 11135,
+        "binary1": 38505,
+        "binary16": 36326,
+        "binary256": 30555,
+        "binary4096": 61041,
+        "tuple0": 36409,
+        "tuple16": 24952,
+        "tuple256": 29211,
+        "list16": 54519,
+        "map16": 50698,
+        "control_scalar": 24355,
+        "control_bitstring16": 39872
+      },
+      "after": {
+        "binary0": 11001,
+        "binary1": 36887,
+        "binary16": 37298,
+        "binary256": 31011,
+        "binary4096": 62212,
+        "tuple0": 37364,
+        "tuple16": 25305,
+        "tuple256": 29495,
+        "list16": 55335,
+        "map16": 52265,
+        "control_scalar": 24346,
+        "control_bitstring16": 40774
+      }
+    },
+    "2": {
+      "before": {
+        "binary0": 11481,
+        "binary1": 38333,
+        "binary16": 37258,
+        "binary256": 30154,
+        "binary4096": 61802,
+        "tuple0": 37089,
+        "tuple16": 25699,
+        "tuple256": 31440,
+        "list16": 53538,
+        "map16": 55616,
+        "control_scalar": 25427,
+        "control_bitstring16": 60848
+      },
+      "after": {
+        "binary0": 11946,
+        "binary1": 39922,
+        "binary16": 43534,
+        "binary256": 30503,
+        "binary4096": 66044,
+        "tuple0": 40885,
+        "tuple16": 25546,
+        "tuple256": 32848,
+        "list16": 53689,
+        "map16": 52084,
+        "control_scalar": 24290,
+        "control_bitstring16": 41758
+      }
+    }
+  }
+}

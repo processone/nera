@@ -1,0 +1,115 @@
+{
+  "samples": {
+    "before": [
+      {
+        "scalar_snapshot": 4656,
+        "status_snapshot": 4907,
+        "process_cpu_us": 15564
+      },
+      {
+        "scalar_snapshot": 3815,
+        "status_snapshot": 4493,
+        "process_cpu_us": 12632
+      },
+      {
+        "scalar_snapshot": 3818,
+        "status_snapshot": 4133,
+        "process_cpu_us": 12057
+      },
+      {
+        "scalar_snapshot": 3837,
+        "status_snapshot": 4242,
+        "process_cpu_us": 12367
+      },
+      {
+        "scalar_snapshot": 3879,
+        "status_snapshot": 4200,
+        "process_cpu_us": 12342
+      },
+      {
+        "scalar_snapshot": 3815,
+        "status_snapshot": 4248,
+        "process_cpu_us": 11957
+      },
+      {
+        "scalar_snapshot": 3814,
+        "status_snapshot": 4215,
+        "process_cpu_us": 12145
+      },
+      {
+        "scalar_snapshot": 3785,
+        "status_snapshot": 4134,
+        "process_cpu_us": 12426
+      },
+      {
+        "scalar_snapshot": 3829,
+        "status_snapshot": 4129,
+        "process_cpu_us": 12037
+      }
+    ],
+    "after": [
+      {
+        "scalar_snapshot": 3721,
+        "status_snapshot": 4563,
+        "process_cpu_us": 13061
+      },
+      {
+        "scalar_snapshot": 3746,
+        "status_snapshot": 4480,
+        "process_cpu_us": 12880
+      },
+      {
+        "scalar_snapshot": 3374,
+        "status_snapshot": 4020,
+        "process_cpu_us": 11825
+      },
+      {
+        "scalar_snapshot": 3365,
+        "status_snapshot": 4126,
+        "process_cpu_us": 12129
+      },
+      {
+        "scalar_snapshot": 3366,
+        "status_snapshot": 4028,
+        "process_cpu_us": 11733
+      },
+      {
+        "scalar_snapshot": 3313,
+        "status_snapshot": 3930,
+        "process_cpu_us": 11293
+      },
+      {
+        "scalar_snapshot": 2921,
+        "status_snapshot": 3672,
+        "process_cpu_us": 11271
+      },
+      {
+        "scalar_snapshot": 3370,
+        "status_snapshot": 3989,
+        "process_cpu_us": 11518
+      },
+      {
+        "scalar_snapshot": 3216,
+        "status_snapshot": 4000,
+        "process_cpu_us": 11402
+      }
+    ]
+  },
+  "medians": {
+    "before": {
+      "scalar_snapshot": 3818,
+      "status_snapshot": 4215,
+      "process_cpu_us": 12342
+    },
+    "after": {
+      "scalar_snapshot": 3366,
+      "status_snapshot": 4020,
+      "process_cpu_us": 11733
+    }
+  },
+  "percent_change": {
+    "scalar_snapshot": -11.83865898376113,
+    "status_snapshot": -4.62633451957295,
+    "process_cpu_us": -4.934370442391833
+  }
+}

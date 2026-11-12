@@ -1,0 +1,24 @@
+{
+  "workspace-tests.txt": {
+    "passed": 1967,
+    "failed": 0,
+    "ignored": 1
+  },
+  "release-tests.txt": {
+    "passed": 626,
+    "failed": 0,
+    "ignored": 1
+  },
+  "base": "4a8d33fd61546ed3c72274217f02ad2efa86e840",
+  "target": "local worktree mr/receive-timeout-contracts",
+  "platform": "macOS-15.7.7-arm64-arm-64bit-Mach-O",
+  "native_distinct": {
+    "passed": 36,
+    "failed": 0,
+    "skipped": 0
+  },
+  "artifacts": {
+    "/tmp/nera-transfer-target/release/nera": "2b987840b4d9abb89cc03de16bb45a6454dab4438babd9c7e2e217642bb51eb5",
+    "/tmp/nera-transfer-target/release/libnera_runtime.a": "d2a9bbed797474f9c7803acf19a16417cd604b52f40f0114d46cbbb299c6c70a"
+  }
+}

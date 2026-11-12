@@ -1,0 +1,7 @@
+BEAM == Nera: base64_options: ok
+BEAM == Nera: base64_large_encode: ok
+BEAM == Nera: base64_large_decode: ok
+BEAM == Nera: base64_list_decode: ok
+Frozen Erlang == production: encode and binary decode corpus: ok
+BEAM == frozen Erlang: exhaustive binary decode value/error corpus: ok
+BEAM == native lists: 67529 values/errors, including invalid elements and options

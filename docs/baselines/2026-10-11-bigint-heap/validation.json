@@ -1,0 +1,35 @@
+{
+  "base": "ab347d5a9f6dad929e68cc0a3bfde7782bc2740e",
+  "branch": "mr/bigint-heap-contracts",
+  "target": "uncommitted worktree",
+  "sources": {
+    "CHANGELOG.md": "8038655110f129ddbaedc14bbca70cacd4c4879e7d29a059de9621450d4a8f68",
+    "crates/nera-runtime/src/bif.rs": "03f8cadc70d27df69bea6843a16064f812768a933251326eaecb6679e79752f1",
+    "crates/nera-runtime/src/bigint.rs": "10672637afd40c41c4661e89569308b357a55957d6da0582aeaff773c651ea51",
+    "crates/nera-runtime/src/ets.rs": "606ada65c2ea0544d9e6c7b93706be0c5c86fb664fd02c40addc63957e2fa213",
+    "crates/nera-runtime/src/ffi/compare.rs": "cb329ea76f301e870d643af10a27310bdd1e6109aa5bf63cd3c1f7ae2b3c0b6a",
+    "crates/nera-runtime/src/ffi/helpers.rs": "a6930db55eaf85b5e39948a9207c8e5a0c5222f349d2f0a37df5412a989f1fce",
+    "crates/nera-runtime/src/ffi/io_format.rs": "1f6c345a902ecd2c57df73d32308f9ff1e9336ab631ad8131121f8218a9264d3",
+    "crates/nera-runtime/src/heap.rs": "f8f0a97bd32140a5f184d352bd983ab3e2c7d275f6e27c457c26549680f4006c",
+    "crates/nera-runtime/src/term.rs": "93426d9460512d6269d3ba74e6de0b575fde89a37a55136084bbbda3e6bda2a4"
+  },
+  "logs": {
+    "nera-heap-red.log": "0cd7d40310f8d888082b7236e6e7777ce38f894c4779af73c52897b642474db7",
+    "nera-contract-workspace.log": "aae7a774b7d9ea80a9ff3ba418f8f7ead81436abef72c75c49adffdf6a1763ab",
+    "nera-contract-debug-final.log": "56c087d2f5de5dadda4778d7f222b2d302b43bf14cb728967b3a9b37c2fd5b72",
+    "nera-contract-release.log": "88b796272eca938293f22901c85a61a9c48350c9bc364b0211dc7f5e5c8b8a45",
+    "nera-contract-doc.log": "f324192ccd4337da912d16a1570786bc0a8d3a0e6ecdc2dc34912cd9df1efe8a",
+    "nera-contract-clippy-final.log": "fdc1e862b464d64c142db9175935f1e07bf2753e2d58264caec70096552fc53c",
+    "nera-contract-build.log": "7412701889184461ac5d25b27762aade7bd1351dbbd901d45b69c2bc9455f49e",
+    "nera-contract-erlang.log": "72d044547efe50f9ed3e864d585ca5c05941cd2bee7ea9bf2c4b0560dfc5008c"
+  },
+  "artifacts": {
+    "nera": "9850a130e02f3d39a4c77ce478014ebc4d4f023fd4b3665bd94964e488bf3fe9",
+    "libnera_runtime.a": "a34b3674cce75c659f9ca18101ee10fe5d6ecb9e080c81507b0be8bf1e605304"
+  },
+  "notes": [
+    "Workspace run preceded final allocator tuning; all runtime unit tests rerun after tuning in debug/release.",
+    "Last edits after release compilation only refined safety documentation.",
+    "Benchmarks isolate actual young allocator code; do not measure full application throughput or GC copying."
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "environment": "macOS ARM64, Rust 1.99.0, BEAM OTP 29",
+  "rust_test_totals": {
+    "passed": 1755,
+    "failed": 0,
+    "ignored": 0
+  },
+  "rust_test_targets": 17,
+  "baseline_summary": "287 passed, 0 failed (0 compile), 2 skipped / 289 total\n\nALL TESTS PASSED",
+  "repeated": {
+    "tcp_reactor_stress": {
+      "runs": 100,
+      "passed": 100,
+      "max_seconds": 2.173519750125706
+    },
+    "tcp_accept_concurrent": {
+      "runs": 100,
+      "passed": 100,
+      "max_seconds": 0.2584344996139407
+    }
+  },
+  "logs": {
+    "main-repro.log": {
+      "local_path": "/home/user/.codex/worktrees/tcp-rearm-timeout/nera/target/tcp-rearm-audit/main-repro.log",
+      "sha256": "8f297f7817c28b2dd960182b250574da7bb083ee3d364dbc23bebc5d0eae9e6e"
+    },
+    "red.log": {
+      "local_path": "/home/user/.codex/worktrees/tcp-rearm-timeout/nera/target/tcp-rearm-audit/red.log",
+      "sha256": "99641b83fc3bfbce3ebe069574d1019c2de4d1849051ba40210d73d69666261a"
+    },
+    "erlang-red.log": {
+      "local_path": "/home/user/.codex/worktrees/tcp-rearm-timeout/nera/target/tcp-rearm-audit/erlang-red.log",
+      "sha256": "479ba49773e31d0ccda3bd1ea8f1c530aab6baf02955a29c3e4acf5b456717d3"
+    },
+    "large-queue-green.log": {
+      "local_path": "/home/user/.codex/worktrees/tcp-rearm-timeout/nera/target/tcp-rearm-audit/large-queue-green.log",
+      "sha256": "d6abe1973b82a75171543e9ac2b3324a5f1c1c0e72becda6e4d480db472ae9d7"
+    },
+    "beam-regression.log": {
+      "local_path": "/home/user/.codex/worktrees/tcp-rearm-timeout/nera/target/tcp-rearm-audit/beam-regression.log",
+      "sha256": "f28b641843c7081c13325a2e80e9f271489900b8904a9508c2a79694b33067d0"
+    },
+    "tcp-green.log": {
+      "local_path": "/home/user/.codex/worktrees/tcp-rearm-timeout/nera/target/tcp-rearm-audit/tcp-green.log",
+      "sha256": "966074f3d38c42832d434f6292e23b440750865c174c34674dcee11ef909ffb9"
+    },
+    "clippy.log": {
+      "local_path": "/home/user/.codex/worktrees/tcp-rearm-timeout/nera/target/tcp-rearm-audit/clippy.log",
+      "sha256": "4f55912549593b2538540b9144a2ba82568d1671df105f58ef8f876221b9ad69"
+    },
+    "rust-tests.log": {
+      "local_path": "/home/user/.codex/worktrees/tcp-rearm-timeout/nera/target/tcp-rearm-audit/rust-tests.log",
+      "sha256": "4cbb0465d4f8446cac88b4399e7479ec51b863d03d7c3a3ba8d04fc47469c069"
+    },
+    "final-build.log": {
+      "local_path": "/home/user/.codex/worktrees/tcp-rearm-timeout/nera/target/tcp-rearm-audit/final-build.log",
+      "sha256": "97269354ec55f24e746abe3d8de6b816a60b072cfa11345f032a6bca1071b3f4"
+    },
+    "baseline.log": {
+      "local_path": "/home/user/.codex/worktrees/tcp-rearm-timeout/nera/target/tcp-rearm-audit/baseline.log",
+      "sha256": "fc70929b6e68e68ae14ee93462e834319f0668c1a0446380f149635f101cc00c"
+    },
+    "repeated/results.json": {
+      "local_path": "/home/user/.codex/worktrees/tcp-rearm-timeout/nera/target/tcp-rearm-audit/repeated/results.json",
+      "sha256": "533ff5d0a974b12c7d527098141460b8c4b996f93f507979b1b3229a0275852c"
+    }
+  },
+  "checks": {
+    "strict_clippy": "passed",
+    "release_workspace_build": "passed",
+    "diff_check": "passed",
+    "beam_regression": "passed",
+    "local_validation_pipeline_exit": 0
+  }
+}

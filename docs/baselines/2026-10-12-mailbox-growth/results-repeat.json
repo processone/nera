@@ -1,0 +1,115 @@
+{
+  "samples": {
+    "before": [
+      {
+        "growth": 16580,
+        "hot": 5495,
+        "process_cpu_us": 24080
+      },
+      {
+        "growth": 16476,
+        "hot": 5355,
+        "process_cpu_us": 23609
+      },
+      {
+        "growth": 16462,
+        "hot": 5360,
+        "process_cpu_us": 23756
+      },
+      {
+        "growth": 16487,
+        "hot": 5710,
+        "process_cpu_us": 24105
+      },
+      {
+        "growth": 16640,
+        "hot": 5347,
+        "process_cpu_us": 23869
+      },
+      {
+        "growth": 16556,
+        "hot": 5453,
+        "process_cpu_us": 23823
+      },
+      {
+        "growth": 16560,
+        "hot": 5392,
+        "process_cpu_us": 24083
+      },
+      {
+        "growth": 16679,
+        "hot": 5463,
+        "process_cpu_us": 23997
+      },
+      {
+        "growth": 16482,
+        "hot": 5356,
+        "process_cpu_us": 23697
+      }
+    ],
+    "after": [
+      {
+        "growth": 17526,
+        "hot": 5998,
+        "process_cpu_us": 25524
+      },
+      {
+        "growth": 17508,
+        "hot": 5348,
+        "process_cpu_us": 24930
+      },
+      {
+        "growth": 17416,
+        "hot": 5383,
+        "process_cpu_us": 24582
+      },
+      {
+        "growth": 17532,
+        "hot": 5325,
+        "process_cpu_us": 24924
+      },
+      {
+        "growth": 17365,
+        "hot": 5418,
+        "process_cpu_us": 24618
+      },
+      {
+        "growth": 17414,
+        "hot": 5345,
+        "process_cpu_us": 24568
+      },
+      {
+        "growth": 17444,
+        "hot": 5443,
+        "process_cpu_us": 24810
+      },
+      {
+        "growth": 17371,
+        "hot": 5550,
+        "process_cpu_us": 24758
+      },
+      {
+        "growth": 17478,
+        "hot": 5898,
+        "process_cpu_us": 25112
+      }
+    ]
+  },
+  "medians": {
+    "before": {
+      "growth": 16556,
+      "hot": 5392,
+      "process_cpu_us": 23869
+    },
+    "after": {
+      "growth": 17444,
+      "hot": 5418,
+      "process_cpu_us": 24810
+    }
+  },
+  "percent_change": {
+    "growth": 5.363614399613437,
+    "hot": 0.48219584569733076,
+    "process_cpu_us": 3.9423520046922844
+  }
+}

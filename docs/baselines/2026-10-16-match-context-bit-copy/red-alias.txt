@@ -1,0 +1,37 @@
+   Compiling nera-syntax v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-syntax)
+   Compiling nera-ir v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-ir)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.52s
+     Running unittests src/lib.rs (/tmp/nera-transfer-target/debug/deps/nera_ir-8b8945ec4992cdab)
+
+running 1 test
+test lower::tests::aliased_match_context_arguments_are_materialized_before_forwarding ... FAILED
+
+failures:
+
+---- lower::tests::aliased_match_context_arguments_are_materialized_before_forwarding stdout ----
+
+thread 'lower::tests::aliased_match_context_arguments_are_materialized_before_forwarding' (10811529) panicked at crates/nera-ir/src/passes/mod.rs:49:5:
+before passes: [
+    VerificationError {
+        function: "0__1_1",
+        location: Terminator(
+            BlockId(
+                2,
+            ),
+        ),
+        kind: UndeclaredVariable(
+            VarId(
+                26,
+            ),
+        ),
+    },
+]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    lower::tests::aliased_match_context_arguments_are_materialized_before_forwarding
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 410 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p nera-ir --lib`

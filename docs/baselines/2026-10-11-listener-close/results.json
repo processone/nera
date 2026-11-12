@@ -1,0 +1,53 @@
+{
+  "base": "7615c429effb39681ba7ba77f68884cbefb6b4e8",
+  "target": "uncommitted working tree on mr/tcp-listener-close",
+  "main": {
+    "release_build": "passed",
+    "strict_clippy": "passed",
+    "rust_passed": 1767,
+    "rust_ignored": 1,
+    "erlang_passed": 287,
+    "erlang_failed": 1,
+    "erlang_skipped": 2,
+    "baseline_green": false,
+    "failure": "tcp_reactor_perf: batch_variance_stall,77,14,[8,10,14,14,77]",
+    "isolated_unchanged_perf_control": "passed"
+  },
+  "fixed": {
+    "release_build": "passed",
+    "strict_clippy": "passed",
+    "rust_totals": {
+      "passed": 1767,
+      "failed": 0,
+      "ignored": 1
+    },
+    "tcp_passed": 9,
+    "tcp_failed": 0,
+    "full_erlang_suite_rerun": false,
+    "repeated_accept_close": {
+      "passed": 100,
+      "total": 100
+    }
+  },
+  "source_sha256": {
+    "crates/nera-runtime/src/ffi/gen_tcp.rs": "309baebdd53347a912e3ca3dc1344a8bf8a0511438a1675a0126ea1000815771",
+    "crates/nera-runtime/src/io_pool.rs": "c716f8f50c3a612b305b9373a665108a5c7dbcf903733548efcda616d549a015",
+    "crates/nera-runtime/src/process.rs": "a2227a888db259087c8d589cedd8bc6110400f57407f3015631890f8070291cd",
+    "crates/nera-runtime/src/reactor.rs": "e30df2eb9668cb7576d9b4cfae3eb05a7909ebd7ec4e2e388a2aa83c361f06ca",
+    "tests/tcp_accept_close.erl": "f14c244aa4d5f57e6cc7999054e0019879dc2a9d27b0ca38e85156bf5f0f5a96",
+    "Cargo.lock": "2b23030c542224604bc14c0b2b0bceff36dcde82391ab8ebe6a7d7b575802e3e"
+  },
+  "local_log_sha256": {
+    "main-build.log": "5588cbaeae78b42152a5b04d3c642541e0cf753953e201708fc993f090e4c728",
+    "main-clippy.log": "5084b8117c1abe365f4a6a3983c6154811a8c4c69998962dfac6c7aea84731b6",
+    "main-rust.log": "8f9f8801bad614ad9caa20f77c17da6d2ae4f5ac8bde2790b2d1afc305a22b4b",
+    "main-erlang.log": "a0e3a42acc4185da4a8af89eb7b222aa80c4bbd159d3b4f86d18d12e299ae437",
+    "main-perf-recheck.log": "b0f108e077ca2f1686ac999f443c080892e3b45737f2f598c46eb558bb70e095",
+    "fix-green.log": "543f3ac4c5fea853480194635a84cfc4e83f651479cd96f5649aae65bae51d92",
+    "fix-clippy.log": "fb5c02a5c5af84fbcdcd2676ce437e7d754c3d564928c6405d54b1d2ce861b89",
+    "fix-rust.log": "2ee54d17b7346b80f18343d44a6c05a63d67a26fa8830a61a5cad0d13b46ae90",
+    "fix-build.log": "b55b89e71f05e36e7b4e8e4c3684b2ebf08dc2a6d8ee2b13b61d0cca842d6321",
+    "fix-tcp.log": "8c85579cb48fd80b23074bcf427303c3efb4ad18b143b956ff7784e4d6486cd7",
+    "repeat/results.json": "c34f02ed4e7a2f2f58cb5b340a3478fae3cad22483f2be04f7731f3dc6682705"
+  }
+}

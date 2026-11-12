@@ -1,0 +1,35 @@
+{
+  "base": "902702e6d6027866f2f2885df0915a294959e283",
+  "branch": "mr/integer-binary-segments",
+  "target": "working tree bound by source-hashes.json",
+  "platform": "macOS ARM64",
+  "toolchain": "Rust 1.99.0; unchanged Cargo.lock",
+  "checks": {
+    "build": 0,
+    "clippy": 0,
+    "release": 0,
+    "native": 0
+  },
+  "counts_passed_failed_ignored": {
+    "workspace-final": [
+      1994,
+      0,
+      1
+    ],
+    "release": [
+      648,
+      0,
+      1
+    ]
+  },
+  "native": [
+    63,
+    0
+  ],
+  "otp": "29; passed",
+  "cross": [
+    "x86_64-apple-darwin; passed",
+    "x86_64-pc-windows-msvc; passed; 6 existing fallback warnings"
+  ],
+  "ci": "paused per CONTRIBUTING.md"
+}

@@ -1,0 +1,4 @@
+   Compiling nera-runtime v0.1.0 (/home/user/.codex/worktrees/binary-match-corrections/nera/crates/nera-runtime)
+   Compiling nera v0.1.0 (/home/user/.codex/worktrees/binary-match-corrections/nera/crates/nera)
+    Checking nera-codegen v0.1.0 (/home/user/.codex/worktrees/binary-match-corrections/nera/crates/nera-codegen)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.81s

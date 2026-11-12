@@ -1,0 +1,136 @@
+{
+  "samples": {
+    "before": [
+      {
+        "lookup": 45362,
+        "monitor": 46849,
+        "self_send": 22400,
+        "process_cpu_us": 116983
+      },
+      {
+        "lookup": 47798,
+        "monitor": 48629,
+        "self_send": 21863,
+        "process_cpu_us": 122005
+      },
+      {
+        "lookup": 43774,
+        "monitor": 50961,
+        "self_send": 23482,
+        "process_cpu_us": 122791
+      },
+      {
+        "lookup": 47330,
+        "monitor": 46012,
+        "self_send": 23141,
+        "process_cpu_us": 123390
+      },
+      {
+        "lookup": 42382,
+        "monitor": 64331,
+        "self_send": 25904,
+        "process_cpu_us": 126975
+      },
+      {
+        "lookup": 42134,
+        "monitor": 46186,
+        "self_send": 21441,
+        "process_cpu_us": 114479
+      },
+      {
+        "lookup": 52324,
+        "monitor": 46691,
+        "self_send": 21759,
+        "process_cpu_us": 128409
+      },
+      {
+        "lookup": 48690,
+        "monitor": 46120,
+        "self_send": 21606,
+        "process_cpu_us": 123457
+      },
+      {
+        "lookup": 48535,
+        "monitor": 45736,
+        "self_send": 21370,
+        "process_cpu_us": 122328
+      }
+    ],
+    "after": [
+      {
+        "lookup": 46163,
+        "monitor": 45474,
+        "self_send": 21166,
+        "process_cpu_us": 119019
+      },
+      {
+        "lookup": 46549,
+        "monitor": 47115,
+        "self_send": 29572,
+        "process_cpu_us": 129280
+      },
+      {
+        "lookup": 189666,
+        "monitor": 51457,
+        "self_send": 21882,
+        "process_cpu_us": 121561
+      },
+      {
+        "lookup": 45416,
+        "monitor": 46491,
+        "self_send": 21697,
+        "process_cpu_us": 119928
+      },
+      {
+        "lookup": 56977,
+        "monitor": 61836,
+        "self_send": 23391,
+        "process_cpu_us": 137523
+      },
+      {
+        "lookup": 53271,
+        "monitor": 46567,
+        "self_send": 21694,
+        "process_cpu_us": 129581
+      },
+      {
+        "lookup": 45034,
+        "monitor": 46013,
+        "self_send": 21546,
+        "process_cpu_us": 118623
+      },
+      {
+        "lookup": 46877,
+        "monitor": 45595,
+        "self_send": 21363,
+        "process_cpu_us": 120518
+      },
+      {
+        "lookup": 44237,
+        "monitor": 45547,
+        "self_send": 21937,
+        "process_cpu_us": 117952
+      }
+    ]
+  },
+  "medians": {
+    "before": {
+      "lookup": 47330,
+      "monitor": 46691,
+      "self_send": 21863,
+      "process_cpu_us": 122791
+    },
+    "after": {
+      "lookup": 46549,
+      "monitor": 46491,
+      "self_send": 21697,
+      "process_cpu_us": 120518
+    }
+  },
+  "percent_change": {
+    "lookup": -1.6501162053665697,
+    "monitor": -0.42834807564626765,
+    "self_send": -0.7592736586927717,
+    "process_cpu_us": -1.851112866578164
+  }
+}

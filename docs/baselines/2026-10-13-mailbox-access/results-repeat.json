@@ -1,0 +1,115 @@
+{
+  "samples": {
+    "before": [
+      {
+        "get": 92279,
+        "exit": 34769,
+        "process_cpu_us": 180078
+      },
+      {
+        "get": 96056,
+        "exit": 36412,
+        "process_cpu_us": 185752
+      },
+      {
+        "get": 350381,
+        "exit": 83366,
+        "process_cpu_us": 246583
+      },
+      {
+        "get": 89539,
+        "exit": 33943,
+        "process_cpu_us": 177404
+      },
+      {
+        "get": 96062,
+        "exit": 43114,
+        "process_cpu_us": 196375
+      },
+      {
+        "get": 131072,
+        "exit": 39104,
+        "process_cpu_us": 212105
+      },
+      {
+        "get": 129241,
+        "exit": 43288,
+        "process_cpu_us": 217938
+      },
+      {
+        "get": 104268,
+        "exit": 36324,
+        "process_cpu_us": 190536
+      },
+      {
+        "get": 99602,
+        "exit": 44719,
+        "process_cpu_us": 203722
+      }
+    ],
+    "after": [
+      {
+        "get": 123544,
+        "exit": 40898,
+        "process_cpu_us": 219423
+      },
+      {
+        "get": 124103,
+        "exit": 35702,
+        "process_cpu_us": 200018
+      },
+      {
+        "get": 177341,
+        "exit": 44352,
+        "process_cpu_us": 256449
+      },
+      {
+        "get": 139318,
+        "exit": 35384,
+        "process_cpu_us": 213729
+      },
+      {
+        "get": 116733,
+        "exit": 33796,
+        "process_cpu_us": 201960
+      },
+      {
+        "get": 179247,
+        "exit": 53024,
+        "process_cpu_us": 262966
+      },
+      {
+        "get": 158827,
+        "exit": 38555,
+        "process_cpu_us": 246267
+      },
+      {
+        "get": 163623,
+        "exit": 45068,
+        "process_cpu_us": 261041
+      },
+      {
+        "get": 119052,
+        "exit": 34767,
+        "process_cpu_us": 206946
+      }
+    ]
+  },
+  "medians": {
+    "before": {
+      "get": 99602,
+      "exit": 39104,
+      "process_cpu_us": 196375
+    },
+    "after": {
+      "get": 139318,
+      "exit": 38555,
+      "process_cpu_us": 219423
+    }
+  },
+  "percent_change": {
+    "get": 39.874701311218644,
+    "exit": -1.4039484451718542,
+    "process_cpu_us": 11.73672819859961
+  }
+}

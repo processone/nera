@@ -1,0 +1,15 @@
+Running 1 tests (1 threads)
+────────────────────────────────────────────────────────────
+  FAIL  tcp_argument_domain                        1.0s  [1/1]
+────────────────────────────────────────────────────────────
+Results: 0 passed, 1 failed (0 compile), 0 skipped / 1 total
+
+Failures:
+  tcp_argument_domain: runtime crash, exit=1
+    stderr:
+    Error in process <0.1.0>: error:{badmatch,{ok,4294967296}}
+    Stacktrace (most recent call last):
+      tcp_argument_domain:bad/1 (tcp_argument_domain.erl, line 18)
+      tcp_argument_domain:__lambda_0/1 (tcp_argument_domain.erl, line 5)
+
+SOME TESTS FAILED

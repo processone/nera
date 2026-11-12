@@ -1,0 +1,3 @@
+BEAM +S 1: observer progresses during small repeated and large encodings
+Nera NERA_SCHEDULERS=1: same progress assertions pass in 5 runs
+Invalid scheduler count rejected before execution

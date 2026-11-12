@@ -1,0 +1,443 @@
+{
+  "status": "passed",
+  "generators": {
+    "parse_qs_test_": 24,
+    "parse_qs_identity_test_": 5,
+    "qs_test_": 16,
+    "qs_identity_test_": 5,
+    "urldecode_test_": 7,
+    "urldecode_identity_test_": 5,
+    "urlencode_test_": 5,
+    "urlencode_identity_test_": 5
+  },
+  "expected": 72,
+  "upstream": {
+    "name": "cowlib",
+    "version": "2.20.0",
+    "url": "https://github.com/ninenines/cowlib.git",
+    "commit": "c768a804565ff5b8178ed968a5921e469d6bd7b2"
+  },
+  "source_sha256": "9d45e09874dd83ed42b02cdc7ce1aff5737f3ed968d7682c8b304ec853b61c91",
+  "include_sha256": {
+    "cow_inline.hrl": "b6734610786a2d10ae82d9b9513e72d7a67396e1c5c1f3d6faa19e6350d580b6",
+    "cow_parse.hrl": "a366ad773962acdfea8b90cbc5499e6b3dc9148fb59d0bdd303dbbdae01a0177"
+  },
+  "nera_sha256": "47069e9f2db13f3c5c2a64da6488621162d690a488c42dbfcc447c66cb9b8d37",
+  "runtime_sha256": "39d1fd9049f142c107176505d17ad60a1cebb6b2a497d1f5ff70dc237397802b",
+  "harness_sha256": "99aa183a4d51e389904eb166a0dc35d1e3512fc540171df08e7839a6ac509198",
+  "removed_benchmarks": [
+    "horse_parse_qs_shorter",
+    "horse_parse_qs_short",
+    "horse_parse_qs_long",
+    "horse_parse_qs_longer",
+    "horse_qs_shorter",
+    "horse_qs_short",
+    "horse_qs_long",
+    "horse_qs_longer",
+    "horse_urldecode",
+    "horse_urldecode_plus",
+    "horse_urldecode_hex",
+    "horse_urldecode_jp_hex",
+    "horse_urldecode_mix",
+    "horse_urlencode",
+    "horse_urlencode_plus",
+    "horse_urlencode_jp",
+    "horse_urlencode_mix"
+  ],
+  "checkout_commit": "47996d38555cc9acfd58b4ed73baefe092e555b3",
+  "otp_version": "Erlang/OTP 29 [erts-17.0.5] [source] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads:1] [jit] [dtrace]",
+  "adapted_sha256": "a0df5e746bd7829f8711c5ffc75fe94391bd13ba853b812801cbe11dbf374578",
+  "beam_passed": true,
+  "native_build_returncode": 0,
+  "executable_sha256": "d752abc4172728b8321e6387c929832542ebdafd78d68441cfc7d920f034b3d6",
+  "native_passed": 72,
+  "scope": "Original EUnit on BEAM; original functional test closures via external adapter in Nera. Horse benchmarks excluded, no native EUnit framework claim.",
+  "native": [
+    {
+      "index": 1,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 2,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 3,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 4,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 5,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 6,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 7,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 8,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 9,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 10,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 11,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 12,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 13,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 14,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 15,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 16,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 17,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 18,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 19,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 20,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 21,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 22,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 23,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 24,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 25,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 26,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 27,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 28,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 29,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 30,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 31,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 32,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 33,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 34,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 35,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 36,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 37,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 38,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 39,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 40,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 41,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 42,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 43,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 44,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 45,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 46,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 47,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 48,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 49,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 50,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 51,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 52,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 53,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 54,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 55,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 56,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 57,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 58,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 59,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 60,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 61,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 62,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 63,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 64,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 65,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 66,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 67,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 68,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 69,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 70,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 71,
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "index": 72,
+      "returncode": 0,
+      "passed": true
+    }
+  ],
+  "date": "2026-10-12",
+  "platform": "macOS arm64",
+  "vendored": false,
+  "harness_tests_passed": 19,
+  "report_sha256": "ff5303e7875b38f78ff148604d7996a916b065c6d59d6e889dd71a1481eea5f7",
+  "report_path": "/private/tmp/nera-cow-qs-upstream/report.json",
+  "negative_control": {
+    "description": "One expected empty-list result changed to [validation_sentinel] only in a separate external copy",
+    "native_returncode": 1,
+    "stdout_empty": true,
+    "reason": "{badmatch,[]}",
+    "stderr_sha256": "d493c8bf18b6cb8f0cf5072494e583c24c2fa1c61082375f7197af01018a9592"
+  },
+  "compiler_provenance": "Same compiler/runtime hashes as case-clause-evidence.json; source correction committed as 47996d3",
+  "warnings": {
+    "count": 22,
+    "categories": [
+      "unused macros",
+      "unused variables",
+      "non-tail-recursive parse_qs_name/5"
+    ]
+  },
+  "limitations": [
+    "Horse performance benchmarks excluded; not functional EUnit tests.",
+    "Native EUnit framework and other Cowlib modules are not validated by this adapter."
+  ]
+}

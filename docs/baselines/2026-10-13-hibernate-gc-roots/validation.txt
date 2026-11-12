@@ -1,0 +1,43 @@
+workspace
+test result: ok. 287 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.60s
+test result: ok. 80 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 121 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 92 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.22s
+test result: ok. 405 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.83s
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 18.67s
+test result: ok. 503 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 2.11s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s
+test result: ok. 300 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+test result: ok. 22 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.02s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+release runtime
+test result: ok. 503 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.24s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s
+test result: ok. 22 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.01s
+
+Clippy
+Checking nera-syntax v0.1.0 (/private/tmp/nera-hibernate-gc-roots/crates/nera-syntax)
+   Compiling nera-runtime v0.1.0 (/private/tmp/nera-hibernate-gc-roots/crates/nera-runtime)
+   Compiling nera v0.1.0 (/private/tmp/nera-hibernate-gc-roots/crates/nera)
+    Checking nera-ir v0.1.0 (/private/tmp/nera-hibernate-gc-roots/crates/nera-ir)
+    Checking nera-fmt v0.1.0 (/private/tmp/nera-hibernate-gc-roots/crates/nera-fmt)
+    Checking nera-codegen v0.1.0 (/private/tmp/nera-hibernate-gc-roots/crates/nera-codegen)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 5.15s
+
+release build
+Compiling nera-runtime v0.1.0 (/private/tmp/nera-hibernate-gc-roots/crates/nera-runtime)
+   Compiling nera v0.1.0 (/private/tmp/nera-hibernate-gc-roots/crates/nera)
+   Compiling nera-codegen v0.1.0 (/private/tmp/nera-hibernate-gc-roots/crates/nera-codegen)
+    Finished `release` profile [optimized] target(s) in 1m 49s
+
+git diff --check passed
+Cargo.lock unchanged
+State: local, uncommitted worktree

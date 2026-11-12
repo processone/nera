@@ -1,0 +1,30 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.23s
+     Running unittests src/lib.rs (/tmp/nera-transfer-target/debug/deps/nera_runtime-27bb0f9fcbc2d668)
+
+running 2 tests
+test ffi::binary_ops::materialize_bits_tests::small_materializations_allocate_no_temporary_bytes ... FAILED
+test ffi::binary_ops::materialize_bits_tests::large_materializations_allocate_only_final_bytes_and_metadata ... FAILED
+
+failures:
+
+---- ffi::binary_ops::materialize_bits_tests::small_materializations_allocate_no_temporary_bytes stdout ----
+
+thread 'ffi::binary_ops::materialize_bits_tests::small_materializations_allocate_no_temporary_bytes' (11274102) panicked at crates/nera-runtime/src/ffi/binary_ops.rs:2559:9:
+assertion `left == right` failed: a small window must be filled in its final heap storage
+  left: 800
+ right: 0
+
+---- ffi::binary_ops::materialize_bits_tests::large_materializations_allocate_only_final_bytes_and_metadata stdout ----
+
+thread 'ffi::binary_ops::materialize_bits_tests::large_materializations_allocate_only_final_bytes_and_metadata' (11274101) panicked at crates/nera-runtime/src/ffi/binary_ops.rs:2579:9:
+allocated 2096 bytes for a 1 KiB final buffer
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    ffi::binary_ops::materialize_bits_tests::large_materializations_allocate_only_final_bytes_and_metadata
+    ffi::binary_ops::materialize_bits_tests::small_materializations_allocate_no_temporary_bytes
+
+test result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 623 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p nera-runtime --lib`

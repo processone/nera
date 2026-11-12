@@ -1,0 +1,115 @@
+{
+  "samples": {
+    "before": [
+      {
+        "set": 80569,
+        "ordered_set": 83704,
+        "process_cpu_us": 171263
+      },
+      {
+        "set": 79807,
+        "ordered_set": 79573,
+        "process_cpu_us": 164350
+      },
+      {
+        "set": 79958,
+        "ordered_set": 80532,
+        "process_cpu_us": 165734
+      },
+      {
+        "set": 80185,
+        "ordered_set": 81338,
+        "process_cpu_us": 168256
+      },
+      {
+        "set": 79809,
+        "ordered_set": 79856,
+        "process_cpu_us": 165319
+      },
+      {
+        "set": 79829,
+        "ordered_set": 79992,
+        "process_cpu_us": 165714
+      },
+      {
+        "set": 79688,
+        "ordered_set": 79893,
+        "process_cpu_us": 164925
+      },
+      {
+        "set": 79329,
+        "ordered_set": 79535,
+        "process_cpu_us": 164451
+      },
+      {
+        "set": 79331,
+        "ordered_set": 79781,
+        "process_cpu_us": 164332
+      }
+    ],
+    "after": [
+      {
+        "set": 71963,
+        "ordered_set": 75813,
+        "process_cpu_us": 152149
+      },
+      {
+        "set": 69655,
+        "ordered_set": 70093,
+        "process_cpu_us": 144619
+      },
+      {
+        "set": 68489,
+        "ordered_set": 68708,
+        "process_cpu_us": 142085
+      },
+      {
+        "set": 69256,
+        "ordered_set": 68707,
+        "process_cpu_us": 144065
+      },
+      {
+        "set": 69231,
+        "ordered_set": 68411,
+        "process_cpu_us": 143231
+      },
+      {
+        "set": 69652,
+        "ordered_set": 69281,
+        "process_cpu_us": 144627
+      },
+      {
+        "set": 69118,
+        "ordered_set": 68443,
+        "process_cpu_us": 142585
+      },
+      {
+        "set": 69145,
+        "ordered_set": 68732,
+        "process_cpu_us": 143640
+      },
+      {
+        "set": 68812,
+        "ordered_set": 68659,
+        "process_cpu_us": 143367
+      }
+    ]
+  },
+  "medians": {
+    "before": {
+      "set": 79809,
+      "ordered_set": 79893,
+      "process_cpu_us": 165319
+    },
+    "after": {
+      "set": 69231,
+      "ordered_set": 68708,
+      "process_cpu_us": 143640
+    }
+  },
+  "percent_change": {
+    "set": -13.254144269443291,
+    "ordered_set": -13.999974966517714,
+    "process_cpu_us": -13.11343523732904
+  }
+}

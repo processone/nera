@@ -1,0 +1,526 @@
+1000cc154: d37cfd6d    	lsr	x13, x11, #60
+1000cc158: b5002c8d    	cbnz	x13, 0x1000cc6e8 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x628>
+1000cc15c: 9100056d    	add	x13, x11, #0x1
+1000cc160: aa0b03ee    	mov	x14, x11
+1000cc164: c8ae7d8d    	cas	x14, x13, [x12]
+1000cc168: eb0b01df    	cmp	x14, x11
+1000cc16c: aa0e03eb    	mov	x11, x14
+1000cc170: 54ffff21    	b.ne	0x1000cc154 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x94>
+
+1000cc148: f94063ec    	ldr	x12, [sp, #0xc0]
+1000cc14c: f940098b    	ldr	x11, [x12, #0x10]
+1000cc150: 9100418c    	add	x12, x12, #0x10
+1000cc154: d37cfd6d    	lsr	x13, x11, #60
+1000cc158: b5002c8d    	cbnz	x13, 0x1000cc6e8 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x628>
+1000cc15c: 9100056d    	add	x13, x11, #0x1
+1000cc160: aa0b03ee    	mov	x14, x11
+1000cc164: c8ae7d8d    	cas	x14, x13, [x12]
+1000cc168: eb0b01df    	cmp	x14, x11
+1000cc16c: aa0e03eb    	mov	x11, x14
+1000cc170: 54ffff21    	b.ne	0x1000cc154 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x94>
+1000cc174: 11000508    	add	w8, w8, #0x1
+1000cc178: f90103eb    	str	x11, [sp, #0x200]
+1000cc17c: 6b0a011f    	cmp	w8, w10
+1000cc180: 54fffe41    	b.ne	0x1000cc148 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x88>
+
+1000cc284: b100053f    	cmn	x9, #0x1
+1000cc288: 540022c0    	b.eq	0x1000cc6e0 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x620>
+1000cc28c: 91000528    	add	x8, x9, #0x1
+1000cc290: aa0903ea    	mov	x10, x9
+1000cc294: c8aa7f88    	cas	x10, x8, [x28]
+1000cc298: eb09015f    	cmp	x10, x9
+1000cc29c: aa0a03e9    	mov	x9, x10
+1000cc2a0: 54ffff21    	b.ne	0x1000cc284 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x1c4>
+
+1000cc45c: 3840150a    	ldrb	w10, [x8], #0x1
+1000cc460: 5100c14a    	sub	w10, w10, #0x30
+1000cc464: 7100255f    	cmp	w10, #0x9
+1000cc468: 54001028    	b.hi	0x1000cc66c <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x5ac>
+1000cc46c: 5280014b    	mov	w11, #0xa               ; =10
+1000cc470: 9b0b7f4b    	mul	x11, x26, x11
+1000cc474: 8b2a417a    	add	x26, x11, w10, uxtw
+1000cc478: f1000529    	subs	x9, x9, #0x1
+1000cc47c: 54ffff01    	b.ne	0x1000cc45c <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x39c>
+
+1000cc4a0: b100051f    	cmn	x8, #0x1
+1000cc4a4: 54000fc0    	b.eq	0x1000cc69c <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x5dc>
+1000cc4a8: 91000500    	add	x0, x8, #0x1
+1000cc4ac: aa0803e9    	mov	x9, x8
+1000cc4b0: c8a97f80    	cas	x9, x0, [x28]
+1000cc4b4: eb08013f    	cmp	x9, x8
+1000cc4b8: aa0903e8    	mov	x8, x9
+1000cc4bc: 54ffff21    	b.ne	0x1000cc4a0 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x3e0>
+
+1000cc2f8: 710012bf    	cmp	w21, #0x4
+1000cc2fc: 54001cc0    	b.eq	0x1000cc694 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x5d4>
+1000cc300: f907f7fa    	str	x26, [sp, #0xfe8]
+1000cc304: f907efff    	str	xzr, [sp, #0xfd8]
+1000cc308: 393b827f    	strb	wzr, [x19, #0xee0]
+1000cc30c: f83402e8    	ldadd	x20, x8, [x23]
+1000cc310: b7f85828    	tbnz	x8, #0x3f, 0x1000cce14 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0xd54>
+1000cc314: 900010a8    	adrp	x8, 0x1002e0000 <crossbeam_utils::atomic::atomic_cell::lock::LOCKS+0x1880>
+1000cc318: f944cd08    	ldr	x8, [x8, #0x998]
+1000cc31c: b4000068    	cbz	x8, 0x1000cc328 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x268>
+1000cc320: d100051a    	sub	x26, x8, #0x1
+1000cc324: 1400005c    	b	0x1000cc494 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x3d4>
+1000cc328: f0000c49    	adrp	x9, 0x100257000 <ryu::d2s_full_table::DOUBLE_POW5_INV_SPLIT+0x2240>
+1000cc32c: 911af129    	add	x9, x9, #0x6bc
+1000cc330: f8406128    	ldur	x8, [x9, #0x6]
+1000cc334: f80062c8    	stur	x8, [x22, #0x6]
+1000cc338: f9400128    	ldr	x8, [x9]
+1000cc33c: f90863e8    	str	x8, [sp, #0x10c0]
+1000cc340: 39003adf    	strb	wzr, [x22, #0xe]
+1000cc344: fd4863e0    	ldr	d0, [sp, #0x10c0]
+1000cc348: 0e208c00    	cmtst.8b	v0, v0, v0
+1000cc34c: bd50cbe1    	ldr	s1, [sp, #0x10c8]
+1000cc350: 2f08a421    	ushll.8h	v1, v1, #0x0
+1000cc354: 0e609821    	cmeq.4h	v1, v1, #0
+1000cc358: 394032c8    	ldrb	w8, [x22, #0xc]
+1000cc35c: 7100011f    	cmp	w8, #0x0
+1000cc360: 394036c8    	ldrb	w8, [x22, #0xd]
+1000cc364: 0e003802    	zip1.8b	v2, v0, v0
+1000cc368: 0e611c41    	bic.8b	v1, v2, v1
+1000cc36c: 0e001821    	uzp1.8b	v1, v1, v0
+1000cc370: 6e0c2401    	mov.s	v1[1], v0[1]
+1000cc374: 0f0f5420    	shl.8b	v0, v1, #0x7
+1000cc378: 0e20a800    	cmlt.8b	v0, v0, #0
+1000cc37c: 9e660009    	fmov	x9, d0
+1000cc380: ba411920    	ccmn	x9, #0x1, #0x0, ne
+1000cc384: 7a400904    	ccmp	w8, #0x0, #0x4, eq
+1000cc388: 7a401a84    	ccmp	w20, #0x0, #0x4, ne
+1000cc38c: 540000e1    	b.ne	0x1000cc3a8 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x2e8>
+1000cc390: 90001038    	adrp	x24, 0x1002d0000 <core::unicode::unicode_data::conversions::UPPERCASE_LUT+0x1670>
+1000cc394: 91202318    	add	x24, x24, #0x808
+1000cc398: f9081ff8    	str	x24, [sp, #0x1038]
+1000cc39c: 92800028    	mov	x8, #-0x2               ; =-2
+1000cc3a0: f9081be8    	str	x8, [sp, #0x1030]
+1000cc3a4: 1400000a    	b	0x1000cc3cc <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x30c>
+1000cc3a8: 914007e0    	add	x0, sp, #0x1, lsl #12   ; =0x1000
+1000cc3ac: 9100c000    	add	x0, x0, #0x30
+1000cc3b0: 914007e1    	add	x1, sp, #0x1, lsl #12   ; =0x1000
+1000cc3b4: 91030021    	add	x1, x1, #0xc0
+1000cc3b8: 9402ac8c    	bl	0x1001775e8 <std::sys::env::unix::getenv::{closure#0}>
+1000cc3bc: f9481bf9    	ldr	x25, [sp, #0x1030]
+1000cc3c0: f9481ff8    	ldr	x24, [sp, #0x1038]
+1000cc3c4: b1000b3f    	cmn	x25, #0x2
+1000cc3c8: 54000141    	b.ne	0x1000cc3f0 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x330>
+1000cc3cc: 92400708    	and	x8, x24, #0x3
+1000cc3d0: d1000909    	sub	x9, x8, #0x2
+1000cc3d4: f100093f    	cmp	x9, #0x2
+1000cc3d8: 54000563    	b.lo	0x1000cc484 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x3c4>
+1000cc3dc: b4000548    	cbz	x8, 0x1000cc484 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x3c4>
+1000cc3e0: d1000700    	sub	x0, x24, #0x1
+1000cc3e4: f8417308    	ldur	x8, [x24, #0x17]
+1000cc3e8: d63f0100    	blr	x8
+1000cc3ec: 14000026    	b	0x1000cc484 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x3c4>
+1000cc3f0: b100073f    	cmn	x25, #0x1
+1000cc3f4: 54000480    	b.eq	0x1000cc484 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x3c4>
+1000cc3f8: f94823e2    	ldr	x2, [sp, #0x1040]
+1000cc3fc: 910803e0    	add	x0, sp, #0x200
+1000cc400: aa1803e1    	mov	x1, x24
+1000cc404: 94018058    	bl	0x10012c564 <core::str::converts::from_utf8>
+1000cc408: f94103e8    	ldr	x8, [sp, #0x200]
+1000cc40c: b5001308    	cbnz	x8, 0x1000cc66c <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x5ac>
+1000cc410: f9410be9    	ldr	x9, [sp, #0x210]
+1000cc414: b40012c9    	cbz	x9, 0x1000cc66c <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x5ac>
+1000cc418: f94107e8    	ldr	x8, [sp, #0x208]
+1000cc41c: f100053f    	cmp	x9, #0x1
+1000cc420: 54000f41    	b.ne	0x1000cc608 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x548>
+1000cc424: 3940010a    	ldrb	w10, [x8]
+1000cc428: 52a0041a    	mov	w26, #0x200000          ; =2097152
+1000cc42c: 7100ad5f    	cmp	w10, #0x2b
+1000cc430: 54001200    	b.eq	0x1000cc670 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x5b0>
+1000cc434: 7100b55f    	cmp	w10, #0x2d
+1000cc438: 540011c0    	b.eq	0x1000cc670 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x5b0>
+1000cc43c: 7100ad5f    	cmp	w10, #0x2b
+1000cc440: 1a9f17ea    	cset	w10, eq
+1000cc444: 9a881508    	cinc	x8, x8, eq
+1000cc448: cb0a0129    	sub	x9, x9, x10
+1000cc44c: f100453f    	cmp	x9, #0x11
+1000cc450: 54000ea2    	b.hs	0x1000cc624 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x564>
+1000cc454: d280001a    	mov	x26, #0x0               ; =0
+1000cc458: b40010c9    	cbz	x9, 0x1000cc670 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x5b0>
+1000cc45c: 3840150a    	ldrb	w10, [x8], #0x1
+1000cc460: 5100c14a    	sub	w10, w10, #0x30
+1000cc464: 7100255f    	cmp	w10, #0x9
+1000cc468: 54001028    	b.hi	0x1000cc66c <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x5ac>
+1000cc46c: 5280014b    	mov	w11, #0xa               ; =10
+1000cc470: 9b0b7f4b    	mul	x11, x26, x11
+1000cc474: 8b2a417a    	add	x26, x11, w10, uxtw
+1000cc478: f1000529    	subs	x9, x9, #0x1
+1000cc47c: 54ffff01    	b.ne	0x1000cc45c <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x39c>
+1000cc480: 1400007c    	b	0x1000cc670 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x5b0>
+1000cc484: 52a0041a    	mov	w26, #0x200000          ; =2097152
+1000cc488: 91000748    	add	x8, x26, #0x1
+1000cc48c: 900010a9    	adrp	x9, 0x1002e0000 <crossbeam_utils::atomic::atomic_cell::lock::LOCKS+0x1880>
+1000cc490: f904cd28    	str	x8, [x9, #0x998]
+1000cc494: 110006b5    	add	w21, w21, #0x1
+1000cc498: 900010a8    	adrp	x8, 0x1002e0000 <crossbeam_utils::atomic::atomic_cell::lock::LOCKS+0x1880>
+1000cc49c: f944c908    	ldr	x8, [x8, #0x990]
+1000cc4a0: b100051f    	cmn	x8, #0x1
+1000cc4a4: 54000fc0    	b.eq	0x1000cc69c <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x5dc>
+1000cc4a8: 91000500    	add	x0, x8, #0x1
+1000cc4ac: aa0803e9    	mov	x9, x8
+1000cc4b0: c8a97f80    	cas	x9, x0, [x28]
+1000cc4b4: eb08013f    	cmp	x9, x8
+1000cc4b8: aa0903e8    	mov	x8, x9
+1000cc4bc: 54ffff21    	b.ne	0x1000cc4a0 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x3e0>
+1000cc4c0: 913f63e8    	add	x8, sp, #0xfd8
+1000cc4c4: 91004101    	add	x1, x8, #0x10
+1000cc4c8: 9402ad9a    	bl	0x100177b30 <<std::thread::thread::Thread>::new>
+1000cc4cc: aa0003f8    	mov	x24, x0
+1000cc4d0: f90807e0    	str	x0, [sp, #0x1008]
+1000cc4d4: 914007e0    	add	x0, sp, #0x1, lsl #12   ; =0x1000
+1000cc4d8: 91004000    	add	x0, x0, #0x10
+1000cc4dc: 914007e1    	add	x1, sp, #0x1, lsl #12   ; =0x1000
+1000cc4e0: 91002021    	add	x1, x1, #0x8
+1000cc4e4: 9402e67c    	bl	0x100185ed4 <std::thread::spawnhook::run_spawn_hooks>
+1000cc4e8: 4e080e80    	dup.2d	v0, x20
+1000cc4ec: 3d8002c0    	str	q0, [x22]
+1000cc4f0: f9086bf7    	str	x23, [sp, #0x10d0]
+1000cc4f4: f9086fff    	str	xzr, [sp, #0x10d8]
+1000cc4f8: 52800600    	mov	w0, #0x30               ; =48
+1000cc4fc: 9403b80e    	bl	0x1001ba534 <__rjem_malloc>
+1000cc500: b4000d20    	cbz	x0, 0x1000cc6a4 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x5e4>
+1000cc504: aa0003f9    	mov	x25, x0
+1000cc508: 3dc002c0    	ldr	q0, [x22]
+1000cc50c: 3d800000    	str	q0, [x0]
+1000cc510: 3dc006c0    	ldr	q0, [x22, #0x10]
+1000cc514: 3d800400    	str	q0, [x0, #0x10]
+1000cc518: 3dc00ac0    	ldr	q0, [x22, #0x20]
+1000cc51c: 3d800800    	str	q0, [x0, #0x20]
+1000cc520: f8340008    	ldadd	x20, x8, [x0]
+1000cc524: b7f84788    	tbnz	x8, #0x3f, 0x1000cce14 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0xd54>
+1000cc528: 3dc3be60    	ldr	q0, [x19, #0xef0]
+1000cc52c: 3d83c660    	str	q0, [x19, #0xf10]
+1000cc530: 3dc3c260    	ldr	q0, [x19, #0xf00]
+1000cc534: 3d83ca60    	str	q0, [x19, #0xf20]
+1000cc538: 9101e3e8    	add	x8, sp, #0x78
+1000cc53c: f9082be8    	str	x8, [sp, #0x1050]
+1000cc540: f9082ff9    	str	x25, [sp, #0x1058]
+1000cc544: f9400b28    	ldr	x8, [x25, #0x10]
+1000cc548: b4000088    	cbz	x8, 0x1000cc558 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x498>
+1000cc54c: 91006109    	add	x9, x8, #0x18
+1000cc550: f8340129    	ldadd	x20, x9, [x9]
+1000cc554: b7f80c09    	tbnz	x9, #0x3f, 0x1000cc6d4 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x614>
+1000cc558: 3dc3c660    	ldr	q0, [x19, #0xf10]
+1000cc55c: 3dc3ca61    	ldr	q1, [x19, #0xf20]
+1000cc560: ad0006c0    	stp	q0, q1, [x22]
+1000cc564: 3dc3ce60    	ldr	q0, [x19, #0xf30]
+1000cc568: 3d800ac0    	str	q0, [x22, #0x20]
+1000cc56c: 52800600    	mov	w0, #0x30               ; =48
+1000cc570: 9403b7f1    	bl	0x1001ba534 <__rjem_malloc>
+1000cc574: b4000a00    	cbz	x0, 0x1000cc6b4 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x5f4>
+1000cc578: aa0003fb    	mov	x27, x0
+1000cc57c: 3dc3c660    	ldr	q0, [x19, #0xf10]
+1000cc580: 3dc3ca61    	ldr	q1, [x19, #0xf20]
+1000cc584: ad000400    	stp	q0, q1, [x0]
+1000cc588: 3dc3ce60    	ldr	q0, [x19, #0xf30]
+1000cc58c: 3d800800    	str	q0, [x0, #0x20]
+1000cc590: f8340308    	ldadd	x20, x8, [x24]
+1000cc594: b7f84408    	tbnz	x8, #0x3f, 0x1000cce14 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0xd54>
+1000cc598: 52800300    	mov	w0, #0x18               ; =24
+1000cc59c: 9403b7e6    	bl	0x1001ba534 <__rjem_malloc>
+1000cc5a0: b4000920    	cbz	x0, 0x1000cc6c4 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x604>
+1000cc5a4: aa0003e1    	mov	x1, x0
+1000cc5a8: a9006c18    	stp	x24, x27, [x0]
+1000cc5ac: 90000ee8    	adrp	x8, 0x1002a8000 <dyld_stub_binder+0x1002a8000>
+1000cc5b0: 9134e108    	add	x8, x8, #0xd38
+1000cc5b4: f9000808    	str	x8, [x0, #0x10]
+1000cc5b8: aa1a03e0    	mov	x0, x26
+1000cc5bc: 9402b62f    	bl	0x100179e78 <<std::sys::thread::unix::Thread>::new>
+1000cc5c0: f100041f    	cmp	x0, #0x1
+1000cc5c4: 9280001a    	mov	x26, #-0x1              ; =-1
+1000cc5c8: 54000b00    	b.eq	0x1000cc728 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x668>
+1000cc5cc: aa0103e0    	mov	x0, x1
+1000cc5d0: 94055fdc    	bl	0x100224540 <dyld_stub_binder+0x100224540>
+1000cc5d4: f87a0308    	ldaddl	x26, x8, [x24]
+1000cc5d8: f100051f    	cmp	x8, #0x1
+1000cc5dc: 54000081    	b.ne	0x1000cc5ec <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x52c>
+1000cc5e0: d50339bf    	dmb	ishld
+1000cc5e4: aa1803e0    	mov	x0, x24
+1000cc5e8: 94023994    	bl	0x10015ac38 <<alloc::sync::Arc<std::thread::thread::Inner, std::alloc::System>>::drop_slow>
+1000cc5ec: f87a0328    	ldaddl	x26, x8, [x25]
+1000cc5f0: f100051f    	cmp	x8, #0x1
+1000cc5f4: 54ffe821    	b.ne	0x1000cc2f8 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x238>
+
+1000ccae8: f90103e8    	str	x8, [sp, #0x200]
+1000ccaec: f94103eb    	ldr	x11, [sp, #0x200]
+1000ccaf0: 9240ed6c    	and	x12, x11, #0xfffffffffffffff
+1000ccaf4: d37cfd6b    	lsr	x11, x11, #60
+1000ccaf8: 2a2b03eb    	mvn	w11, w11
+1000ccafc: 9240016b    	and	x11, x11, #0x1
+1000ccb00: f90103eb    	str	x11, [sp, #0x200]
+1000ccb04: f90107ec    	str	x12, [sp, #0x208]
+1000ccb08: 7100054a    	subs	w10, w10, #0x1
+1000ccb0c: 54fffee1    	b.ne	0x1000ccae8 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0xa28>
+
+1000ccbf4: b907a3e8    	str	w8, [sp, #0x7a0]
+1000ccbf8: f90103ea    	str	x10, [sp, #0x200]
+1000ccbfc: f94103ec    	ldr	x12, [sp, #0x200]
+1000ccc00: b947a3ed    	ldr	w13, [sp, #0x7a0]
+1000ccc04: b900118d    	str	w13, [x12, #0x10]
+1000ccc08: b94133ec    	ldr	w12, [sp, #0x130]
+1000ccc0c: b90203ec    	str	w12, [sp, #0x200]
+1000ccc10: 71000694    	subs	w20, w20, #0x1
+1000ccc14: 54ffff01    	b.ne	0x1000ccbf4 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0xb34>
+
+1000ccce0: d37cfc29    	lsr	x9, x1, #60
+1000ccce4: b5002da9    	cbnz	x9, 0x1000cd298 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x11d8>
+1000ccce8: 91000429    	add	x9, x1, #0x1
+1000cccec: aa0103ea    	mov	x10, x1
+1000cccf0: c8aa7d09    	cas	x10, x9, [x8]
+1000cccf4: eb01015f    	cmp	x10, x1
+1000cccf8: aa0a03e1    	mov	x1, x10
+1000cccfc: 54ffff21    	b.ne	0x1000ccce0 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0xc20>
+
+1000cccd0: 11000694    	add	w20, w20, #0x1
+1000cccd4: f94063e8    	ldr	x8, [sp, #0xc0]
+1000cccd8: f9400901    	ldr	x1, [x8, #0x10]
+1000cccdc: 91004108    	add	x8, x8, #0x10
+1000ccce0: d37cfc29    	lsr	x9, x1, #60
+1000ccce4: b5002da9    	cbnz	x9, 0x1000cd298 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x11d8>
+1000ccce8: 91000429    	add	x9, x1, #0x1
+1000cccec: aa0103ea    	mov	x10, x1
+1000cccf0: c8aa7d09    	cas	x10, x9, [x8]
+1000cccf4: eb01015f    	cmp	x10, x1
+1000cccf8: aa0a03e1    	mov	x1, x10
+1000cccfc: 54ffff21    	b.ne	0x1000ccce0 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0xc20>
+1000ccd00: 912f03e0    	add	x0, sp, #0xbc0
+1000ccd04: 97fe1c0d    	bl	0x100053d38 <<nera_runtime::process::Process>::new>
+1000ccd08: 91001ee0    	add	x0, x23, #0x7
+1000ccd0c: 912f03e1    	add	x1, sp, #0xbc0
+1000ccd10: 52808302    	mov	w2, #0x418              ; =1048
+1000ccd14: 94055da2    	bl	0x10022439c <dyld_stub_binder+0x10022439c>
+1000ccd18: 91040700    	add	x0, x24, #0x101
+1000ccd1c: 911e83e1    	add	x1, sp, #0x7a0
+1000ccd20: 528083e2    	mov	w2, #0x41f              ; =1055
+1000ccd24: 94055d9e    	bl	0x10022439c <dyld_stub_binder+0x10022439c>
+1000ccd28: 390c03ff    	strb	wzr, [sp, #0x300]
+1000ccd2c: f90107ff    	str	xzr, [sp, #0x208]
+1000ccd30: f90103ff    	str	xzr, [sp, #0x200]
+1000ccd34: a9087f1f    	stp	xzr, xzr, [x24, #0x80]
+1000ccd38: b90723ff    	str	wzr, [sp, #0x720]
+1000ccd3c: 790e4bf9    	strh	w25, [sp, #0x724]
+1000ccd40: 910803e0    	add	x0, sp, #0x200
+1000ccd44: 97fd28b1    	bl	0x100017008 <core::ptr::drop_glue::<nera_runtime::process::ProcessEntry>>
+1000ccd48: 6b1b029f    	cmp	w20, w27
+1000ccd4c: 54fffc21    	b.ne	0x1000cccd0 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0xc10>
+
+1000cce3c: b100053f    	cmn	x9, #0x1
+1000cce40: 54002280    	b.eq	0x1000cd290 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x11d0>
+1000cce44: 91000528    	add	x8, x9, #0x1
+1000cce48: aa0903ea    	mov	x10, x9
+1000cce4c: c8aa7f88    	cas	x10, x8, [x28]
+1000cce50: eb09015f    	cmp	x10, x9
+1000cce54: aa0a03e9    	mov	x9, x10
+1000cce58: 54ffff21    	b.ne	0x1000cce3c <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0xd7c>
+
+1000cd004: 3840150a    	ldrb	w10, [x8], #0x1
+1000cd008: 5100c14a    	sub	w10, w10, #0x30
+1000cd00c: 7100255f    	cmp	w10, #0x9
+1000cd010: 54001048    	b.hi	0x1000cd218 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x1158>
+1000cd014: 5280014b    	mov	w11, #0xa               ; =10
+1000cd018: 9b0b7f2b    	mul	x11, x25, x11
+1000cd01c: 8b2a4179    	add	x25, x11, w10, uxtw
+1000cd020: f1000529    	subs	x9, x9, #0x1
+1000cd024: 54ffff01    	b.ne	0x1000cd004 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0xf44>
+
+1000cd048: b100051f    	cmn	x8, #0x1
+1000cd04c: 54001000    	b.eq	0x1000cd24c <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x118c>
+1000cd050: 91000500    	add	x0, x8, #0x1
+1000cd054: aa0803e9    	mov	x9, x8
+1000cd058: c8a97f80    	cas	x9, x0, [x28]
+1000cd05c: eb08013f    	cmp	x9, x8
+1000cd060: aa0903e8    	mov	x8, x9
+1000cd064: 54ffff21    	b.ne	0x1000cd048 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0xf88>
+
+1000cceb0: 7100137f    	cmp	w27, #0x4
+1000cceb4: 54001c60    	b.eq	0x1000cd240 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x1180>
+1000cceb8: f9083ff6    	str	x22, [sp, #0x1078]
+1000ccebc: f90837ff    	str	xzr, [sp, #0x1068]
+1000ccec0: 393dc27f    	strb	wzr, [x19, #0xf70]
+1000ccec4: f8350288    	ldadd	x21, x8, [x20]
+1000ccec8: b7fffa68    	tbnz	x8, #0x3f, 0x1000cce14 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0xd54>
+1000ccecc: 900010a8    	adrp	x8, 0x1002e0000 <crossbeam_utils::atomic::atomic_cell::lock::LOCKS+0x1880>
+1000cced0: f944cd08    	ldr	x8, [x8, #0x998]
+1000cced4: b4000068    	cbz	x8, 0x1000ccee0 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0xe20>
+1000cced8: d1000519    	sub	x25, x8, #0x1
+1000ccedc: 14000058    	b	0x1000cd03c <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0xf7c>
+1000ccee0: f0000c49    	adrp	x9, 0x100257000 <ryu::d2s_full_table::DOUBLE_POW5_INV_SPLIT+0x2240>
+1000ccee4: 911af129    	add	x9, x9, #0x6bc
+1000ccee8: f8406128    	ldur	x8, [x9, #0x6]
+1000cceec: f80e6268    	stur	x8, [x19, #0xe6]
+1000ccef0: f9400128    	ldr	x8, [x9]
+1000ccef4: f90103e8    	str	x8, [sp, #0x200]
+1000ccef8: 39083bff    	strb	wzr, [sp, #0x20e]
+1000ccefc: fd4103e0    	ldr	d0, [sp, #0x200]
+1000ccf00: 0e208c00    	cmtst.8b	v0, v0, v0
+1000ccf04: bd420be1    	ldr	s1, [sp, #0x208]
+1000ccf08: 2f08a421    	ushll.8h	v1, v1, #0x0
+1000ccf0c: 0e609821    	cmeq.4h	v1, v1, #0
+1000ccf10: 394833e8    	ldrb	w8, [sp, #0x20c]
+1000ccf14: 7100011f    	cmp	w8, #0x0
+1000ccf18: 394837e8    	ldrb	w8, [sp, #0x20d]
+1000ccf1c: 0e003802    	zip1.8b	v2, v0, v0
+1000ccf20: 0e611c41    	bic.8b	v1, v2, v1
+1000ccf24: 0e001821    	uzp1.8b	v1, v1, v0
+1000ccf28: 6e0c2401    	mov.s	v1[1], v0[1]
+1000ccf2c: 0f0f5420    	shl.8b	v0, v1, #0x7
+1000ccf30: 0e20a800    	cmlt.8b	v0, v0, #0
+1000ccf34: 9e660009    	fmov	x9, d0
+1000ccf38: ba411920    	ccmn	x9, #0x1, #0x0, ne
+1000ccf3c: 7a400904    	ccmp	w8, #0x0, #0x4, eq
+1000ccf40: 7a401aa4    	ccmp	w21, #0x0, #0x4, ne
+1000ccf44: 540000a1    	b.ne	0x1000ccf58 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0xe98>
+1000ccf48: 90001037    	adrp	x23, 0x1002d0000 <core::unicode::unicode_data::conversions::UPPERCASE_LUT+0x1670>
+1000ccf4c: 912022f7    	add	x23, x23, #0x808
+1000ccf50: f903d7f7    	str	x23, [sp, #0x7a8]
+1000ccf54: 14000008    	b	0x1000ccf74 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0xeb4>
+1000ccf58: 911e83e0    	add	x0, sp, #0x7a0
+1000ccf5c: 910803e1    	add	x1, sp, #0x200
+1000ccf60: 9402a9a2    	bl	0x1001775e8 <std::sys::env::unix::getenv::{closure#0}>
+1000ccf64: f943d3f8    	ldr	x24, [sp, #0x7a0]
+1000ccf68: f943d7f7    	ldr	x23, [sp, #0x7a8]
+1000ccf6c: b1000b1f    	cmn	x24, #0x2
+1000ccf70: 54000141    	b.ne	0x1000ccf98 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0xed8>
+1000ccf74: 924006e8    	and	x8, x23, #0x3
+1000ccf78: d1000909    	sub	x9, x8, #0x2
+1000ccf7c: f100093f    	cmp	x9, #0x2
+1000ccf80: 54000563    	b.lo	0x1000cd02c <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0xf6c>
+1000ccf84: b4000548    	cbz	x8, 0x1000cd02c <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0xf6c>
+1000ccf88: d10006e0    	sub	x0, x23, #0x1
+1000ccf8c: f84172e8    	ldur	x8, [x23, #0x17]
+1000ccf90: d63f0100    	blr	x8
+1000ccf94: 14000026    	b	0x1000cd02c <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0xf6c>
+1000ccf98: b100071f    	cmn	x24, #0x1
+1000ccf9c: 54000480    	b.eq	0x1000cd02c <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0xf6c>
+1000ccfa0: f943dbe2    	ldr	x2, [sp, #0x7b0]
+1000ccfa4: 910803e0    	add	x0, sp, #0x200
+1000ccfa8: aa1703e1    	mov	x1, x23
+1000ccfac: 94017d6e    	bl	0x10012c564 <core::str::converts::from_utf8>
+1000ccfb0: f94103e8    	ldr	x8, [sp, #0x200]
+1000ccfb4: b5001328    	cbnz	x8, 0x1000cd218 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x1158>
+1000ccfb8: f9410be9    	ldr	x9, [sp, #0x210]
+1000ccfbc: b40012e9    	cbz	x9, 0x1000cd218 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x1158>
+1000ccfc0: f94107e8    	ldr	x8, [sp, #0x208]
+1000ccfc4: f100053f    	cmp	x9, #0x1
+1000ccfc8: 54000f61    	b.ne	0x1000cd1b4 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x10f4>
+1000ccfcc: 3940010a    	ldrb	w10, [x8]
+1000ccfd0: 52a00419    	mov	w25, #0x200000          ; =2097152
+1000ccfd4: 7100ad5f    	cmp	w10, #0x2b
+1000ccfd8: 54001220    	b.eq	0x1000cd21c <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x115c>
+1000ccfdc: 7100b55f    	cmp	w10, #0x2d
+1000ccfe0: 540011e0    	b.eq	0x1000cd21c <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x115c>
+1000ccfe4: 7100ad5f    	cmp	w10, #0x2b
+1000ccfe8: 1a9f17ea    	cset	w10, eq
+1000ccfec: 9a881508    	cinc	x8, x8, eq
+1000ccff0: cb0a0129    	sub	x9, x9, x10
+1000ccff4: f100453f    	cmp	x9, #0x11
+1000ccff8: 54000ec2    	b.hs	0x1000cd1d0 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x1110>
+1000ccffc: d2800019    	mov	x25, #0x0               ; =0
+1000cd000: b40010e9    	cbz	x9, 0x1000cd21c <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x115c>
+1000cd004: 3840150a    	ldrb	w10, [x8], #0x1
+1000cd008: 5100c14a    	sub	w10, w10, #0x30
+1000cd00c: 7100255f    	cmp	w10, #0x9
+1000cd010: 54001048    	b.hi	0x1000cd218 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x1158>
+1000cd014: 5280014b    	mov	w11, #0xa               ; =10
+1000cd018: 9b0b7f2b    	mul	x11, x25, x11
+1000cd01c: 8b2a4179    	add	x25, x11, w10, uxtw
+1000cd020: f1000529    	subs	x9, x9, #0x1
+1000cd024: 54ffff01    	b.ne	0x1000cd004 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0xf44>
+1000cd028: 1400007d    	b	0x1000cd21c <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x115c>
+1000cd02c: 52a00419    	mov	w25, #0x200000          ; =2097152
+1000cd030: 91000728    	add	x8, x25, #0x1
+1000cd034: f0001089    	adrp	x9, 0x1002e0000 <crossbeam_utils::atomic::atomic_cell::lock::LOCKS+0x1880>
+1000cd038: f904cd28    	str	x8, [x9, #0x998]
+1000cd03c: 1100077b    	add	w27, w27, #0x1
+1000cd040: f0001088    	adrp	x8, 0x1002e0000 <crossbeam_utils::atomic::atomic_cell::lock::LOCKS+0x1880>
+1000cd044: f944c908    	ldr	x8, [x8, #0x990]
+1000cd048: b100051f    	cmn	x8, #0x1
+1000cd04c: 54001000    	b.eq	0x1000cd24c <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x118c>
+1000cd050: 91000500    	add	x0, x8, #0x1
+1000cd054: aa0803e9    	mov	x9, x8
+1000cd058: c8a97f80    	cas	x9, x0, [x28]
+1000cd05c: eb08013f    	cmp	x9, x8
+1000cd060: aa0903e8    	mov	x8, x9
+1000cd064: 54ffff21    	b.ne	0x1000cd048 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0xf88>
+1000cd068: 914007e8    	add	x8, sp, #0x1, lsl #12   ; =0x1000
+1000cd06c: 9101a108    	add	x8, x8, #0x68
+1000cd070: 91004101    	add	x1, x8, #0x10
+1000cd074: 9402aaaf    	bl	0x100177b30 <<std::thread::thread::Thread>::new>
+1000cd078: aa0003f7    	mov	x23, x0
+1000cd07c: f9084fe0    	str	x0, [sp, #0x1098]
+1000cd080: 914007e0    	add	x0, sp, #0x1, lsl #12   ; =0x1000
+1000cd084: 91028000    	add	x0, x0, #0xa0
+1000cd088: 914007e1    	add	x1, sp, #0x1, lsl #12   ; =0x1000
+1000cd08c: 91026021    	add	x1, x1, #0x98
+1000cd090: 9402e391    	bl	0x100185ed4 <std::thread::spawnhook::run_spawn_hooks>
+1000cd094: 4e080ea0    	dup.2d	v0, x21
+1000cd098: 3d803a60    	str	q0, [x19, #0xe0]
+1000cd09c: f9010bf4    	str	x20, [sp, #0x210]
+1000cd0a0: f9010fff    	str	xzr, [sp, #0x218]
+1000cd0a4: 52800600    	mov	w0, #0x30               ; =48
+1000cd0a8: 9403b523    	bl	0x1001ba534 <__rjem_malloc>
+1000cd0ac: b4000d40    	cbz	x0, 0x1000cd254 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x1194>
+1000cd0b0: aa0003f8    	mov	x24, x0
+1000cd0b4: 3dc03a60    	ldr	q0, [x19, #0xe0]
+1000cd0b8: 3d800000    	str	q0, [x0]
+1000cd0bc: 3dc03e60    	ldr	q0, [x19, #0xf0]
+1000cd0c0: 3d800400    	str	q0, [x0, #0x10]
+1000cd0c4: 3dc04260    	ldr	q0, [x19, #0x100]
+1000cd0c8: 3d800800    	str	q0, [x0, #0x20]
+1000cd0cc: f8350008    	ldadd	x21, x8, [x0]
+1000cd0d0: b7ffea28    	tbnz	x8, #0x3f, 0x1000cce14 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0xd54>
+1000cd0d4: 3dc3e260    	ldr	q0, [x19, #0xf80]
+1000cd0d8: 3d81a260    	str	q0, [x19, #0x680]
+1000cd0dc: 3dc3e660    	ldr	q0, [x19, #0xf90]
+1000cd0e0: 3d81a660    	str	q0, [x19, #0x690]
+1000cd0e4: 9101e3e8    	add	x8, sp, #0x78
+1000cd0e8: f903e3e8    	str	x8, [sp, #0x7c0]
+1000cd0ec: f903e7f8    	str	x24, [sp, #0x7c8]
+1000cd0f0: f9400b08    	ldr	x8, [x24, #0x10]
+1000cd0f4: b4000088    	cbz	x8, 0x1000cd104 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x1044>
+1000cd0f8: 91006109    	add	x9, x8, #0x18
+1000cd0fc: f8350129    	ldadd	x21, x9, [x9]
+1000cd100: b7f80c29    	tbnz	x9, #0x3f, 0x1000cd284 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x11c4>
+1000cd104: 3dc1a260    	ldr	q0, [x19, #0x680]
+1000cd108: 3dc1a661    	ldr	q1, [x19, #0x690]
+1000cd10c: ad070660    	stp	q0, q1, [x19, #0xe0]
+1000cd110: 3dc1aa60    	ldr	q0, [x19, #0x6a0]
+1000cd114: 3d804260    	str	q0, [x19, #0x100]
+1000cd118: 52800600    	mov	w0, #0x30               ; =48
+1000cd11c: 9403b506    	bl	0x1001ba534 <__rjem_malloc>
+1000cd120: b4000a20    	cbz	x0, 0x1000cd264 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x11a4>
+1000cd124: aa0003fa    	mov	x26, x0
+1000cd128: 3dc1a260    	ldr	q0, [x19, #0x680]
+1000cd12c: 3d800000    	str	q0, [x0]
+1000cd130: 3dc1a660    	ldr	q0, [x19, #0x690]
+1000cd134: 3d800400    	str	q0, [x0, #0x10]
+1000cd138: 3dc1aa60    	ldr	q0, [x19, #0x6a0]
+1000cd13c: 3d800800    	str	q0, [x0, #0x20]
+1000cd140: f83502e8    	ldadd	x21, x8, [x23]
+1000cd144: b7ffe688    	tbnz	x8, #0x3f, 0x1000cce14 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0xd54>
+1000cd148: 52800300    	mov	w0, #0x18               ; =24
+1000cd14c: 9403b4fa    	bl	0x1001ba534 <__rjem_malloc>
+1000cd150: b4000920    	cbz	x0, 0x1000cd274 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x11b4>
+1000cd154: aa0003e1    	mov	x1, x0
+1000cd158: a9006817    	stp	x23, x26, [x0]
+1000cd15c: f0000ec8    	adrp	x8, 0x1002a8000 <dyld_stub_binder+0x1002a8000>
+1000cd160: 91356108    	add	x8, x8, #0xd58
+1000cd164: f9000808    	str	x8, [x0, #0x10]
+1000cd168: aa1903e0    	mov	x0, x25
+1000cd16c: 9402b343    	bl	0x100179e78 <<std::sys::thread::unix::Thread>::new>
+1000cd170: f100041f    	cmp	x0, #0x1
+1000cd174: 54000c00    	b.eq	0x1000cd2f4 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x1234>
+1000cd178: aa0103e0    	mov	x0, x1
+1000cd17c: 94055cf1    	bl	0x100224540 <dyld_stub_binder+0x100224540>
+1000cd180: f87602e8    	ldaddl	x22, x8, [x23]
+1000cd184: f100051f    	cmp	x8, #0x1
+1000cd188: 54000081    	b.ne	0x1000cd198 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0x10d8>
+1000cd18c: d50339bf    	dmb	ishld
+1000cd190: aa1703e0    	mov	x0, x23
+1000cd194: 940236a9    	bl	0x10015ac38 <<alloc::sync::Arc<std::thread::thread::Inner, std::alloc::System>>::drop_slow>
+1000cd198: f8760308    	ldaddl	x22, x8, [x24]
+1000cd19c: f100051f    	cmp	x8, #0x1
+1000cd1a0: 54ffe881    	b.ne	0x1000cceb0 <<nera_runtime::process::entry_performance_probe::process_entry_performance_probe::{closure#0} as core::ops::function::FnOnce<()>>::call_once+0xdf0>

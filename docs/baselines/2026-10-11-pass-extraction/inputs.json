@@ -1,0 +1,19 @@
+{
+  "crates/nera-ir/src/lib.rs": "9a55b38799e10d9dfb4c6857ffbd1810782f7279e2b9874911cef9aca6f2d0c6",
+  "crates/nera-ir/src/lower/closure.rs": "fab34831d90853d6bb944a2a07d16b1aa27c3644d23e2924af6ca69811582bd3",
+  "crates/nera-ir/src/lower/list_comp.rs": "d709c28318b26646b050eaf43b4e1326bb56413a8487651b85bd8b3935e7c6fe",
+  "crates/nera-ir/src/lower/mod.rs": "60ce3ef59bc1bf4dd582d4f78f5c91b0f692d9f700fb656a78ceb2c46bd43330",
+  "crates/nera-ir/src/lower/tests.rs": "08e891ce3ff38f040e730969d1fffcf2edd7a4875741eaaf965d84fdbcac308f",
+  "crates/nera-ir/src/passes/constant_folding.rs": "21bcb739554f94112bf11ef234c8873a5ca249195c69e85307b61ae9a68f332d",
+  "crates/nera-ir/src/passes/dead_code.rs": "a07367182031a97fed483bb749cb410aaf6111ba762591d4bfb97884d956a62e",
+  "crates/nera-ir/src/passes/match_contexts.rs": "daf6966a9dcc6f974394f28cf07ec112b046011d972466ede5c0c8126c9cbee2",
+  "crates/nera-ir/src/passes/mod.rs": "3ef1604bc9975ea5fc734777bbf7ae5c6bdfee6498c4c9f5e9cfa3bd60b27d30",
+  "crates/nera-ir/src/passes/tests.rs": "2f94c24a419062726fb9675b01697176829b735a0945ac69d0ea3375bf0d74fc",
+  "crates/nera-ir/src/passes/tuple_send.rs": "9bf7b42ed7bfb3f23f04694599364235ff48e8e7589e5f1446f5e1035148a32d",
+  "crates/nera-ir/src/passes/uses.rs": "effefc2d5e8f122c9e84ca2056ee2dfc5f8af273b773f3a444f7f9247ac4a040",
+  "crates/nera-ir/src/passes/yield_checks.rs": "e74795abf7cec3097a082e576ad47f3be9c21b92f9ff9ca9e54825b151aa546f",
+  "crates/nera-ir/tests/passes.rs": "43a1ef93a79c58907e3e255fb4e72e09c182a8e8493184a1c7f313deddcc3a1e",
+  "docs/ARCHITECTURE.md": "9df1ed1291819f2f69f5929ebdbfa3a2da645cf85dbe19c9319a0c8455227499",
+  "docs/IR_CONTRACT.md": "dc4bf34811499fa028b5c447be3bc7d2ba2e3f97bf38c66eafbeb54887795b8f",
+  "docs/IR_PASSES.md": "93ff6483979d37df7416e1a227d111b094f4796324047237381431e9b598bb83"
+}

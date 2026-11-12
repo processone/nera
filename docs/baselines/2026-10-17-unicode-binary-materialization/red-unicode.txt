@@ -1,0 +1,24 @@
+   Compiling nera-runtime v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.19s
+     Running unittests src/lib.rs (/tmp/nera-transfer-target/debug/deps/nera_runtime-27bb0f9fcbc2d668)
+
+running 1 test
+test bif::tests::term_to_string_checks_full_unicode_scalar_before_narrowing ... FAILED
+
+failures:
+
+---- bif::tests::term_to_string_checks_full_unicode_scalar_before_narrowing stdout ----
+
+thread 'bif::tests::term_to_string_checks_full_unicode_scalar_before_narrowing' (11274072) panicked at crates/nera-runtime/src/bif.rs:2063:13:
+assertion `left == right` failed: accepted 0x100000041
+  left: Ok("A")
+ right: Err(())
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    bif::tests::term_to_string_checks_full_unicode_scalar_before_narrowing
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 624 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p nera-runtime --lib`

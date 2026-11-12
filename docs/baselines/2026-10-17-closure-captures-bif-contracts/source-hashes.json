@@ -1,0 +1,13 @@
+{
+  "Cargo.lock": "a210f397cb773d07c39ed4827a9aea44092f56ee7c2a438f708784dfa5769f80",
+  "crates/nera-ir/src/lower/closure.rs": "302eab3001cc1ddc5ee1828814bed32a9db3200113310bd50fd8d1e96bf60237",
+  "crates/nera-ir/src/lower/expr.rs": "a895a14c7f4de2207521d6cc790972fd833ea373f6febceceaff560d820033a0",
+  "crates/nera-ir/src/lower/mod.rs": "b9a337d81b1ff4c2c44618da1462dc25c1c750e541530dd46ad63cb78de5185c",
+  "crates/nera-ir/src/lower/tests.rs": "20e2c42e7a116701bc331309ded6a4d016a62ac252d4c17474d3cef91cd99457",
+  "crates/nera-runtime/src/bif.rs": "29a7ac49d781cd9937094546cdf53842f2fbd66fd7511dc2d64b24ce3831c938",
+  "crates/nera-runtime/src/ffi/io_format.rs": "eea4a6b5a2b88585d1a5c638027e05d66d3ec2b1ae4ef908655e6e4ebdf21759",
+  "crates/nera-runtime/src/scheduler.rs": "e0e5d7c00cb86ac0c91ca732cdf58468c7739963835b547707912455fd0aa4c8",
+  "rust-toolchain.toml": "2ad6f15416572b4836585087f1d4abc53b8fa2dbd616f8dacfaa587ed6714228",
+  "tests/README.md": "05a2f4991fce88bc43ec03c7037d447c12a438d407d2e0919a645f55daaa86c1",
+  "tests/closure_binary_captures.erl": "47f01724ac77a0a352ee269d0bf5ce02c080533270965f1e97529bf477c6acae"
+}

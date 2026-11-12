@@ -1,0 +1,631 @@
+{
+  "status": "passed",
+  "scope": "Project nera test with external OTP EUnit; HTTP functional tests only, properties are validated separately.",
+  "modules": {
+    "cow_http": {
+      "expected": 102,
+      "beam": {
+        "returncode": 0,
+        "passed": true
+      },
+      "adapted_sha256": "c8005606781a3febea69b48484a77c685245a03966342b9486609d34549df310",
+      "original_sha256": "cba1db8e6aace87f3f8772ea778b8088eedf8f7d54d84d767b46fcc02ea0e594",
+      "removed": [],
+      "native": {
+        "returncode": 0,
+        "passed": true
+      },
+      "runner": "nera test (project EUnit configuration)"
+    },
+    "cow_http_hd": {
+      "expected": 396,
+      "beam": {
+        "returncode": 0,
+        "passed": true
+      },
+      "adapted_sha256": "ca2d800e7e7076c1140c17bb905a7f433cfb4292f06e4fc2174aa8cb16629fe6",
+      "original_sha256": "af8028340f58b2cf0a7bbaa734d6e1e9c61d48993454119e0df6c6cba6b82c2c",
+      "removed": [
+        "vector",
+        "small_list",
+        "small_non_empty_list",
+        "alpha_chars",
+        "alphanum_chars",
+        "digit_chars",
+        "ows",
+        "alpha",
+        "alphanum",
+        "digit",
+        "tchar",
+        "token",
+        "abnf_char",
+        "vchar",
+        "obs_text",
+        "qdtext",
+        "quoted_pair",
+        "quoted_string",
+        "unquote",
+        "parameter",
+        "weight",
+        "qvalue_to_iodata",
+        "accept_ext",
+        "accept_exts",
+        "accept_param",
+        "accept_params",
+        "accept",
+        "prop_parse_accept",
+        "horse_parse_accept",
+        "accept_charset",
+        "prop_parse_accept_charset",
+        "horse_parse_accept_charset",
+        "accept_encoding",
+        "prop_parse_accept_encoding",
+        "horse_parse_accept_encoding",
+        "language_range_tag",
+        "language_range_subtag",
+        "language_range",
+        "accept_language",
+        "prop_parse_accept_language",
+        "horse_parse_accept_language",
+        "horse_parse_accept_ranges_none",
+        "horse_parse_accept_ranges_bytes",
+        "horse_parse_accept_ranges_other",
+        "horse_access_control_allow_headers",
+        "horse_access_control_allow_methods",
+        "horse_access_control_allow_origin",
+        "horse_access_control_expose_headers",
+        "headers",
+        "prop_parse_access_control_request_headers",
+        "horse_parse_access_control_request_headers",
+        "horse_parse_access_control_request_method",
+        "allow",
+        "prop_parse_allow",
+        "horse_parse_allow",
+        "horse_parse_authorization_basic",
+        "horse_parse_authorization_bearer",
+        "horse_parse_authorization_digest",
+        "cache_directive_unreserved_token",
+        "cache_directive",
+        "cache_control",
+        "prop_parse_cache_control",
+        "horse_parse_cache_control_no_cache",
+        "horse_parse_cache_control_max_age_0",
+        "horse_parse_cache_control_max_age_30",
+        "horse_parse_cache_control_custom",
+        "horse_parse_cache_control_fields",
+        "prop_parse_connection",
+        "horse_parse_connection_close",
+        "horse_parse_connection_keepalive",
+        "horse_parse_connection_keepalive_upgrade",
+        "horse_parse_content_encoding",
+        "langtag_language",
+        "langtag_extlang",
+        "langtag_script",
+        "langtag_region",
+        "langtag_variant",
+        "langtag_extension",
+        "langtag_privateuse",
+        "langtag_privateuse_nodash",
+        "private_language_tag",
+        "language_tag",
+        "content_language",
+        "prop_parse_content_language",
+        "horse_parse_content_language",
+        "prop_parse_content_length",
+        "horse_parse_content_length_zero",
+        "horse_parse_content_length_giga",
+        "content_range",
+        "prop_parse_content_range",
+        "horse_parse_content_range_bytes",
+        "horse_parse_content_range_other",
+        "media_type_parameter",
+        "media_type",
+        "prop_parse_content_type",
+        "horse_parse_content_type",
+        "etagc",
+        "etag",
+        "prop_parse_etag",
+        "horse_parse_etag",
+        "expect",
+        "prop_parse_expect",
+        "horse_parse_expect",
+        "horse_parse_expires_0",
+        "horse_parse_expires_invalid",
+        "host_chars",
+        "host",
+        "host_port",
+        "prop_parse_host",
+        "horse_parse_host_blue_example_org",
+        "horse_parse_host_ipv4",
+        "horse_parse_host_ipv6",
+        "horse_parse_host_ipv6_v4",
+        "prop_parse_if_match",
+        "horse_parse_if_match",
+        "horse_parse_if_none_match",
+        "horse_parse_if_range_etag",
+        "horse_parse_if_range_date",
+        "prop_parse_max_forwards",
+        "scheme",
+        "scheme_host_port",
+        "prop_parse_origin",
+        "horse_parse_origin_blue_example_org",
+        "horse_parse_origin_ipv4",
+        "horse_parse_origin_ipv6",
+        "horse_parse_origin_ipv6_v4",
+        "horse_parse_origin_null",
+        "bytes_range",
+        "other_range",
+        "range",
+        "prop_parse_range",
+        "horse_parse_range_first_last",
+        "horse_parse_range_infinity",
+        "horse_parse_range_suffix",
+        "horse_parse_range_two",
+        "horse_parse_range_other",
+        "horse_parse_retry_after_date",
+        "horse_parse_retry_after_delay_seconds",
+        "quoted_token",
+        "ws_extension",
+        "prop_parse_sec_websocket_extensions",
+        "horse_parse_sec_websocket_extensions",
+        "horse_parse_sec_websocket_protocol_req",
+        "prop_parse_sec_websocket_protocol_resp",
+        "horse_parse_sec_websocket_protocol_resp",
+        "prop_parse_sec_websocket_version_req",
+        "horse_parse_sec_websocket_version_req_13",
+        "horse_parse_sec_websocket_version_req_255",
+        "sec_websocket_version_resp",
+        "prop_parse_sec_websocket_version_resp",
+        "horse_parse_sec_websocket_version_resp",
+        "te",
+        "prop_parse_te",
+        "horse_parse_te",
+        "horse_parse_trailer",
+        "prop_parse_transfer_encoding",
+        "horse_parse_transfer_encoding_chunked",
+        "horse_parse_transfer_encoding_custom",
+        "protocols",
+        "prop_parse_upgrade",
+        "horse_parse_www_authenticate"
+      ],
+      "native": {
+        "returncode": 0,
+        "passed": true
+      },
+      "runner": "nera test (project EUnit configuration)"
+    }
+  },
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/private/tmp/nera-cowlib-main-proper",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/private/tmp/nera-cowlib-project-eunit-semantic-final",
+      "label": "proper-head",
+      "returncode": 0,
+      "stdout_sha256": "6435f6eb1643468f91ea867fe183cfd63a71804d78768c9765b0eedbe6b52e9a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/private/tmp/nera-cowlib-project-eunit-semantic-final",
+      "label": "cowlib-head",
+      "returncode": 0,
+      "stdout_sha256": "d987cdb63f2e2c1f01ca097d28e28f79bedaa4a0fdaa228c05b29caa265a812d",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream",
+        "status",
+        "--porcelain",
+        "--untracked-files=all",
+        "--ignored"
+      ],
+      "cwd": "/private/tmp/nera-cowlib-project-eunit-semantic-final",
+      "label": "cowlib-clean",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/user/.codex/worktrees/base64-one-arity/nera",
+      "label": "nera-head",
+      "returncode": 0,
+      "stdout_sha256": "76c547f4eb2bf1b4b08cd9c34a86876086bc6d6455c5062b720e00042ee4d5f4",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "cwd": "/home/user/.codex/worktrees/base64-one-arity/nera",
+      "label": "nera-status",
+      "returncode": 0,
+      "stdout_sha256": "78bb895f8a900b6abf0ef6047f71d54318a6e755a71c094874d5d59589981195",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "erl",
+        "-noshell",
+        "-eval",
+        "io:format(\"~s\",[erlang:system_info(system_version)]),halt()."
+      ],
+      "cwd": "/private/tmp/nera-cowlib-project-eunit-semantic-final",
+      "label": "otp",
+      "returncode": 0,
+      "stdout_sha256": "0e5d220635638ebbe2981d178553ebd4c9e9036c5a6912e0bf1e00a84df6bbb8",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "erlc",
+        "-I",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream/include",
+        "-o",
+        "/private/tmp/nera-cowlib-project-eunit-semantic-final/beam",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream/src/cow_http1.erl",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream/src/cow_cookie.erl",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream/src/cow_date.erl",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream/src/cow_http2.erl",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream/src/cow_http_struct_hd.erl",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream/src/cow_link.erl"
+      ],
+      "cwd": "/private/tmp/nera-cowlib-project-eunit-semantic-final",
+      "label": "beam-dependencies",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "erlc",
+        "-DTEST",
+        "+export_all",
+        "+{parse_transform,eunit_autoexport}",
+        "-I",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream/include",
+        "-o",
+        "/private/tmp/nera-cowlib-project-eunit-semantic-final/beam",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream/src/cow_http.erl",
+        "/private/tmp/nera-http2-pattern-surrounding/upstream/src/cow_http_hd.erl"
+      ],
+      "cwd": "/private/tmp/nera-cowlib-project-eunit-semantic-final",
+      "label": "beam-suites",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "erl",
+        "-noshell",
+        "-pa",
+        "/private/tmp/nera-cowlib-project-eunit-semantic-final/beam",
+        "-eval",
+        "io:format(\"COUNT:~w~n\",[1]),io:format(\"COUNT:~w~n\",[length(cow_http:ensure_scheme_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http:ensure_scheme_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http:ensure_token_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http:ensure_token_error_test_())]),halt()."
+      ],
+      "cwd": "/private/tmp/nera-cowlib-project-eunit-semantic-final",
+      "label": "cow_http-inventory",
+      "returncode": 0,
+      "stdout_sha256": "f1cae847b5da78eece8b49361211bb237a5d9072373bc9b373bdf2e8be480b30",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "erl",
+        "-noshell",
+        "-pa",
+        "/private/tmp/nera-cowlib-project-eunit-semantic-final/beam",
+        "-eval",
+        "case eunit:test(cow_http,[verbose]) of ok -> io:format(\"NATIVE_EUNIT_OK:cow_http~n\"),halt(); _ -> halt(1) end."
+      ],
+      "cwd": "/private/tmp/nera-cowlib-project-eunit-semantic-final",
+      "label": "cow_http-beam",
+      "returncode": 0,
+      "stdout_sha256": "ae3bba978d0ad03d9b8eee7998517c2630d4cee41f3515cd1d819c87642eab5e",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "erl",
+        "-noshell",
+        "-pa",
+        "/private/tmp/nera-cowlib-project-eunit-semantic-final/beam",
+        "-eval",
+        "io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_accept_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_accept_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_accept_charset_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_accept_charset_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_accept_encoding_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_accept_language_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_accept_language_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_accept_ranges_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_accept_ranges_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:access_control_allow_headers_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:access_control_allow_headers_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:access_control_allow_methods_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:access_control_allow_methods_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:access_control_allow_origin_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:access_control_expose_headers_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:access_control_expose_headers_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:access_control_max_age_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_access_control_request_headers_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_access_control_request_method_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_access_control_request_method_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_age_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_age_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_allow_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:allow_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_authorization_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_cache_control_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_cache_control_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_connection_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_connection_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_content_encoding_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_content_encoding_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_content_language_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_content_language_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_content_length_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_content_length_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_content_range_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_content_range_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_content_type_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_date_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_etag_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_etag_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_expect_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_expect_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_expires_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_host_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_host_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_if_match_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_if_match_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_if_modified_since_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_if_none_match_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_if_none_match_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_if_range_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_if_range_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_if_unmodified_since_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_last_modified_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_max_forwards_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_max_forwards_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_origin_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_origin_reference_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_origin_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_range_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_range_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_retry_after_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_retry_after_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_sec_websocket_extensions_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_sec_websocket_extensions_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_sec_websocket_protocol_req_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_sec_websocket_protocol_req_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_sec_websocket_protocol_resp_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_sec_websocket_protocol_resp_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_sec_websocket_version_req_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_sec_websocket_version_req_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_sec_websocket_version_resp_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_sec_websocket_version_resp_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_te_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_trailer_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_trailer_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_transfer_encoding_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_transfer_encoding_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_upgrade_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_upgrade_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_variant_key_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_variant_key_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:variant_key_identity_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_variants_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:variants_identity_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_vary_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_vary_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_www_authenticate_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_www_authenticate_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_x_forwarded_for_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:parse_x_forwarded_for_error_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:digits_test_())]),io:format(\"COUNT:~w~n\",[length(cow_http_hd:digits_error_test_())]),halt()."
+      ],
+      "cwd": "/private/tmp/nera-cowlib-project-eunit-semantic-final",
+      "label": "cow_http_hd-inventory",
+      "returncode": 0,
+      "stdout_sha256": "1efe5c97bd692b46097af0da14dff84c62f3ea73461b5eebbac073756daadf3f",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "erl",
+        "-noshell",
+        "-pa",
+        "/private/tmp/nera-cowlib-project-eunit-semantic-final/beam",
+        "-eval",
+        "case eunit:test(cow_http_hd,[verbose]) of ok -> io:format(\"NATIVE_EUNIT_OK:cow_http_hd~n\"),halt(); _ -> halt(1) end."
+      ],
+      "cwd": "/private/tmp/nera-cowlib-project-eunit-semantic-final",
+      "label": "cow_http_hd-beam",
+      "returncode": 0,
+      "stdout_sha256": "799c90a3ffcef2f7cf671889ac92d295a92215a1e05fd23fac685783205411da",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/private/tmp/nera-base64-one-target/release/nera",
+        "test",
+        "cow_http",
+        "--verbose",
+        "--no-warnings",
+        "--timeout",
+        "120"
+      ],
+      "cwd": "/private/tmp/nera-cowlib-project-eunit-semantic-final/project",
+      "label": "cow_http-native-test",
+      "returncode": 0,
+      "stdout_sha256": "27ae9d183dfba127d2eec05df41b6a4eb8c9a4f56fb980cfd47c2f18b40a5e66",
+      "stderr_sha256": "075a23a63f0f66ee46545842b186bfc42d934c1405ee551d157dbe0ad0d4e1c8"
+    },
+    {
+      "argv": [
+        "/private/tmp/nera-base64-one-target/release/nera",
+        "test",
+        "cow_http_hd",
+        "--verbose",
+        "--no-warnings",
+        "--timeout",
+        "120"
+      ],
+      "cwd": "/private/tmp/nera-cowlib-project-eunit-semantic-final/project",
+      "label": "cow_http_hd-native-test",
+      "returncode": 0,
+      "stdout_sha256": "4d9919fc89d340c39344cc32467faad0f7d537c803901336690be618ca838a2c",
+      "stderr_sha256": "075a23a63f0f66ee46545842b186bfc42d934c1405ee551d157dbe0ad0d4e1c8"
+    },
+    {
+      "argv": [
+        "erlc",
+        "-o",
+        "/private/tmp/nera-cowlib-project-eunit-semantic-final/beam",
+        "/home/user/.codex/worktrees/base64-one-arity/nera/tests/integration/eunit/eunit_native.erl"
+      ],
+      "cwd": "/private/tmp/nera-cowlib-project-eunit-semantic-final",
+      "label": "framework-controls-beam-build",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "erl",
+        "-noshell",
+        "-pa",
+        "/private/tmp/nera-cowlib-project-eunit-semantic-final/beam",
+        "-eval",
+        "eunit_native:test(),eunit:stop(),halt()."
+      ],
+      "cwd": "/private/tmp/nera-cowlib-project-eunit-semantic-final",
+      "label": "framework-controls-beam",
+      "returncode": 0,
+      "stdout_sha256": "d632a12e292ec721729d2e6ed9b2041e09bd8c8719d3fdb8fcac27deb9de70db",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "/private/tmp/nera-base64-one-target/release/nera",
+        "build",
+        "--no-warnings"
+      ],
+      "cwd": "/private/tmp/nera-cowlib-project-eunit-semantic-final/project",
+      "label": "framework-controls-native-build",
+      "returncode": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "075a23a63f0f66ee46545842b186bfc42d934c1405ee551d157dbe0ad0d4e1c8"
+    },
+    {
+      "argv": [
+        "/private/tmp/nera-cowlib-project-eunit-semantic-final/project/run"
+      ],
+      "cwd": "/private/tmp/nera-cowlib-project-eunit-semantic-final/project",
+      "label": "framework-controls-native",
+      "returncode": 0,
+      "stdout_sha256": "2c435e76143b0038e3f9a3d07b8748a7e6734d418682ea9b6ac40f16372fe12d",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "upstream": {
+    "name": "cowlib",
+    "version": "2.20.0",
+    "url": "https://github.com/ninenines/cowlib.git",
+    "commit": "c768a804565ff5b8178ed968a5921e469d6bd7b2"
+  },
+  "nera_commit": "b772a5501ed9a190f20f6fbba1dc4ae76a9fbb4b",
+  "nera_worktree_status": "M CHANGELOG.md\n M COMPATIBILITY.md\n M FEATURES.md\n M crates/nera-ir/src/bif_table.rs\n M crates/nera-ir/src/lower/expr.rs\n M crates/nera-runtime/src/bif.rs\n M crates/nera-runtime/src/entry.rs\n M crates/nera-runtime/src/ffi/apply.rs\n M crates/nera-runtime/src/ffi/closure.rs\n M crates/nera-runtime/src/ffi/compare.rs\n M crates/nera-runtime/src/ffi/io_format.rs\n M crates/nera-runtime/src/ffi/map_ops.rs\n M crates/nera-runtime/src/ffi/misc.rs\n M crates/nera-runtime/src/ffi/mod.rs\n M crates/nera-runtime/src/ffi/process.rs\n M crates/nera-runtime/src/process.rs\n M crates/nera-runtime/src/scheduler.rs\n M crates/nera-syntax/src/parser.rs\n M crates/nera-syntax/src/token.rs\n M crates/nera/Cargo.toml\n M crates/nera/src/main.rs\n M crates/nera/src/test_runner.rs\n M erlang/stdlib/lists.erl\n M erlang/stdlib/proplists.erl\n M tests/README.md\n M tests/integration/cowlib/README.md\n?? crates/nera-runtime/src/ffi/unicode.rs\n?? crates/nera/src/eunit_runner.rs\n?? crates/nera/src/module_info.rs\n?? erlang/stdlib/dict.erl\n?? erlang/stdlib/sets.erl\n?? tests/eunit_collections.erl\n?? tests/eunit_runtime_metadata.erl\n?? tests/group_leader.erl\n?? tests/integration/cowlib/native-eunit-evidence.json\n?? tests/integration/cowlib/native_eunit.py\n?? tests/integration/cowlib/test_native_eunit.py\n?? tests/integration/eunit/\n?? tests/lists_suffix.erl\n?? tests/maps_structural_keys.erl\n?? tests/module_info_exports.erl\n?? tests/process_priority.erl\n?? tests/proplists_all_values.erl\n?? tests/term_exact_equality.erl\n?? tests/try_call_short_circuit.erl\n?? tests/unicode_characters_binary.erl",
+  "nera_sha256": "3f3919b5c2d0cb562fd52b02395d10698878216bd211dc7496374ad34b963880",
+  "runtime_sha256": "3e4de0d69ba7e1c4493915de6cd556f5ae0d0ed3ef903f877624f41e7fab9aab",
+  "eunit_path": "/opt/homebrew/Cellar/erlang/29.0.5/lib/erlang/lib/eunit-2.11",
+  "eunit_sources": {
+    "doc/examples/fib.erl": "d03708f1c6ae706f9dab1a530d59fe4be62ab726f632ff6a5a997d815b5fac13",
+    "include/eunit.hrl": "1ec1a665f54a4c3c78ad9d4ccb614ae58d2320b367455b964fbc2eccabf59102",
+    "src/eunit.erl": "b4ca2dc5f9f854ebd33b247d28e6ffe7fbd4d5a2fc50c2eb31f79aa7b108954c",
+    "src/eunit_autoexport.erl": "c7a26b14de6b5b2accc83b6827fac383ce7aa56ac8dd41a4a316eb5bee400e31",
+    "src/eunit_data.erl": "964ada1aa2107f7452d65a434074a42051131f0dbac8f2a3dba15dba98a56651",
+    "src/eunit_internal.hrl": "0e06a96b302003dabc18a44b16831888dcc7bfd47f70981f1880be95ab694718",
+    "src/eunit_lib.erl": "f6e8dcebbf8d478161a926013bcd71832de01b0819d7da9de43a792bc67cfc20",
+    "src/eunit_listener.erl": "9fcd2363fdf04c28ddd369e9cec5b5490623bf38f93a6565266b60ce2472c4a2",
+    "src/eunit_proc.erl": "a53d8c08181f7134d4fa49b1b7deee7dab648f9183bdef6c680b30c6ec164921",
+    "src/eunit_serial.erl": "24ab121bb9b1c11d3de890cb4d09e223cc93392e541479ab79106abe086475bf",
+    "src/eunit_server.erl": "c71f3cfdd3c4344a0ee1cc7fc6cd8126508995e85ce9162271b87bf050044b8b",
+    "src/eunit_striptests.erl": "04aac7db42326448f2b11a9666e73c529b48e38a5efd23223c0f53a64863e5b3",
+    "src/eunit_surefire.erl": "ddeacfb3f678025e6682c50d0349bd5f3273436c7056a08c5e4fce64dffd2432",
+    "src/eunit_test.erl": "6d04cb599f194c6e0230674ab5fea383ac21de4dfe0ef814a2b1c16d4c7f8bcf",
+    "src/eunit_tests.erl": "56e82ffd824553aa8a06fabc49f1da85baa205416aae4af0afcb457927f9b602",
+    "src/eunit_tty.erl": "50a735ad25eec829b6e126bc8b4b52ab9b13da91df4364191fbe00b84841cddf"
+  },
+  "gb_trees_source": "/opt/homebrew/Cellar/erlang/29.0.5/lib/erlang/lib/stdlib-8.0.3/src/gb_trees.erl",
+  "gb_trees_sha256": "890b641fa4e901c4f11bf65288ea12e8a8c0480d3a4867274f699fb4ef9c60a3",
+  "otp": "Erlang/OTP 29 [erts-17.0.5] [source] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads:1] [jit] [dtrace]",
+  "framework_controls": {
+    "fixture_sha256": "8c1719fc9a5f8d41c466c5496aefc36cb04242e6ab11ed7b62d1734296532399",
+    "beam": {
+      "returncode": 0,
+      "passed": true
+    },
+    "native_build_returncode": 0,
+    "executable_sha256": "991749b4e52274c7ef37b481058ef20cd7493843e98ac96865b2ac09d4d1edc7",
+    "native": {
+      "returncode": 0,
+      "passed": true
+    }
+  },
+  "local_checks": {
+    "release": {
+      "command": [
+        "cargo",
+        "build",
+        "--release",
+        "--locked"
+      ],
+      "result": "passed",
+      "log": "/private/tmp/nera-eunit-project-release-final.log",
+      "log_sha256": "eac6c068b2b4bb274f2a9151e9f3acdaeb3bf0887d328709e8c73da3715e8ae4"
+    },
+    "workspace": {
+      "command": [
+        "cargo",
+        "test",
+        "--workspace",
+        "--locked",
+        "--no-fail-fast"
+      ],
+      "result": "1950 passed, 0 failed, 1 ignored",
+      "log": "/private/tmp/nera-eunit-project-workspace.log",
+      "log_sha256": "8d357e0f41eebb68f4845e34020feecaf22efd469b54cd4b56324a3c96e0ad84"
+    },
+    "clippy": {
+      "command": [
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "result": "passed",
+      "log": "/private/tmp/nera-eunit-project-clippy.log",
+      "log_sha256": "5f1aa6ff82bd0afca61abfab22c78723622bf31aab676a0dacef3320a96e26ac"
+    },
+    "native": {
+      "command": [
+        "nera",
+        "test",
+        "-j",
+        "4",
+        "--timeout",
+        "30",
+        "--no-warnings"
+      ],
+      "result": "353 passed, 0 failed, 2 external Onecached skips",
+      "log": "/private/tmp/nera-eunit-project-native-final.log",
+      "log_sha256": "8f51fdc39fb0c4d271e2e933ee1768d648349b9373535369ab9e60c9e9aa1abe"
+    },
+    "project_runner": {
+      "command": [
+        "python3",
+        "tests/integration/eunit/project_test.py",
+        "--nera",
+        "/private/tmp/nera-base64-one-target/release/nera",
+        "--eunit",
+        "/opt/homebrew/lib/erlang/lib/eunit-2.11",
+        "--gb-trees",
+        "/opt/homebrew/lib/erlang/lib/stdlib-8.0.3/src/gb_trees.erl"
+      ],
+      "result": "10 checks passed",
+      "log": "/private/tmp/nera-eunit-project-regression-final.log",
+      "log_sha256": "5dc435b0079c8441a183d2e9b24141974add5f17cf0d4c2614c3edcb3313ddd2"
+    },
+    "deferred_calls": {
+      "command": [
+        "python3",
+        "tests/integration/eunit/deferred_calls.py",
+        "--nera",
+        "/private/tmp/nera-base64-one-target/release/nera"
+      ],
+      "result": "4 checks passed",
+      "log": "/private/tmp/nera-eunit-project-deferred.log",
+      "log_sha256": "9c2b9e9ea31e44c4e883835af25f01de8d95969bbaf6eebc4f88051648862a12"
+    },
+    "harness": {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/integration/cowlib",
+        "-p",
+        "test_*.py"
+      ],
+      "result": "59 passed",
+      "log": "/private/tmp/nera-eunit-project-harness.log",
+      "log_sha256": "31c0431c419b8e69bbadab23bb2f06e0b0543a1b12069d2b1be2d1fee97ba40b"
+    },
+    "native_serial_publication": {
+      "command": [
+        "nera",
+        "test",
+        "-j",
+        "1",
+        "--timeout",
+        "30"
+      ],
+      "result": "353 passed, 0 failed, 2 external Onecached skips",
+      "log": "/private/tmp/nera-eunit-pr-native-serial.log",
+      "log_sha256": "a4841e0536eb13f6a9d77f5f1c0714e52c189141baebe8adf25045bc0c3f4313"
+    }
+  },
+  "validation_target": {
+    "state": "Uncommitted mr/native-eunit worktree, based on main b772a55; subsequent main commits excluded.",
+    "code_test_sha256": "4a2ee76a2d6f7bce1e404f53b2a09a995b3af85d6c1f020545872b36c735b472",
+    "source_files": 594,
+    "source_manifest": "/private/tmp/nera-eunit-project-source-manifest.json",
+    "source_manifest_sha256": "7ac5f18b1c22dc920ddca7a18dc0f071bf407d29d41c04b672d5f53aee7878b7",
+    "platform": "Darwin arm64"
+  },
+  "limitations": [
+    "macOS arm64 only",
+    "Captured test I/O and generic OTP helper coverage unvalidated",
+    "EUnit failure ~P and stacktrace formatting remains partial",
+    "HTTP properties not rerun",
+    "CI/Release manually paused",
+    "No implicit TEST define; external Cowlib adaptation preserves assertions and removes nonfunctional helpers"
+  ]
+}

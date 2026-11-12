@@ -1,0 +1,14 @@
+{
+  "CHANGELOG.md": "7e94b9e100f5dd25e0b563fd533f151c9817356da64b3ec875435b09fd17ee4b",
+  "crates/nera-runtime/src/process.rs": "8604337be92d08eff19246f14f87db8d24dbc3fff50f449dbe2b4a2fd06729d7",
+  "crates/nera-runtime/src/scheduler.rs": "0606887e74f05977e8e67be883132ca2bdb018234371dfeabd7e5da5fa837e07",
+  "Cargo.lock": "a210f397cb773d07c39ed4827a9aea44092f56ee7c2a438f708784dfa5769f80",
+  "Cargo.toml": "8d8f30e39479037b8f2cb82dbcc3f4705503423f0a6db6237003281cf25d24b3",
+  "rust-toolchain.toml": "2ad6f15416572b4836585087f1d4abc53b8fa2dbd616f8dacfaa587ed6714228",
+  "docs/baselines/2026-10-14-pid-blocks/probe.rs": "dd5f58652e95cc89281c5be1779729508569bfd6ac35b5c668b10a473e8e32fb",
+  "docs/baselines/2026-10-14-pid-blocks/probe-before.rs": "dd5f58652e95cc89281c5be1779729508569bfd6ac35b5c668b10a473e8e32fb",
+  "docs/baselines/2026-10-14-pid-blocks/spawn_probe.erl": "0e214d311c0f7c23b944a68804fab893b0217782cb77aca16cabfe41ab6ad20c",
+  "docs/baselines/2026-10-14-pid-blocks/build_probe.py": "8d354adf289fda183381d8623b506a5e2068e8784f4312000670c571e67403b5",
+  "docs/baselines/2026-10-14-pid-blocks/measure.py": "ddb1e9b73ed3afe8079e6a14411837ab361146d95e145ea84f3e0f8c3b33374b",
+  "docs/baselines/2026-10-14-pid-blocks/initial-measure.py": "860d945508f47cadbbc5aa77e2f465b979519fe6032e2d301e99bed53d8a26f4"
+}

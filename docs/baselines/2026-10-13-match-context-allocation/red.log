@@ -1,0 +1,35 @@
+   Compiling nera-runtime v0.1.0 (/home/user/AIProjects/nera/crates/nera-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.41s
+     Running unittests src/lib.rs (target/debug/deps/nera_runtime-27bb0f9fcbc2d668)
+
+running 4 tests
+test ffi::alloc::tests::fresh_binary_match_replenishes_exhausted_inline_capacity ... ok
+test ffi::alloc::tests::tuple_adapters_accept_empty_null_array_and_publish_region ... ok
+test ffi::alloc::tests::failed_match_start_preserves_inline_capacity ... FAILED
+test ffi::alloc::tests::reused_match_context_does_not_reserve_another_inline_region ... FAILED
+
+failures:
+
+---- ffi::alloc::tests::failed_match_start_preserves_inline_capacity stdout ----
+
+thread 'ffi::alloc::tests::failed_match_start_preserves_inline_capacity' (3451295) panicked at crates/nera-runtime/src/ffi/alloc.rs:205:9:
+assertion `left == right` failed
+  left: 3584
+ right: 512
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- ffi::alloc::tests::reused_match_context_does_not_reserve_another_inline_region stdout ----
+
+thread 'ffi::alloc::tests::reused_match_context_does_not_reserve_another_inline_region' (3451297) panicked at crates/nera-runtime/src/ffi/alloc.rs:175:17:
+assertion `left == right` failed: reusing a match context must not allocate or abandon inline capacity
+  left: 4189864
+ right: 680
+
+
+failures:
+    ffi::alloc::tests::failed_match_start_preserves_inline_capacity
+    ffi::alloc::tests::reused_match_context_does_not_reserve_another_inline_region
+
+test result: FAILED. 2 passed; 2 failed; 0 ignored; 0 measured; 493 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p nera-runtime --lib`

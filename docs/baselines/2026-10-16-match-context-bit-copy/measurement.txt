@@ -1,0 +1,22 @@
+series 1 group 1 complete
+series 1 group 2 complete
+series 1 group 3 complete
+series 1 group 4 complete
+series 1 group 5 complete
+series 2 group 1 complete
+series 2 group 2 complete
+series 2 group 3 complete
+series 2 group 4 complete
+series 2 group 5 complete
+series 3 group 1 complete
+series 3 group 2 complete
+series 3 group 3 complete
+series 3 group 4 complete
+series 3 group 5 complete
+copy1 24385 24400 32840 26897 aligned% 0.06 shifted% -18.1
+copy13bits 33134 21160 35244 23120 aligned% -36.14 shifted% -34.4
+copy16 24860 25403 175450 44379 aligned% 2.18 shifted% -74.71
+copy256 9830 9760 251690 49336 aligned% -0.71 shifted% -80.4
+scan256 46081 46751 76509 77356 aligned% 1.45 shifted% 1.11
+message256 96944 97063 96987 96974 aligned% 0.12 shifted% -0.01
+load (2.83544921875, 3.4521484375, 3.31103515625) (2.72705078125, 3.33935546875, 3.27587890625)

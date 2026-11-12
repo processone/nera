@@ -1,0 +1,2 @@
+   Compiling nera-runtime v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-runtime)
+    Finished `release` profile [optimized] target(s) in 27.66s

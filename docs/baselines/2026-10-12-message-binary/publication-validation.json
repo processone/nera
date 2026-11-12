@@ -1,0 +1,33 @@
+{
+  "base": "964dc1979df1992ecf25423713624f82fb7b9261",
+  "workspace_passed": 1831,
+  "workspace_failed": 0,
+  "ignored": 1,
+  "release_runtime_passed": 511,
+  "e2e_passed": 27,
+  "sources": {
+    "CHANGELOG.md": "4f8774832dc8aa77696ff7c924d3c1d7fcb0b0b5ca3c91bc92d028c6b81d7710",
+    "crates/nera-runtime/src/binary.rs": "e6daee198a94e21461c561ba0758522f772625560d4a981d61ee488093e191bb",
+    "crates/nera-runtime/src/ffi/gen_tcp.rs": "3d96f513062b0609a98fa754b39a7e5315aae9bf51b606c66ebe3606dbcfac8f",
+    "crates/nera-runtime/src/ffi/process.rs": "60268241ae8098163c59fad638ab7f35ae4e9ad29d038d834f8821aee1c34763",
+    "crates/nera-runtime/src/heap.rs": "ae665abdfc232344307b5c664c03e941a7aa4bae7a7ad6a4bb50f5cad2b80d3e",
+    "crates/nera-runtime/src/message.rs": "7c99385aac1cf0ded0641feba7ca2c6e7a64d7331c64b7ba776615bb57939997",
+    "crates/nera-runtime/src/process.rs": "49f32496b2d90f8e9f3d0a925c97d63e4b9e2a03a65f8b0f97bc6919733c5b8c",
+    "crates/nera-runtime/src/scheduler.rs": "96b32cf67bd91aec542c02735acabfb41fb0431a5f0444bc1d2f0e462c25c9aa",
+    "crates/nera-runtime/src/term.rs": "e0c527b4b045f9b7f4c152ad8ef082e7c5596a40133d4b92532830286902a3ce",
+    "docs/baselines/2026-10-12-message-binary/probe.rs": "e481f47ac285b887985befee6070002991da06e862c0b3cfd84af4ce3f7e9580",
+    "Cargo.lock": "a210f397cb773d07c39ed4827a9aea44092f56ee7c2a438f708784dfa5769f80"
+  },
+  "logs": {
+    "nera-contract-publication-workspace.log": "d1285d8ef72a117493523a3e26b3a65666604fd70ee3669e69d2f2eadf359849",
+    "nera-contract-publication-clippy.log": "f6fd22948b42efbc4915026e362b3786006739823258a8163234d3f02c63135b",
+    "nera-contract-publication-release.log": "cce2add2753bec992dc7f022e86a36e4e6279b2db1e08d8f1f1ab561b9fc6c32",
+    "nera-contract-publication-build.log": "4a9ad4d43ff7eafec84e76b49c212ad6ddbec28d0420df4acff899e8f8d2dcb3",
+    "nera-contract-publication-e2e.log": "2ee203330ffbb7ce181428d6792e9a94ea60b26bde9bc11f94ae9087d695f229"
+  },
+  "notes": [
+    "Rebased onto main including PR 55; both changelog entries retained",
+    "Original README, validation.json and performance samples are historical evidence against fd364b5",
+    "Performance was not remeasured after integration"
+  ]
+}

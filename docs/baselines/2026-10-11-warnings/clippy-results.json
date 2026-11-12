@@ -1,0 +1,52 @@
+{
+  "base_commit": "b4008d5b86b449d4a74a767f9b757c58f302e006",
+  "target": "uncommitted worktree on mr/warning-cleanup",
+  "platform": "macOS ARM64",
+  "rust": "1.99.0",
+  "dependencies_changed": false,
+  "clippy": {
+    "command": "RUSTC_WRAPPER= cargo clippy --workspace --all-targets --locked -- -D warnings",
+    "exit_code": 0,
+    "diagnostics": 0,
+    "local_expectations": {
+      "too_many_arguments": 20,
+      "vec_box_stable_region_addresses": 1
+    },
+    "blanket_suppression_added": false
+  },
+  "rust_tests": {
+    "passed": 1689,
+    "failed": 0,
+    "exit_code": 0
+  },
+  "release_build": {
+    "exit_code": 0,
+    "warnings": 0
+  },
+  "erlang_tests": {
+    "passed": 286,
+    "failed": 0,
+    "skipped": 2,
+    "exit_code": 0
+  },
+  "cross_object_smoke": {
+    "x86_64-apple-darwin": "passed: Mach-O 64-bit x86_64",
+    "aarch64-unknown-linux-gnu": "passed: ELF 64-bit ARM aarch64"
+  },
+  "git_diff_check": "passed",
+  "logs_directory": "target/warning-audit-2026-10-11",
+  "log_sha256": {
+    "nera-clippy-final.log": "538060f4da2df160ec6b4d9403c11a4b66b15d89af8124fe95e66ff77e8135f9",
+    "nera-clippy-tests.log": "919a0e8b3eb1ed91b41917700bb2502d42ec063cebe93dcccb951f3388daa5bb",
+    "nera-clippy-release-final.log": "f5ef3fdb3ee5952f8bd666cb4d1b5a7a5b131152f09fdbba307059ee64dc42d3",
+    "nera-clippy-erlang.log": "a392cba404e3b404f971402decd24cea7a021f21724a9cdada273734256cc4d3",
+    "nera-clippy-cross-x86_64-apple-darwin.log": "a5ea65e47292bd59fd75619b81305d50210937c274a466e3b14b419da6304fd8",
+    "nera-clippy-cross-aarch64-unknown-linux-gnu.log": "03c7500f54d95ccecba62c9859116dfa1517ab00c850a1715bd5c86ac4ea22a3"
+  },
+  "limits": [
+    "Local validation only; no remote CI.",
+    "Cross-target checks generate objects; no execution on those targets.",
+    "Long-signature refactoring deferred via documented item-level expectations."
+  ],
+  "source_manifest": "clippy-source-manifest.json"
+}

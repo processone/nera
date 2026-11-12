@@ -1,0 +1,13 @@
+   Compiling nera-runtime v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.66s
+     Running unittests src/lib.rs (/tmp/nera-transfer-target/debug/deps/nera_runtime-27bb0f9fcbc2d668)
+
+running 6 tests
+test process::tests::process_identifier_cache_tracks_allocator_identity_without_retaining_it ... ok
+test process::tests::process_identifier_final_partial_block_survives_global_exhaustion ... ok
+test process::tests::process_identifier_block_reservation_keeps_remaining_ids_private ... ok
+test process::tests::process_identifier_single_worker_path_is_bounded_under_external_contention ... ok
+test process::tests::process_identifier_allocator_saturates_without_reuse ... ok
+test process::tests::process_identifier_blocks_are_disjoint_across_threads_and_refills ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 564 filtered out; finished in 0.01s

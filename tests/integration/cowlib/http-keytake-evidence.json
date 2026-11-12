@@ -1,0 +1,216 @@
+{
+  "date": "2026-10-13",
+  "status": "lists_keytake_fixed_http_still_blocked",
+  "base_commit": "8c0e3a2f8281bf150222bbb446d7e4f398749866",
+  "base_tree": "5ba9a77dc951e74e33e432b22a44b2e0e3add081",
+  "target": "Uncommitted lists:keytake/3 stdlib implementation and project-owned regression on merged main 8c0e3a2, in an isolated managed worktree. Documentation/evidence edits follow execution.",
+  "source_sha256": {
+    "erlang/stdlib/lists.erl": "95f11246e4f01e2953cac27c22e9cbee97a29b12661c57addce1a86e8bb7f8e6",
+    "tests/lists_keytake.erl": "99d91f67706c209fe343cc8c330af9acd5358d8eb4cd8d22549ae9ed61a5761c"
+  },
+  "nera_sha256": "8572ca1e1325fa16756c4402c8eb869a2d432b50cc348fda9733c0b4624567c1",
+  "runtime_sha256": "7f08ce0f99e0e0cd73fe9e40def6c235df867c22876ad37f31ee1a9915a491af",
+  "platform": "macOS-15.7.7-arm64-arm-64bit-Mach-O",
+  "otp_version": "Erlang/OTP 29 [erts-17.0.5] [source] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads:1] [jit] [dtrace]",
+  "upstream": {
+    "name": "cowlib",
+    "version": "2.20.0",
+    "url": "https://github.com/ninenines/cowlib.git",
+    "commit": "c768a804565ff5b8178ed968a5921e469d6bd7b2"
+  },
+  "upstream_source_sha256": {
+    "src/cow_http3.erl": "cb8426277588906b49c78a42bfd8e2d214efd319d5cad6b4627b2cc94242a372",
+    "src/cow_multipart.erl": "2d684ed2229fd9d15d8941ad5cc1abd83a41f8bab0a7705e6093a7e112555d90",
+    "src/cow_http_struct_hd.erl": "bae6afed59d1395ad1234a0138c24736bc7ca8b8aca0425535fd9c06ce28aa84",
+    "src/cow_http2.erl": "edeb6bef50b963312e92021ed2edd029628c51752fa75b527557832912f452d6",
+    "src/cow_http1.erl": "e5851d0ad97a639458416d26f3b9d23ddfd09afe0dda8a356f33627ccc5b377c",
+    "src/cow_cookie.erl": "949f38c2aaa1fd30f690289a024429ea2d8a66e08b6c87a4436e51e568ddf88d",
+    "src/cow_mimetypes.erl": "bbdd5d794a0c970cdd0420109ceaf2aaeb4ec70294a5c8a053737e67e3e3779b",
+    "src/cow_ws.erl": "3d46948104e15194ffbe080a03299dd38e911857a9fc86f025a51ff76dab32c6",
+    "src/cow_hpack.erl": "6c9d5714790d8951fa57b793bb8f6c0f0433f7bbc15f33284e3b289b264bfa4d",
+    "src/cow_date.erl": "6f22428c9b1df2c59abe8b372f6a075c3d1b51ea6653cbf778a5bceeff813504",
+    "src/cow_capsule.erl": "b94fa3ee9242be4812ab631e30b71ff79b24112b538cbf304c735238e0683e80",
+    "src/cow_http2_machine.erl": "5ff9d6c3c520ca26d0a0090cc5d67ba6dc918fe7ee557083754e1d703cc14d3d",
+    "src/cow_http_hd.erl": "af8028340f58b2cf0a7bbaa734d6e1e9c61d48993454119e0df6c6cba6b82c2c",
+    "src/cow_base64url.erl": "3d68bd7d9d03230c99c298688bb9c804fe8ebdcf1ced3e64683de3b72a9436a2",
+    "src/cow_uri_template.erl": "589a363068a9f4bf77e29ef860792205d85541c71d76cd68ff5bd35686aca28b",
+    "src/cow_hpack_common.hrl": "c53242bd29cad93135050d5daf9f73e9b571da56a992dbc49870e7e53c1d164c",
+    "src/cow_uri.erl": "8a8627ec975e5597499385ce481760b751f80888aa7c55e915eedd31481da664",
+    "src/cow_qs.erl": "9d45e09874dd83ed42b02cdc7ce1aff5737f3ed968d7682c8b304ec853b61c91",
+    "src/cow_sse.erl": "180f35d763c003fc9b2304fed9da5244b6aa4497571dd6b73c92451e7e85f5ff",
+    "src/cow_http.erl": "cba1db8e6aace87f3f8772ea778b8088eedf8f7d54d84d767b46fcc02ea0e594",
+    "src/cow_iolists.erl": "ae976127c029af3e6a38dc5f406861a41f102c355d9077b1142abf3bba863df3",
+    "src/cow_http3_machine.erl": "a0e489819c72fb418920dbe2594b4ecbcc8aab72b5b2fdd809b419091ca2ba2d",
+    "src/cow_qpack.erl": "fe9adc05008b3b9e68bdb973b4486593bbaac665fcfb4de4679555a76d9ec99f",
+    "src/cow_mimetypes.erl.src": "b733e1a0defcc6402e4d9443db10334055738467c19a1765dc9c993ecea03612",
+    "src/cow_hpack_dec_huffman_lookup.hrl": "80fb656300ee1288bf34268e88c2b0886760ab6a794eeca60d84a94ae0f11652",
+    "src/cow_http_te.erl": "03676592aef761d7c623f814b324b4e15d4fb21889928b7474bc976c804de47a",
+    "src/cow_link.erl": "bcfec544ae3ca6796fece4c82a0c5061c282864c6e515ed89492238e02682c8c",
+    "src/cow_deflate.erl": "ba3b1bf977f0fda687c12d7195b6f143bae4f7ce26437736077c7b180a1261e8",
+    "include/cow_inline.hrl": "b6734610786a2d10ae82d9b9513e72d7a67396e1c5c1f3d6faa19e6350d580b6",
+    "include/cow_parse.hrl": "a366ad773962acdfea8b90cbc5499e6b3dc9148fb59d0bdd303dbbdae01a0177"
+  },
+  "implementation": [
+    "Project-owned compiled Erlang stdlib export; no new runtime BIF.",
+    "Positive integer position guard; guarded element/2 and loose equality skip non-tuples/short tuples and preserve numeric equality.",
+    "Tail-recursive scan accumulates prefix; reverse/2 returns remaining elements in original order while preserving the matched tuple and tail.",
+    "Invalid position or traversed improper tail raises function_clause; successful match may return an improper remaining list, as on BEAM."
+  ],
+  "regression": {
+    "fixture": "tests/lists_keytake.erl",
+    "beam_exit_code": 0,
+    "beam_log_sha256": "dc51b8c96c2d745df3bd5590d990230a482fd247123599548e0632fdbf97fc22",
+    "before": {
+      "exit_code": 1,
+      "command": "nera build lists.erl lists_keytake.erl -e lists_keytake:test -o native",
+      "cwd": "/private/tmp/nera-keytake-red",
+      "baseline_module_sha256": "7cb00ad07cd59e3c7177b1076d5f6a34dd64e6536432a283a69e3a0230d85936",
+      "before_stderr_sha256": "86213c44d32364107cf6c26f21a3bdf0f54e1816f7510fe9c0ee9ab7ffbffbf5",
+      "counter_verification_stderr_sha256": "86213c44d32364107cf6c26f21a3bdf0f54e1816f7510fe9c0ee9ab7ffbffbf5",
+      "note": "Same unchanged fixture, explicit original main lists module and fresh GREEN compiler: compilation fails on the missing lists:keytake/3 export."
+    },
+    "native_after": {
+      "passed": 19,
+      "failed": 0,
+      "command": "/private/tmp/nera-base64-one-target/release/nera test 'lists_*' 'guard_*' is_tuple_guard -j 1 --timeout 30"
+    }
+  },
+  "build": {
+    "exit_code": 0,
+    "command": "RUSTC_WRAPPER= CARGO_TARGET_DIR=/private/tmp/nera-base64-one-target cargo build --release --locked --offline"
+  },
+  "workspace_serial": {
+    "passed": 1910,
+    "failed": 0,
+    "ignored": 1,
+    "command": "RUSTC_WRAPPER= CARGO_TARGET_DIR=/private/tmp/nera-case-clause-target cargo test --workspace --locked --offline --no-fail-fast -- --test-threads=1"
+  },
+  "workspace_clippy": {
+    "status": "passed",
+    "command": "RUSTC_WRAPPER= CARGO_TARGET_DIR=/private/tmp/nera-case-clause-target cargo clippy --workspace --all-targets --locked --offline -- -D warnings"
+  },
+  "harness_tests": {
+    "passed": 37,
+    "failed": 0
+  },
+  "http_rerun": {
+    "runner_exit_code": 1,
+    "execution_order": [
+      "cow_http_hd",
+      "cow_http"
+    ],
+    "command": "python3 tests/integration/cowlib/runner.py --module cow_http_hd --module cow_http --nera /private/tmp/nera-base64-one-target/release/nera --work-dir /private/tmp/nera-cow-http-keytake --offline",
+    "report_path": "/private/tmp/nera-cow-http-keytake/report.json",
+    "report_sha256": "2fa334097d0fc05c3c2de69abe68d73ff9bfdf9cf42557f41119b5f6735335aa",
+    "modules": {
+      "cow_http_hd": {
+        "beam_passed": 63,
+        "native_passed": 0,
+        "native_executed": 0,
+        "native_blocked": 63,
+        "total": 63,
+        "build_exit_code": 1,
+        "native_sources": [
+          "src/cow_http_hd.erl",
+          "src/cow_http.erl",
+          "src/cow_http1.erl",
+          "src/cow_cookie.erl",
+          "src/cow_date.erl",
+          "src/cow_http2.erl",
+          "src/cow_http_struct_hd.erl",
+          "src/cow_link.erl"
+        ],
+        "build_stderr_sha256": "fc4f7c9b541ad3897f035db84d68f89317454ac6cf4f15a72a9be33ef68aab43"
+      },
+      "cow_http": {
+        "beam_passed": 136,
+        "native_passed": 0,
+        "native_executed": 0,
+        "native_blocked": 136,
+        "total": 136,
+        "build_exit_code": 1,
+        "native_sources": [
+          "src/cow_http.erl",
+          "src/cow_http1.erl",
+          "src/cow_http_hd.erl",
+          "src/cow_cookie.erl",
+          "src/cow_date.erl",
+          "src/cow_http2.erl",
+          "src/cow_http_struct_hd.erl",
+          "src/cow_link.erl"
+        ],
+        "build_stderr_sha256": "fc4f7c9b541ad3897f035db84d68f89317454ac6cf4f15a72a9be33ef68aab43"
+      }
+    },
+    "next_blockers": [
+      "uri_string:parse/1",
+      "uri_string:normalize/1",
+      "uri_string:recompose/1",
+      "uri_string:resolve/3"
+    ]
+  },
+  "core_rerun": {
+    "runner_exit_code": 0,
+    "passed": 122,
+    "total": 122,
+    "command": "TZ=Pacific/Honolulu python3 tests/integration/cowlib/runner.py --nera /private/tmp/nera-base64-one-target/release/nera --work-dir /private/tmp/nera-cow-keytake-core --offline",
+    "report_path": "/private/tmp/nera-cow-keytake-core/report.json",
+    "report_sha256": "25f9b68342262e211ac135f474dcf22a48e15f134e9963d5206e06d8cf89f7aa",
+    "modules": {
+      "cow_qs": {
+        "passed": 29,
+        "total": 29
+      },
+      "cow_cookie": {
+        "passed": 34,
+        "total": 34
+      },
+      "cow_date": {
+        "passed": 26,
+        "total": 26
+      },
+      "cow_base64url": {
+        "passed": 33,
+        "total": 33
+      }
+    }
+  },
+  "logs": {
+    "build": {
+      "path": "/private/tmp/nera-keytake-build.log",
+      "sha256": "f9eb60e4abd633a07e93055c796e5e41f848cad1daf11abe526725f830187512"
+    },
+    "workspace": {
+      "path": "/private/tmp/nera-keytake-workspace.log",
+      "sha256": "46774781887ef81271ce325780c9d3afea64e3ed8edad86a43f444103073735e"
+    },
+    "clippy": {
+      "path": "/private/tmp/nera-keytake-clippy.log",
+      "sha256": "5e89c4875eaaf07371889164c64def204d012aa717f24a33c3ed2925f98c3833"
+    },
+    "native": {
+      "path": "/private/tmp/nera-keytake-native.log",
+      "sha256": "e901310ac14a1d1ab223c24fffd60dbc90de7899f2371a86cf5adfe81d180c72"
+    },
+    "harness": {
+      "path": "/private/tmp/nera-keytake-harness.log",
+      "sha256": "67350492d5b7763e3e48d4d7dbd184b2b1483532816761be93d72c390d1ea621"
+    },
+    "http": {
+      "path": "/private/tmp/nera-keytake-http.log",
+      "sha256": "cb1ecdb8245760d7bce627edc8e9602269a8f4fd3d74d388850ebd59a329891b"
+    },
+    "core": {
+      "path": "/private/tmp/nera-keytake-core.log",
+      "sha256": "727c4cf38235524ac88695c12a05e2e35aeb4184de512f107f8b0b1719216f2f"
+    }
+  },
+  "limitations": [
+    "All 199 native HTTP cases remain blocked before execution; all BEAM expectations pass. Header subset covers 12/68 public functions.",
+    "Full native suite, Base64url properties, scheduler fairness and cross-platform/installed-archive checks not rerun.",
+    "Native upstream HTTP EUnit/PropEr frameworks/suites not executed.",
+    "No Cowlib source, headers, tests or dependencies copied into this repository; pristine external pinned checkouts used.",
+    "Original checkout and unrelated binary modifications untouched.",
+    "No publication or remote CI result; CI/Release remain manually paused."
+  ]
+}

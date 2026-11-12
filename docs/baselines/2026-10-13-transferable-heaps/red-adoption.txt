@@ -1,0 +1,18 @@
+   Compiling nera-runtime v0.1.0 (/private/tmp/nera-transferable-heap-fragments/crates/nera-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.01s
+   Doc-tests nera_runtime
+
+running 1 test
+test crates/nera-runtime/src/heap.rs - heap::ProcessHeap::adopt_fragment (line 550) - compile fail ... FAILED
+
+failures:
+
+---- crates/nera-runtime/src/heap.rs - heap::ProcessHeap::adopt_fragment (line 550) stdout ----
+Test compiled successfully, but it's marked `compile_fail`.
+
+failures:
+    crates/nera-runtime/src/heap.rs - heap::ProcessHeap::adopt_fragment (line 550)
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 22 filtered out; finished in 0.17s
+
+error: doctest failed, to rerun pass `-p nera-runtime --doc`

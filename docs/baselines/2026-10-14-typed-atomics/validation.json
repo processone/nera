@@ -1,0 +1,45 @@
+{
+  "workspace-tests.txt": {
+    "passed": 1940,
+    "failed": 0,
+    "ignored": 1
+  },
+  "release-tests.txt": {
+    "passed": 612,
+    "failed": 0,
+    "ignored": 1
+  },
+  "build-release.txt": {
+    "status": "passed"
+  },
+  "clippy.txt": {
+    "status": "passed"
+  },
+  "intel-macos-check.txt": {
+    "status": "passed"
+  },
+  "windows-check.txt": {
+    "status": "passed"
+  },
+  "base": "b772a5501ed9a190f20f6fbba1dc4ae76a9fbb4b",
+  "target": "local worktree mr/typed-atomics-integers",
+  "source_fingerprint": "source-hashes.json",
+  "artifacts": {
+    "/tmp/nera-transfer-target/release/nera": "ced72457bab79185d8fd381ebccc60c3312f9f6ca6736fc7cd1f91ba6d62d17a",
+    "/tmp/nera-transfer-target/release/libnera_runtime.a": "ac6a2be2e52c979f84f9111e9a9367ed113cb66819c8f72320b1592eb609403a"
+  },
+  "native-tests.txt": {
+    "passed": 344,
+    "failed": 0,
+    "skipped": 2,
+    "total": 346
+  },
+  "beam-domain.txt": {
+    "status": "passed",
+    "otp_release": 29
+  },
+  "working_tree_fingerprint": "source-hashes.json",
+  "publication": "unstaged local changes; no commit, push or PR",
+  "origin_main_tracking": "fa22327846ea38839b02456fe740aacc9fe95efa",
+  "git_diff_check": "passed"
+}

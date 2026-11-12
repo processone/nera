@@ -1,0 +1,6 @@
+[project]
+name = "thoas_test"
+entry = "thoas_roundtrip:test"
+
+[deps]
+thoas = { git = "https://github.com/lpil/thoas.git", rev = "7cdcec7e52b80d2869900893b2acf47199d84190" } # v1.2.1

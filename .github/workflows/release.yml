@@ -1,0 +1,174 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    name: Build ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: macOS arm64
+            os: macos-latest
+            target: aarch64-apple-darwin
+            cross: false
+          - name: macOS x86_64
+            os: macos-latest
+            target: x86_64-apple-darwin
+            cross: true
+          - name: Linux x86_64
+            os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            cross: false
+          - name: Linux aarch64
+            os: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+            cross: true
+          - name: Windows x86_64
+            os: windows-latest
+            target: x86_64-pc-windows-msvc
+            cross: false
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: "1.99.0"
+          targets: ${{ matrix.cross && matrix.target || '' }}
+
+      - name: Install cross-compilation tools (Linux aarch64)
+        if: matrix.target == 'aarch64-unknown-linux-gnu'
+        run: sudo apt-get update && sudo apt-get install -y gcc-aarch64-linux-gnu
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: release-${{ runner.os }}-rust-1.99.0-${{ matrix.target }}-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Extract version
+        id: version
+        shell: bash
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Build and package
+        shell: bash
+        env:
+          CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER: aarch64-linux-gnu-gcc
+          CC_aarch64_unknown_linux_gnu: aarch64-linux-gnu-gcc
+        run: ./scripts/dist.sh --version ${{ steps.version.outputs.version }} --target ${{ matrix.target }}
+
+      - name: Test installed native archive
+        if: ${{ !matrix.cross && runner.os != 'Windows' }}
+        shell: bash
+        run: python3 scripts/test-dist.py dist/nera-${{ steps.version.outputs.version }}-${{ matrix.target }}.tar.gz
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nera-${{ steps.version.outputs.version }}-${{ matrix.target }}
+          path: dist/nera-${{ steps.version.outputs.version }}-${{ matrix.target }}.*
+          if-no-files-found: error
+
+  plugin-vscode:
+    name: VSCode plugin
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Extract version
+        id: version
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Build VSIX
+        working-directory: editors/vscode-nera
+        run: |
+          npm install
+          npm run compile
+          npx @vscode/vsce package -o "vscode-nera-${{ steps.version.outputs.version }}.vsix"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vscode-nera-${{ steps.version.outputs.version }}
+          path: editors/vscode-nera/vscode-nera-${{ steps.version.outputs.version }}.vsix
+          if-no-files-found: error
+
+  plugin-jetbrains:
+    name: JetBrains plugin
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Extract version
+        id: version
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Build plugin
+        working-directory: editors/jetbrains-nera
+        env:
+          CI: true
+        run: ./gradlew buildPlugin
+
+      - name: Rename artifact
+        working-directory: editors/jetbrains-nera
+        run: |
+          ZIP=$(ls build/distributions/*.zip | head -1)
+          mv "$ZIP" "build/distributions/jetbrains-nera-${{ steps.version.outputs.version }}.zip"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: jetbrains-nera-${{ steps.version.outputs.version }}
+          path: editors/jetbrains-nera/build/distributions/jetbrains-nera-${{ steps.version.outputs.version }}.zip
+          if-no-files-found: error
+
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [build, plugin-vscode, plugin-jetbrains]
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-artifacts
+          merge-multiple: true
+
+      - name: List artifacts
+        run: find release-artifacts -type f | sort
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          # A tag with a suffix (v0.2.0-experimental, v0.2.0-rc1) is a
+          # prerelease; a plain vX.Y.Z tag is a full release.
+          prerelease: ${{ contains(github.ref_name, '-') }}
+          files: release-artifacts/*

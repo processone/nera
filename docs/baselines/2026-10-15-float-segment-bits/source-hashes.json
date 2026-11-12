@@ -1,0 +1,16 @@
+{
+  "Cargo.toml": "8d8f30e39479037b8f2cb82dbcc3f4705503423f0a6db6237003281cf25d24b3",
+  "Cargo.lock": "a210f397cb773d07c39ed4827a9aea44092f56ee7c2a438f708784dfa5769f80",
+  "rust-toolchain.toml": "2ad6f15416572b4836585087f1d4abc53b8fa2dbd616f8dacfaa587ed6714228",
+  "crates/nera-codegen/src/func_translator/ffi_emit.rs": "d8f3c222ef6a3aa1e1a6fe2f73f6c208821ae355243836637803a2b484eb1f52",
+  "crates/nera-codegen/src/func_translator/instructions.rs": "f378bfdac283b33d6080fb5ce2709bf180e5d034eff63d218e0c6e8a3b3d5057",
+  "crates/nera-ir/src/ir.rs": "033a7163521c2eb4c90b8c6a8474d15426737dae2ce0323788473c54b695ddf4",
+  "crates/nera-ir/src/lower/expr.rs": "d4a053b874bbfa1176b0a27cf5038ce13e2bcd34be653b651cbffd41c2b4dd79",
+  "crates/nera-ir/src/pattern.rs": "3959b2a6b435936793bc30db53eb4513e25d885839b567b27954dc15b5b2f7ab",
+  "crates/nera-runtime/src/ffi/binary_ops.rs": "df737a0f7a1526d4137b1fe210aafaf1ceebba4e211f03920b36435ae790e955",
+  "crates/nera-runtime/src/ffi/binary_ops/float_segment.rs": "cad18eff277e4025a4d8cc7de77930e89a5bbad4d887cdd0b55e80e643e6b9dd",
+  "crates/nera-runtime/src/ffi/helpers.rs": "b16c8f010ca85c335329737933932e6733b2a487f44b5f821f373d6f81c82542",
+  "tests/binary_float_bits.erl": "3a19049882399d7ec6d88f91100df7bd0f2bd76ffa01e494bdff0d122831c70e",
+  "crates/nera-codegen/src/func_translator/mod.rs": "6b44207043afc97463dc8c0e1ce9777b53bea1f189cf8b1d5082a47a7c76c71d",
+  "crates/nera-codegen/src/func_translator/terminators.rs": "60d59fbd658ae657d20c3669b59f47e7433ac526920aa22fe53e3e5d046fa4c4"
+}

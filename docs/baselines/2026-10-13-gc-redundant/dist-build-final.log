@@ -1,0 +1,29 @@
+Building nera 0.1.0-gc-redundant-validation for aarch64-apple-darwin...
+   Compiling nera-runtime v0.1.0 (/home/user/.codex/worktrees/binary-match-corrections/nera/crates/nera-runtime)
+    Finished `release` profile [optimized] target(s) in 9.41s
+   Compiling nera-runtime v0.1.0 (/home/user/.codex/worktrees/binary-match-corrections/nera/crates/nera-runtime)
+   Compiling nera v0.1.0 (/home/user/.codex/worktrees/binary-match-corrections/nera/crates/nera)
+   Compiling nera-codegen v0.1.0 (/home/user/.codex/worktrees/binary-match-corrections/nera/crates/nera-codegen)
+    Finished `release` profile [optimized] target(s) in 1m 55s
+
+Distribution created:
+  /home/user/.codex/worktrees/binary-match-corrections/nera/dist/nera-0.1.0-gc-redundant-validation-aarch64-apple-darwin.tar.gz
+
+Contents:
+  bin/nera                                 22043768 bytes
+  lib/libnera_runtime.a                    29807952 bytes
+  lib/nera/erlang/stdlib/application.erl   1749 bytes
+  lib/nera/erlang/stdlib/base64.erl        1307 bytes
+  lib/nera/erlang/stdlib/calendar.erl      2373 bytes
+  lib/nera/erlang/stdlib/gen_server.erl    4967 bytes
+  lib/nera/erlang/stdlib/lists.erl         11730 bytes
+  lib/nera/erlang/stdlib/maps.erl          5264 bytes
+  lib/nera/erlang/stdlib/proc_lib.erl      3266 bytes
+  lib/nera/erlang/stdlib/proplists.erl     2251 bytes
+  lib/nera/erlang/stdlib/queue.erl         18897 bytes
+  lib/nera/erlang/stdlib/supervisor.erl    6602 bytes
+  lib/nera/erlang/stdlib/timer.erl         2615 bytes
+
+Install:
+  tar xzf nera-0.1.0-gc-redundant-validation-aarch64-apple-darwin.tar.gz
+  export PATH="$(pwd)/nera-0.1.0-gc-redundant-validation-aarch64-apple-darwin/bin:$PATH"

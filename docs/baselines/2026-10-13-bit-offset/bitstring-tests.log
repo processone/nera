@@ -1,0 +1,10 @@
+Running 4 tests (1 threads)
+────────────────────────────────────────────────────────────
+  PASS  bitstring_basic                           846ms  [1/4]
+  PASS  bitstring_concat                          826ms  [2/4]
+  PASS  bitstring_pattern                         812ms  [3/4]
+  PASS  bitstring_types                           810ms  [4/4]
+────────────────────────────────────────────────────────────
+Results: 4 passed, 0 failed (0 compile), 0 skipped / 4 total
+
+ALL TESTS PASSED

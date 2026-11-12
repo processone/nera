@@ -1,0 +1,3 @@
+# NERA-121: retained failing seed for negative binary-size grouping.
+# integration.rs also exercises the real overflow fixture deterministically.
+cc f3c3fc1fb75bb248a854ebd349c28a4289d5d63b66bd03bbcb8363fa921e2414

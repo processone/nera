@@ -1,0 +1,13 @@
+[package]
+name = "nera-ir"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "Intermediate representation and AST-to-IR lowering for nera"
+
+[dependencies]
+nera-syntax = { path = "../nera-syntax" }
+thiserror = { workspace = true }

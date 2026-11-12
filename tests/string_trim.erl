@@ -1,0 +1,35 @@
+%% EXPECT: ok
+-module(string_trim).
+-export([test/0]).
+test() ->
+    <<"hello">> = string:trim(<<" \thello\t ">>, both, [32,9]),
+    <<"hello ">> = string:trim(<<" hello ">>, leading, [32]),
+    <<" hello">> = string:trim(<<" hello ">>, trailing, [32]),
+    "a b" = string:trim("  a b  ", both, [32]),
+    [] = string:trim("xxx", both, "x"),
+    <<>> = string:trim(<<>>, both, [32]),
+    <<>> = string:trim(<<" \t">>, both, [32,9]),
+    <<"no">> = string:trim(<<"no">>, both, [32]),
+    unchanged = string:trim(unchanged, invalid_direction, []),
+    [233,120,233] = string:trim([32,233,120,233,32], both, [32]),
+    <<"x">> = string:trim(<<233/utf8,120,233/utf8>>, both, [233]),
+    [97,769,120] = string:trim([97,769,120], leading, [97]),
+    [120] = string:trim([97,769,120,97,769], both, [[97,769]]),
+    <<"x">> = string:trim(<<97,769/utf8,120,97,769/utf8>>, both, [[97,769]]),
+    "\r\nx\r\n" = string:trim("\r\nx\r\n", both, [13,10]),
+    "x" = string:trim("\r\nx\r\n", both, [[13,10]]),
+    <<" x ">> = string:trim(<<" x ">>, both, [[32]]),
+    <<"x">> = string:trim(<<"x">>, both, [<<"x">>]),
+    function_clause = failure(fun() -> string:trim(<<"x">>, wrong, [32]) end),
+    function_clause = failure(fun() -> string:trim(atom, both, [32]) end),
+    function_clause = failure(fun() -> string:trim(<<"x">>, both, [atom]) end),
+    badarg = failure(fun() -> string:trim(<<"x">>, both, [32|tail]) end),
+    {badarg, <<255>>} = failure(fun() -> string:trim(<<255>>, both, [32]) end),
+    <<"x">> = apply(string, trim, [<<" x ">>, both, [32]]),
+    <<"xy">> = iolist_to_binary(string:trim([" ", <<"xy">>, " "], both, [32])),
+    <<"xy">> = iolist_to_binary(string:trim([32 | <<"xy ">>], both, [32])),
+    "x" = string:trim(lists:duplicate(10000, 32) ++ "x" ++ lists:duplicate(10000, 32), both, [32]),
+    F = fun string:trim/3,
+    "x" = F(" x ", both, [32]),
+    io:format("ok~n").
+failure(F) -> try F() of _ -> unexpected_return catch error:R -> R end.

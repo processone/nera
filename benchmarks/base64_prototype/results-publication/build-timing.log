@@ -1,0 +1,7 @@
+   Compiling nera-syntax v0.1.0 (/private/var/folders/yk/hpylg6r976qgbphydj66gt9h0000gn/T/nera-base64-u35q9cui/crates/nera-syntax)
+   Compiling nera-runtime v0.1.0 (/private/var/folders/yk/hpylg6r976qgbphydj66gt9h0000gn/T/nera-base64-u35q9cui/crates/nera-runtime)
+   Compiling nera v0.1.0 (/private/var/folders/yk/hpylg6r976qgbphydj66gt9h0000gn/T/nera-base64-u35q9cui/crates/nera)
+   Compiling nera-ir v0.1.0 (/private/var/folders/yk/hpylg6r976qgbphydj66gt9h0000gn/T/nera-base64-u35q9cui/crates/nera-ir)
+   Compiling nera-fmt v0.1.0 (/private/var/folders/yk/hpylg6r976qgbphydj66gt9h0000gn/T/nera-base64-u35q9cui/crates/nera-fmt)
+   Compiling nera-codegen v0.1.0 (/private/var/folders/yk/hpylg6r976qgbphydj66gt9h0000gn/T/nera-base64-u35q9cui/crates/nera-codegen)
+    Finished `release` profile [optimized] target(s) in 2m 11s

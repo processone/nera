@@ -1,0 +1,11 @@
+Results: 287 passed, 1 failed (0 compile), 2 skipped / 290 total
+
+Failures:
+  tcp_reactor_perf: runtime crash, exit=1
+    stderr:
+    Error in process <0.1.0>: error:{batch_variance_stall,77,14,[8,10,14,14,77]}
+    Stacktrace (most recent call last):
+      tcp_reactor_perf:test_active_once_batch_consistency/0 (tcp_reactor_perf.erl, line 34)
+    reactor stats: events=36013 missing_token=1 active_reads=1001 setopts_fastpath=0 pending=0 active_regs=0
+
+SOME TESTS FAILED

@@ -1,0 +1,23 @@
+{
+  "CHANGELOG.md": "41fb55f3657f199ad3b34e3a04534951500815955f0498c3d722bccf52e37ad6",
+  "Cargo.lock": "a210f397cb773d07c39ed4827a9aea44092f56ee7c2a438f708784dfa5769f80",
+  "Cargo.toml": "8d8f30e39479037b8f2cb82dbcc3f4705503423f0a6db6237003281cf25d24b3",
+  "crates/nera-codegen/src/func_translator/ffi_emit.rs": "72bc772a958971402c4e2de99417924492df4ff77980077e963fea2d23cb46ed",
+  "crates/nera-codegen/src/term_layout.rs": "a119c4c109028bcc7414926956fd18811ed56101d1a9a709b07ba031d621c0ae",
+  "crates/nera-runtime/src/bif.rs": "c00f5384579eba713219be27adddafdba9b6b431d3ad4babfed33fc2a0d93296",
+  "crates/nera-runtime/src/bigint.rs": "d66cec53ce2348d15ad94ceaa14b148e03b855d1f286fd13fa698f6f4df4dbfa",
+  "crates/nera-runtime/src/ets.rs": "cc47f8bcc416f71e913704ee52dd36db654e2aed35b5cd0ee2d9b5b688989ec5",
+  "crates/nera-runtime/src/ffi/atomics.rs": "0ec8686db5662e8765835401af07ea8f9c27a3412509011d0bee0ed6d0d060d0",
+  "crates/nera-runtime/src/ffi/binary_ops.rs": "9ff52091fb30300c8bee5d2cf9bb9b91afec604e0554b414e6f8961eba1f1dd9",
+  "crates/nera-runtime/src/ffi/closure.rs": "4b34712a65d86f298ebe7131354a182e5ef6b831b79ca1220e1144001d47d05c",
+  "crates/nera-runtime/src/ffi/counters.rs": "1dd91871977e3e695ccf0490bfb0a37587217f0d0ff63d6a6539883aaf40915f",
+  "crates/nera-runtime/src/ffi/map_ops.rs": "675647cc9884ed2797c8cb3faf15f833b617f63b6cf5cf3d0e2b9ce3ad534423",
+  "crates/nera-runtime/src/ffi/misc.rs": "72f7fd907598387a58927705a11a2c15c7aa837d5fd1dd43d6cc48e4d2b7e6fc",
+  "crates/nera-runtime/src/ffi/process.rs": "6ac84e0d5e34a4f4b50a4a965fb3010c1f10ccb949fff178e5a9b8573c84fae1",
+  "crates/nera-runtime/src/heap.rs": "eb13ddf7ebbafbe176687178f764aeec6388e3d996d3973427fda506f9e02c28",
+  "crates/nera-runtime/src/message.rs": "2b4e01659adddceb3878de1dd8f96c25c88ee108f1f1f254214e11cb3e4cf3e9",
+  "crates/nera-runtime/src/process.rs": "996cbe568bb9f191615000688773e72ae5858ce403001567d49f64ac4aa9ce05",
+  "crates/nera-runtime/src/scheduler.rs": "f5b678a43ce101f8923fabad96f1ea1ba9ce9ad1a5b5489b29d9e3dd6cf76e12",
+  "crates/nera-runtime/src/term.rs": "422396812350455ddd509e11ad211848c298da8a51292f992f1bafed2a6b804b",
+  "rust-toolchain.toml": "2ad6f15416572b4836585087f1d4abc53b8fa2dbd616f8dacfaa587ed6714228"
+}

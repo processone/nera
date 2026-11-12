@@ -1,0 +1,4 @@
+.nera/
+/cowlib_demo
+_build/
+rebar.lock

@@ -1,0 +1,320 @@
+{
+  "deprecation-package": {
+    "command": [
+      "env",
+      "RUSTUP_TOOLCHAIN=1.99.0",
+      "RUSTC_WRAPPER=",
+      "CARGO_TARGET_DIR=target/rust199-baseline",
+      "CARGO_NET_OFFLINE=true",
+      "./scripts/dist.sh",
+      "--version",
+      "0.1.0-deprecation",
+      "--target",
+      "aarch64-apple-darwin"
+    ],
+    "cwd": "/home/user/AIProjects/nera",
+    "exit_code": 0,
+    "timed_out": false,
+    "seconds": 2.36
+  },
+  "deprecation-format-semantics": {
+    "command": [
+      "python3",
+      "/tmp/nera-refresh-format-semantics.py"
+    ],
+    "cwd": "/home/user/AIProjects/nera",
+    "exit_code": 0,
+    "timed_out": false,
+    "seconds": 2.06
+  },
+  "workspace": {
+    "command": [
+      "env",
+      "RUSTC_WRAPPER=",
+      "CARGO_TARGET_DIR=target/rust199-baseline",
+      "cargo",
+      "test",
+      "--workspace",
+      "--locked",
+      "--offline",
+      "--no-fail-fast"
+    ],
+    "cwd": "/home/user/AIProjects/nera",
+    "exit_code": 0,
+    "timed_out": false,
+    "seconds": 13.03
+  },
+  "red": {
+    "command": [
+      "env",
+      "RUSTC_WRAPPER=",
+      "CARGO_TARGET_DIR=target/rust199-baseline",
+      "cargo",
+      "test",
+      "-p",
+      "nera-ir",
+      "deprecated",
+      "--locked",
+      "--offline"
+    ],
+    "cwd": "/home/user/AIProjects/nera",
+    "exit_code": 101,
+    "timed_out": false,
+    "seconds": 6.63
+  },
+  "deprecation-probes": {
+    "command": [
+      "python3",
+      "docs/baselines/2026-10-10/reproduce.py",
+      "--nera",
+      "/home/user/AIProjects/nera/target/rust199-baseline/release/nera"
+    ],
+    "cwd": "/home/user/AIProjects/nera",
+    "exit_code": 1,
+    "timed_out": false,
+    "seconds": 2.81
+  },
+  "clippy": {
+    "command": [
+      "env",
+      "RUSTC_WRAPPER=",
+      "CARGO_TARGET_DIR=target/rust199-baseline",
+      "cargo",
+      "clippy",
+      "--workspace",
+      "--all-targets",
+      "--locked",
+      "--offline",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "cwd": "/home/user/AIProjects/nera",
+    "exit_code": 101,
+    "timed_out": false,
+    "seconds": 4.22
+  },
+  "erlang": {
+    "command": [
+      "./target/rust199-baseline/release/nera",
+      "test",
+      "-j",
+      "4",
+      "--timeout",
+      "30"
+    ],
+    "cwd": "/home/user/AIProjects/nera",
+    "exit_code": 0,
+    "timed_out": false,
+    "seconds": 64.56
+  },
+  "focused": {
+    "command": [
+      "env",
+      "RUSTC_WRAPPER=",
+      "CARGO_TARGET_DIR=target/rust199-baseline",
+      "cargo",
+      "test",
+      "-p",
+      "nera-ir",
+      "-p",
+      "nera-syntax",
+      "deprecated",
+      "--locked",
+      "--offline"
+    ],
+    "cwd": "/home/user/AIProjects/nera",
+    "exit_code": 0,
+    "timed_out": false,
+    "seconds": 3.41
+  },
+  "green": {
+    "command": [
+      "env",
+      "RUSTC_WRAPPER=",
+      "CARGO_TARGET_DIR=target/rust199-baseline",
+      "cargo",
+      "test",
+      "-p",
+      "nera-ir",
+      "deprecated",
+      "--locked",
+      "--offline"
+    ],
+    "cwd": "/home/user/AIProjects/nera",
+    "exit_code": 101,
+    "timed_out": false,
+    "seconds": 3.39
+  },
+  "deprecation-thoas-run": {
+    "command": [
+      "/home/user/AIProjects/nera/target/deprecation-repair-2026-10-10/thoas-deprecation"
+    ],
+    "cwd": "/home/user/AIProjects/nera/tests/integration/thoas",
+    "exit_code": 0,
+    "timed_out": false,
+    "seconds": 0.29
+  },
+  "release": {
+    "command": [
+      "env",
+      "RUSTC_WRAPPER=",
+      "CARGO_TARGET_DIR=target/rust199-baseline",
+      "bash",
+      "-c",
+      "cargo build --release --locked --offline -p nera-runtime && cargo build --release --locked --offline"
+    ],
+    "cwd": "/home/user/AIProjects/nera",
+    "exit_code": 0,
+    "timed_out": false,
+    "seconds": 118.59
+  },
+  "deprecation-installed": {
+    "command": [
+      "python3",
+      "scripts/test-dist.py",
+      "dist/nera-0.1.0-deprecation-aarch64-apple-darwin.tar.gz"
+    ],
+    "cwd": "/home/user/AIProjects/nera",
+    "exit_code": 0,
+    "timed_out": false,
+    "seconds": 2.03
+  },
+  "deprecation-poolboy-build": {
+    "command": [
+      "/home/user/AIProjects/nera/target/rust199-baseline/release/nera",
+      "build",
+      "-o",
+      "/home/user/AIProjects/nera/target/deprecation-repair-2026-10-10/poolboy-deprecation"
+    ],
+    "cwd": "/home/user/AIProjects/nera/tests/integration/poolboy",
+    "exit_code": 1,
+    "timed_out": false,
+    "seconds": 0.18
+  },
+  "deprecation-thoas-build": {
+    "command": [
+      "/home/user/AIProjects/nera/target/rust199-baseline/release/nera",
+      "build",
+      "-o",
+      "/home/user/AIProjects/nera/target/deprecation-repair-2026-10-10/thoas-deprecation"
+    ],
+    "cwd": "/home/user/AIProjects/nera/tests/integration/thoas",
+    "exit_code": 0,
+    "timed_out": false,
+    "seconds": 1.25
+  },
+  "format": {
+    "command": [
+      "cargo",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "cwd": "/home/user/AIProjects/nera",
+    "exit_code": 1,
+    "timed_out": false,
+    "seconds": 1.85
+  },
+  "red-final": {
+    "command": [
+      "env",
+      "RUSTC_WRAPPER=",
+      "CARGO_TARGET_DIR=target/rust199-baseline",
+      "cargo",
+      "test",
+      "-p",
+      "nera-ir",
+      "-p",
+      "nera-syntax",
+      "deprecated",
+      "--locked",
+      "--offline",
+      "--no-fail-fast"
+    ],
+    "cwd": "/home/user/AIProjects/nera",
+    "exit_code": 101,
+    "timed_out": false,
+    "seconds": 3.51
+  },
+  "green-final": {
+    "command": [
+      "env",
+      "RUSTC_WRAPPER=",
+      "CARGO_TARGET_DIR=target/rust199-baseline",
+      "cargo",
+      "test",
+      "-p",
+      "nera-ir",
+      "-p",
+      "nera-syntax",
+      "deprecated",
+      "--locked",
+      "--offline",
+      "--no-fail-fast"
+    ],
+    "cwd": "/home/user/AIProjects/nera",
+    "exit_code": 0,
+    "timed_out": false,
+    "seconds": 3.06
+  },
+  "ci-cross-isolated": {
+    "command": [
+      "/home/user/AIProjects/nera/target/rust199-baseline/release/nera",
+      "build",
+      "/var/folders/yk/hpylg6r976qgbphydj66gt9h0000gn/T/nera-cross-isolated-e2c19j36/hello.erl",
+      "--target",
+      "x86_64-apple-darwin",
+      "--emit-obj",
+      "-v"
+    ],
+    "exit_code": 0,
+    "objects": "/var/folders/yk/hpylg6r976qgbphydj66gt9h0000gn/T/nera-cross-isolated-e2c19j36/supervisor.o:      Mach-O 64-bit object x86_64\n/var/folders/yk/hpylg6r976qgbphydj66gt9h0000gn/T/nera-cross-isolated-e2c19j36/gen_server.o:      Mach-O 64-bit object x86_64\n/var/folders/yk/hpylg6r976qgbphydj66gt9h0000gn/T/nera-cross-isolated-e2c19j36/application.o:     Mach-O 64-bit object x86_64\n/var/folders/yk/hpylg6r976qgbphydj66gt9h0000gn/T/nera-cross-isolated-e2c19j36/lists.o:           Mach-O 64-bit object x86_64\n/var/folders/yk/hpylg6r976qgbphydj66gt9h0000gn/T/nera-cross-isolated-e2c19j36/timer.o:           Mach-O 64-bit object x86_64\n/var/folders/yk/hpylg6r976qgbphydj66gt9h0000gn/T/nera-cross-isolated-e2c19j36/proc_lib.o:        Mach-O 64-bit object x86_64\n/var/folders/yk/hpylg6r976qgbphydj66gt9h0000gn/T/nera-cross-isolated-e2c19j36/proplists.o:       Mach-O 64-bit object x86_64\n/var/folders/yk/hpylg6r976qgbphydj66gt9h0000gn/T/nera-cross-isolated-e2c19j36/hello.o:           Mach-O 64-bit object x86_64\n/var/folders/yk/hpylg6r976qgbphydj66gt9h0000gn/T/nera-cross-isolated-e2c19j36/maps.o:            Mach-O 64-bit object x86_64\n/var/folders/yk/hpylg6r976qgbphydj66gt9h0000gn/T/nera-cross-isolated-e2c19j36/__nera_metadata.o: Mach-O 64-bit object x86_64\n/var/folders/yk/hpylg6r976qgbphydj66gt9h0000gn/T/nera-cross-isolated-e2c19j36/queue.o:           Mach-O 64-bit object x86_64\n",
+    "expected_architecture": true
+  },
+  "beam_probes": {
+    "resume_exception_probe": {
+      "expected": "before\nafter\n",
+      "beam": {
+        "exit": 0,
+        "stdout": "before\nafter\n",
+        "stderr": ""
+      },
+      "native": {
+        "exit": 0,
+        "stdout": "before\nafter\n",
+        "stderr": ""
+      },
+      "pass": true
+    },
+    "late_reply_probe": {
+      "expected": "no_late_reply\n",
+      "beam": {
+        "exit": 0,
+        "stdout": "no_late_reply\n",
+        "stderr": ""
+      },
+      "native": {
+        "exit": 0,
+        "stdout": "late_reply\n",
+        "stderr": ""
+      },
+      "pass": false
+    },
+    "formatter_guard_probe": {
+      "original_beam": {
+        "exit": 0,
+        "stdout": "matched\n",
+        "stderr": ""
+      },
+      "formatted_beam": {
+        "exit": 0,
+        "stdout": "matched\n",
+        "stderr": ""
+      },
+      "formatted_source": "%% Run on BEAM before and after `nera fmt --stdout`.\n%% The unformatted program must print matched.\n-module(formatter_guard_probe).\n-export([start/0]).\n\nstart() -> io:format(\"~p~n\", [classify(2, 1)]).\n\nclassify(A, B) when not (A < B) -> matched;\nclassify(_, _) -> fallback.\n",
+      "pass": true
+    }
+  }
+}

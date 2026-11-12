@@ -1,0 +1,4 @@
+BEAM +S 1: observer progresses during small repeated and large encodings
+Nera NERA_SCHEDULERS=1: same progress assertions pass in 5 runs
+BEAM +S 1 and Nera (5 runs): decoder yields on data, whitespace and late errors
+Invalid scheduler count rejected before execution

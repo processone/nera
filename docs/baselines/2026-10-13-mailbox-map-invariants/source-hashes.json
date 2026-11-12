@@ -1,0 +1,35 @@
+{
+  "base_ref": "fetched main",
+  "base": "53d3778236bcfd774d973236a1dad1645fd6543d",
+  "target": "uncommitted worktree /tmp/nera-transferable-heap-fragments",
+  "branch": "mr/mailbox-map-invariants",
+  "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)",
+  "source_sha256": {
+    "CHANGELOG.md": "ee3373426dde81ceeb67d0067a1251043bb87314a2e8b592a47785ee099d41be",
+    "crates/nera-runtime/src/bif.rs": "c0351d530cdebb04412e333d59579c96ab8b68a92d36f6f26e34c3eeb4775322",
+    "crates/nera-runtime/src/ets.rs": "194e82f8908e1044bbf617aad19f13dab516573f5de5bdf25a949820490e6a93",
+    "crates/nera-runtime/src/ffi/atomics.rs": "f6f7b3841f791dccd4d5a889550207afb2c374c1b6d5df571f1313b0a7e07fc8",
+    "crates/nera-runtime/src/ffi/counters.rs": "22a4a4333ff20a2231110a8afcf918cbc8f705164a7eda1b45c86af1bd0f8cc4",
+    "crates/nera-runtime/src/ffi/map_ops.rs": "2641c6dff32c01c07aa5448ed47756adb5c37b7edb4e3ef63722147ee4506250",
+    "crates/nera-runtime/src/ffi/persistent_term.rs": "0d8feba6cab7440cbf6d98fa271f342cacdcc97195082305853f45fd6e2e0e33",
+    "crates/nera-runtime/src/heap.rs": "9a2db57112b24355df9fea5cd861d8744ea6d96a58df958ddc398a99ccd4f02f",
+    "crates/nera-runtime/src/message.rs": "34f34d226107e6778f5191c3080bd81b1cf12cfa9885efac9d1bcb4971072811",
+    "crates/nera-runtime/src/process.rs": "beff55205e0b75893aebeb768119a6060ca1d1befe5a3e2838be8cce4d82d48c",
+    "docs/baselines/2026-10-13-mailbox-map-invariants/probe.rs": "12fe655c51f63ca963a951fcc21695d3629bd7d4147329a26c86584e41e4613a",
+    "docs/baselines/2026-10-13-mailbox-map-invariants/measure.py": "af18e0d09ac2db08452fe9ee38aa04f4dda038b6ce1d7388c76bc40324d4aea4",
+    "Cargo.lock": "a210f397cb773d07c39ed4827a9aea44092f56ee7c2a438f708784dfa5769f80"
+  },
+  "artifact_sha256": {
+    "before": {
+      "libnera_runtime.rlib": "02dc5ef3fb70ca998783f77a060584872eed43e1653f5f01277db5a0e0524e73",
+      "probe": "e0e5603b98005e9f5afd5530826c96c49e9e09f89efdce70a7c4e00c92024361"
+    },
+    "after": {
+      "nera": "6584421f61c5e7b01e7c0ff791d9223c67166356177b4cbd80ead7297e6a5464",
+      "libnera_runtime.rlib": "192fd13dcc8719b18e424735106be32bb31d9d4f23a378cdac98a7dcf8cf948b",
+      "libnera_runtime.a": "12c9bac108fbbe602241d746e43aac70f095a611ad454c6b0c71c5b8b2c0ccbe",
+      "probe": "af3fda223311bdc030b214323bffc0e6bfe147954f8954bfe2a3dcea7b1c2500"
+    }
+  },
+  "publication_main": "bf194448aa48619d934f25630a9037656feee73e"
+}

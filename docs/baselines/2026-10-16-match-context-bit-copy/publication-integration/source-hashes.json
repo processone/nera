@@ -1,0 +1,21 @@
+{
+  "Cargo.lock": "a210f397cb773d07c39ed4827a9aea44092f56ee7c2a438f708784dfa5769f80",
+  "crates/nera-codegen/src/func_translator/instructions.rs": "2269625e2c6a4e2df1b57d163305d22c2334121aa59ed22682a3a28c3b36e1f4",
+  "crates/nera-codegen/src/term_layout.rs": "f12fba040cd7cb0400e41e044a6b442620264e6d6735f9e922a82c67205af227",
+  "crates/nera-ir/src/lower/expr.rs": "5dfab50390d499b9c257bbab6ef219c4ebea2150e455e16cc1c51209560e2c56",
+  "crates/nera-ir/src/lower/tests.rs": "06deacdf32ec1edee36de839375984d4cb4c8f607adc447c2a63ca9550251717",
+  "crates/nera-runtime/src/binary.rs": "2c8852bb5de9b4d32d2d6ae9e84e1f450ae369ca05f8c3ef246cf123a9ff76b0",
+  "crates/nera-runtime/src/binary/bit_copy.rs": "60c3a51429cbb05601e90e5081585ad6a423c764bf0853493a40df279accaea2",
+  "crates/nera-runtime/src/ffi/binary_ops.rs": "12a36451ba9e7b4945bfcf33bfd7f237382e2a7ef211ddfaae42b34cb0bad998",
+  "crates/nera-runtime/src/ffi/helpers.rs": "55905c190075d43aeeec8cd62afb8b9735029e1e54b03603a16b3e5fd17f3e9a",
+  "crates/nera-runtime/src/ffi/process.rs": "6edf2d7c88ac6021a690f2c185f20917729f7ec5837adeb680ee9591fabed23c",
+  "crates/nera-runtime/src/heap.rs": "dc7f29c597da9b93e4708df439fa953ea1de9683551192d7c4b4356b0f803b2f",
+  "crates/nera-runtime/src/lib.rs": "271b195ae38c115967f992f3e78a4769c6012f1b772dc5cb085b8e1f053665fb",
+  "crates/nera-runtime/src/match_context.rs": "97617b56f1284725c46fca8148226a5c2c97308b24db4ee6e0c64cfa4d1c1d37",
+  "crates/nera-runtime/src/message.rs": "dce949a34abc6d0bf0da3db7448b79459d84ac54f3edea21953221cf7d38e175",
+  "crates/nera-runtime/src/term.rs": "916f213a3d70b86c98b929016e7651ce8f98005d001438bd5ee8103f425040de",
+  "rust-toolchain.toml": "2ad6f15416572b4836585087f1d4abc53b8fa2dbd616f8dacfaa587ed6714228",
+  "tests/README.md": "99ac7da16483fa295d00aebe7c92c56fe462220d666dc8c7245dda919d85ec09",
+  "tests/binary_match_windows.erl": "28b8b95855157dfe33fcf1f0d290ef641f6ea22cb7276b5cb441411807afdb56",
+  "crates/nera-runtime/src/reactor.rs": "8758eea5215b6d1026c7c10df7466552538c2a6a17c2ada292be32743aae5687"
+}

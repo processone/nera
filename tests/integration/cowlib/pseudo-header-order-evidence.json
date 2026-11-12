@@ -1,0 +1,878 @@
+{
+  "date": "2026-10-14",
+  "base_ref": "origin/main",
+  "base_commit": "514b35b030dc5415e39a48aedf8f44b12183404b",
+  "target": "mr/http-pseudo-header-order working tree; comparator/corpus/test hashes bind validation; later edits are documentation/evidence only.",
+  "platform": "macOS-15.7.7-arm64-arm-64bit-Mach-O",
+  "otp_version": "Erlang/OTP 29 [erts-17.0.5] [source] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads:1] [jit] [dtrace]",
+  "upstream": {
+    "name": "cowlib",
+    "version": "2.20.0",
+    "url": "https://github.com/ninenines/cowlib.git",
+    "commit": "c768a804565ff5b8178ed968a5921e469d6bd7b2"
+  },
+  "scope": "136 project-owned cow_http cases on unchanged external Cowlib. Correction is to the comparison contract, not Nera runtime behavior or Cowlib implementation.",
+  "diagnosis": "Cowlib folds over maps:to_list/1, whose order is undefined. The strict comparator treated a permutation of distinct leading pseudo-header fields as a compiler mismatch. Both engines preserve the same names/values.",
+  "sources": [
+    {
+      "url": "https://www.erlang.org/doc/apps/stdlib/maps.html#to_list/1",
+      "contract": "Map enumeration order is undefined without an ordered iterator."
+    },
+    {
+      "url": "https://www.rfc-editor.org/rfc/rfc9113.html#section-8.3",
+      "contract": "All pseudo-header fields precede regular fields; duplicates are invalid. Relative pseudo-header order is not prescribed."
+    }
+  ],
+  "comparison_contract": {
+    "mode": "request_pseudo_headers",
+    "opt_in_cases": [
+      "http_merge_request"
+    ],
+    "canonicalized": "Only the leading request pseudo-header prefix; exact name/value bytes are retained.",
+    "rejected": "Duplicate/unknown pseudo-header names, pseudo-header after regular fields, malformed pairs, non-binary names/values and exception outcomes.",
+    "preserved": "Ordinary suffix order, repeated ordinary fields and all field bytes. Other corpus cases retain exact comparison.",
+    "raw_results_preserved": true,
+    "wire_equal_for_fixed_case": false
+  },
+  "source_sha256": {
+    "tests/integration/cowlib/runner.py": "ddcbd9cbaceb6d2666a1134498f6cf9f173cf028c507ed61551821baeee0911f",
+    "tests/integration/cowlib/test_runner.py": "b5e6cd90694f355cc65708d4ef4bc9bbb2a7b4d7042e55a743b5b2add0853f55",
+    "tests/integration/cowlib/corpus.json": "053129e503c327b9a09395b14cd5ba8dd8fa19415f17f3c88c65317770827695",
+    "Cargo.lock": "a210f397cb773d07c39ed4827a9aea44092f56ee7c2a438f708784dfa5769f80",
+    "rust-toolchain.toml": "2ad6f15416572b4836585087f1d4abc53b8fa2dbd616f8dacfaa587ed6714228"
+  },
+  "nera_sha256": "773d57b5336989b6cf124683b151ed33ab18496bb50b6f484d6b5c7a27a3c1a6",
+  "runtime_sha256": "ee51f923b5075ff5034e7534b9f79eb2255ca3562847974953f19de920ed49fb",
+  "upstream_source_sha256": {
+    "src/cow_http3.erl": "cb8426277588906b49c78a42bfd8e2d214efd319d5cad6b4627b2cc94242a372",
+    "src/cow_multipart.erl": "2d684ed2229fd9d15d8941ad5cc1abd83a41f8bab0a7705e6093a7e112555d90",
+    "src/cow_http_struct_hd.erl": "bae6afed59d1395ad1234a0138c24736bc7ca8b8aca0425535fd9c06ce28aa84",
+    "src/cow_http2.erl": "edeb6bef50b963312e92021ed2edd029628c51752fa75b527557832912f452d6",
+    "src/cow_http1.erl": "e5851d0ad97a639458416d26f3b9d23ddfd09afe0dda8a356f33627ccc5b377c",
+    "src/cow_cookie.erl": "949f38c2aaa1fd30f690289a024429ea2d8a66e08b6c87a4436e51e568ddf88d",
+    "src/cow_mimetypes.erl": "bbdd5d794a0c970cdd0420109ceaf2aaeb4ec70294a5c8a053737e67e3e3779b",
+    "src/cow_ws.erl": "3d46948104e15194ffbe080a03299dd38e911857a9fc86f025a51ff76dab32c6",
+    "src/cow_hpack.erl": "6c9d5714790d8951fa57b793bb8f6c0f0433f7bbc15f33284e3b289b264bfa4d",
+    "src/cow_date.erl": "6f22428c9b1df2c59abe8b372f6a075c3d1b51ea6653cbf778a5bceeff813504",
+    "src/cow_capsule.erl": "b94fa3ee9242be4812ab631e30b71ff79b24112b538cbf304c735238e0683e80",
+    "src/cow_http2_machine.erl": "5ff9d6c3c520ca26d0a0090cc5d67ba6dc918fe7ee557083754e1d703cc14d3d",
+    "src/cow_http_hd.erl": "af8028340f58b2cf0a7bbaa734d6e1e9c61d48993454119e0df6c6cba6b82c2c",
+    "src/cow_base64url.erl": "3d68bd7d9d03230c99c298688bb9c804fe8ebdcf1ced3e64683de3b72a9436a2",
+    "src/cow_uri_template.erl": "589a363068a9f4bf77e29ef860792205d85541c71d76cd68ff5bd35686aca28b",
+    "src/cow_hpack_common.hrl": "c53242bd29cad93135050d5daf9f73e9b571da56a992dbc49870e7e53c1d164c",
+    "src/cow_uri.erl": "8a8627ec975e5597499385ce481760b751f80888aa7c55e915eedd31481da664",
+    "src/cow_qs.erl": "9d45e09874dd83ed42b02cdc7ce1aff5737f3ed968d7682c8b304ec853b61c91",
+    "src/cow_sse.erl": "180f35d763c003fc9b2304fed9da5244b6aa4497571dd6b73c92451e7e85f5ff",
+    "src/cow_http.erl": "cba1db8e6aace87f3f8772ea778b8088eedf8f7d54d84d767b46fcc02ea0e594",
+    "src/cow_iolists.erl": "ae976127c029af3e6a38dc5f406861a41f102c355d9077b1142abf3bba863df3",
+    "src/cow_http3_machine.erl": "a0e489819c72fb418920dbe2594b4ecbcc8aab72b5b2fdd809b419091ca2ba2d",
+    "src/cow_qpack.erl": "fe9adc05008b3b9e68bdb973b4486593bbaac665fcfb4de4679555a76d9ec99f",
+    "src/cow_mimetypes.erl.src": "b733e1a0defcc6402e4d9443db10334055738467c19a1765dc9c993ecea03612",
+    "src/cow_hpack_dec_huffman_lookup.hrl": "80fb656300ee1288bf34268e88c2b0886760ab6a794eeca60d84a94ae0f11652",
+    "src/cow_http_te.erl": "03676592aef761d7c623f814b324b4e15d4fb21889928b7474bc976c804de47a",
+    "src/cow_link.erl": "bcfec544ae3ca6796fece4c82a0c5061c282864c6e515ed89492238e02682c8c",
+    "src/cow_deflate.erl": "ba3b1bf977f0fda687c12d7195b6f143bae4f7ce26437736077c7b180a1261e8",
+    "include/cow_inline.hrl": "b6734610786a2d10ae82d9b9513e72d7a67396e1c5c1f3d6faa19e6350d580b6",
+    "include/cow_parse.hrl": "a366ad773962acdfea8b90cbc5499e6b3dc9148fb59d0bdd303dbbdae01a0177"
+  },
+  "checks": {
+    "release_build": {
+      "exit_code": 0,
+      "command": "RUSTC_WRAPPER= CARGO_TARGET_DIR=/private/tmp/nera-base64-one-target cargo build --release --locked --offline",
+      "log_path": "/private/tmp/nera-pseudo-headers-build.log",
+      "log_sha256": "cfb13536cb59112b6f8cff7ef2b3eec5423d22c883fde09108468fc5aaa86b45"
+    },
+    "regression_red": {
+      "exit_code": 1,
+      "note": "The permutation regression failed before comparison-mode implementation; it raised unknown comparison: request_pseudo_headers. Other assertions guarded preservation/rejection contracts.",
+      "log_path": "/private/tmp/nera-pseudo-headers-red.log",
+      "log_sha256": "29f1055a84048fda762f4eebe3f51fb5c7556d889209a828994a1a89f5e9d590"
+    },
+    "harness_tests": {
+      "exit_code": 0,
+      "passed": 47,
+      "failed": 0,
+      "command": "python3 -m unittest discover -s tests/integration/cowlib -p 'test_*.py'",
+      "log_path": "/private/tmp/nera-pseudo-headers-harness.log",
+      "log_sha256": "63a598e1ad2d08e1062580bd49194632d0cfd9ce55bf93505c4b2f73651bb8ab"
+    }
+  },
+  "cow_http": {
+    "passed": 133,
+    "total": 136,
+    "beam_passed": 136,
+    "wire_exact_passes": 132,
+    "semantic_passes": 1,
+    "blocked": 0,
+    "build_returncode": 0,
+    "runner_exit_code": 1,
+    "runner_exit_note": "Three genuine, exact HTTP/2 content-length mismatches remain.",
+    "command": "python3 tests/integration/cowlib/runner.py --module cow_http --nera /private/tmp/nera-base64-one-target/release/nera --work-dir /private/tmp/nera-pseudo-headers-cowlib --offline",
+    "report_path": "/private/tmp/nera-pseudo-headers-cowlib/report.json",
+    "report_sha256": "e1155cdda01f9726538d2d4943afbb24ff447928b25607d6dbe9e65d7ad41bad",
+    "build_commands": [
+      {
+        "argv": [
+          "/opt/homebrew/bin/gmake",
+          "-j2",
+          "all"
+        ],
+        "label": "beam-build",
+        "returncode": 0
+      },
+      {
+        "argv": [
+          "/private/tmp/nera-base64-one-target/release/nera",
+          "build",
+          "/private/tmp/nera-pseudo-headers-cowlib/upstream/src/cow_http.erl",
+          "/private/tmp/nera-pseudo-headers-cowlib/upstream/src/cow_http1.erl",
+          "/private/tmp/nera-pseudo-headers-cowlib/upstream/src/cow_http_hd.erl",
+          "/private/tmp/nera-pseudo-headers-cowlib/upstream/src/cow_cookie.erl",
+          "/private/tmp/nera-pseudo-headers-cowlib/upstream/src/cow_date.erl",
+          "/private/tmp/nera-pseudo-headers-cowlib/upstream/src/cow_http2.erl",
+          "/private/tmp/nera-pseudo-headers-cowlib/upstream/src/cow_http_struct_hd.erl",
+          "/private/tmp/nera-pseudo-headers-cowlib/upstream/src/cow_link.erl",
+          "/private/tmp/nera-pseudo-headers-cowlib/cow_http/cowlib_probe.erl",
+          "-I",
+          "/private/tmp/nera-pseudo-headers-cowlib/upstream/include",
+          "-e",
+          "cowlib_probe:start",
+          "-o",
+          "/private/tmp/nera-pseudo-headers-cowlib/cow_http/native"
+        ],
+        "label": "cow_http-nera-build",
+        "returncode": 0
+      },
+      {
+        "argv": [
+          "erl",
+          "-noshell",
+          "-pa",
+          "/private/tmp/nera-pseudo-headers-cowlib/beam-source/ebin",
+          "/private/tmp/nera-pseudo-headers-cowlib/cow_http",
+          "-eval",
+          "cowlib_probe:start(),halt()."
+        ],
+        "label": "http_build_request-beam",
+        "returncode": 0
+      },
+      {
+        "argv": [
+          "/private/tmp/nera-pseudo-headers-cowlib/cow_http/native"
+        ],
+        "label": "http_build_request-nera",
+        "returncode": 0
+      },
+      {
+        "argv": [
+          "erl",
+          "-noshell",
+          "-pa",
+          "/private/tmp/nera-pseudo-headers-cowlib/beam-source/ebin",
+          "/private/tmp/nera-pseudo-headers-cowlib/cow_http",
+          "-eval",
+          "cowlib_probe:start(),halt()."
+        ],
+        "label": "http_build_request_iodata-beam",
+        "returncode": 0
+      },
+      {
+        "argv": [
+          "/private/tmp/nera-pseudo-headers-cowlib/cow_http/native"
+        ],
+        "label": "http_build_request_iodata-nera",
+        "returncode": 0
+      },
+      {
+        "argv": [
+          "erl",
+          "-noshell",
+          "-pa",
+          "/private/tmp/nera-pseudo-headers-cowlib/beam-source/ebin",
+          "/private/tmp/nera-pseudo-headers-cowlib/cow_http",
+          "-eval",
+          "cowlib_probe:start(),halt()."
+        ],
+        "label": "http_build_request_bad_version-beam",
+        "returncode": 0
+      },
+      {
+        "argv": [
+          "/private/tmp/nera-pseudo-headers-cowlib/cow_http/native"
+        ],
+        "label": "http_build_request_bad_version-nera",
+        "returncode": 0
+      },
+      {
+        "argv": [
+          "erl",
+          "-noshell",
+          "-pa",
+          "/private/tmp/nera-pseudo-headers-cowlib/beam-source/ebin",
+          "/private/tmp/nera-pseudo-headers-cowlib/cow_http",
+          "-eval",
+          "cowlib_probe:start(),halt()."
+        ],
+        "label": "http_build_response-beam",
+        "returncode": 0
+      },
+      {
+        "argv": [
+          "/private/tmp/nera-pseudo-headers-cowlib/cow_http/native"
+        ],
+        "label": "http_build_response-nera",
+        "returncode": 0
+      },
+      {
+        "argv": [
+          "erl",
+          "-noshell",
+          "-pa",
+          "/private/tmp/nera-pseudo-headers-cowlib/beam-source/ebin",
+          "/private/tmp/nera-pseudo-headers-cowlib/cow_http",
+          "-eval",
+          "cowlib_probe:start(),halt()."
+        ],
+        "label": "http_build_response_custom-beam",
+        "returncode": 0
+      },
+      {
+        "argv": [
+          "/private/tmp/nera-pseudo-headers-cowlib/cow_http/native"
+        ],
+        "label": "http_build_response_custom-nera",
+        "returncode": 0
+      },
+      {
+        "argv": [
+          "erl",
+          "-noshell",
+          "-pa",
+          "/private/tmp/nera-pseudo-headers-cowlib/beam-source/ebin",
+          "/private/tmp/nera-pseudo-headers-cowlib/cow_http",
+          "-eval",
+          "cowlib_probe:start(),halt()."
+        ],
+        "label": "http_build_response_bad_status-beam",
+        "returncode": 0
+      },
+      {
+        "argv": [
+          "/private/tmp/nera-pseudo-headers-cowlib/cow_http/native"
+        ],
+        "label": "http_build_response_bad_status-nera",
+        "returncode": 0
+      },
+      {
+        "argv": [
+          "erl",
+          "-noshell",
+          "-pa",
+          "/private/tmp/nera-pseudo-headers-cowlib/beam-source/ebin",
+          "/private/tmp/nera-pseudo-headers-cowlib/cow_http",
+          "-eval",
+          "cowlib_probe:start(),halt()."
+        ],
+        "label": "http_build_headers-beam",
+        "returncode": 0
+      },
+      {
+        "argv": [
+          "/private/tmp/nera-pseudo-headers-cowlib/cow_http/native"
+        ],
+        "label": "http_build_headers-nera",
+        "returncode": 0
+      },
+      {
+        "argv": [
+          "erl",
+          "-noshell",
+          "-pa",
+          "/private/tmp/nera-pseudo-headers-cowlib/beam-source/ebin",
+          "/private/tmp/nera-pseudo-headers-cowlib/cow_http",
+          "-eval",
+          "cowlib_probe:start(),halt()."
+        ],
+        "label": "http_build_headers_empty-beam",
+        "returncode": 0
+      },
+      {
+        "argv": [
+          "/private/tmp/nera-pseudo-headers-cowlib/cow_http/native"
+        ],
+        "label": "http_build_headers_empty-nera",
+        "returncode": 0
+      }
+    ],
+    "fixed_case": {
+      "before": {
+        "id": "http_merge_request",
+        "group": "valid",
+        "expect": "return",
+        "comparison": "exact",
+        "beam": [
+          "tuple",
+          [
+            [
+              "atom",
+              "return"
+            ],
+            [
+              "list",
+              [
+                [
+                  "tuple",
+                  [
+                    [
+                      "binary",
+                      "3a6d6574686f64"
+                    ],
+                    [
+                      "binary",
+                      "474554"
+                    ]
+                  ]
+                ],
+                [
+                  "tuple",
+                  [
+                    [
+                      "binary",
+                      "3a70617468"
+                    ],
+                    [
+                      "binary",
+                      "2f"
+                    ]
+                  ]
+                ],
+                [
+                  "tuple",
+                  [
+                    [
+                      "binary",
+                      "3a736368656d65"
+                    ],
+                    [
+                      "binary",
+                      "6874747073"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "nera": [
+          "tuple",
+          [
+            [
+              "atom",
+              "return"
+            ],
+            [
+              "list",
+              [
+                [
+                  "tuple",
+                  [
+                    [
+                      "binary",
+                      "3a70617468"
+                    ],
+                    [
+                      "binary",
+                      "2f"
+                    ]
+                  ]
+                ],
+                [
+                  "tuple",
+                  [
+                    [
+                      "binary",
+                      "3a736368656d65"
+                    ],
+                    [
+                      "binary",
+                      "6874747073"
+                    ]
+                  ]
+                ],
+                [
+                  "tuple",
+                  [
+                    [
+                      "binary",
+                      "3a6d6574686f64"
+                    ],
+                    [
+                      "binary",
+                      "474554"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "wire_equal": false,
+        "status": "failed",
+        "error": "different result or exception class/reason"
+      },
+      "after": {
+        "id": "http_merge_request",
+        "group": "valid",
+        "expect": "return",
+        "comparison": "request_pseudo_headers",
+        "beam": [
+          "tuple",
+          [
+            [
+              "atom",
+              "return"
+            ],
+            [
+              "list",
+              [
+                [
+                  "tuple",
+                  [
+                    [
+                      "binary",
+                      "3a6d6574686f64"
+                    ],
+                    [
+                      "binary",
+                      "474554"
+                    ]
+                  ]
+                ],
+                [
+                  "tuple",
+                  [
+                    [
+                      "binary",
+                      "3a70617468"
+                    ],
+                    [
+                      "binary",
+                      "2f"
+                    ]
+                  ]
+                ],
+                [
+                  "tuple",
+                  [
+                    [
+                      "binary",
+                      "3a736368656d65"
+                    ],
+                    [
+                      "binary",
+                      "6874747073"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "nera": [
+          "tuple",
+          [
+            [
+              "atom",
+              "return"
+            ],
+            [
+              "list",
+              [
+                [
+                  "tuple",
+                  [
+                    [
+                      "binary",
+                      "3a70617468"
+                    ],
+                    [
+                      "binary",
+                      "2f"
+                    ]
+                  ]
+                ],
+                [
+                  "tuple",
+                  [
+                    [
+                      "binary",
+                      "3a736368656d65"
+                    ],
+                    [
+                      "binary",
+                      "6874747073"
+                    ]
+                  ]
+                ],
+                [
+                  "tuple",
+                  [
+                    [
+                      "binary",
+                      "3a6d6574686f64"
+                    ],
+                    [
+                      "binary",
+                      "474554"
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ],
+        "wire_equal": false,
+        "status": "passed"
+      }
+    },
+    "remaining_mismatches": [
+      {
+        "id": "http_h2_get",
+        "group": "valid",
+        "expect": "return",
+        "comparison": "exact",
+        "beam": [
+          "tuple",
+          [
+            [
+              "atom",
+              "return"
+            ],
+            [
+              "tuple",
+              [
+                [
+                  "atom",
+                  "headers"
+                ],
+                [
+                  "list",
+                  [
+                    [
+                      "tuple",
+                      [
+                        [
+                          "binary",
+                          "616363657074"
+                        ],
+                        [
+                          "binary",
+                          "2a2f2a"
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "map",
+                  [
+                    [
+                      [
+                        "atom",
+                        "method"
+                      ],
+                      [
+                        "binary",
+                        "474554"
+                      ]
+                    ],
+                    [
+                      [
+                        "atom",
+                        "path"
+                      ],
+                      [
+                        "binary",
+                        "2f"
+                      ]
+                    ],
+                    [
+                      [
+                        "atom",
+                        "scheme"
+                      ],
+                      [
+                        "binary",
+                        "6874747073"
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "atom",
+                  "undefined"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "nera": [
+          "tuple",
+          [
+            [
+              "atom",
+              "return"
+            ],
+            [
+              "tuple",
+              [
+                [
+                  "atom",
+                  "error"
+                ],
+                [
+                  "atom",
+                  "invalid_content_length_header"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "wire_equal": false,
+        "status": "failed",
+        "error": "different result or exception class/reason"
+      },
+      {
+        "id": "http_h2_cookie_duplicate",
+        "group": "valid",
+        "expect": "return",
+        "comparison": "exact",
+        "beam": [
+          "tuple",
+          [
+            [
+              "atom",
+              "return"
+            ],
+            [
+              "tuple",
+              [
+                [
+                  "atom",
+                  "headers"
+                ],
+                [
+                  "list",
+                  [
+                    [
+                      "tuple",
+                      [
+                        [
+                          "binary",
+                          "636f6f6b6965"
+                        ],
+                        [
+                          "binary",
+                          "613d31"
+                        ]
+                      ]
+                    ],
+                    [
+                      "tuple",
+                      [
+                        [
+                          "binary",
+                          "636f6f6b6965"
+                        ],
+                        [
+                          "binary",
+                          "623d32"
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "map",
+                  [
+                    [
+                      [
+                        "atom",
+                        "method"
+                      ],
+                      [
+                        "binary",
+                        "474554"
+                      ]
+                    ],
+                    [
+                      [
+                        "atom",
+                        "path"
+                      ],
+                      [
+                        "binary",
+                        "2f"
+                      ]
+                    ],
+                    [
+                      [
+                        "atom",
+                        "scheme"
+                      ],
+                      [
+                        "binary",
+                        "6874747073"
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "atom",
+                  "undefined"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "nera": [
+          "tuple",
+          [
+            [
+              "atom",
+              "return"
+            ],
+            [
+              "tuple",
+              [
+                [
+                  "atom",
+                  "error"
+                ],
+                [
+                  "atom",
+                  "multiple_content_length_headers"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "wire_equal": false,
+        "status": "failed",
+        "error": "different result or exception class/reason"
+      },
+      {
+        "id": "http_h2_te",
+        "group": "valid",
+        "expect": "return",
+        "comparison": "exact",
+        "beam": [
+          "tuple",
+          [
+            [
+              "atom",
+              "return"
+            ],
+            [
+              "tuple",
+              [
+                [
+                  "atom",
+                  "headers"
+                ],
+                [
+                  "list",
+                  [
+                    [
+                      "tuple",
+                      [
+                        [
+                          "binary",
+                          "7465"
+                        ],
+                        [
+                          "binary",
+                          "747261696c657273"
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "map",
+                  [
+                    [
+                      [
+                        "atom",
+                        "method"
+                      ],
+                      [
+                        "binary",
+                        "474554"
+                      ]
+                    ],
+                    [
+                      [
+                        "atom",
+                        "path"
+                      ],
+                      [
+                        "binary",
+                        "2f"
+                      ]
+                    ],
+                    [
+                      [
+                        "atom",
+                        "scheme"
+                      ],
+                      [
+                        "binary",
+                        "6874747073"
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "atom",
+                  "undefined"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "nera": [
+          "tuple",
+          [
+            [
+              "atom",
+              "return"
+            ],
+            [
+              "tuple",
+              [
+                [
+                  "atom",
+                  "error"
+                ],
+                [
+                  "atom",
+                  "invalid_content_length_header"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "wire_equal": false,
+        "status": "failed",
+        "error": "different result or exception class/reason"
+      }
+    ]
+  },
+  "omissions": [
+    "Full upstream HTTP EUnit/PropEr suites and other Cowlib module/property corpora were not rerun.",
+    "Rust workspace and full native tests were not rerun: there are no Nera production-source changes. Release rebuilt from main; comparator tests and all 136 HTTP cases run.",
+    "Linux/Windows, cross-target, installed-archive and performance checks were not run.",
+    "CI/Release remain paused per CONTRIBUTING.md; no remote workflow requested."
+  ]
+}

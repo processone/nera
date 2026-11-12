@@ -1,0 +1,21 @@
+    Blocking waiting for file lock on build directory
+    Finished `release` profile [optimized] target(s) in 4.48s
+     Running unittests src/lib.rs (/tmp/nera-transfer-target/release/deps/nera_runtime-d1e13e6021944ea8)
+
+running 1 test
+
+thread 'process::tests::exit_scan_keeps_next_signal_after_head_removal' (4186470) panicked at crates/nera-runtime/src/process.rs:2121:9:
+assertion `left == right` failed
+  left: None
+ right: Some(Atom(26))
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test process::tests::exit_scan_keeps_next_signal_after_head_removal ... FAILED
+
+failures:
+
+failures:
+    process::tests::exit_scan_keeps_next_signal_after_head_removal
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 514 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p nera-runtime --lib`

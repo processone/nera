@@ -1,0 +1,10 @@
+{
+  "reactor_sha256": "b13afbbcc97eb077bca922c09c3d21b1df141fdd556e3490232690b156ecda69",
+  "logs": {
+    "cancellation-scaling.log": "4c58e479ce50f0a9292fbe009cfac31bf0b1fc5ab17c6052102c7767fd88e9f1",
+    "cancellation-scaling-repeat.log": "2c97c06c16dcd085e3bc6018237bdcd413207fbadb4e6e305b1dab947f1a1ca8",
+    "cancellation-clippy.log": "326a6c18eaf61df5b08554d09a68eb1e11b99e82764b31dfdc225994959c7761",
+    "cancellation-tests.log": "0ac4254bcd1b0407306b5a98a608ee100fb2db6e930162bce4618f075b431fca"
+  },
+  "production_code_changed_since_full_baseline": false
+}
