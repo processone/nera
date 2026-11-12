@@ -796,6 +796,17 @@ impl IrBuilder {
         // BEFORE receive_peek so it's only executed on first entry (not on resume).
         if let Some(after_clause) = after {
             let timeout_var = self.lower_expr(&after_clause.timeout, false)?;
+            // Inside try, an operation that raised earlier, in the timeout
+            // expression or before it, reaches the handler here, before the
+            // scan can receive a message or the timeout can be judged.
+            if let Some(&landing_pad) = self.try_exception_targets.last() {
+                let failed = self.fresh_var();
+                self.emit(Instruction::CheckException(failed));
+                let next = self.fresh_block_with_id();
+                self.set_terminator(Terminator::Branch(failed, landing_pad, next));
+                self.close_current_block();
+                self.start_block(next);
+            }
             let _set_result = self.fresh_var();
             self.emit(Instruction::Call(
                 _set_result,

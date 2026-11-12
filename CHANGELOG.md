@@ -13,6 +13,10 @@ All notable milestones for the nera project are documented in this file.
   at once, without waiting for a later message, and leaves the queued
   messages in the mailbox. `try`, `catch` and an uncaught exit see the same
   error as before.
+- Inside `try`, an error raised by the `after` expression itself, such as
+  `after (1 div Z) -> ...` with `Z` zero, is now caught as that error
+  (`badarith`) even when the mailbox is empty. Previously the receive
+  replaced it with `timeout_value`.
 - The `receive_timeout_domain` fixture now asserts this order and runs
   natively and on BEAM.
 

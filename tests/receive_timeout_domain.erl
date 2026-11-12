@@ -31,6 +31,20 @@ test() ->
         try {continued, receive M -> M after id(invalid) -> elapsed end}
         catch error:timeout_value -> raised end,
 
+    %% The after expression runs before the mailbox scan. Its own error, or
+    %% an earlier one in the try body, is raised first: the queued message
+    %% stays, and the error is not replaced by timeout_value.
+    self() ! go,
+    caught = try _ = 1 + id(a), receive go -> consumed after 10 -> elapsed end
+             catch error:badarith -> caught end,
+    caught = try receive go -> consumed after (1 div id(0)) -> elapsed end
+             catch error:badarith -> caught end,
+    {'EXIT', {badarith, _}} =
+        (catch receive go -> consumed after (1 div id(0)) -> elapsed end),
+    go = next(),
+    caught = try receive _ -> consumed after (1 div id(0)) -> elapsed end
+             catch error:badarith -> caught end,
+
     %% A receive with only an after clause has nothing to match: it raises
     %% even with a message queued, and the message stays.
     self() ! queued,
