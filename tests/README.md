@@ -346,6 +346,7 @@ These are automatically skipped by the runner and show up as SKIP in output.
 | `demonitor_basic.erl`       | demonitor prevents DOWN delivery   | ~4         |
 | `timer_many.erl`            | Multiple concurrent timers         | ~6         |
 | `timer_cancel_on_msg.erl`   | Timer cancellation on message      | ~4         |
+| `many_pending_timers.erl` | 50,000 pending start_timer/send_after timers in one program; short timers among them still fire in deadline order; every cancel returns the time left; also run on BEAM | ~4 |
 | `exit_code_spawn_crash.erl`     | Exit code after spawn crash            | ~4         |
 | `process_flag_fullsweep.erl`    | process_flag(fullsweep_after, N)       | ~4         |
 | `garbage_collect_bif.erl` | Real garbage_collect/0 suspension, local/dictionary/mailbox roots and dynamic calls | ~9 |

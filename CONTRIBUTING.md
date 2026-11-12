@@ -248,18 +248,19 @@ Run it without concurrent builds; investigate significant outliers rather than
 attributing them to load without evidence. Linux/Windows require native execution;
 cross-compilation alone does not validate their shutdown latency.
 
-For receive-timer or timer-thread changes, build the runtime before the compiler
-the same way, then run:
+For receive-timer, message-timer (`send_after`, `start_timer`) or timer-thread
+changes, build the runtime before the compiler the same way, then run:
 
 ```bash
 python3 scripts/test-native-timer.py --out /path/to/timer-results.json
 ```
 
-This opt-in performance regression runs three real native programs 30 times each
+This opt-in performance regression runs four real native programs 30 times each
 with the default scheduler count and with `NERA_SCHEDULERS=1`: `receive after 37`
-in the main process, the same in a spawned process, and five `receive after 10` in
-a row. Each prints a line just before it starts waiting; the probe measures from
-that line to the timeout's output and subtracts the requested wait. On macOS every
+in the main process, the same in a spawned process, five `receive after 10` in
+a row, and a 37 ms `erlang:start_timer/3` message. Each prints a line just before
+it starts waiting; the probe measures from that line to the timer's output and
+subtracts the requested wait. On macOS every
 case also runs at utility and background priority (through `taskpolicy`), where
 the kernel otherwise postpones ordinary timed waits by up to 75 ms and 100 ms.
 Each case's median lateness must be at most 5 ms, and no sample may resume more

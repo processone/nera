@@ -954,11 +954,14 @@ fn timer_thread_loop(
         // Fire all expired timers.
         let now = current_time_ms();
         let expired = timer_wheel.pop_expired(now);
-        let woke_count = expired.len();
+        let mut woke_count = expired.len();
 
         for entry in expired {
             wake_process_for_timer(entry.owner_pid, &process_table, &injector, &runnable_count);
         }
+        woke_count += timer_wheel.fire_due_message_timers(|delivery| {
+            deliver_timer_message(delivery, &process_table, &injector, &runnable_count)
+        });
 
         // Wake idle workers if we made processes runnable.
         // Phase 8: unpark all worker threads directly instead of the
@@ -974,6 +977,28 @@ fn timer_thread_loop(
             }
         }
     }
+}
+
+/// Publish a fired `send_after`/`start_timer` message. Returns true when it
+/// woke its receiver; the caller unparks workers after the batch.
+fn deliver_timer_message(
+    delivery: crate::timer::MessageDelivery,
+    process_table: &ProcessTable,
+    injector: &Arc<Injector<Arc<ProcessEntry>>>,
+    runnable_count: &Arc<AtomicI64>,
+) -> bool {
+    let Some(entry) = process_table.get(&delivery.dest).map(|r| r.clone()) else {
+        return false;
+    };
+    entry.inbox.push(delivery.message);
+    // The worker that runs the receiver cancels its receive timer; see
+    // nera_rt_send_message.
+    if !entry.try_wake() {
+        return false;
+    }
+    runnable_count.fetch_add(1, Ordering::AcqRel);
+    injector.push(entry);
+    true
 }
 
 fn wake_process_for_timer(
@@ -2334,6 +2359,29 @@ mod tests {
         // Cleanup finished and woke nobody: now every process is blocked.
         scheduler.process_table.remove(&dying_pid);
         assert!(processes_are_blocked(&scheduler.process_table));
+    }
+
+    // send_after and start_timer messages now come from the timer thread. Like
+    // a send, their delivery must not cancel the receiver's receive timer: by
+    // then the receiver can be running into a later `receive ... after`.
+    #[test]
+    fn timer_delivery_leaves_the_receive_timer_to_the_worker() {
+        let scheduler = Scheduler::new(1);
+        let (pid, entry) = running_process(&scheduler);
+        assert!(!publish_wait(entry.lock_for_runtime(), &entry, timed_wait(10),
+            &scheduler.timer_wheel, &scheduler.runnable_count));
+        let delivery = crate::timer::MessageDelivery {
+            dest: pid,
+            message: crate::message::MessageFragment::Immediate(
+                crate::message::ImmediateTerm::new(ErlTerm::atom(crate::atom_table::ATOM_OK))),
+        };
+        assert!(deliver_timer_message(delivery, &scheduler.process_table,
+            &scheduler.injector, &scheduler.runnable_count));
+        assert_eq!(entry.published_status(), ASTATUS_READY);
+        assert_eq!(scheduler.runnable_count.load(Ordering::Acquire), 1);
+        assert!(matches!(scheduler.injector.steal(), Steal::Success(_)));
+        assert!(scheduler.timer_wheel.has_pending_for(pid),
+            "the worker that runs the receiver cancels its timer, not the timer thread");
     }
 
     #[test]

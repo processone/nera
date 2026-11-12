@@ -10,9 +10,6 @@
 #      (1 s warm-up, 11 timed rounds), per runtime
 #   3. peak memory footprint of the whole program (macOS /usr/bin/time -l)
 #
-# The HTTP/2 machine check is left out of the warm loop: each call starts
-# 5 s timers and native Nera keeps one OS thread per pending timer (NERA-88).
-#
 # Usage:
 #   ./benchmarks/cowlib_bench.sh [RUNS]      # default 20
 #

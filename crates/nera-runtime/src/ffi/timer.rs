@@ -35,33 +35,14 @@ unsafe fn message_timer(ctx: *mut ProcessContext, time_term: u64, dest_term: u64
     } else {
         ErlTerm(msg_term)
     };
-    let fragment = crate::message::MessageFragment::from_term(message);
+    let delivery = crate::timer::MessageDelivery {
+        dest: dest_pid,
+        message: crate::message::MessageFragment::from_term(message),
+    };
+    // The timer thread delivers it; a pending timer holds no thread.
     with_sched_from_ctx(ctx, |scheduler| {
         if let Some(sched) = scheduler {
-            let process_table = std::sync::Arc::clone(&sched.process_table);
-            let injector = sched.injector.clone();
-            let runnable_count = std::sync::Arc::clone(&sched.runnable_count);
-            let timer_wheel = std::sync::Arc::clone(&sched.timer_wheel);
-            let timer = timer_wheel.register_message_timer(id, std::time::Duration::from_millis(time_ms));
-            std::thread::spawn(move || timer.run(|| {
-                let entry = process_table.get(&dest_pid).map(|r| r.clone());
-                if let Some(entry) = entry {
-                    entry.inbox.push(fragment);
-                    // The worker cancels the receive timer; see nera_rt_send_message.
-                    if entry.try_wake() {
-                        runnable_count.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
-                        injector.push(entry);
-                        if let Some(sched) = crate::scheduler::global_scheduler() {
-                            for t in sched.worker_threads.iter() {
-                                if let Some(t) = t.get() {
-                                    t.unpark();
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-            }));
+            sched.timer_wheel.register_message_timer(id, std::time::Duration::from_millis(time_ms), delivery);
         }
     });
     reference

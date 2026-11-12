@@ -1,25 +1,30 @@
-//! Timer wheel for efficient `receive...after` timeout management.
+//! Timer wheel for `receive...after` timeouts and message timers.
 //!
 //! Replaces the polling-based timeout check in the scheduler worker loop
 //! with a min-heap of timer entries and a dedicated timer thread. Processes
-//! waiting on a `receive...after` deadline register a timer entry; the timer
-//! thread sleeps until the earliest deadline and wakes the process precisely.
+//! waiting on a `receive...after` deadline register a timer entry;
+//! `erlang:send_after/3` and `erlang:start_timer/3` register a message timer
+//! (see `message`). The timer thread sleeps until the earliest deadline of
+//! either kind, then wakes the process or delivers the message.
 //!
-//! Cancellation is lazy: when a process is woken by a message before its
-//! timeout fires, the `pid_to_timer` mapping is removed. The stale heap
-//! entry is skipped on the next `pop_expired` call.
+//! Receive-timer cancellation is lazy: when a process is woken by a message
+//! before its timeout fires, the `pid_to_timer` mapping is removed. The stale
+//! heap entry is skipped on the next `pop_expired` call.
 
+mod message;
 mod wait;
 
 use std::cmp::Ordering;
 use std::collections::{BinaryHeap, HashMap};
 use std::sync::atomic::{AtomicU64, Ordering as AtomicOrdering};
-use std::sync::{Arc, OnceLock};
+use std::sync::OnceLock;
 use std::time::{Duration, Instant};
 
-use parking_lot::{Condvar, Mutex};
+use parking_lot::Mutex;
 
 use crate::process::ProcessId;
+pub(crate) use message::MessageDelivery;
+use message::MessageTimers;
 use wait::{Precision, Waiter};
 
 // ---------------------------------------------------------------------------
@@ -78,60 +83,10 @@ pub struct TimerWheel {
     /// remove_for_pid to skip the Mutex when no timers are active (the
     /// common case for pure message-passing workloads).
     active_count: std::sync::atomic::AtomicUsize,
-    /// Message-timer callbacks stay live until delivery has published any wake.
-    /// They are independent of a process's receive timer and its cancellation.
-    pending_messages: std::sync::atomic::AtomicUsize,
-    /// Message timers are keyed by the unique Erlang reference, not the receiver.
-    message_timers: Mutex<HashMap<u64, Arc<MessageTimer>>>,
-}
-
-/// Keeps deadlock detection from shutting down ahead of an asynchronous timer.
-/// Dropping after delivery (or on callback failure) releases the pending work.
-pub(crate) struct PendingMessageTimer(Arc<TimerWheel>);
-
-impl Drop for PendingMessageTimer {
-    fn drop(&mut self) {
-        self.0.pending_messages.fetch_sub(1, AtomicOrdering::Release);
-    }
-}
-
-/// The same lock serializes cancellation with message publication and wakeup.
-/// A cancelled timer releases its pending-work guard immediately, even if the
-/// callback thread has not started yet.
-struct MessageTimer {
-    started: Instant,
-    delay: Duration,
-    pending: Mutex<Option<PendingMessageTimer>>,
-    changed: Condvar,
-}
-
-/// Owns registry cleanup on completion, cancellation, or callback unwinding.
-pub(crate) struct RegisteredMessageTimer {
-    wheel: Arc<TimerWheel>,
-    id: u64,
-    timer: Arc<MessageTimer>,
-}
-
-impl RegisteredMessageTimer {
-    pub(crate) fn run(self, deliver: impl FnOnce()) {
-        let mut pending = self.timer.pending.lock();
-        while pending.is_some() {
-            let remaining = self.timer.delay.saturating_sub(self.timer.started.elapsed());
-            if remaining.is_zero() {
-                // Keep the guard through publication, including on unwinding.
-                let _delivery = pending.take();
-                deliver();
-                return;
-            }
-            self.timer.changed.wait_for(&mut pending, remaining);
-        }
-    }
-}
-
-impl Drop for RegisteredMessageTimer {
-    fn drop(&mut self) {
-        self.wheel.message_timers.lock().remove(&self.id);
-    }
+    /// `send_after`/`start_timer` timers, keyed by their unique Erlang
+    /// reference. Independent of a process's receive timer and its
+    /// cancellation.
+    messages: MessageTimers,
 }
 
 impl TimerWheel {
@@ -142,39 +97,31 @@ impl TimerWheel {
             pid_to_timer: Mutex::new(HashMap::new()),
             waiter: Waiter::new(),
             active_count: std::sync::atomic::AtomicUsize::new(0),
-            pending_messages: std::sync::atomic::AtomicUsize::new(0),
-            message_timers: Mutex::new(HashMap::new()),
+            messages: MessageTimers::default(),
         }
     }
 
-    /// Register callback work before spawning its thread. Retain the guard
-    /// until both message publication and scheduler dispatch are complete.
-    pub(crate) fn track_message_timer(self: &Arc<Self>) -> PendingMessageTimer {
-        self.pending_messages.fetch_add(1, AtomicOrdering::AcqRel);
-        PendingMessageTimer(Arc::clone(self))
+    /// Register a `send_after`/`start_timer` timer under its reference id,
+    /// due after `delay`. The timer thread delivers it; no thread is started.
+    pub(crate) fn register_message_timer(&self, id: u64, delay: Duration, delivery: MessageDelivery) {
+        if self.messages.register(id, current_time_ns(), delay, delivery) {
+            // The timer thread may be sleeping past this new earliest deadline.
+            self.waiter.wake();
+        }
     }
 
-    pub(crate) fn register_message_timer(self: &Arc<Self>, id: u64, delay: Duration) -> RegisteredMessageTimer {
-        let timer = Arc::new(MessageTimer {
-            started: Instant::now(),
-            delay,
-            pending: Mutex::new(Some(self.track_message_timer())),
-            changed: Condvar::new(),
-        });
-        self.message_timers.lock().insert(id, Arc::clone(&timer));
-        RegisteredMessageTimer { wheel: Arc::clone(self), id, timer }
-    }
-
-    /// A synchronous cancellation cannot return before a winning delivery has
+    /// Returns the milliseconds left, or None once delivered or cancelled. A
+    /// synchronous cancellation cannot return before a winning delivery has
     /// published its message and wake. It never retracts an already sent message.
     pub(crate) fn cancel_message_timer(&self, id: u64) -> Option<u64> {
-        let timer = self.message_timers.lock().remove(&id)?;
-        let mut pending = timer.pending.lock();
-        let remaining = timer.delay.saturating_sub(timer.started.elapsed());
-        let cancelled = pending.take()?;
-        drop(cancelled);
-        timer.changed.notify_one();
-        Some(remaining.as_nanos().div_ceil(1_000_000) as u64)
+        self.messages.cancel(id, current_time_ns())
+    }
+
+    /// Deliver every message timer now due, earliest first. `deliver`
+    /// publishes one message and returns whether it woke the receiver;
+    /// returns how many it woke. Called by the timer thread.
+    pub(crate) fn fire_due_message_timers(&self, deliver: impl FnMut(MessageDelivery) -> bool) -> usize {
+        self.messages.fire_due(current_time_ns(), deliver)
     }
 
     /// Insert a timer for a process. Returns the timer id.
@@ -276,10 +223,10 @@ impl TimerWheel {
         self.heap.lock().peek().map(|e| e.deadline_ms)
     }
 
-    /// Check for active receive timers or outstanding message-timer callbacks.
+    /// Check for active receive timers or undelivered message timers.
     pub fn has_pending_timers(&self) -> bool {
         self.active_count.load(std::sync::atomic::Ordering::Relaxed) > 0
-            || self.pending_messages.load(AtomicOrdering::Acquire) > 0
+            || self.messages.has_pending()
     }
 
     /// Sleep until the earliest timer is due, so the caller can pop it.
@@ -297,14 +244,15 @@ impl TimerWheel {
         if shutdown.load(AtomicOrdering::SeqCst) {
             return;
         }
-        let (duration, precision) = match self.next_deadline() {
-            Some(deadline) => {
-                let now = current_time_ms();
-                if now >= deadline {
-                    return;
-                }
-                (Duration::from_millis(deadline - now), Precision::Exact)
-            }
+        let receive = self.next_deadline()
+            .map(|deadline| Duration::from_millis(deadline.saturating_sub(current_time_ms())));
+        let message = self.messages.next_deadline_ns().map(|deadline| {
+            let left = deadline.saturating_sub(current_time_ns());
+            Duration::from_nanos(u64::try_from(left).unwrap_or(u64::MAX))
+        });
+        let (duration, precision) = match receive.into_iter().chain(message).min() {
+            Some(wait) if wait.is_zero() => return,
+            Some(wait) => (wait, Precision::Exact),
             None => (idle, Precision::Relaxed),
         };
         before_wait();
@@ -334,6 +282,12 @@ static TIMER_EPOCH: OnceLock<Instant> = OnceLock::new();
 pub fn current_time_ms() -> u64 {
     let epoch = TIMER_EPOCH.get_or_init(Instant::now);
     (epoch.elapsed().as_millis() as u64).max(1)
+}
+
+/// Nanoseconds since the same epoch. Message timers keep this precision so
+/// that none fires before its full delay has passed.
+pub(crate) fn current_time_ns() -> u128 {
+    TIMER_EPOCH.get_or_init(Instant::now).elapsed().as_nanos()
 }
 
 // ---------------------------------------------------------------------------
@@ -396,76 +350,44 @@ mod tests {
             || panic!("timer waited although a deadline was already due"));
     }
 
+    // A message timer registered while the timer thread computes its sleep
+    // must end that sleep, and later waits must end at its deadline, not the
+    // idle bound. The timer thread now delivers every send_after/start_timer.
     #[test]
-    fn cancelled_message_timer_never_publishes_and_releases_liveness() {
-        // cow_http2_machine termination must cancel real work, not return a stub.
-        let timers = Arc::new(TimerWheel::new());
-        let timer = timers.register_message_timer(17, Duration::from_secs(60));
-        let other = timers.register_message_timer(18, Duration::ZERO);
-        assert!(timers.has_pending_timers());
-        assert!(timers.cancel_message_timer(17).is_some());
-        assert_eq!(timers.pending_messages.load(AtomicOrdering::Acquire), 1,
-                   "cancellation must release its slot before the callback runs");
-        assert_eq!(timers.cancel_message_timer(17), None);
-        timer.run(|| panic!("cancelled timer published a message"));
-        assert!(timers.has_pending_timers(), "unrelated delivery still owns its slot");
-        other.run(|| assert!(timers.has_pending_timers(), "release must follow publication"));
-        assert!(!timers.has_pending_timers());
-        assert!(timers.message_timers.lock().is_empty());
+    fn message_timer_registered_after_deadline_read_wakes_timer_wait() {
+        const IDLE: Duration = Duration::from_secs(30);
+        let wheel = TimerWheel::new();
+        let shutdown = std::sync::atomic::AtomicBool::new(false);
+        let started = Instant::now();
+        wheel.wait_for_next_deadline_with(IDLE, &shutdown, || {
+            wheel.register_message_timer(1, Duration::from_millis(5), message::test_delivery(1));
+        });
+        assert!(started.elapsed() < IDLE / 3, "timer wait missed a message timer");
+        let mut delivered = 0;
+        while delivered == 0 && started.elapsed() < IDLE / 3 {
+            wheel.wait_for_next_deadline(IDLE, &shutdown);
+            delivered = wheel.fire_due_message_timers(|_| true);
+        }
+        assert!(started.elapsed() >= Duration::from_millis(5), "message timer fired early");
+        assert!(started.elapsed() < IDLE / 3, "timer wait ignored a message deadline");
+        assert_eq!(delivered, 1);
+        assert!(!wheel.has_pending_timers());
     }
 
     #[test]
-    fn message_timer_delivery_wins_before_cancel_returns() {
-        // Synchronous cancellation cannot overtake a callback already publishing.
-        let timers = Arc::new(TimerWheel::new());
-        let timer = timers.register_message_timer(19, Duration::ZERO);
-        let (publishing, started) = std::sync::mpsc::channel();
-        let (release, wait) = std::sync::mpsc::channel();
-        let wheel = Arc::clone(&timers);
-        let worker = std::thread::spawn(move || timer.run(|| {
-            publishing.send(()).unwrap();
-            wait.recv().unwrap();
-            assert!(wheel.has_pending_timers());
-        }));
-        started.recv().unwrap();
-        let wheel = Arc::clone(&timers);
-        let canceller = std::thread::spawn(move || wheel.cancel_message_timer(19));
-        release.send(()).unwrap();
-        assert_eq!(canceller.join().unwrap(), None);
-        worker.join().unwrap();
-        assert!(!timers.has_pending_timers());
-        assert!(timers.message_timers.lock().is_empty());
-    }
-
-    #[test]
-    fn message_timer_unwind_and_unstarted_drop_release_registration() {
-        // Callback failure must not leave shutdown waiting forever.
-        let timers = Arc::new(TimerWheel::new());
-        let timer = timers.register_message_timer(20, Duration::ZERO);
-        assert!(std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-            timer.run(|| panic!("publication failure"));
-        })).is_err());
-        assert!(!timers.has_pending_timers());
-        assert!(timers.message_timers.lock().is_empty());
-        drop(timers.register_message_timer(21, Duration::from_secs(60)));
-        assert!(!timers.has_pending_timers());
-        assert!(timers.message_timers.lock().is_empty());
-    }
-
-    #[test]
-    fn message_timers_remain_pending_until_callbacks_finish() {
-        let timers = Arc::new(TimerWheel::new());
-        let first = timers.track_message_timer();
-        let second = timers.track_message_timer();
+    fn message_timers_remain_pending_until_delivered() {
+        let timers = TimerWheel::new();
+        timers.register_message_timer(1, Duration::ZERO, message::test_delivery(1));
+        timers.register_message_timer(2, Duration::from_secs(60), message::test_delivery(2));
         let pid = ProcessId::new(1);
         timers.insert(1, pid);
         timers.cancel_for_pid(pid);
         timers.remove_for_pid(pid);
         assert!(timers.pop_expired(u64::MAX).is_empty());
         assert!(timers.has_pending_timers(), "receive cancellation must not cancel sends");
-        drop(first);
-        assert!(timers.has_pending_timers(), "each callback owns its pending slot");
-        drop(second);
+        assert_eq!(timers.fire_due_message_timers(|_| true), 1);
+        assert!(timers.has_pending_timers(), "each timer owns its pending slot");
+        assert!(timers.cancel_message_timer(2).is_some());
         assert!(!timers.has_pending_timers());
     }
 
