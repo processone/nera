@@ -713,111 +713,42 @@ pub unsafe fn bif_float(heap: &mut ProcessHeap, args: &[ErlTerm]) -> Result<ErlT
     Err(ErlTerm::atom(ATOM_BADARG))
 }
 
-/// `erlang:max/2` -- return the larger of two terms.
-///
-/// For Phase 1 we support integer-integer and float-float comparisons.
-/// Mixed int/float promotes both to float (consistent with Erlang semantics).
+/// `erlang:max/2` -- return the larger of two terms, the first when they
+/// compare equal. The result is one of the arguments, unchanged.
 /// # Safety
 /// Every reachable input object must have the runtime layout and remain live,
 /// immutable and unmoved throughout this call, including externally owned
 /// storage. No moving GC or reentrant mutation may occur during graph access.
-pub unsafe fn bif_max(heap: &mut ProcessHeap, args: &[ErlTerm]) -> Result<ErlTerm, ErlTerm> {
+pub unsafe fn bif_max(_heap: &mut ProcessHeap, args: &[ErlTerm]) -> Result<ErlTerm, ErlTerm> {
     if args.len() != 2 {
         return Err(ErlTerm::atom(ATOM_BADARG));
     }
-    compare_and_pick(heap, args[0], args[1], true)
+    Ok(compare_and_pick(args[0], args[1], true))
 }
 
-/// `erlang:min/2` -- return the smaller of two terms.
+/// `erlang:min/2` -- return the smaller of two terms, the first when they
+/// compare equal. The result is one of the arguments, unchanged.
 /// # Safety
 /// Every reachable input object must have the runtime layout and remain live,
 /// immutable and unmoved throughout this call, including externally owned
 /// storage. No moving GC or reentrant mutation may occur during graph access.
-pub unsafe fn bif_min(heap: &mut ProcessHeap, args: &[ErlTerm]) -> Result<ErlTerm, ErlTerm> {
+pub unsafe fn bif_min(_heap: &mut ProcessHeap, args: &[ErlTerm]) -> Result<ErlTerm, ErlTerm> {
     if args.len() != 2 {
         return Err(ErlTerm::atom(ATOM_BADARG));
     }
-    compare_and_pick(heap, args[0], args[1], false)
+    Ok(compare_and_pick(args[0], args[1], false))
 }
 
-/// Helper for max/min: compares two numeric terms and returns
-/// the larger (if `pick_max`) or smaller one.
-///
-/// Supports int-int, float-float, and mixed int-float comparisons.
+/// Helper for max/min: returns `a` or `b`, whichever is larger (if
+/// `pick_max`) or smaller in the term order, and `a` when they compare equal,
+/// as on BEAM. Neither argument is converted: an integer and a float compare
+/// exactly, as with `<`, and the one picked comes back with its own type.
 /// # Safety
 /// Source graphs obey the enclosing BIF live, immutable, unmoved input contract.
-unsafe fn compare_and_pick(
-    heap: &mut ProcessHeap,
-    a: ErlTerm,
-    b: ErlTerm,
-    pick_max: bool,
-) -> Result<ErlTerm, ErlTerm> {
-    let a_num = term_to_number(a);
-    let b_num = term_to_number(b);
-
-    match (a_num, b_num) {
-        (Some(Num::Int(ai)), Some(Num::Int(bi))) => {
-            let pick_a = if pick_max { ai >= bi } else { ai <= bi };
-            Ok(if pick_a { a } else { b })
-        }
-        (Some(Num::Float(af)), Some(Num::Float(bf))) => {
-            let pick_a = if pick_max { af >= bf } else { af <= bf };
-            Ok(if pick_a { a } else { b })
-        }
-        (Some(Num::Int(ai)), Some(Num::Float(bf))) => {
-            let af = ai as f64;
-            let pick_a = if pick_max { af >= bf } else { af <= bf };
-            if pick_a {
-                // Return as float since comparison promoted
-                Ok(heap.alloc_float(af))
-            } else {
-                Ok(b)
-            }
-        }
-        (Some(Num::Float(af)), Some(Num::Int(bi))) => {
-            let bf = bi as f64;
-            let pick_a = if pick_max { af >= bf } else { af <= bf };
-            if pick_a {
-                Ok(a)
-            } else {
-                Ok(heap.alloc_float(bf))
-            }
-        }
-        _ => {
-            // Every other pair follows the term order: atoms by name, and
-            // number < atom < reference < fun < pid < tuple < map < list.
-            // Equal terms return the first argument, as on BEAM.
-            let order = crate::ffi::compare::compare_terms(a, b);
-            let pick_a = if pick_max { order >= 0 } else { order <= 0 };
-            Ok(if pick_a { a } else { b })
-        }
-    }
-}
-
-/// Internal numeric representation for comparison helpers.
-enum Num {
-    Int(i64),
-    Float(f64),
-}
-
-/// Extract a numeric value from an ErlTerm.
-/// # Safety
-/// Source graphs obey the enclosing BIF live, immutable, unmoved input contract.
-unsafe fn term_to_number(term: ErlTerm) -> Option<Num> {
-    if let Some(val) = term.as_small_int() {
-        return Some(Num::Int(val));
-    }
-    if term.is_boxed() {
-        unsafe {
-            let ptr = term.as_boxed_ptr()?;
-            let header = BoxedHeader(*ptr);
-            if header.subtype() == BOXED_FLOAT {
-                let bits = *ptr.add(1);
-                return Some(Num::Float(f64::from_bits(bits)));
-            }
-        }
-    }
-    None
+unsafe fn compare_and_pick(a: ErlTerm, b: ErlTerm, pick_max: bool) -> ErlTerm {
+    let order = crate::ffi::compare::compare_terms(a, b);
+    let pick_a = if pick_max { order >= 0 } else { order <= 0 };
+    if pick_a { a } else { b }
 }
 
 // ---------------------------------------------------------------------------
@@ -2695,29 +2626,26 @@ mod tests {
         }
     }
 
+    /// max/2 and min/2 return one of their arguments unchanged, the first
+    /// when they compare equal, as on BEAM. They used to turn the integer of a
+    /// mixed pair into a new float, so max(3, 2.5) returned 3.0.
     #[test]
     fn bif_max_min_mixed_int_float() {
         let mut heap = ProcessHeap::new();
-        let int_val = ErlTerm::small_int(3);
-        let float_val = heap.alloc_float(2.5);
-
-        // max(3, 2.5) should be 3.0 (promoted to float)
-        let max_result = unsafe { bif_max(&mut heap, &[int_val, float_val]) }.unwrap();
-        assert!(max_result.is_boxed());
-        unsafe {
-            let ptr = max_result.as_boxed_ptr().unwrap();
-            let bits = *ptr.add(1);
-            assert_eq!(f64::from_bits(bits), 3.0);
-        }
-
-        // min(3, 2.5) should be 2.5
-        let min_result = unsafe { bif_min(&mut heap, &[int_val, float_val]) }.unwrap();
-        assert!(min_result.is_boxed());
-        unsafe {
-            let ptr = min_result.as_boxed_ptr().unwrap();
-            let bits = *ptr.add(1);
-            assert_eq!(f64::from_bits(bits), 2.5);
-        }
+        let three = ErlTerm::small_int(3);
+        let two_and_half = heap.alloc_float(2.5);
+        let three_float = heap.alloc_float(3.0);
+        let pick = |heap: &mut ProcessHeap, max: bool, a: ErlTerm, b: ErlTerm| {
+            let args = [a, b];
+            unsafe { if max { bif_max(heap, &args) } else { bif_min(heap, &args) } }.unwrap()
+        };
+        assert_eq!(pick(&mut heap, true, three, two_and_half), three);
+        assert_eq!(pick(&mut heap, true, two_and_half, three), three);
+        assert_eq!(pick(&mut heap, false, three, two_and_half), two_and_half);
+        assert_eq!(pick(&mut heap, true, three, three_float), three);
+        assert_eq!(pick(&mut heap, true, three_float, three), three_float);
+        assert_eq!(pick(&mut heap, false, three, three_float), three);
+        assert_eq!(pick(&mut heap, false, three_float, three), three_float);
     }
 
     // -----------------------------------------------------------------------
