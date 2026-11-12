@@ -20,7 +20,6 @@ fn spawn_active_reader(handle: crate::socket::SocketHandle, dest_pid: crate::pro
         let process_table = std::sync::Arc::clone(&sched.process_table);
         let injector = sched.injector.clone();
         let runnable_count = std::sync::Arc::clone(&sched.runnable_count);
-        let timer_wheel = std::sync::Arc::clone(&sched.timer_wheel);
         let worker_notify = std::sync::Arc::clone(&sched.worker_notify);
 
         std::thread::spawn(move || {
@@ -91,10 +90,10 @@ fn spawn_active_reader(handle: crate::socket::SocketHandle, dest_pid: crate::pro
             let entry = process_table.get(&dest_pid).map(|r| r.clone());
             if let Some(entry) = entry {
                 entry.inbox.push(fragment);
+                // The worker cancels the receive timer; see nera_rt_send_message.
                 if entry.try_wake() {
                     runnable_count.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
                     injector.push(entry);
-                    timer_wheel.cancel_for_pid(dest_pid);
                     if let Some(sched) = crate::scheduler::global_scheduler() {
                         for t in sched.worker_threads.iter() {
                             if let Some(t) = t.get() {

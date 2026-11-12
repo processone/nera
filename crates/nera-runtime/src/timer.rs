@@ -259,6 +259,12 @@ impl TimerWheel {
         expired
     }
 
+    /// Whether `pid` still has a timer that has not expired, been cancelled
+    /// or been removed. Reads the map pop_expired clears before its wake.
+    pub fn has_pending_for(&self, pid: ProcessId) -> bool {
+        self.pid_to_timer.lock().contains_key(&pid)
+    }
+
     /// Return the deadline of the earliest pending timer, or None.
     pub fn next_deadline(&self) -> Option<u64> {
         self.heap.lock().peek().map(|e| e.deadline_ms)

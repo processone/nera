@@ -127,11 +127,14 @@ pub unsafe extern "C" fn nera_rt_send_message(ctx: *mut ProcessContext, pid_term
             } else {
                 false
             };
+            // The receiver's timer is left to the worker that runs it, which
+            // cancels it under the process lock. Once queued, the receiver can
+            // run into a later timed receive, and cancelling here would remove
+            // that receive's timer.
             if direct_sent {
                 if entry.try_wake() {
                     sched.runnable_count.fetch_add(1, Ordering::AcqRel);
                     sched.dispatch_to_worker(entry);
-                    sched.timer_wheel.cancel_for_pid(target_pid);
                 }
                 return msg;
             }
@@ -144,9 +147,6 @@ pub unsafe extern "C" fn nera_rt_send_message(ctx: *mut ProcessContext, pid_term
             if entry.try_wake() {
                 sched.runnable_count.fetch_add(1, Ordering::AcqRel);
                 sched.dispatch_to_worker(entry);
-                // Cancel any pending receive timer for this process.
-                sched.timer_wheel.cancel_for_pid(target_pid);
-                // Wake an idle worker to pick up the newly-ready process.
             }
         }
         msg
@@ -411,11 +411,11 @@ pub unsafe extern "C" fn nera_rt_send_tuple(
             } else {
                 false
             };
+            // As in nera_rt_send_message, the worker cancels the timer.
             if direct_sent {
                 if entry.try_wake() {
                     sched.runnable_count.fetch_add(1, Ordering::AcqRel);
                     sched.dispatch_to_worker(entry);
-                    sched.timer_wheel.cancel_for_pid(target_pid);
                 }
                 return return_val;
             }
@@ -427,7 +427,6 @@ pub unsafe extern "C" fn nera_rt_send_tuple(
             if entry.try_wake() {
                 sched.runnable_count.fetch_add(1, Ordering::AcqRel);
                 sched.dispatch_to_worker(entry);
-                sched.timer_wheel.cancel_for_pid(target_pid);
             }
         }
         return_val
@@ -1910,10 +1909,12 @@ pub unsafe extern "C" fn nera_rt_exit_2(ctx: *mut ProcessContext, pid_term: u64,
                 // Try waking the process. try_wake() handles receive-waiting
                 // (ASTATUS_WAITING), try_wake_io() handles IO-waiting
                 // (ASTATUS_IO_WAIT). Only one CAS can succeed.
+                // The worker cancels the receive timer; see nera_rt_send_message.
+                // An ignored signal returns the process to its wait, which
+                // keeps its timer.
                 if entry.try_wake() || entry.try_wake_io() {
                     sched.runnable_count.fetch_add(1, std::sync::atomic::Ordering::AcqRel);
                     sched.dispatch_to_worker(entry);
-                    sched.timer_wheel.cancel_for_pid(target_pid);
                 }
             }
         }
@@ -2348,6 +2349,67 @@ mod snapshot_tests {
         // SAFETY: adoption moved the independent snapshot storage to target.
         for term in [message, value] {
             assert_eq!(unsafe { term.borrow(&target) }.binary_bytes(), Some(&b"snapshot payload"[..]));
+        }
+    }
+}
+
+#[cfg(test)]
+mod delivery_timer_tests {
+    use super::*;
+    use crate::process::{ProcessId, ProcessState, WaitReason, ASTATUS_READY};
+    use crate::scheduler::SchedulerHandle;
+    use std::sync::atomic::{AtomicI64, AtomicU32};
+
+    // Cowlib's cow_cookie EUnit suite hung natively in a few runs out of a
+    // hundred. A sender cancelled the receiver's receive timer after queueing
+    // the receiver. By then the receiver could have run into a later
+    // `receive ... after`, whose timer the cancel removed, so it never timed out.
+    #[test]
+    fn delivery_leaves_the_receive_timer_to_the_worker() {
+        #[cfg(mio_supported)]
+        let (reactor, reactor_thread) = crate::reactor::spawn_reactor();
+        let owner = Arc::new(SchedulerHandle {
+            injector: Arc::new(crossbeam_deque::Injector::new()),
+            process_table: Arc::new(dashmap::DashMap::new()),
+            next_pid: Arc::new(crate::process::ProcessIdAllocator::starting_at(2)),
+            runnable_count: Arc::new(AtomicI64::new(0)),
+            alive_count: Arc::new(AtomicI64::new(1)),
+            registered_names: Arc::new(parking_lot::RwLock::new(std::collections::HashMap::new())),
+            timer_wheel: Arc::new(crate::timer::TimerWheel::new()),
+            worker_notify: Arc::new((parking_lot::Mutex::new(()), parking_lot::Condvar::new())),
+            io_pool: Arc::new(crate::io_pool::IoPool::new(1)),
+            #[cfg(mio_supported)]
+            reactor: reactor.clone(),
+            worker_inboxes: Arc::new(Vec::new()),
+            num_workers: 0,
+            worker_threads: Arc::new(Vec::new()),
+            dispatch_rr: AtomicU32::new(0),
+        });
+        // A receiver waiting in `receive ... after`, with its timer registered.
+        let receiver = ProcessId::new(4_242);
+        let entry = Arc::new(ProcessEntry::new(Process::new(receiver)));
+        entry.lock_for_runtime().transition(ProcessState::Waiting(WaitReason::Receive {
+            timeout_deadline_ms: Some(10),
+        }));
+        owner.process_table.insert(receiver, Arc::clone(&entry));
+        owner.timer_wheel.insert(10, receiver);
+
+        let mut sender = ProcessContext::new(ProcessId::new(1));
+        sender.runtime = Arc::as_ptr(&owner);
+        let message = ErlTerm::atom(crate::atom_table::ATOM_OK).0;
+        // SAFETY: the sender context and its scheduler outlive the call; the
+        // message is an immediate, so no sender heap is read.
+        unsafe { nera_rt_send_message(&mut sender, ErlTerm::pid(receiver).0, message) };
+
+        assert_eq!(entry.published_status(), ASTATUS_READY);
+        assert_eq!(owner.runnable_count.load(Ordering::Acquire), 1);
+        assert!(matches!(owner.injector.steal(), crossbeam_deque::Steal::Success(_)));
+        assert!(owner.timer_wheel.has_pending_for(receiver),
+            "the worker that runs the receiver cancels its timer, not the sender");
+        #[cfg(mio_supported)]
+        {
+            reactor.shutdown();
+            reactor_thread.join().unwrap();
         }
     }
 }
