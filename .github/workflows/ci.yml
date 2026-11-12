@@ -28,7 +28,7 @@ env:
 jobs:
   changes:
     name: Change map
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     outputs:
       rust: ${{ steps.map.outputs.rust }}
       build: ${{ steps.map.outputs.build }}
@@ -41,7 +41,7 @@ jobs:
       jetbrains: ${{ steps.map.outputs.jetbrains }}
       packaging: ${{ steps.map.outputs.packaging }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           # On a pull request this is the merge commit; HEAD^1 is the base.
           fetch-depth: 2
@@ -70,14 +70,14 @@ jobs:
       matrix:
         include:
           - name: Linux x86_64
-            os: ubuntu-latest
+            os: ubuntu-26.04
             slug: linux
           - name: macOS arm64
             os: macos-latest
             slug: macos
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@master
@@ -87,7 +87,7 @@ jobs:
 
       - name: Restore cargo cache
         id: cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           path: |
             ~/.cargo/registry
@@ -105,7 +105,7 @@ jobs:
 
       - name: Save cargo cache (main and manual runs only)
         if: github.event_name != 'pull_request'
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: |
             ~/.cargo/registry
@@ -123,14 +123,14 @@ jobs:
       matrix:
         include:
           - name: Linux x86_64
-            os: ubuntu-latest
+            os: ubuntu-26.04
             slug: linux
           - name: macOS arm64
             os: macos-latest
             slug: macos
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@master
@@ -140,7 +140,7 @@ jobs:
 
       - name: Restore cargo cache
         id: cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           path: |
             ~/.cargo/registry
@@ -158,7 +158,7 @@ jobs:
 
       - name: Save cargo cache (main and manual runs only)
         if: github.event_name != 'pull_request'
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: |
             ~/.cargo/registry
@@ -167,7 +167,7 @@ jobs:
           key: ${{ runner.os }}-rust-${{ env.RUST_VERSION }}-release-${{ hashFiles('**/Cargo.lock') }}-${{ github.sha }}
 
       - name: Upload compiler
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: nera-build-${{ matrix.slug }}
           path: nera-build.tar
@@ -182,17 +182,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-26.04, macos-latest]
         part: [1, 2, 3]
         include:
-          - os: ubuntu-latest
+          - os: ubuntu-26.04
             name: Linux x86_64
             slug: linux
           - os: macos-latest
             name: macOS arm64
             slug: macos
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: ./.github/actions/fetch-compiler
         with:
@@ -206,9 +206,9 @@ jobs:
     name: Cowlib (Linux x86_64)
     needs: [changes, build]
     if: needs.changes.outputs.cowlib == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: ./.github/actions/fetch-compiler
         with:
@@ -228,7 +228,7 @@ jobs:
 
       - name: Preserve Cowlib differential evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: cowlib-differential-linux
           path: |
@@ -261,7 +261,7 @@ jobs:
 
       - name: Preserve Base64url property evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: cowlib-base64url-properties-linux
           path: |
@@ -297,7 +297,7 @@ jobs:
 
       - name: Preserve Cowlib cookie and date EUnit evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: cowlib-cookie-date-eunit-linux
           path: |
@@ -309,9 +309,9 @@ jobs:
     name: Thoas (Linux x86_64)
     needs: [changes, build]
     if: needs.changes.outputs.thoas == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: ./.github/actions/fetch-compiler
         with:
@@ -356,7 +356,7 @@ jobs:
 
       - name: Preserve native Thoas validation evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: thoas-native-linux
           path: |
@@ -372,7 +372,7 @@ jobs:
 
       - name: Preserve Thoas differential evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: thoas-differential-linux
           path: |
@@ -387,9 +387,9 @@ jobs:
     name: Poolboy (Linux x86_64)
     needs: [changes, build]
     if: needs.changes.outputs.poolboy == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: ./.github/actions/fetch-compiler
         with:
@@ -417,7 +417,7 @@ jobs:
       needs.changes.outputs.poolboy == 'true'
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: ./.github/actions/fetch-compiler
         with:
@@ -466,11 +466,11 @@ jobs:
           - os: macos-latest
             target: x86_64-apple-darwin
             slug: macos
-          - os: ubuntu-latest
+          - os: ubuntu-26.04
             target: aarch64-unknown-linux-gnu
             slug: linux
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@master
@@ -484,7 +484,7 @@ jobs:
 
       - name: Restore cargo cache
         id: cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           path: |
             ~/.cargo/registry
@@ -504,7 +504,7 @@ jobs:
 
       - name: Save cargo cache (main and manual runs only)
         if: github.event_name != 'pull_request'
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: |
             ~/.cargo/registry
@@ -519,13 +519,13 @@ jobs:
     name: VS Code plugin
     needs: changes
     if: needs.changes.outputs.vscode == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # Same steps and versions as release.yml.
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: '20'
 
@@ -540,13 +540,13 @@ jobs:
     name: JetBrains plugin
     needs: changes
     if: needs.changes.outputs.jetbrains == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # Same steps and versions as release.yml.
       - name: Setup Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           distribution: 'temurin'
           java-version: '21'
@@ -561,9 +561,9 @@ jobs:
     name: Packaging trial (Linux x86_64)
     needs: changes
     if: needs.changes.outputs.packaging == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@master
@@ -572,7 +572,7 @@ jobs:
 
       - name: Restore cargo cache
         id: cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           path: |
             ~/.cargo/registry
@@ -591,7 +591,7 @@ jobs:
 
       - name: Save cargo cache (main and manual runs only)
         if: github.event_name != 'pull_request'
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: |
             ~/.cargo/registry
@@ -603,7 +603,7 @@ jobs:
     name: CI result
     needs: [changes, rust, build, e2e, cowlib, thoas, poolboy, integration-macos, cross, vscode, jetbrains, packaging]
     if: always()
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: Fail if any job that started did not succeed
         env:
