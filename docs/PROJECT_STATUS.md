@@ -17,14 +17,14 @@ No release has been published.
 
 ## Experimental release plan — 2026-11-12
 
-The first release is an **experimental prerelease** (milestone A), not the
+The first release is `v0.1.0`, an **experimental** release (milestone A), not the
 public preview described in the rest of this record. Its gates:
 
 1. Cowlib builds cleanly with `nera check`. Done: Cowlib 2.22.0 checks with
    0 errors and builds natively; see [`examples/cowlib_demo`](../examples/cowlib_demo).
-2. Linux x86-64 is verified natively. Open: no native Linux run since CI was
-   paused on 2026-10-12; this needs the repository public and the workflows
-   re-enabled.
+2. Linux x86-64 is verified natively. Done: the repository is public and CI is
+   enabled again; the native Linux x86-64 run on this pull request passed, after
+   the October 12 pause that had left no native Linux run since.
 3. Five wrong-result or hang bugs are fixed: atom ordering, a `[]` message read
    as an empty mailbox, garbage-collection crashes on deeply nested lists,
    `ets:new/2` with `named_table`, and `start_link` hanging when `init` crashes.
@@ -35,8 +35,9 @@ public preview described in the rest of this record. Its gates:
 Since the October baseline, main passes the local gate on macOS arm64 with
 2,118 Rust workspace tests and 450 Erlang tests (2 skipped: external OneCached
 modules); the early-November binary, `lists`, `maps`, `crypto` and `zlib`
-fixes are listed in [CHANGELOG.md](../CHANGELOG.md). Tags of the form
-`vX.Y.Z-experimental` publish as GitHub prereleases ([RELEASE.md](RELEASE.md)).
+fixes are listed in [CHANGELOG.md](../CHANGELOG.md). The `v0.1.0` tag publishes
+as a full GitHub release; tags with a suffix, such as `vX.Y.Z-experimental`,
+publish as GitHub prereleases ([RELEASE.md](RELEASE.md)).
 
 The next milestones are Cowboy over plain HTTP (about 4 to 6 weeks after the
 experimental release), then Cowboy with TLS. The public announcement waits for

@@ -15,8 +15,9 @@ tools, does not mean a program runs.
   behaviour can change between releases without a deprecation period.
 - Wrong results and hangs are still being found. Compare important output with
   the BEAM before relying on it.
-- Releases are tagged as GitHub prereleases. A tag such as `v0.2.0-experimental`
-  is never a stable release.
+- The first release, `v0.1.0`, is a full GitHub release but stays experimental
+  until 1.0. Later tags with a suffix, such as `v0.2.0-experimental`, are GitHub
+  prereleases and are never stable releases.
 - Do not use Nera for production services yet.
 
 ## Platforms

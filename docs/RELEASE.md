@@ -4,10 +4,11 @@
 
 **Experimental prereleases only (2026-11-12).** Read
 [PROJECT_STATUS.md](PROJECT_STATUS.md) and [KNOWN_LIMITS.md](KNOWN_LIMITS.md)
-before tagging. Only tags with a prerelease suffix, such as
-`v0.2.0-experimental`, are planned; the workflow publishes them as GitHub
-prereleases. A tag without a suffix publishes a full release and is not
-planned. The packaging repair adds native installed-
+before tagging. The first release is `v0.1.0`, published as a full GitHub
+release (the tag has no suffix, so the workflow does not mark it as a
+prerelease). It stays experimental in the docs until 1.0. Later prereleases
+with a suffix, such as `v0.2.0-experimental`, are published as GitHub
+prereleases. The packaging repair adds native installed-
 archive smoke tests, but the tag workflow still does not run the full test
 suite. Packaging success is not release validation.
 
