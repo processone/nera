@@ -27,7 +27,7 @@ tools, does not mean a program runs.
 | macOS arm64 | Developed and tested here. All recorded results come from this platform. |
 | Linux x86-64 | Release archive builds in CI. **Native execution has not been rerun since 2026-10-12**, when CI was paused. Treat it as unverified until the release notes say it was verified. |
 | macOS x86-64, Linux arm64 | Cross-built only. Archives have never been executed. |
-| Windows x86-64 | Cross-built only. Never executed. |
+| Windows x86-64 | Not in the release archives. The compiler does not link on Windows, and the archive was never executed. |
 
 The CI and Release workflows are paused until the repository is public. See
 [RELEASE.md](RELEASE.md).

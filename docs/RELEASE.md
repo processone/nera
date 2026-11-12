@@ -85,7 +85,6 @@ this pause does not authorize them.
 | `nera-<ver>-x86_64-apple-darwin.tar.gz` | macOS Intel binary |
 | `nera-<ver>-x86_64-unknown-linux-gnu.tar.gz` | Linux x86_64 binary |
 | `nera-<ver>-aarch64-unknown-linux-gnu.tar.gz` | Linux ARM64 binary |
-| `nera-<ver>-x86_64-pc-windows-msvc.zip` | Windows x86_64 binary |
 | `vscode-nera-<ver>.vsix` | VSCode extension |
 | `jetbrains-nera-<ver>.zip` | JetBrains plugin (RustRover, IntelliJ, etc.) |
 
@@ -95,7 +94,7 @@ The workflow (`.github/workflows/release.yml`) has 4 jobs:
 
 ### 1. `build` (matrix, 5 targets)
 
-Builds nera binaries using `scripts/dist.sh`. Each target produces a tarball (or zip for Windows) containing:
+Builds nera binaries using `scripts/dist.sh`. Each target produces a tarball containing:
 - `bin/nera` — the compiler binary
 - `lib/nera/erlang/stdlib/` — standard library sources
 - `lib/libnera_runtime.a` — runtime library (`lib/nera_runtime.lib` on MSVC)
@@ -105,8 +104,9 @@ External lookup takes precedence; the embedded copy is the fallback. Both the
 compiler and runtime in a target-labelled archive are built for that target.
 Cross-compilation requires the corresponding Rust target and system linker.
 Native macOS/Linux release jobs compile and run an unpacked archive, then remove
-its external library and repeat to check embedding. Cross-target and Windows
-execution still need equivalent verification.
+its external library and repeat to check embedding. Cross-target execution still
+needs equivalent verification. The Windows x86_64 target is not built or released
+yet: the release build does not link on Windows.
 
 ### 2. `plugin-vscode`
 
