@@ -17,7 +17,7 @@ No release has been published.
 
 ## Experimental release plan — 2026-11-12
 
-The first release is an **experimental prerelease** (milestone A), not the
+The first release is `v0.1.0`, an **experimental** release (milestone A), not the
 public preview described in the rest of this record. Its gates:
 
 1. Cowlib builds cleanly with `nera check`. Done: Cowlib 2.22.0 checks with
@@ -35,8 +35,9 @@ public preview described in the rest of this record. Its gates:
 Since the October baseline, main passes the local gate on macOS arm64 with
 2,118 Rust workspace tests and 450 Erlang tests (2 skipped: external OneCached
 modules); the early-November binary, `lists`, `maps`, `crypto` and `zlib`
-fixes are listed in [CHANGELOG.md](../CHANGELOG.md). Tags of the form
-`vX.Y.Z-experimental` publish as GitHub prereleases ([RELEASE.md](RELEASE.md)).
+fixes are listed in [CHANGELOG.md](../CHANGELOG.md). The `v0.1.0` tag publishes
+as a full GitHub release; tags with a suffix, such as `vX.Y.Z-experimental`,
+publish as GitHub prereleases ([RELEASE.md](RELEASE.md)).
 
 The next milestones are Cowboy over plain HTTP (about 4 to 6 weeks after the
 experimental release), then Cowboy with TLS. The public announcement waits for

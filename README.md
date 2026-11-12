@@ -4,12 +4,12 @@ nera compiles Erlang source files to standalone native binaries — no BEAM VM
 required.
 
 **Experimental software (2026-11-12).** Nera is being prepared for an
-experimental prerelease. It is developed and tested on macOS arm64; Linux x86-64
-is not yet re-verified, and Cowboy, TLS, distributed Erlang and hot upgrades do
-not work. Read the [known limits](docs/KNOWN_LIMITS.md) before relying on it,
-and see the [current project status](docs/PROJECT_STATUS.md) for the evidence.
-Prereleases are tagged `vX.Y.Z-experimental` and published as GitHub
-prereleases.
+experimental first release, `v0.1.0`. It is developed and tested on macOS arm64
+and Linux x86-64; Cowboy, TLS, distributed Erlang and hot upgrades do not work.
+Read the [known limits](docs/KNOWN_LIMITS.md) before relying on it, and see the
+[current project status](docs/PROJECT_STATUS.md) for the evidence. It stays
+experimental until 1.0. Later suffixed tags, such as `vX.Y.Z-experimental`, are
+published as GitHub prereleases.
 
 See [project compatibility](COMPATIBILITY.md) for tested libraries and
 applications, known blockers, untested candidates, and the scope of each result.
