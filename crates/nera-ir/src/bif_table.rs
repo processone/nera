@@ -43,6 +43,9 @@ pub const BIF_TABLE: &[BifEntry] = &[
     // -------------------------------------------------------------------------
     BifEntry { module: "erlang", function: "abs",   arity: 1, ffi_symbol: Some("nera_rt_abs"), param_names: None, spec: Some("-spec abs(Float) -> float(); (Int) -> non_neg_integer().") },
     BifEntry { module: "math", function: "sqrt", arity: 1, ffi_symbol: Some("nera_rt_math_sqrt"), param_names: Some(&["Number"]), spec: Some("-spec sqrt(Number :: number()) -> float().") },
+    BifEntry { module: "math", function: "exp", arity: 1, ffi_symbol: Some("nera_rt_math_exp"), param_names: Some(&["X"]), spec: Some("-spec exp(X :: number()) -> float().") },
+    BifEntry { module: "math", function: "log", arity: 1, ffi_symbol: Some("nera_rt_math_log"), param_names: Some(&["X"]), spec: Some("-spec log(X :: number()) -> float().") },
+    BifEntry { module: "math", function: "pow", arity: 2, ffi_symbol: Some("nera_rt_math_pow"), param_names: Some(&["X", "Y"]), spec: Some("-spec pow(X :: number(), Y :: number()) -> float().") },
     BifEntry { module: "erlang", function: "round", arity: 1, ffi_symbol: Some("nera_rt_round"), param_names: None, spec: Some("-spec round(Number) -> integer().") },
     BifEntry { module: "erlang", function: "trunc", arity: 1, ffi_symbol: Some("nera_rt_trunc"), param_names: None, spec: Some("-spec trunc(Number) -> integer().") },
     BifEntry { module: "erlang", function: "float", arity: 1, ffi_symbol: Some("nera_rt_float"), param_names: None, spec: Some("-spec float(Number) -> float().") },
@@ -313,7 +316,6 @@ pub const BIF_TABLE: &[BifEntry] = &[
     BifEntry { module: "binary", function: "last", arity: 1, ffi_symbol: Some("nera_rt_binary_last"), param_names: Some(&["Subject"]), spec: Some("-spec last(Subject) -> byte().") },
     BifEntry { module: "binary", function: "longest_common_prefix", arity: 1, ffi_symbol: Some("nera_rt_binary_longest_common_prefix"), param_names: Some(&["Binaries"]), spec: Some("-spec longest_common_prefix(Binaries) -> non_neg_integer().") },
     BifEntry { module: "binary", function: "match", arity: 3, ffi_symbol: Some("nera_rt_binary_match_3"), param_names: Some(&["Subject", "Pattern", "Options"]), spec: Some("-spec match(Subject, Pattern, Options) -> {non_neg_integer(), pos_integer()} | nomatch when Options :: [{scope, {integer(), integer()}}].") },
-    BifEntry { module: "rand", function: "uniform", arity: 1, ffi_symbol: Some("nera_rt_rand_uniform_1"), param_names: Some(&["N"]), spec: Some("-spec uniform(N) -> pos_integer() when N :: pos_integer().") },
     BifEntry { module: "binary", function: "match", arity: 2, ffi_symbol: Some("nera_rt_binary_match"), param_names: Some(&["Subject", "Pattern"]), spec: Some("-spec match(Subject, Pattern) -> {non_neg_integer(), pos_integer()} | nomatch.") },
     BifEntry { module: "binary", function: "at",    arity: 2, ffi_symbol: Some("nera_rt_binary_at"),      param_names: Some(&["Subject", "Pos"]), spec: Some("-spec at(Subject, Pos) -> byte().") },
     BifEntry { module: "binary", function: "referenced_byte_size", arity: 1, ffi_symbol: Some("nera_rt_binary_referenced_byte_size"), param_names: Some(&["Binary"]), spec: Some("-spec referenced_byte_size(Binary) -> non_neg_integer().") },

@@ -451,9 +451,13 @@ functions as compiled Erlang in `erlang/stdlib/lists.erl`.
 | Function | Status | Notes |
 | --- | --- | --- |
 | sqrt/1 | ✅ | Rust runtime BIF; nonnegative numbers to float, preserves negative zero; direct/dynamic/remote-fun calls |
+| exp/1 | ✅ | Rust runtime BIF; overflow raises `badarith` |
+| log/1 | ✅ | Rust runtime BIF; zero and negative numbers raise `badarith` |
+| pow/2 | ✅ | Rust runtime BIF; both arguments as floats; overflow, a complex result and zero to a negative power raise `badarith` |
 
-Nonnumbers raise `badarg`; negative and non-finite/out-of-conversion-range
-numbers raise `badarith`. This does not imply other `math` APIs are supported.
+Nonnumbers raise `badarg`. Numbers outside the float range, and results that
+are not finite real numbers (such as a negative number's square root), raise
+`badarith`. This does not imply other `math` APIs are supported.
 
 ### string module
 
@@ -488,9 +492,26 @@ numbers raise `badarith`. This does not imply other `math` APIs are supported.
 
 ### rand module
 
-| Function  | Status | Notes                        |
-|-----------|--------|------------------------------|
-| uniform/1 | ✅      | BIF; integer in 1..N for any positive integer N, bignums included; other arguments raise function_clause. Not seedable, and no other rand functions. |
+OTP 29's `rand` module, ported to compiled Erlang in `erlang/stdlib/rand.erl`.
+Every OTP algorithm is available (`exsss`, the default, `exro928ss`, `exrop`,
+`exs1024s`, `exsp`, and the older `exs64`, `exsplus`, `exs1024`), and a seed
+gives the same numbers, states and errors as on OTP 29.
+
+| Function | Status | Notes |
+|----------|--------|-------|
+| seed/1,2, seed_s/1,2 | ✅ | Integer, `{A1, A2, A3}` and list seeds, `default`, and seeding from an exported or full state |
+| export_seed/0, export_seed_s/1 | ✅ | |
+| uniform/0,1, uniform_s/1,2 | ✅ | Integer ranges of any size, bignums included; other ranges raise function_clause |
+| uniform_real/0, uniform_real_s/1 | ✅ | |
+| bytes/1, bytes_s/2 | ✅ | |
+| normal/0,2, normal_s/1,3 | ✅ | Slower than on BEAM: each draw rebuilds a 256-entry lookup table, because Nera has no constant literal storage |
+| shuffle/1, shuffle_s/2 | ✅ | |
+| jump/0,1 | ✅ | |
+| mwc59 and splitmix64 utilities | ✅ | `mwc59/1`, `mwc59_value32/1`, `mwc59_value/1`, `mwc59_float/1`, `mwc59_seed/0,1`, `splitmix64_next/1`, `exsp_next/1`, `exsp_jump/1` |
+
+Without a seed, the first draw in a process seeds the default algorithm from
+the process, a unique integer and the time, as on OTP. The state lives in the
+process dictionary under `rand_seed`.
 
 ### ets module
 
@@ -648,7 +669,7 @@ optimization as counters — on par with BEAM performance.
 | Module      | Notes                                        |
 |-------------|----------------------------------------------|
 | string      | String manipulation functions                |
-| math        | sqrt, log, pi, sin, cos, etc.                |
+| math        | pi, sin, cos, etc. (sqrt, exp, log and pow are available) |
 | os          | cmd, getenv, type, timestamp                 |
 | re          | Regular expressions                          |
 | crypto      | Cryptographic functions                      |

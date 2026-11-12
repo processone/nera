@@ -77,22 +77,34 @@ comparison passes with `wire_equal` false. Atom map keys follow Nera's own
 atom-table order ([map iteration order](../../../COMPATIBILITY.md#map-iteration-order--2026-11-12)),
 so this order can differ from one program to another.
 
-**Date property: blocked natively.** Cowlib 2.22.0 renames `prop_http_date/0`
-to `prop_parse_date/0` with the same generators. `native_date.py --pin 2.22.0`
-passes it on BEAM (1,000 trials for each of three seeds, run twice). The native
-run fails because two runs from the same seed generate different inputs.
-Since the 2.20.0 date campaign, `rand:uniform/1` is a Nera built-in, and the
-compiler calls the built-in rather than the OTP `rand` module the harness
-supplies, so PropEr's `rand:seed/2` no longer controls it. The 2.20.0 property
-fails the same way on this revision. Native date-property evidence needs a
-seedable `rand` in Nera first; the other seeded native PropEr campaigns were
-not rerun.
+**Date property.** Cowlib 2.22.0 renames `prop_http_date/0` to
+`prop_parse_date/0` with the same generators. At first the native run failed
+because two runs from the same seed generated different inputs: `rand:uniform/1`
+was a Nera built-in, and the compiler called it rather than the OTP `rand`
+module the harness supplies, so PropEr's `rand:seed/2` did not control it.
+
+`rand` is now a seedable stdlib module and the built-in is gone, so calls reach
+the module the harness supplies. `native_date.py --pin 2.22.0` then passes on
+both engines: 6,000 trials per engine (1,000 for each of three seeds, run
+twice), six false-property shrinking controls and twelve replays, with the
+native and BEAM traces identical (SHA-256
+`bc371ae0deae5b92db0cb55dec9151e4cc98d849353ccad85bace998c5d1d6b9`). The run
+used the pinned PropEr and OTP 27.3 `rand` and `ordsets` sources on macOS 27
+arm64 with OTP 29.1.2. The other seeded native PropEr campaigns were not rerun.
 
 The Linux workflow fetches the pinned 2.22.0 commit and runs both suites
 through `native_eunit.py --pin 2.22.0`, keeping the report as the
 `cowlib-cookie-date-eunit-linux` artifact.
 
 ```sh
+python3 tests/integration/cowlib/native_date.py --pin 2.22.0 \
+  --upstream /tmp/cowlib-2.22.0 \
+  --proper /tmp/nera-proper-src \
+  --nera "$PWD/target/release/nera" \
+  --otp-rand /tmp/nera-otp-rand/rand.erl \
+  --otp-ordsets /tmp/nera-otp-rand/ordsets.erl \
+  --beam-parse-transforms --samples 1000 \
+  --work-dir /tmp/nera-cow-date-property-2.22.0
 python3 tests/integration/cowlib/native_eunit.py --pin 2.22.0 \
   --modules cow_cookie cow_date \
   --upstream /tmp/cowlib-2.22.0 \

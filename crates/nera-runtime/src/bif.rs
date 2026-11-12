@@ -503,6 +503,24 @@ pub unsafe fn bif_abs(heap: &mut ProcessHeap, args: &[ErlTerm]) -> Result<ErlTer
     Err(ErlTerm::atom(ATOM_BADARG))
 }
 
+/// The integer equal to an integral float, as round/1, trunc/1, ceil/1 and
+/// floor/1 return it: a small integer, or a bignum for magnitudes beyond the
+/// small range. Every finite float converts exactly; `as i64` would saturate
+/// at 2^63.
+fn integral_float_term(heap: &mut ProcessHeap, integral: f64) -> Result<ErlTerm, ErlTerm> {
+    use num_traits::FromPrimitive;
+    if integral.abs() < 9_223_372_036_854_775_808.0 {
+        let int = integral as i64;
+        if crate::term::fits_small_int(int) {
+            return Ok(ErlTerm::small_int(int));
+        }
+    }
+    match num_bigint::BigInt::from_f64(integral) {
+        Some(big) => Ok(bigint_to_term(heap, big)),
+        None => Err(ErlTerm::atom(ATOM_BADARG)),
+    }
+}
+
 /// `erlang:round/1` -- round a number to the nearest integer.
 ///
 /// Integers pass through unchanged. Floats are rounded to the nearest integer
@@ -534,11 +552,7 @@ pub unsafe fn bif_round(heap: &mut ProcessHeap, args: &[ErlTerm]) -> Result<ErlT
             if header.subtype() == BOXED_FLOAT {
                 let bits = *ptr.add(1);
                 let val = f64::from_bits(bits);
-                let rounded = val.round() as i64;
-                if crate::term::fits_small_int(rounded) {
-                    return Ok(ErlTerm::small_int(rounded));
-                }
-                return Ok(bigint_to_term(heap, num_bigint::BigInt::from(rounded)));
+                return integral_float_term(heap, val.round());
             }
         }
     }
@@ -577,11 +591,7 @@ pub unsafe fn bif_trunc(heap: &mut ProcessHeap, args: &[ErlTerm]) -> Result<ErlT
             if header.subtype() == BOXED_FLOAT {
                 let bits = *ptr.add(1);
                 let val = f64::from_bits(bits);
-                let truncated = val.trunc() as i64;
-                if crate::term::fits_small_int(truncated) {
-                    return Ok(ErlTerm::small_int(truncated));
-                }
-                return Ok(bigint_to_term(heap, num_bigint::BigInt::from(truncated)));
+                return integral_float_term(heap, val.trunc());
             }
         }
     }
@@ -619,11 +629,7 @@ pub unsafe fn bif_ceil(heap: &mut ProcessHeap, args: &[ErlTerm]) -> Result<ErlTe
             if header.subtype() == BOXED_FLOAT {
                 let bits = *ptr.add(1);
                 let val = f64::from_bits(bits);
-                let ceiled = val.ceil() as i64;
-                if crate::term::fits_small_int(ceiled) {
-                    return Ok(ErlTerm::small_int(ceiled));
-                }
-                return Ok(bigint_to_term(heap, num_bigint::BigInt::from(ceiled)));
+                return integral_float_term(heap, val.ceil());
             }
         }
     }
@@ -661,11 +667,7 @@ pub unsafe fn bif_floor(heap: &mut ProcessHeap, args: &[ErlTerm]) -> Result<ErlT
             if header.subtype() == BOXED_FLOAT {
                 let bits = *ptr.add(1);
                 let val = f64::from_bits(bits);
-                let floored = val.floor() as i64;
-                if crate::term::fits_small_int(floored) {
-                    return Ok(ErlTerm::small_int(floored));
-                }
-                return Ok(bigint_to_term(heap, num_bigint::BigInt::from(floored)));
+                return integral_float_term(heap, val.floor());
             }
         }
     }

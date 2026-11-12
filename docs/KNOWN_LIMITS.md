@@ -54,9 +54,9 @@ platform and scope.
   atom keys differently from OTP, so `Set-Cookie` attributes and HTTP/2
   pseudo-headers come out in another byte order (equivalent when sorted).
   Cowlib's upstream `cow_cookie` and `cow_date` EUnit suites pass natively on
-  2.22.0 (157/157 and 27/27, as on BEAM). The other upstream suites were last
-  run on the 2.20.0 pin, and Cowlib's date property cannot run natively until
-  `rand` can be seeded.
+  2.22.0 (157/157 and 27/27, as on BEAM). Cowlib's seeded date property
+  passes natively, with the same 6,000 trials as on BEAM. The other upstream
+  suites were last run on the 2.20.0 pin.
 - **Poolboy:** does not compile.
 - **Thoas** (JSON) passes its recorded checks. **PropEr** passes a scoped probe.
 - **OneCached:** worked in early runs, which have not been revalidated.
