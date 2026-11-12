@@ -202,6 +202,7 @@ These are automatically skipped by the runner and show up as SKIP in output.
 | `comparison_ops.erl` | Equality, ordering, mixed types | ~30        |
 | `map_comparison.erl` | Exact recursive map-key ordering, numeric map-value equality, insertion order, comparison operators, sibling key searches and ETS ordered-set identity/order; also run on BEAM | Table-driven |
 | `atom_order.erl` | Atoms order by name whatever their creation order: operators, guards, lists:sort/1,2, usort/1, max/1 and min/1, run-time atoms, prefixes across eight bytes, Unicode names, tuples, lists, map keys and values, Cowlib's server-sent event keys, erlang:max/2 and min/2 between types, apply and fun calls, ordered_set iteration; also run on BEAM | Table-driven |
+| `max_min_numbers.erl` | erlang:max/2 and min/2 return an argument unchanged, the first when equal: mixed integers and floats, signed zeros, exact comparison above 2^53, 2^60, 2^63 and beyond 64 bits, apply, fun and guard calls; also run on BEAM | 46 |
 
 ### Remote calls
 

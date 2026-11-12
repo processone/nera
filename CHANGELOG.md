@@ -2,6 +2,19 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## erlang:max/2 and min/2 return an argument unchanged
+
+- `erlang:max/2` and `min/2` now return one of their two arguments
+  unchanged, the first one when the two compare equal, as on BEAM:
+  `max(2, 1.5)` is `2` and `max(1, 1.0)` is `1`. Previously a mixed integer
+  and float pair turned the integer into a new float, so these returned `2.0`
+  and `1.0`, and `min(1, 1.0)` returned `1.0`.
+- An integer and a float now compare exactly, as with `<`:
+  `max(9007199254740993, 9007199254740992.0)` returns the integer, which is
+  larger. Previously the integer was rounded to a float first, so an integer
+  above 2^53 could compare equal to a smaller float.
+- The `max_min_numbers` fixture runs natively and on BEAM.
+
 ## Cowlib 2.22.0 cookie and date upstream suites run natively
 
 - Cowlib 2.22.0's original `cow_cookie` and `cow_date` EUnit suites pass
