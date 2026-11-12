@@ -253,6 +253,10 @@ enum Command {
         /// Number of parallel legacy test threads (EUnit uses its own scheduling)
         #[arg(short = 'j', long, default_value_t = default_jobs())]
         jobs: usize,
+
+        /// Run only part K of N of the tests, e.g. 2/3 (every test is in exactly one part)
+        #[arg(long, value_name = "K/N", value_parser = test_runner::parse_shard)]
+        shard: Option<(usize, usize)>,
     },
 
     /// Format Erlang source files
@@ -590,8 +594,8 @@ fn main() {
         }
         Command::Lsp { transport } => cmd_lsp(&transport),
         Command::Run { verbose, no_stdlib, no_warnings, args } => cmd_run(verbose, no_stdlib, no_warnings, &args),
-        Command::Test { patterns, list, verbose, no_stdlib, no_warnings, timeout, jobs } => {
-            cmd_test(patterns, list, verbose, no_stdlib, no_warnings, timeout, jobs)
+        Command::Test { patterns, list, verbose, no_stdlib, no_warnings, timeout, jobs, shard } => {
+            cmd_test(patterns, list, verbose, no_stdlib, no_warnings, timeout, jobs, shard)
         }
         Command::Version => cmd_version(),
     };
@@ -942,6 +946,7 @@ fn cmd_run(verbose: bool, no_stdlib: bool, no_warnings: bool, args: &[String]) -
 
 // ── nera test ────────────────────────────────────────────────────────
 
+#[expect(clippy::too_many_arguments, reason = "Mirrors independently configurable CLI test options")]
 fn cmd_test(
     patterns: Vec<String>,
     list: bool,
@@ -950,6 +955,7 @@ fn cmd_test(
     no_warnings: bool,
     timeout: u64,
     jobs: usize,
+    shard: Option<(usize, usize)>,
 ) -> Result<(), Box<dyn std::error::Error>> {
     test_runner::run_tests(&test_runner::TestOpts {
         patterns,
@@ -959,6 +965,7 @@ fn cmd_test(
         no_warnings,
         timeout,
         jobs,
+        shard,
     })
 }
 
