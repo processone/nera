@@ -96,7 +96,7 @@ test skips Windows; MSVC uses the system allocator, while Windows GNU keeps
 jemalloc's own configuration symbol and defaults.
 Complete Linux x86_64 and aarch64-linux-gnu compiler/distribution builds and
 execution remain unverified; cross-building runtime libraries does not prove
-native startup or end-to-end behavior. GitHub CI remains paused.
+native startup or end-to-end behavior.
 
 ### Running Tests
 
@@ -188,22 +188,37 @@ the observed result, pinned versions, platform, reproduction commands and
 evidence. Follow its status definitions; a test harness alone does not prove
 compatibility.
 
-## Temporary private CI pause
+## Continuous integration
 
-Since 2026-10-12, the GitHub **CI** and **Release** workflows are manually
-suspended until Nera becomes open source, to reduce private CI costs. Their
-workflow files, triggers, matrices and tests remain unchanged. This is a
-GitHub setting, not a condition in the YAML files: changing visibility alone
-will not reactivate them.
+`.github/workflows/ci.yml` runs on pull requests, on every push to `main` and
+on a manual start. It is split into small jobs that run only when the files a
+pull request changes need them:
 
-During the pause, PRs receive no new automatic CI validation, and version tags
-do not build archives/plugins or publish releases. Do not rerun historical
-runs, enable these workflows, or add new active workflows during the private
-pause. Existing runs are not cancelled; retained caches/artifacts and runs
-already started can still incur costs.
+1. **Change map** lists the changed files (`git diff --name-only HEAD^1 HEAD`
+   on the pull request's merge commit) and runs `scripts/ci/changes.py`, which
+   holds the rules mapping files to jobs. `scripts/ci/test_changes.py` tests
+   them against real changed-file lists.
+2. **Build compiler** builds `target/release/nera` and the runtime once per
+   system and shares them with the test jobs as one artifact.
+3. **Rust checks** (clippy, `cargo test`), **End-to-end** (three parts per
+   system, `nera test --shard K/3`, each with `-j 1`), **Cowlib**, **Thoas**,
+   **Poolboy** (allowed to fail), **Integration (macOS)** and **Cross-compile**
+   use that compiler. **VS Code plugin**, **JetBrains plugin** and the
+   **Packaging trial** (Linux x86_64, publishes nothing) build on their own.
+4. **CI result** always runs last and fails if any started job failed. Jobs the
+   change map skips count as passed.
 
-Before each merge, validate the exact proposed revision locally with the pinned
-Rust toolchain and dependency lock:
+Documentation, examples and benchmarks start no job beyond the change map and
+CI result. A file that no rule names, and any change to `ci.yml`, the change
+map or its tests, starts every job; so does every push to `main` and every
+manual start. When you add a new kind of file or job, add its rule to
+`scripts/ci/changes.py` and a case to its test.
+
+Pull requests restore the Cargo caches saved by runs on `main` and save none.
+A newer push to a pull request cancels its older run.
+
+To reproduce the Rust and end-to-end checks locally with the pinned Rust
+toolchain and dependency lock:
 
 ```bash
 cargo build --release --locked

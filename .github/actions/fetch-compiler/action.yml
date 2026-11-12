@@ -1,0 +1,15 @@
+name: Fetch compiler
+description: Unpack the compiler and runtime built by the build job at target/release.
+inputs:
+  name:
+    description: Artifact name of the build job for this system
+    required: true
+runs:
+  using: composite
+  steps:
+    - uses: actions/download-artifact@v4
+      with:
+        name: ${{ inputs.name }}
+        path: ${{ runner.temp }}/compiler
+    - shell: bash
+      run: tar -xf "$RUNNER_TEMP/compiler/nera-build.tar" -C "$GITHUB_WORKSPACE"

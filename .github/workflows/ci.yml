@@ -1,15 +1,69 @@
 name: CI
 
+# One workflow, many small jobs. The "Change map" job lists the files a pull
+# request changes and scripts/ci/changes.py decides which jobs they need; every
+# other job is skipped when its flag is false. "CI result" always runs last and
+# is the one check that reports the whole run. Pushes to main and manual starts
+# run every job. See CONTRIBUTING.md.
+
 on:
   pull_request:
     branches: [main, "mr/**"]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# A newer push to a pull request replaces its older run.
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
 
 env:
   CARGO_TERM_COLOR: always
+  RUST_VERSION: "1.99.0"
 
 jobs:
-  test:
-    name: ${{ matrix.name }}
+  changes:
+    name: Change map
+    runs-on: ubuntu-latest
+    outputs:
+      rust: ${{ steps.map.outputs.rust }}
+      build: ${{ steps.map.outputs.build }}
+      e2e: ${{ steps.map.outputs.e2e }}
+      cowlib: ${{ steps.map.outputs.cowlib }}
+      thoas: ${{ steps.map.outputs.thoas }}
+      poolboy: ${{ steps.map.outputs.poolboy }}
+      cross: ${{ steps.map.outputs.cross }}
+      vscode: ${{ steps.map.outputs.vscode }}
+      jetbrains: ${{ steps.map.outputs.jetbrains }}
+      packaging: ${{ steps.map.outputs.packaging }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # On a pull request this is the merge commit; HEAD^1 is the base.
+          fetch-depth: 2
+
+      - name: Unit tests for the change map
+        run: python3 -m unittest discover -s scripts/ci -p 'test_*.py'
+
+      - name: Map changed files to jobs
+        id: map
+        env:
+          EVENT: ${{ github.event_name }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT" = pull_request ]; then
+            git diff --name-only HEAD^1 HEAD | tee /dev/stderr | python3 scripts/ci/changes.py --event "$EVENT"
+          else
+            python3 scripts/ci/changes.py --event "$EVENT"
+          fi
+  rust:
+    name: Rust checks (${{ matrix.name }})
+    needs: changes
+    if: needs.changes.outputs.rust == 'true'
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -17,10 +71,10 @@ jobs:
         include:
           - name: Linux x86_64
             os: ubuntu-latest
-            rust: "1.99.0"
+            slug: linux
           - name: macOS arm64
             os: macos-latest
-            rust: "1.99.0"
+            slug: macos
 
     steps:
       - uses: actions/checkout@v4
@@ -28,20 +82,20 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: ${{ matrix.rust }}
+          toolchain: ${{ env.RUST_VERSION }}
           components: clippy
 
-      - name: Cache cargo
-        uses: actions/cache@v4
+      - name: Restore cargo cache
+        id: cache
+        uses: actions/cache/restore@v4
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-rust-1.99.0-cargo-${{ hashFiles('**/Cargo.lock') }}
-
-      - name: Build
-        run: cargo build --release --locked
+          key: ${{ runner.os }}-rust-${{ env.RUST_VERSION }}-check-${{ hashFiles('**/Cargo.lock') }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-rust-${{ env.RUST_VERSION }}-check-${{ hashFiles('**/Cargo.lock') }}-
 
       - name: Clippy (workspace and tests)
         run: cargo clippy --workspace --all-targets --locked -- -D warnings
@@ -49,34 +103,123 @@ jobs:
       - name: Unit tests
         run: cargo test --locked
 
+      - name: Save cargo cache (main and manual runs only)
+        if: github.event_name != 'pull_request'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-rust-${{ env.RUST_VERSION }}-check-${{ hashFiles('**/Cargo.lock') }}-${{ github.sha }}
+
+  build:
+    name: Build compiler (${{ matrix.name }})
+    needs: changes
+    if: needs.changes.outputs.build == 'true'
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Linux x86_64
+            os: ubuntu-latest
+            slug: linux
+          - name: macOS arm64
+            os: macos-latest
+            slug: macos
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+          components: clippy
+
+      - name: Restore cargo cache
+        id: cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-rust-${{ env.RUST_VERSION }}-release-${{ hashFiles('**/Cargo.lock') }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-rust-${{ env.RUST_VERSION }}-release-${{ hashFiles('**/Cargo.lock') }}-
+
+      - name: Build
+        run: cargo build --release --locked
+
+      - name: Pack compiler and runtime
+        run: tar -cf nera-build.tar target/release/nera target/release/libnera_runtime.a
+
+      - name: Save cargo cache (main and manual runs only)
+        if: github.event_name != 'pull_request'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-rust-${{ env.RUST_VERSION }}-release-${{ hashFiles('**/Cargo.lock') }}-${{ github.sha }}
+
+      - name: Upload compiler
+        uses: actions/upload-artifact@v4
+        with:
+          name: nera-build-${{ matrix.slug }}
+          path: nera-build.tar
+          if-no-files-found: error
+          retention-days: 1
+
+  e2e:
+    name: End-to-end ${{ matrix.part }}/3 (${{ matrix.name }})
+    needs: [changes, build]
+    if: needs.changes.outputs.e2e == 'true'
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        part: [1, 2, 3]
+        include:
+          - os: ubuntu-latest
+            name: Linux x86_64
+            slug: linux
+          - os: macos-latest
+            name: macOS arm64
+            slug: macos
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/fetch-compiler
+        with:
+          name: nera-build-${{ matrix.slug }}
+
       - name: End-to-end tests
         # Keep timing-sensitive reactor checks isolated, as in the shell runner.
-        run: ./target/release/nera test -j 1 --timeout 30
+        run: ./target/release/nera test -j 1 --timeout 30 --shard ${{ matrix.part }}/3
 
-      - name: Integration tests (thoas JSON library)
-        run: |
-          cd tests/integration/thoas
-          ${{ github.workspace }}/target/release/nera deps get
-          ${{ github.workspace }}/target/release/nera build -o thoas_test
-          ./thoas_test
+  cowlib:
+    name: Cowlib (Linux x86_64)
+    needs: [changes, build]
+    if: needs.changes.outputs.cowlib == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-      - name: Install BEAM reference
-        uses: erlef/setup-beam@v1
+      - uses: ./.github/actions/fetch-compiler
         with:
-          otp-version: '29.0.5'
-          rebar3-version: '3.27.0'
+          name: nera-build-linux
+
+      - uses: ./.github/actions/setup-otp
 
       - name: Test Cowlib differential harness
         run: python3 -m unittest discover -s tests/integration/cowlib -p 'test_*.py'
 
-      - name: Test Thoas validation harnesses
-        run: |
-          python3 -m unittest discover -s tests/integration/thoas/differential -p test_runner.py
-          python3 -m unittest discover -s tests/integration/thoas/upstream -p test_run.py
-          python3 -m unittest discover -s tests/integration/thoas/eunit -p 'test_*.py'
-
       - name: Compare all 122 Cowlib cases on BEAM and Nera (Linux)
-        if: runner.os == 'Linux'
         timeout-minutes: 15
         run: |
           python3 tests/integration/cowlib/runner.py \
@@ -84,7 +227,7 @@ jobs:
             --work-dir "$RUNNER_TEMP/cowlib-differential"
 
       - name: Preserve Cowlib differential evidence
-        if: always() && runner.os == 'Linux'
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: cowlib-differential-linux
@@ -94,7 +237,6 @@ jobs:
             ${{ runner.temp }}/cowlib-differential/*.stderr
 
       - name: Build pinned PropEr reference (Linux)
-        if: runner.os == 'Linux'
         timeout-minutes: 10
         run: |
           set -euo pipefail
@@ -107,7 +249,6 @@ jobs:
           rebar3 compile 2>&1 | tee "$RUNNER_TEMP/cowlib-proper-build.log"
 
       - name: Replay Base64url properties cumulatively on BEAM and Nera (Linux)
-        if: runner.os == 'Linux'
         timeout-minutes: 20
         # The runner requires cumulative success even when isolated inputs pass.
         # Keep isolated runs and false-property controls for diagnostic evidence.
@@ -119,7 +260,7 @@ jobs:
             --work-dir "$RUNNER_TEMP/cowlib-base64url-properties"
 
       - name: Preserve Base64url property evidence
-        if: always() && runner.os == 'Linux'
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: cowlib-base64url-properties-linux
@@ -130,26 +271,49 @@ jobs:
             ${{ runner.temp }}/cowlib-base64url-properties/*.stdout
             ${{ runner.temp }}/cowlib-base64url-properties/*.stderr
 
+  thoas:
+    name: Thoas (Linux x86_64)
+    needs: [changes, build]
+    if: needs.changes.outputs.thoas == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/fetch-compiler
+        with:
+          name: nera-build-linux
+
+      - uses: ./.github/actions/setup-otp
+
+      - name: Integration tests (thoas JSON library)
+        run: |
+          cd tests/integration/thoas
+          ${{ github.workspace }}/target/release/nera deps get
+          ${{ github.workspace }}/target/release/nera build -o thoas_test
+          ./thoas_test
+
+      - name: Test Thoas validation harnesses
+        run: |
+          python3 -m unittest discover -s tests/integration/thoas/differential -p test_runner.py
+          python3 -m unittest discover -s tests/integration/thoas/upstream -p test_run.py
+          python3 -m unittest discover -s tests/integration/thoas/eunit -p 'test_*.py'
+
       - name: Compare Thoas on BEAM and Nera (Linux)
-        if: runner.os == 'Linux'
         run: python3 tests/integration/thoas/differential/runner.py
 
       - name: Compare Thoas memory sharing (Linux)
-        if: runner.os == 'Linux'
         run: |
           python3 tests/integration/thoas/memory/run.py \
             --nera "$GITHUB_WORKSPACE/target/release/nera" \
             --work-dir "$RUNNER_TEMP/thoas-memory"
 
       - name: Check OTP headers and assertions (Linux)
-        if: runner.os == 'Linux'
         run: |
           python3 tests/integration/thoas/eunit/run_probes.py \
             --nera "$GITHUB_WORKSPACE/target/release/nera" \
             --work-dir "$RUNNER_TEMP/thoas-otp"
 
       - name: Validate all native Thoas assertion bodies (Linux)
-        if: runner.os == 'Linux'
         run: |
           python3 tests/integration/thoas/eunit/run_assertions.py \
             --upstream "$RUNNER_TEMP/thoas-memory/upstream" \
@@ -157,7 +321,7 @@ jobs:
             --work-dir "$RUNNER_TEMP/thoas-assertions"
 
       - name: Preserve native Thoas validation evidence
-        if: always() && runner.os == 'Linux'
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: thoas-native-linux
@@ -173,7 +337,7 @@ jobs:
             ${{ runner.temp }}/thoas-assertions/*.stderr
 
       - name: Preserve Thoas differential evidence
-        if: always() && runner.os == 'Linux'
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: thoas-differential-linux
@@ -185,9 +349,24 @@ jobs:
             target/thoas-differential/nera.json
             target/thoas-differential/build/thoas_differential.erl
 
+  poolboy:
+    name: Poolboy (Linux x86_64)
+    needs: [changes, build]
+    if: needs.changes.outputs.poolboy == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/fetch-compiler
+        with:
+          name: nera-build-linux
+
+      - uses: ./.github/actions/setup-otp
+
       - name: Integration tests (poolboy worker pool)
         # Known-failing target: blocked on ETS and supervisor extensions.
-        # Kept in CI as a roadmap signal — flip to required once green.
+        # Kept in CI as a roadmap signal - flip to required once green.
+        # The step, not the job, may fail so the job reads green as before.
         continue-on-error: true
         run: |
           cd tests/integration/poolboy
@@ -195,8 +374,56 @@ jobs:
           ${{ github.workspace }}/target/release/nera build -o poolboy_test
           ./poolboy_test
 
-  cross-compile:
+  integration-macos:
+    name: Integration (macOS arm64)
+    needs: [changes, build]
+    if: >-
+      needs.changes.outputs.cowlib == 'true' ||
+      needs.changes.outputs.thoas == 'true' ||
+      needs.changes.outputs.poolboy == 'true'
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/fetch-compiler
+        with:
+          name: nera-build-macos
+
+      - uses: ./.github/actions/setup-otp
+
+      - name: Integration tests (thoas JSON library)
+        if: needs.changes.outputs.thoas == 'true'
+        run: |
+          cd tests/integration/thoas
+          ${{ github.workspace }}/target/release/nera deps get
+          ${{ github.workspace }}/target/release/nera build -o thoas_test
+          ./thoas_test
+
+      - name: Test Cowlib differential harness
+        if: needs.changes.outputs.cowlib == 'true'
+        run: python3 -m unittest discover -s tests/integration/cowlib -p 'test_*.py'
+
+      - name: Test Thoas validation harnesses
+        if: needs.changes.outputs.thoas == 'true'
+        run: |
+          python3 -m unittest discover -s tests/integration/thoas/differential -p test_runner.py
+          python3 -m unittest discover -s tests/integration/thoas/upstream -p test_run.py
+          python3 -m unittest discover -s tests/integration/thoas/eunit -p 'test_*.py'
+
+      - name: Integration tests (poolboy worker pool)
+        if: needs.changes.outputs.poolboy == 'true'
+        # Known-failing target: blocked on ETS and supervisor extensions.
+        continue-on-error: true
+        run: |
+          cd tests/integration/poolboy
+          ${{ github.workspace }}/target/release/nera deps get
+          ${{ github.workspace }}/target/release/nera build -o poolboy_test
+          ./poolboy_test
+
+  cross:
     name: Cross-compile ${{ matrix.target }}
+    needs: [changes, build]
+    if: needs.changes.outputs.cross == 'true'
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -204,36 +431,157 @@ jobs:
         include:
           - os: macos-latest
             target: x86_64-apple-darwin
+            slug: macos
           - os: ubuntu-latest
             target: aarch64-unknown-linux-gnu
-
+            slug: linux
     steps:
       - uses: actions/checkout@v4
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: "1.99.0"
+          toolchain: ${{ env.RUST_VERSION }}
           targets: ${{ matrix.target }}
 
       - name: Install cross-compilation tools (Linux aarch64)
         if: matrix.target == 'aarch64-unknown-linux-gnu'
         run: sudo apt-get update && sudo apt-get install -y gcc-aarch64-linux-gnu
 
-      - name: Cache cargo
-        uses: actions/cache@v4
+      - name: Restore cargo cache
+        id: cache
+        uses: actions/cache/restore@v4
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: ${{ runner.os }}-rust-1.99.0-cross-${{ matrix.target }}-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-rust-${{ env.RUST_VERSION }}-cross-${{ matrix.target }}-${{ hashFiles('**/Cargo.lock') }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-rust-${{ env.RUST_VERSION }}-cross-${{ matrix.target }}-${{ hashFiles('**/Cargo.lock') }}-
 
-      - name: Build compiler (host)
-        run: cargo build --release --locked -p nera
+      # After the cache restore, so the cache cannot replace the compiler.
+      - uses: ./.github/actions/fetch-compiler
+        with:
+          name: nera-build-${{ matrix.slug }}
 
       - name: Build runtime (target)
         run: cargo build --release --locked -p nera-runtime --target ${{ matrix.target }}
 
+      - name: Save cargo cache (main and manual runs only)
+        if: github.event_name != 'pull_request'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-rust-${{ env.RUST_VERSION }}-cross-${{ matrix.target }}-${{ hashFiles('**/Cargo.lock') }}-${{ github.sha }}
+
       - name: Cross-compile isolated test program and verify object format
         run: bash scripts/test-cross.sh "$GITHUB_WORKSPACE/target/release/nera" "${{ matrix.target }}"
+
+  vscode:
+    name: VS Code plugin
+    needs: changes
+    if: needs.changes.outputs.vscode == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Same steps and versions as release.yml.
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build VSIX
+        working-directory: editors/vscode-nera
+        run: |
+          npm install
+          npm run compile
+          npx @vscode/vsce package -o "vscode-nera-ci.vsix"
+
+  jetbrains:
+    name: JetBrains plugin
+    needs: changes
+    if: needs.changes.outputs.jetbrains == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Same steps and versions as release.yml.
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Build plugin
+        working-directory: editors/jetbrains-nera
+        env:
+          CI: true
+        run: ./gradlew buildPlugin
+
+  packaging:
+    name: Packaging trial (Linux x86_64)
+    needs: changes
+    if: needs.changes.outputs.packaging == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+
+      - name: Restore cargo cache
+        id: cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-rust-${{ env.RUST_VERSION }}-release-dist-${{ hashFiles('**/Cargo.lock') }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-rust-${{ env.RUST_VERSION }}-release-dist-${{ hashFiles('**/Cargo.lock') }}-
+
+      # Builds and tests the release archive exactly as release.yml does; publishes nothing.
+      - name: Build and package
+        run: ./scripts/dist.sh --version 0.0.0-ci --target x86_64-unknown-linux-gnu
+
+      - name: Test installed native archive
+        run: python3 scripts/test-dist.py dist/nera-0.0.0-ci-x86_64-unknown-linux-gnu.tar.gz
+
+      - name: Save cargo cache (main and manual runs only)
+        if: github.event_name != 'pull_request'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-rust-${{ env.RUST_VERSION }}-release-dist-${{ hashFiles('**/Cargo.lock') }}-${{ github.sha }}
+
+  result:
+    name: CI result
+    needs: [changes, rust, build, e2e, cowlib, thoas, poolboy, integration-macos, cross, vscode, jetbrains, packaging]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail if any job that started did not succeed
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+        run: |
+          python3 - <<'PY'
+          import json, os, sys
+          needs = json.loads(os.environ["NEEDS"])
+          bad = {k: v["result"] for k, v in needs.items() if v["result"] not in ("success", "skipped")}
+          for name, result in sorted(needs.items()):
+              print(f"{name}: {result['result']}")
+          if bad:
+              print(f"Not green: {bad}")
+              sys.exit(1)
+          PY

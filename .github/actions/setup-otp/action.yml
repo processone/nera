@@ -1,0 +1,9 @@
+name: Install BEAM reference
+description: Install the Erlang/OTP and rebar3 versions the comparisons are pinned to.
+runs:
+  using: composite
+  steps:
+    - uses: erlef/setup-beam@v1
+      with:
+        otp-version: '29.0.5'
+        rebar3-version: '3.27.0'

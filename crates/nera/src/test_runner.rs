@@ -19,6 +19,27 @@ pub struct TestOpts {
     pub no_warnings: bool,
     pub timeout: u64,
     pub jobs: usize,
+    /// Run only part `K` of `N` (1-based), see [`parse_shard`].
+    pub shard: Option<(usize, usize)>,
+}
+
+/// Parse a `K/N` shard selector with `1 <= K <= N`.
+pub fn parse_shard(text: &str) -> Result<(usize, usize), String> {
+    let bad = || format!("invalid shard '{}': expected K/N with 1 <= K <= N", text);
+    let (k, n) = text.split_once('/').ok_or_else(bad)?;
+    let k: usize = k.trim().parse().map_err(|_| bad())?;
+    let n: usize = n.trim().parse().map_err(|_| bad())?;
+    if k == 0 || k > n {
+        return Err(bad());
+    }
+    Ok((k, n))
+}
+
+/// Keep every `n`th item starting at the `k`th (1-based). Items are dealt
+/// round-robin so that each lands in exactly one part and neighbouring (often
+/// similarly slow) tests spread across parts.
+fn select_shard<T>(items: Vec<T>, (k, n): (usize, usize)) -> Vec<T> {
+    items.into_iter().enumerate().filter(|(i, _)| i % n == k - 1).map(|(_, t)| t).collect()
 }
 
 /// Run the test suite. Returns `Ok(())` on success, `Err("")` if any test failed.
@@ -50,6 +71,13 @@ pub fn run_tests(opts: &TestOpts) -> Result<(), Box<dyn std::error::Error>> {
     }
 
     tests.sort_by(|a, b| a.name.cmp(&b.name));
+    if let Some(shard) = opts.shard {
+        tests = select_shard(tests, shard);
+        if tests.is_empty() {
+            println!("No tests in shard {}/{}.", shard.0, shard.1);
+            return Ok(());
+        }
+    }
 
     // --list mode
     if opts.list {
@@ -726,6 +754,30 @@ fn format_duration(d: Duration) -> String {
 mod tests {
     use super::*;
     use std::fs;
+
+    #[test]
+    fn shards_cover_every_test_exactly_once() {
+        // CI splits `nera test` into parts; a test must never be dropped or doubled.
+        let names: Vec<String> = (0..466).map(|i| format!("t{i}")).collect();
+        for n in 1..=7 {
+            let mut seen: Vec<String> = Vec::new();
+            for k in 1..=n {
+                seen.extend(select_shard(names.clone(), (k, n)));
+            }
+            seen.sort();
+            let mut want = names.clone();
+            want.sort();
+            assert_eq!(seen, want, "n={n}");
+        }
+    }
+
+    #[test]
+    fn shard_selector_parses_only_valid_parts() {
+        assert_eq!(parse_shard("2/3"), Ok((2, 3)));
+        for bad in ["0/3", "4/3", "1", "a/b", "1/0", "/", "1/2/3"] {
+            assert!(parse_shard(bad).is_err(), "{bad}");
+        }
+    }
 
     #[cfg(unix)]
     #[test]
