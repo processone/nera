@@ -49,6 +49,26 @@ Two Nera defects stopped the run before these results:
   failed. Both directives now print depth-limited terms as OTP does;
   `tests/io_format_depth.erl` checks 38 BEAM results.
 
+**Intermittent hang and early exit.** Repeated native runs of `cow_cookie`
+then hung or exited early about once in 30 runs; untouched main with only the
+`filename:flatten/1` export hung 3 times in 80. Three scheduler races were the
+cause:
+
+- A sender cancelled the receiver's `receive ... after` timer after queueing
+  the receiver, which could already be in a later timed receive. That
+  receive then waited with no timer.
+- A timed receive registered its timer after publishing its wait, so a
+  late registration could replace the timer of the process's next receive.
+- The idle check counted a process whose exit cleanup was still running as
+  finished. A linked process waiting for its EXIT signal looked blocked, and
+  the program exited with status 0 before EUnit reported.
+
+Senders now leave the timer to the worker that runs the process, a wait
+registers its timer before it becomes visible, and the idle check waits for
+exit cleanup. Runtime unit tests replay each ordering and fail on the old
+code. After the fixes, 1,200 consecutive native `cow_cookie` runs pass: 600
+one at a time and 600 in four parallel loops.
+
 **Cookie attribute order.** The raw suite passes, including the
 `setcookie_test_` case that expects `Domain` before `HttpOnly` and failed on
 2.20.0. The project-owned `cookie_order_probe.erl`, built on its own, still

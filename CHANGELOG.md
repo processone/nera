@@ -14,6 +14,17 @@ All notable milestones for the nera project are documented in this file.
   the literal text `~W` or `~P`. EUnit's reporter passed that text to
   `io:fwrite/2` again and failed with `badarg` when it reported a cancelled
   test group.
+- A process in `receive ... after` could wait forever. A sender cancelled the
+  receiver's timer after queueing it, when the receiver could already be in a
+  later timed receive, and a late registration could replace a newer timer.
+  Senders now leave the timer to the worker that runs the process, and the
+  timer is registered before the wait becomes visible.
+- A program could exit with status 0 while a process that had just exited
+  still had to deliver its EXIT or DOWN signal. The idle check now waits for
+  exit cleanup to finish.
+- With these three scheduler fixes, the native `cow_cookie` run no longer
+  hangs or stops early: about 1 run in 30 did before, and 1,200 consecutive
+  runs pass after. Runtime unit tests replay each ordering.
 - The `filename_flatten` and `io_format_depth` fixtures run natively and on
   BEAM. The Cowlib harness takes `--pin 2.22.0` beside the default 2.20.0 pin.
 - Cowlib's date property still cannot run natively: `rand:uniform/1` is a
