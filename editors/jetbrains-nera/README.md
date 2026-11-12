@@ -1,7 +1,9 @@
 # Nera Erlang — JetBrains Plugin
 
 Language support for Erlang projects using the [nera](https://github.com/processone/nera) compiler.
-Works with IntelliJ IDEA (Community & Ultimate), CLion, and other JetBrains 2025.1+ IDEs.
+Works with commercial JetBrains IDEs 2025.3 or later, such as IntelliJ IDEA Ultimate,
+RustRover and CLion. The plugin uses the IDE's built-in LSP support and depends on the
+commercial-IDE module (`com.intellij.modules.ultimate`), so IntelliJ IDEA Community is not supported.
 
 ## Features
 
@@ -11,9 +13,8 @@ Works with IntelliJ IDEA (Community & Ultimate), CLion, and other JetBrains 2025
 
 ## Prerequisites
 
-- JetBrains IDE 2025.1 or later
+- A commercial JetBrains IDE, 2025.3 or later (build 253+)
 - Java 21+ (for building)
-- [LSP4IJ](https://plugins.jetbrains.com/plugin/23257-lsp4ij) plugin installed
 - `nera` binary on your `PATH` (or set the `NERA_PATH` environment variable)
 
 ## Build
@@ -27,9 +28,12 @@ The distributable ZIP is generated in `build/distributions/`.
 
 ## Install
 
-1. In your IDE go to **Settings → Plugins → ⚙️ → Install Plugin from Disk…**
-2. Select the ZIP from `build/distributions/`
-3. Restart the IDE
+1. Get the plugin ZIP: download `jetbrains-nera-<version>.zip` from the
+   [GitHub releases page](https://github.com/processone/nera/releases), or build it
+   (see above) and use the ZIP from `build/distributions/`.
+2. In your IDE go to **Settings → Plugins → ⚙️ → Install Plugin from Disk…**
+3. Select the ZIP
+4. Restart the IDE
 
 ## Development
 

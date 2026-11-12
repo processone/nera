@@ -3,11 +3,11 @@
 Updated **2026-11-12**. Nera is **experimental**. This page lists what does not
 work, what is unverified and what behaves differently from Erlang/OTP, so you
 can decide whether Nera fits before you try it. It is written for the first
-experimental prerelease and is revised with every one after it.
+release, `v0.1.0`, and is revised with every release after it.
 
 Nera is not a drop-in replacement for the BEAM. Everything here describes native
-compilation and execution. Passing `nera check`, or using the editor and MCP
-tools, does not mean a program runs.
+compilation and execution. Passing `nera check`, or using the editor plugins,
+does not mean a program runs.
 
 ## What "experimental" means
 
@@ -25,12 +25,12 @@ tools, does not mean a program runs.
 | Platform | State |
 | --- | --- |
 | macOS arm64 | Developed and tested here. All recorded results come from this platform. |
-| Linux x86-64 | Release archive builds in CI. **Native execution has not been rerun since 2026-10-12**, when CI was paused. Treat it as unverified until the release notes say it was verified. |
+| Linux x86-64 | Built and tested natively in CI, and the release job compiles and runs a program with the installed archive. The detailed results on this page come from macOS arm64. |
 | macOS x86-64, Linux arm64 | Cross-built only. Archives have never been executed. |
 | Windows x86-64 | Not in the release archives. The compiler does not link on Windows, and the archive was never executed. |
 
-The CI and Release workflows are paused until the repository is public. See
-[RELEASE.md](RELEASE.md).
+CI runs on pull requests, and the Release workflow builds and publishes each
+`v*` tag. See [RELEASE.md](RELEASE.md).
 
 ## Libraries and applications
 

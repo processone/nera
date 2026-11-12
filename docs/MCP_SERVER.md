@@ -1,5 +1,8 @@
 # nera MCP Server — Design Document
 
+**Status: planned.** This server is not built yet; the compiler has no
+`nera mcp` command.
+
 ## Motivation
 
 Large language models generate better code when they have access to
