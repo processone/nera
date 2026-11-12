@@ -16,7 +16,7 @@ repositories {
 dependencies {
     intellijPlatform {
         if (System.getenv("CI") != null) {
-            intellijIdeaUltimate("2025.1")
+            intellijIdeaUltimate("2025.2")
         } else {
             local("/Applications/RustRover.app/Contents")
         }
