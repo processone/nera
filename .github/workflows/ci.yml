@@ -60,8 +60,7 @@ jobs:
           ${{ github.workspace }}/target/release/nera build -o thoas_test
           ./thoas_test
 
-      - name: Install BEAM reference (Linux)
-        if: runner.os == 'Linux'
+      - name: Install BEAM reference
         uses: erlef/setup-beam@v1
         with:
           otp-version: '29.0.5'
