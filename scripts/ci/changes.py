@@ -11,7 +11,8 @@ Output: one `name=true|false` line per job, written to $GITHUB_OUTPUT when set
 and to stdout otherwise.
 
 Rules, first match wins:
-  * Documentation and sample trees start no job.
+  * Documentation and sample trees start no job, nor do the release target
+    file and its workflow.
   * A file that no rule names starts every job, so a new kind of file is
     never silently skipped.
   * Pushes to main and manual starts run every job (see `--event`).
@@ -64,6 +65,9 @@ EXACT_RULES = {
     "rust-toolchain.toml": COMPILER,
     "scripts/test-cross.sh": frozenset({"build", "cross"}),
     ".github/workflows/release.yml": PACKAGING,
+    # Release milestone: runs from main on its own; the target file is its input.
+    ".github/workflows/release-milestone.yml": NONE,
+    ".github/release-target.json": NONE,
     "scripts/dist.sh": PACKAGING,
     "scripts/test-dist.py": PACKAGING,
     "scripts/install-local.sh": PACKAGING,

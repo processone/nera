@@ -42,14 +42,40 @@ a real release once enabled. Verify its active state without a publication.
 Reactivation, visibility changes and publication are separate future actions;
 this pause does not authorize them.
 
+## Release target
+
+`.github/release-target.json` names the release being prepared, for example
+`{"milestone":"0.1.1"}`. It is the only place that version is written for this
+purpose. When a pull request opens, the **Release milestone** workflow
+(`.github/workflows/release-milestone.yml`, running
+`scripts/ci/assign_release_milestone.py`) puts it in the open GitHub milestone
+with that exact title. Milestone titles are bare versions (`0.1.1`); tags keep
+the `v` (`v0.1.1`).
+
+Rules:
+
+- The workflow runs from `main` on `pull_request_target` and never checks out
+  the pull request's code. It covers drafts, every base branch and forks.
+- It never creates a milestone. A target that is missing, closed, held by two
+  open milestones or unreadable fails the run. Create the milestone first.
+- A pull request that already has a milestone keeps it.
+- It acts only when a pull request opens. Pull requests opened earlier are not
+  moved: one still open when its release ships is moved by hand.
+- Editing the target file or the workflow starts no CI job.
+
 ## How to Create a Release
+
+0. Create the milestone for the version after this one (for example `0.1.2`
+   when releasing `0.1.1`), or reuse an open one. Leave it empty.
 
 1. Update version numbers in:
    - Root `Cargo.toml` (`[workspace.package].version`; the CLI inherits it)
    - `editors/vscode-nera/package.json`
    - `editors/jetbrains-nera/build.gradle.kts`
+   - `.github/release-target.json`: set it to the next milestone from step 0,
+     so pull requests opened after this commit go to the next release
 
-2. Commit the version bump:
+2. Commit the version bump and the new target together:
    ```bash
    git add -A
    git commit -m "Bump version to 0.2.0"
@@ -64,6 +90,9 @@ this pause does not authorize them.
 4. The release workflow runs automatically. Monitor progress at **Actions > Release** on GitHub.
 
 5. Once complete, a GitHub Release appears with all artifacts attached.
+
+6. Close the shipped milestone (`0.2.0`) on GitHub, and move any pull request
+   still open in it to the new target.
 
 ## Release Artifacts
 
