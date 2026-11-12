@@ -302,6 +302,11 @@ and a depth and replace what lies deeper with `...`, as OTP does: `[1,2|...]`
 for `[1,2,3,4,5]` at depth 3, `...` at depth 0 and the whole term at a negative
 depth. They differ only for maps, where `~W` follows `io_lib:write/2` and `~P`
 the pretty printer.
+`~w`, `~p`, `~W` and `~P` write atoms as OTP does: bare only when they start
+with a lowercase letter and hold only letters, digits, `_` and `@`, and are
+not reserved words; otherwise quoted, with escapes inside the quotes
+(`'EXIT'`, `'hello world'`, `'maybe'`, `'it\'s'`). Characters above 255 print
+as `\x{...}` unless `t` is given.
 Unicode string directives decode each binary independently as UTF-8, falling
 back to Latin-1 bytes for that entire binary if decoding fails. The `l` modifier
 accepts printable lists as numeric lists, as basic `~p` and `~P` already do.

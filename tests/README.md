@@ -383,6 +383,7 @@ These are automatically skipped by the runner and show up as SKIP in output.
 |---------------------|-------------------------------------|------------|
 | `io_format.erl`     | io:format with ~w, ~p, ~s, ~n       | ~5         |
 | `io_lib_format.erl` | io_lib:format/2 directives          | ~8         |
+| `io_format_atom_quoting.erl` | Atoms quoted as OTP writes them under ~w, ~p, ~W and ~P: uppercase, empty and punctuated names, reserved words, escapes, Latin-1 letters, characters above 255 with and without ~t, nesting, field widths; io:format output matches; also run on BEAM | 36 |
 | `io_concurrent.erl` | Concurrent io:format from processes | ~4         |
 | `file_io.erl`       | file:read_file/1, file:write_file/2 | ~6         |
 

@@ -2,6 +2,18 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Atoms print quoted under ~w and ~p
+
+- `io:format/2` and `io_lib:format/2` write atoms with single quotes where OTP
+  does, under `~w`, `~p`, `~W` and `~P`: `{'EXIT',bye}`, `'Foo'` and
+  `'hello world'` printed bare before, which do not read back as the same term.
+- Quotes follow OTP's rules: an atom stays bare only when it starts with a
+  lowercase letter, holds only letters, digits, `_` and `@`, and is not a
+  reserved word, so `'after'`, `'maybe'` and `'else'` are quoted too. Quotes,
+  backslashes and control characters are escaped, and characters above 255
+  print as `\x{...}` unless the `t` modifier is given.
+- The `io_format_atom_quoting` fixture runs natively and on BEAM.
+
 ## Message timers without a thread each
 
 - `erlang:send_after/3` and `erlang:start_timer/3` no longer start an OS
