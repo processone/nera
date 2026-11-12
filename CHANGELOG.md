@@ -2,6 +2,20 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## An invalid receive timeout raises only when the receive would wait
+
+- A `receive` whose `after` value is not a valid timeout (`infinity` or an
+  integer from 0 to 4294967295) now receives a matching message already in
+  the mailbox, as on BEAM: `self() ! x, receive X -> {got, X} after foo ->
+  tmo end` returns `{got, x}`. Previously the value was checked before the
+  mailbox scan, so this raised `timeout_value`.
+- When no message matches, the receive still raises `error:timeout_value`
+  at once, without waiting for a later message, and leaves the queued
+  messages in the mailbox. `try`, `catch` and an uncaught exit see the same
+  error as before.
+- The `receive_timeout_domain` fixture now asserts this order and runs
+  natively and on BEAM.
+
 ## rand can be seeded, with OTP 29's algorithms
 
 - `rand` is now OTP 29's module ported to Nera: `seed/1,2`, `seed_s/1,2`,

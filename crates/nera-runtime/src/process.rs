@@ -1077,6 +1077,11 @@ pub struct ProcessContext {
     pub(crate) base64_list_decode: Option<Box<crate::base64::ListDecoder>>,
     /// Explicit garbage_collect/0 waits for a full collection at the next safe point.
     pub(crate) full_gc_requested: bool,
+    /// The current receive's `after` value is not a valid timeout. Written by
+    /// every `receive ... after` when it starts and read only by that
+    /// receive's timeout check, which raises `timeout_value` once the mailbox
+    /// scan finds no match: a matching message is received first, as on BEAM.
+    pub(crate) receive_timeout_invalid: bool,
 }
 
 /// ProcessContext field offsets (source of truth for codegen/runtime ABI).
@@ -1160,6 +1165,7 @@ impl ProcessContext {
             native_work: None,
             base64_list_decode: None,
             full_gc_requested: false,
+            receive_timeout_invalid: false,
         }
     }
 }

@@ -777,6 +777,11 @@ impl IrBuilder {
     /// empty_block:
     ///   [check timeout → after_block | wait_block]
     /// ```
+    ///
+    /// An `after` value that is not a valid timeout raises `timeout_value`
+    /// from the timeout check in `empty_block`, as on BEAM: a matching
+    /// message already in the mailbox is received, and the receive raises only
+    /// when it would have to wait.
     pub(super) fn lower_expr_receive(
         &mut self,
         node: &ast::Expr,
@@ -797,14 +802,6 @@ impl IrBuilder {
                 CallTarget::Bif("receive_set_timeout".to_string()),
                 vec![timeout_var],
             ));
-            if let Some(&landing_pad) = self.try_exception_targets.last() {
-                let failed = self.fresh_var();
-                self.emit(Instruction::CheckException(failed));
-                let next = self.fresh_block_with_id();
-                self.set_terminator(Terminator::Branch(failed, landing_pad, next));
-                self.close_current_block();
-                self.start_block(next);
-            }
         }
 
         // Peek at the first message without removing it.
@@ -860,12 +857,22 @@ impl IrBuilder {
         // --- Empty block: no messages (or all scanned, none matched) ---
         self.start_block(empty_block);
         if let Some(ab) = after_block {
+            // Raises timeout_value for an invalid after value: nothing
+            // matched, so the receive would wait.
             let timed_out = self.fresh_var();
             self.emit(Instruction::Call(
                 timed_out,
                 CallTarget::Bif("receive_check_timeout".to_string()),
                 vec![],
             ));
+            if let Some(&landing_pad) = self.try_exception_targets.last() {
+                let failed = self.fresh_var();
+                self.emit(Instruction::CheckException(failed));
+                let next = self.fresh_block_with_id();
+                self.set_terminator(Terminator::Branch(failed, landing_pad, next));
+                self.close_current_block();
+                self.start_block(next);
+            }
             let wait_block = self.fresh_block_with_id();
             self.set_terminator(Terminator::Branch(timed_out, ab, wait_block));
             self.close_current_block();

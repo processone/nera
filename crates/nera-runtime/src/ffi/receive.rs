@@ -127,34 +127,47 @@ impl ReceiveTimeout {
     }
 }
 
-/// Validate the timeout before scanning any mailbox message.
+/// Set the deadline of a `receive ... after` before it scans the mailbox.
+///
+/// A value outside the timeout domain raises nothing here: as on BEAM, a
+/// matching message already in the mailbox is still received. The receive
+/// raises `timeout_value` from `nera_rt_receive_check_timeout`, once the scan
+/// finds no match and the receive would have to wait.
+///
+/// # Safety
+/// ctx must be null or a live, exclusively accessed ProcessContext. This call
+/// must not race execution or GC.
+#[no_mangle]
+pub unsafe extern "C" fn nera_rt_receive_set_timeout(ctx: *mut ProcessContext, timeout_term: u64) -> u64 {
+    let Some(ctx) = (unsafe { ctx.as_mut() }) else {
+        return ErlTerm::nil().0;
+    };
+    let timeout = ReceiveTimeout::from_term(ErlTerm(timeout_term));
+    ctx.receive_timeout_invalid = timeout.is_none();
+    ctx.receive_timeout_deadline = match timeout {
+        Some(after @ ReceiveTimeout::After(_)) => after.deadline_at(crate::timer::current_time_ms()),
+        Some(ReceiveTimeout::Infinite) | None => 0,
+    };
+    ErlTerm::nil().0
+}
+
+/// Check whether the receive timeout has expired, once the mailbox scan has
+/// found no matching message.
+/// Returns the atom `true` if the deadline has passed, `false` otherwise.
+/// Also clears the deadline when it has expired. An invalid `after` value
+/// raises `timeout_value` instead, so the receive never waits.
 ///
 /// # Safety
 /// ctx must be null or a live, exclusively accessed ProcessContext satisfying
 /// raise_error's trace invariants. This call must not race execution or GC.
 #[no_mangle]
-pub unsafe extern "C" fn nera_rt_receive_set_timeout(ctx: *mut ProcessContext, timeout_term: u64) -> u64 {
-    let Some(timeout) = ReceiveTimeout::from_term(ErlTerm(timeout_term)) else {
-        return super::helpers::raise_error(ctx, ErlTerm::atom(crate::atom_table::ATOM_TIMEOUT_VALUE).0);
-    };
-    if let Some(ctx) = ctx.as_mut() {
-        let now = match timeout {
-            ReceiveTimeout::Infinite => 0,
-            ReceiveTimeout::After(_) => crate::timer::current_time_ms(),
-        };
-        ctx.receive_timeout_deadline = timeout.deadline_at(now);
-    }
-    ErlTerm::nil().0
-}
-
-/// Check whether the receive timeout has expired.
-/// Returns the atom `true` if the deadline has passed, `false` otherwise.
-/// Also clears the deadline when it has expired.
-#[no_mangle]
 pub unsafe extern "C" fn nera_rt_receive_check_timeout(ctx: *mut ProcessContext) -> u64 {
     use crate::atom_table::{ATOM_TRUE, ATOM_FALSE};
     if ctx.is_null() {
         return ErlTerm::atom(ATOM_FALSE).0;
+    }
+    if unsafe { std::mem::take(&mut (*ctx).receive_timeout_invalid) } {
+        return super::helpers::raise_error(ctx, ErlTerm::atom(crate::atom_table::ATOM_TIMEOUT_VALUE).0);
     }
     let deadline = unsafe { (*ctx).receive_timeout_deadline };
     if deadline == 0 {
@@ -267,11 +280,16 @@ mod timeout_tests {
         assert_eq!(ReceiveTimeout::After(0).deadline_at(0), 1);
         assert_eq!(ReceiveTimeout::After(50).deadline_at(100), 150);
         assert_eq!(ReceiveTimeout::After(u32::MAX).deadline_at(u64::MAX), u64::MAX);
+
+        // An invalid value raises nothing when the receive starts, only from
+        // the timeout check that runs once the scan finds no match.
         let mut ctx = ProcessContext::new(crate::process::ProcessId::new(0));
-        ctx.receive_timeout_deadline = 123;
         // SAFETY: ctx is exclusively owned; default trace pointers are null.
         unsafe { nera_rt_receive_set_timeout(&mut ctx, ErlTerm::small_int(-1).0); }
-        assert_eq!(ctx.receive_timeout_deadline, 123);
+        assert_eq!(ctx.status, crate::process::STATUS_OK);
+        // SAFETY: as above.
+        unsafe { nera_rt_receive_check_timeout(&mut ctx); }
+        assert_eq!(ctx.status, crate::process::STATUS_EXCEPTION);
         assert_eq!(ctx.result, ErlTerm::atom(ATOM_TIMEOUT_VALUE).0);
     }
 }

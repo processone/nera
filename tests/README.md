@@ -331,6 +331,7 @@ These are automatically skipped by the runner and show up as SKIP in output.
 | `self_send.erl`             | Self-send message passing          | ~4         |
 | `selective_receive.erl`     | Selective receive (mailbox scan)   | ~6         |
 | `receive_after.erl`         | Receive with timeout               | ~4         |
+| `receive_timeout_domain.erl` | `after` values outside `infinity` and 0..4294967295: a matching queued message is received first, including selective receive and inside `try`; with no match, `error:timeout_value` at once, queued messages kept, no wait for a later sender, and as an uncaught exit; valid boundaries; also run on BEAM | Table-driven |
 | `receive_nil_message.erl`   | The message `[]` is received like any other: first, middle and last in the mailbox, `[]` patterns and guards, `after 0` and no `after`, selective receive skipping it, and a waiting process woken by it; later messages still arrive; also run on BEAM | ~21 |
 | `process_dict.erl`          | put/get/erase/get_keys             | ~10        |
 | `process_dict_exact_keys.erl` | put/get/erase exact numeric and compound keys, signed zeros, equal reconstructed keys, missing lookup/removal, replacement/erase returns, dictionary contents and direct/qualified/dynamic/fun calls; also run on BEAM | Table-driven |

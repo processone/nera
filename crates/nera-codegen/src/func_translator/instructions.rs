@@ -551,9 +551,10 @@ impl FuncTranslator {
                     builder.def_var(*var, final_ret);
                 }
 
-                // A timeout error must return before mailbox scanning can
-                // consume a message or overwrite exception status with wait.
-                if matches!(target, CallTarget::Bif(name) if name == "receive_set_timeout")
+                // An invalid receive timeout raises here, once the mailbox
+                // scan found no match; return before receive_wait can
+                // overwrite the exception status.
+                if matches!(target, CallTarget::Bif(name) if name == "receive_check_timeout")
                     && !is_try_protected {
                     self.emit_ffi_exception_check(module, builder, ctx_var)?;
                 }
