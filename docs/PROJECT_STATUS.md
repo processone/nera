@@ -22,10 +22,9 @@ public preview described in the rest of this record. Its gates:
 
 1. Cowlib builds cleanly with `nera check`. Done: Cowlib 2.22.0 checks with
    0 errors and builds natively; see [`examples/cowlib_demo`](../examples/cowlib_demo).
-2. Linux x86-64 is verified natively. In progress: the repository is public and
-   CI is enabled again, so this pull request runs the native Linux x86-64 checks
-   before the prerelease tag. No native Linux run existed between the pause on
-   2026-10-12 and this pull request.
+2. Linux x86-64 is verified natively. Done: the repository is public and CI is
+   enabled again; the native Linux x86-64 run on this pull request passed, after
+   the October 12 pause that had left no native Linux run since.
 3. Five wrong-result or hang bugs are fixed: atom ordering, a `[]` message read
    as an empty mailbox, garbage-collection crashes on deeply nested lists,
    `ets:new/2` with `named_table`, and `start_link` hanging when `init` crashes.
