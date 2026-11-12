@@ -72,6 +72,11 @@ class ChangeMapTest(unittest.TestCase):
         self.assertEqual(selected(["tests/integration/thoas/differential/runner.py"]), {"build", "thoas"})
         self.assertEqual(selected(["tests/integration/poolboy/nera.toml"]), {"build", "poolboy"})
 
+    def test_release_target_and_its_workflow_start_no_job(self):
+        # Intent: moving the next-release target must not cost a CI run.
+        self.assertEqual(selected([".github/release-target.json",
+                                   ".github/workflows/release-milestone.yml"]), set())
+
     def test_cross_script(self):
         self.assertEqual(selected(["scripts/test-cross.sh"]), {"build", "cross"})
 

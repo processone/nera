@@ -211,7 +211,8 @@ pull request changes need them:
 Documentation, examples and benchmarks start no job beyond the change map and
 CI result. A file that no rule names, and any change to `ci.yml`, the change
 map or its tests, starts every job; so does every push to `main` and every
-manual start. When you add a new kind of file or job, add its rule to
+manual start. The release target file and the **Release milestone** workflow
+are the exception: they start nothing. When you add a new kind of file or job, add its rule to
 `scripts/ci/changes.py` and a case to its test.
 
 Pull requests restore the Cargo caches saved by runs on `main` and save none.
@@ -311,7 +312,10 @@ Do not include AI or LLM co-author references, AI `Co-Authored-By` trailers, or 
 2. Make your changes
 3. Run and record the local validation above, including any known failures or missing coverage
 4. Add tests for new functionality
-5. Open a pull request with a clear description of the changes
+5. Open a pull request with a clear description of the changes. The
+   **Release milestone** workflow puts it in the milestone named by
+   `.github/release-target.json` within a minute; check that it did, and set
+   the milestone by hand if not (see [docs/RELEASE.md](docs/RELEASE.md#release-target))
 
 ### What Makes a Good Pull Request
 
