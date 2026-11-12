@@ -61,5 +61,6 @@ times faster once warm, with short binary parsers the widest gap. The HTTP/2
 machine check is left out of the loop because each native timer holds an OS
 thread until it fires (NERA-88).
 
-Not covered: Cowlib's own upstream test suites (see
-`tests/integration/cowlib`), Linux, and Cowboy.
+Cowlib's own `cow_cookie` and `cow_date` upstream suites run on this release in
+`tests/integration/cowlib`; its other upstream suites, Linux and Cowboy are not
+covered here.

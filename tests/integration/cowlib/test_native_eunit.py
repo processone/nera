@@ -182,6 +182,33 @@ horse_probe() -> unavailable_benchmark:run().
         self.assertNotIn('prop_http_date()', adapted)
         self.assertEqual(removed, ['day_name', 'prop_http_date', 'horse_date'])
 
+    def test_cookie_preparation_keeps_expiry_window_helper(self):
+        # Cowlib 2.22.0's Max-Age/Expires limit test calls this helper; the
+        # native cow_cookie suite did not compile while preparation dropped it.
+        helper = ('expiry_in_window(Got, Before, After) ->\n'
+                  '\tGotSecs = calendar:datetime_to_gregorian_seconds(Got),\n'
+                  '\tLow = calendar:datetime_to_gregorian_seconds(Before) + ?MAX_COOKIE_AGE,\n'
+                  '\tHigh = calendar:datetime_to_gregorian_seconds(After) + ?MAX_COOKIE_AGE,\n'
+                  '\tGotSecs >= Low andalso GotSecs =< High.\n')
+        body = ('expiry_probe_test() ->\n'
+                '\tNow = {{2026,1,1},{0,0,0}},\n'
+                '\tLimit = calendar:gregorian_seconds_to_datetime(calendar:datetime_to_gregorian_seconds(Now) + ?MAX_COOKIE_AGE),\n'
+                '\ttrue = expiry_in_window(Limit, Now, Now),\n'
+                '\tfalse = expiry_in_window(Now, Now, Now),\n'
+                '\tok.\n')
+        source = ('-module(cow_cookie).\n-export([probe_test/0]).\n-define(MAX_COOKIE_AGE, 34560000).\n'
+                  'probe_test() -> expiry_probe_test().\n-ifdef(TEST).\n'+body+helper+'horse_parse() -> horse:run().\n-endif.\n')
+        adapted, removed = native_source(source, 'cow_cookie')
+        self.assertEqual(removed, ['horse_parse'])
+        with tempfile.TemporaryDirectory() as directory:
+            file = Path(directory)/'cow_cookie.erl'
+            file.write_text(adapted)
+            built = subprocess.run(['erlc', '-o', directory, str(file)], capture_output=True, text=True)
+            self.assertEqual(built.returncode, 0, built.stdout+built.stderr)
+            result = subprocess.run(['erl', '+S', '1', '-noshell', '-pa', directory, '-eval',
+                                     'ok = cow_cookie:probe_test(), io:format("HELPER_OK~n"), halt().'], capture_output=True, text=True)
+            self.assertEqual((result.returncode, result.stdout), (0, 'HELPER_OK\n'), result.stderr)
+
     def test_completion_requires_exit_count_and_single_marker(self):
         # Reject ambiguous summaries and non-standalone markers without an external report.
         summary, marker = 'All 102 tests passed.', 'NATIVE_EUNIT_OK:cow_http'

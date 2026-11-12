@@ -196,4 +196,27 @@ class BeamBuildTests(unittest.TestCase):
             (ebin / 'cow_qs.beam').write_bytes(b'fixture')
             verify_beam_modules(ebin, ['cow_qs', 'cow_qs'])
 
+class PinTests(unittest.TestCase):
+    def test_cookie_date_pin_follows_the_release_the_example_builds(self):
+        # The cookie/date suites run on the Cowlib release examples/cowlib_demo uses.
+        import re
+        from runner import ROOT, PIN_FILES, load_pin
+        demo = (ROOT/'examples/cowlib_demo/nera.toml').read_text()
+        version = re.search(r'^cowlib = "([^"]+)"$', demo, re.M).group(1)
+        self.assertIn(version, PIN_FILES)
+        self.assertEqual(load_pin(version)['version'], version)
+
+    def test_pin_file_for_another_release_is_refused(self):
+        # A checkout is only accepted against the release that was asked for.
+        import json
+        import tempfile
+        from unittest import mock
+        import runner
+        with tempfile.TemporaryDirectory() as directory:
+            wrong = Path(directory)/'pin.json'
+            wrong.write_text(json.dumps(dict(runner.load_pin('2.20.0'))))
+            with mock.patch.dict(runner.PIN_FILES, {'2.22.0': str(wrong)}):
+                with self.assertRaisesRegex(ValueError, '2.22.0'):
+                    runner.load_pin('2.22.0')
+
 if __name__ == '__main__': unittest.main()

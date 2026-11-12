@@ -2,6 +2,23 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Cowlib 2.22.0 cookie and date upstream suites run natively
+
+- Cowlib 2.22.0's original `cow_cookie` and `cow_date` EUnit suites pass
+  through `nera test` with OTP's EUnit, 157/157 and 27/27 as on BEAM, with no
+  skipped or changed assertions. The Linux workflow runs both.
+- `filename:flatten/1` is exported, as in OTP. OTP's EUnit server calls it, so
+  native EUnit projects failed to build with "function `filename:flatten/1` is
+  not exported".
+- `~W` and `~P` print the term cut at the given depth, as OTP does, instead of
+  the literal text `~W` or `~P`. EUnit's reporter passed that text to
+  `io:fwrite/2` again and failed with `badarg` when it reported a cancelled
+  test group.
+- The `filename_flatten` and `io_format_depth` fixtures run natively and on
+  BEAM. The Cowlib harness takes `--pin 2.22.0` beside the default 2.20.0 pin.
+- Cowlib's date property still cannot run natively: `rand:uniform/1` is a
+  built-in that `rand:seed/2` does not control.
+
 ## ets:new/2 returns the name of a named table
 
 - `ets:new(Name, Options)` with `named_table` now returns `Name`, as on
