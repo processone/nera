@@ -133,7 +133,9 @@ jobs:
         working-directory: editors/jetbrains-nera
         run: |
           ZIP=$(ls build/distributions/*.zip | head -1)
-          mv "$ZIP" "build/distributions/jetbrains-nera-${{ steps.version.outputs.version }}.zip"
+          TARGET="build/distributions/jetbrains-nera-${{ steps.version.outputs.version }}.zip"
+          # Gradle may already name the archive with this version; mv then fails on the same file.
+          if [ "$ZIP" != "$TARGET" ]; then mv "$ZIP" "$TARGET"; fi
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
