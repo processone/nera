@@ -57,9 +57,11 @@ Speed, measured on an Apple M4 (shared machine, so treat as indicative; rerun
 | Peak memory footprint | 5.7 MB | 78 MB |
 
 Nera wins a single run because it starts in milliseconds; OTP's JIT is about 4
-times faster once warm, with short binary parsers the widest gap. The HTTP/2
-machine check is left out of the loop because each native timer holds an OS
-thread until it fires (NERA-88).
+times faster once warm, with short binary parsers the widest gap. The warm-loop
+row leaves out the HTTP/2 machine check: each call starts four 5 s timers, and
+at the time each pending native timer held an OS thread, so the loop aborted
+near 4,096 threads. Native timers no longer hold a thread, and
+`benchmarks/cowlib_bench.sh` now includes that check.
 
 Cowlib's own `cow_cookie` and `cow_date` upstream suites run on this release in
 `tests/integration/cowlib`; its other upstream suites, Linux and Cowboy are not

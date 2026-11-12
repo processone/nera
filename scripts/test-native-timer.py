@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-"""Measure how long a native `receive after N` waits before its output appears.
+"""Measure how long a native timer waits before its output appears.
 
-Each fixture prints a marker line just before it starts waiting, then prints a
-final line once the timeout has fired. The probe timestamps every stdout chunk
-as it arrives and reports the delay from the marker to the final line, minus
-the requested wait (the lateness). Startup, compilation and exit are excluded.
+The fixtures wait on `receive after N` or on an `erlang:start_timer/3`
+message; the runtime's timer thread fires both. Each fixture prints a marker
+line just before it starts waiting, then prints a final line once the timer
+has fired. The probe timestamps every stdout chunk as it arrives and reports
+the delay from the marker to the final line, minus the requested wait (the
+lateness). Startup, compilation and exit are excluded.
 
 On macOS every case also runs at utility and background priority (through
 taskpolicy), where the kernel may postpone ordinary timed waits by up to
@@ -49,6 +51,11 @@ FIXTURES = {
         'lists:foreach(fun(_) -> receive after 10 -> ok end end, lists:seq(1, 5)), '
         'io:format("loop done~n")',
         MARKER + "loop done\n", 50),
+    # A start_timer/send_after message, delivered by the same timer thread.
+    "start_timer": (
+        'io:format("waiting~n"), Ref = erlang:start_timer(37, self(), fired), '
+        'receive {timeout, Ref, fired} -> io:format("message done~n") end',
+        MARKER + "message done\n", 37),
 }
 
 
@@ -165,7 +172,7 @@ def main():
                     print(json.dumps(summary), flush=True)
     args.out.write_text(json.dumps(results, indent=2) + "\n")
     if failed:
-        raise SystemExit("FAIL: native receive timeout lateness exceeds budget")
+        raise SystemExit("FAIL: native timer lateness exceeds budget")
 
 
 if __name__ == "__main__":

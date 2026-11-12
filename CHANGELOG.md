@@ -2,6 +2,30 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Message timers without a thread each
+
+- `erlang:send_after/3` and `erlang:start_timer/3` no longer start an OS
+  thread per timer. Each pending timer kept a thread until it fired or was
+  cancelled. macOS allows 4,096 threads per process, so a program with
+  about 4,000 pending timers failed to start the next one and aborted (exit
+  status 134). Cowlib's HTTP/2 state machine starts two 5-second timers on
+  each side of a connection, so a loop of 3,000 client-server exchanges
+  aborted the program.
+- Pending timers now wait in one registry ordered by deadline. The runtime's
+  timer thread, which already ended `receive ... after` waits, delivers them.
+  A program holding 200,000 pending timers runs with the same 13 threads as
+  one holding none, and a Cowlib HTTP/2 exchange takes about 65 µs instead
+  of 280 µs.
+- On macOS that thread waits with the kqueue timer that fires on time at any
+  priority, so a 37 ms `start_timer` message is no longer 64 ms late at
+  utility priority and 82 ms late at background priority.
+- `cancel_timer/1,2` results are unchanged: the milliseconds left, or `false`
+  once the message is delivered. A cancellation that loses to a delivery
+  still returns only after the message is in the receiver's mailbox.
+- The `many_pending_timers` fixture holds 50,000 pending timers natively and
+  on BEAM. `scripts/test-native-timer.py` adds a `start_timer` case.
+  `benchmarks/cowlib_bench.sh` includes the HTTP/2 machine check again.
+
 ## erlang:max/2 and min/2 return an argument unchanged
 
 - `erlang:max/2` and `min/2` now return one of their two arguments

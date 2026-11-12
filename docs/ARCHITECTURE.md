@@ -213,7 +213,7 @@ src/
 ├── scheduler.rs      # Work-stealing N:M scheduler, timer wake, exit propagation
 ├── bif.rs            # Public BIF dispatch entry points
 ├── bigint.rs         # Arbitrary-precision integer support (num-bigint)
-├── timer.rs          # Min-heap timer wheel, nera-timer thread
+├── timer.rs          # Receive and message timers, nera-timer thread
 ├── entry.rs          # C-ABI entry point, function table, process setup
 ├── socket.rs         # Global socket registry (Arc<TcpStream/TcpListener>)
 ├── io_pool.rs        # I/O thread pool (file I/O; lazy-started)

@@ -856,7 +856,9 @@ Design considerations for the Rust implementation:
 
 ### 14.3 Timer Wheel (Implemented)
 
-Implemented as a min-heap (`BinaryHeap`) of `TimerEntry` with lazy cancellation via `pid_to_timer` map. A dedicated `nera-timer` thread sleeps until the next deadline, pops expired entries, and wakes processes. Its wait keeps wakes pending, so a timer inserted while it computes its sleep is not missed. On macOS the wait is a kqueue whose receive-deadline timer is marked `NOTE_CRITICAL`, so it fires on time even when macOS coalesces the timers of a utility- or background-priority process; other platforms use a condvar. `send_message` and `propagate_exit_signals` cancel timers when waking processes before their timeout fires.
+Implemented as a min-heap (`BinaryHeap`) of `TimerEntry` with lazy cancellation via `pid_to_timer` map. A dedicated `nera-timer` thread sleeps until the next deadline, pops expired entries, and wakes processes. Its wait keeps wakes pending, so a timer inserted while it computes its sleep is not missed. On macOS the wait is a kqueue whose deadline timer is marked `NOTE_CRITICAL`, so it fires on time even when macOS coalesces the timers of a utility- or background-priority process; other platforms use a condvar. A process woken before its timeout fires, by a message, an exit signal or a message timer, has its receive timer cancelled by the worker that runs it: by the time the waker could cancel it, the process may already be in a later timed receive.
+
+`erlang:send_after/3` and `erlang:start_timer/3` register message timers in a second registry (`timer/message.rs`): a `BTreeMap` ordered by nanosecond deadline, then registration order, and a map from the returned reference to its timer. The same `nera-timer` thread sleeps until the earlier of the two kinds of deadline and delivers due messages, so a pending message timer holds memory, not an OS thread. Cancellation removes the timer at once; a cancellation that loses to a delivery waits on that timer's lock until the message is published and its receiver woken.
 
 ### 14.4 Dirty Schedulers
 

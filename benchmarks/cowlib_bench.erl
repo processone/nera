@@ -24,11 +24,7 @@ warm(F, Until) ->
 timed(F, N) -> T0 = now_ns(), loop(F, N), (now_ns() - T0) div N.
 
 start() ->
-    %% http2_machine.request is left out: it starts pending 5 s timers on
-    %% every call, and native Nera keeps one OS thread per pending timer
-    %% (the program aborts near 4096 threads, NERA-88).
-    Checks = [C || {Name, _} = C <- cowlib_demo:checks(),
-                   Name =/= "http2_machine.request"],
+    Checks = cowlib_demo:checks(),
     Suite = fun() -> lists:foreach(fun({_, F}) -> F() end, Checks) end,
     warm(Suite, now_ns() + 1000000000),
     N = calib(Suite, 100000000),

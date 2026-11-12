@@ -244,8 +244,8 @@ Maintainers with OTP 29.0.4 installed can verify the catalogue with
 | universaltime/0     | ✅      | UTC date/time, whole seconds; direct and dynamic calls |
 | system_time/1       | ✅      | second, millisecond   |
 | monotonic_time/1    | ✅      | second, millisecond   |
-| send_after/3        | ✅      | Pending delivery keeps the scheduler alive |
-| start_timer/3       | ✅      | Pending delivery keeps the scheduler alive |
+| send_after/3        | ✅      | Pending delivery keeps the scheduler alive; no OS thread per pending timer |
+| start_timer/3       | ✅      | Pending delivery keeps the scheduler alive; no OS thread per pending timer |
 | cancel_timer/1,2    | ✅      | Cancels send_after/start_timer; async/info boolean options; already sent messages remain |
 | binary_part/3       | ✅      |                       |
 | process_info/2      | ✅      | Item atom or list; see notes below |
