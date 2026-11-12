@@ -240,7 +240,8 @@ python3 scripts/test-native-shutdown.py --out /path/to/shutdown-results.json
 This opt-in performance regression runs five real native programs 30 times each
 with the default scheduler count and with `NERA_SCHEDULERS=1`. It checks complete
 stdout and normal exit, and measures last stdout to exit, excluding startup and
-compilation. Each median must be at most 5 ms; p95, maximum and individual samples
+compilation. The packet demo's maps may list their keys in any order, since Nera
+orders atom keys by its own atom table; every key, value and line must match. Each median must be at most 5 ms; p95, maximum and individual samples
 are recorded. This is not a maximum-latency guarantee or a wall-clock unit gate.
 Run it without concurrent builds; investigate significant outliers rather than
 attributing them to load without evidence. Linux/Windows require native execution;
