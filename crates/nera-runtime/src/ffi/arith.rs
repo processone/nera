@@ -27,6 +27,74 @@ pub unsafe extern "C" fn nera_rt_math_sqrt(ctx: *mut ProcessContext, value: u64)
     with_ctx_heap(ctx, |heap| heap.alloc_float(number.sqrt()).0)
 }
 
+/// A float result of a C math function, or `badarith` when it is infinite or
+/// NaN, as OTP's math module raises for overflow and domain errors.
+unsafe fn math_result(ctx: *mut ProcessContext, result: f64) -> u64 {
+    if !result.is_finite() {
+        return raise_badarith(ctx);
+    }
+    with_ctx_heap(ctx, |heap| heap.alloc_float(result).0)
+}
+
+/// A math argument as a float: nonnumbers raise `badarg`; numbers outside the
+/// float range raise `badarith`, as on OTP.
+unsafe fn math_argument(term: ErlTerm) -> Result<f64, bool> {
+    if !is_numeric(term) {
+        return Err(false);
+    }
+    match extract_numeric(term) {
+        Some(number) if number.is_finite() => Ok(number),
+        _ => Err(true),
+    }
+}
+
+unsafe fn raise_math_argument(ctx: *mut ProcessContext, arithmetic: bool) -> u64 {
+    if arithmetic { raise_badarith(ctx) } else { raise_badarg(ctx) }
+}
+
+/// math:exp/1 — e raised to a number, as a float.
+///
+/// # Safety
+/// The context must be live and exclusively accessible, with a valid process
+/// heap. Boxed input storage must remain live and unmoved for this call.
+#[no_mangle]
+pub unsafe extern "C" fn nera_rt_math_exp(ctx: *mut ProcessContext, value: u64) -> u64 {
+    match math_argument(ErlTerm(value)) {
+        Ok(number) => math_result(ctx, number.exp()),
+        Err(arithmetic) => raise_math_argument(ctx, arithmetic),
+    }
+}
+
+/// math:log/1 — the natural logarithm of a positive number, as a float.
+///
+/// # Safety
+/// The context must be live and exclusively accessible, with a valid process
+/// heap. Boxed input storage must remain live and unmoved for this call.
+#[no_mangle]
+pub unsafe extern "C" fn nera_rt_math_log(ctx: *mut ProcessContext, value: u64) -> u64 {
+    match math_argument(ErlTerm(value)) {
+        Ok(number) => math_result(ctx, number.ln()),
+        Err(arithmetic) => raise_math_argument(ctx, arithmetic),
+    }
+}
+
+/// math:pow/2 — X raised to Y, both coerced to floats, as C's pow().
+///
+/// # Safety
+/// The context must be live and exclusively accessible, with a valid process
+/// heap. Boxed input storage must remain live and unmoved for this call.
+#[no_mangle]
+pub unsafe extern "C" fn nera_rt_math_pow(ctx: *mut ProcessContext, base: u64, exponent: u64) -> u64 {
+    let (base, exponent) = (ErlTerm(base), ErlTerm(exponent));
+    if !is_numeric(base) || !is_numeric(exponent) {
+        return raise_badarg(ctx);
+    }
+    match (math_argument(base), math_argument(exponent)) {
+        (Ok(x), Ok(y)) => math_result(ctx, x.powf(y)),
+        _ => raise_badarith(ctx),
+    }
+}
+
 /// Arithmetic add: int+int -> int, float+float -> float, int+float / float+int -> float.
 #[no_mangle]
 pub unsafe extern "C" fn nera_rt_add(ctx: *mut ProcessContext, a: u64, b: u64) -> u64 {
