@@ -2,6 +2,34 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## rand can be seeded, with OTP 29's algorithms
+
+- `rand` is now OTP 29's module ported to Nera: `seed/1,2`, `seed_s/1,2`,
+  `export_seed/0`, `export_seed_s/1`, `uniform/0,1`, `uniform_s/1,2`,
+  `uniform_real/0`, `uniform_real_s/1`, `bytes/1`, `bytes_s/2`, `normal/0,2`,
+  `normal_s/1,3`, `shuffle/1`, `shuffle_s/2`, `jump/0,1` and the `mwc59` and
+  `splitmix64` utilities, for every OTP algorithm. A seed gives the same
+  numbers, states and errors as on OTP 29. Before, `rand:uniform/1` was a
+  runtime built-in that no seed controlled, and no other rand function
+  existed.
+- `math:exp/1`, `math:log/1` and `math:pow/2` are available, raising `badarg`
+  and `badarith` as OTP does. rand's normal and real draws call them.
+- `trunc/1`, `round/1`, `ceil/1` and `floor/1` return the exact integer for
+  floats beyond 2^63 in magnitude; they returned 2^63 - 1 or -2^63. rand's
+  `exs64`, `exsplus` and `exs1024` algorithms depend on it for large ranges.
+- Every program compiles the stdlib modules, so this one has a cost: on an
+  Apple silicon Mac, a trivial program takes about 0.1 s longer to build, and
+  its executable grows from 3.8 MB to 4.3 MB. `rand:uniform(100)` takes about
+  145 ns instead of 24 ns. A normal draw takes about 2 µs (37 ns on BEAM),
+  because each draw rebuilds its 256-entry lookup table: Nera has no constant
+  literal storage.
+- The `rand_regression`, `math_exp_log_pow` and `float_integer_large` fixtures
+  run natively and on BEAM. `scripts/generate-rand-regression.escript`
+  regenerates rand's expected values on OTP 29.
+- Cowlib 2.22.0's seeded date property now runs natively: PropEr's
+  `rand:seed/2` controls the draws, and 6,000 trials per engine give the
+  same traces natively and on BEAM.
+
 ## Atoms print quoted under ~w and ~p
 
 - `io:format/2` and `io_lib:format/2` write atoms with single quotes where OTP
