@@ -219,7 +219,7 @@ on:
 
 jobs:
   fuzz:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
       matrix:
@@ -231,11 +231,11 @@ jobs:
           - { crate: nera-runtime, name: fuzz_bifs }
           - { crate: nera-runtime, name: fuzz_gc }
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@nightly
       - run: cargo install cargo-fuzz
       - name: Restore corpus
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: crates/${{ matrix.target.crate }}/fuzz/corpus/${{ matrix.target.name }}
           key: fuzz-corpus-${{ matrix.target.crate }}-${{ matrix.target.name }}-${{ github.sha }}
@@ -248,7 +248,7 @@ jobs:
             -max_len=8192
       - name: Upload artifacts on failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: crash-${{ matrix.target.crate }}-${{ matrix.target.name }}
           path: crates/${{ matrix.target.crate }}/fuzz/artifacts/${{ matrix.target.name }}/
