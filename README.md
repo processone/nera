@@ -3,9 +3,9 @@
 nera compiles Erlang source files to standalone native binaries — no BEAM VM
 required.
 
-**Experimental software (2026-11-12).** Nera is being prepared for an
-experimental first release, `v0.1.0`. It is developed and tested on macOS arm64
-and Linux x86-64; Cowboy, TLS, distributed Erlang and hot upgrades do not work.
+**Experimental software (2026-11-12).** `v0.1.0` is Nera's first experimental
+release. It is developed and tested on macOS arm64 and Linux x86-64; Windows
+does not work yet, and Cowboy, TLS, distributed Erlang and hot upgrades do not work.
 Read the [known limits](docs/KNOWN_LIMITS.md) before relying on it, and see the
 [current project status](docs/PROJECT_STATUS.md) for the evidence. It stays
 experimental until 1.0. Later suffixed tags, such as `vX.Y.Z-experimental`, are
@@ -39,10 +39,10 @@ enforcement and the component remain planned capabilities.
 - **No bytecode** — nera is an ahead-of-time (AOT) compiler. Erlang source →
   Cranelift IR → native machine code. There is no interpreter, no bytecode,
   no JIT. The output is a regular native executable.
-- **AI tooling** — an **MCP server** (`nera mcp`) exposes project symbols,
-  cross-module references and structured compiler diagnostics to coding
-  assistants. These tools provide a feedback loop; generated code still needs
-  compilation, testing and review.
+- **AI tooling (planned)** — an **MCP server** that would expose project
+  symbols, cross-module references and structured compiler diagnostics to
+  coding assistants is designed but not built yet; there is no `nera mcp`
+  command in this release.
 
 ## Using nera with the BEAM compiler
 
@@ -58,11 +58,12 @@ faster feedback loop on your existing Erlang codebase. nera understands standard
 OTP project layouts and rebar3 dependency directories out of the box, so setup is
 minimal.
 
-### MCP Server — AI-Native Tooling
+### MCP Server — planned
 
-nera ships an MCP (Model Context Protocol) server that gives AI coding assistants
-direct access to the compiler's project understanding. While the LSP serves human
-developers through editors, the MCP server is purpose-built for AI:
+An MCP (Model Context Protocol) server for AI coding assistants is planned but
+not built yet: this release has no `nera mcp` command. It would give assistants
+direct access to the compiler's project understanding, as the LSP does for human
+developers in editors. The design proposes these tools:
 
 - **`nera/check`** — structured diagnostics with error codes, locations, and
   severity, so the AI can fix issues precisely instead of guessing from text output.
@@ -73,10 +74,9 @@ developers through editors, the MCP server is purpose-built for AI:
 - **`nera/references`** — all callers of a function across the project.
 - **`nera/format`** — format generated code before returning it to the user.
 
-The MCP interface makes Nera's project analysis available independently of an
-editor. It complements existing Erlang tooling; it is not a claim of exclusive
-semantic-analysis capabilities. The formatting endpoint uses the same formatter
-and regression coverage as the CLI; see the project status for validation limits.
+The MCP interface would make Nera's project analysis available independently of
+an editor. It would complement existing Erlang tooling; it is not a claim of
+exclusive semantic-analysis capabilities.
 
 See [`docs/MCP_SERVER.md`](docs/MCP_SERVER.md) for the full design document.
 
@@ -430,7 +430,9 @@ Supported targets (all 64-bit):
 | `x86_64-apple-darwin`       | macOS   | x86_64 |
 | `x86_64-unknown-linux-gnu`  | Linux   | x86_64 |
 | `aarch64-unknown-linux-gnu` | Linux   | arm64  |
-| `x86_64-pc-windows-msvc`    | Windows | x86_64 |
+
+Windows (`x86_64-pc-windows-msvc`) does not work yet: the compiler does not
+link there, and releases include no Windows archive.
 
 Use `--linker` to override the linker command for custom toolchains (e.g.,
 `zig cc`, Android NDK, iOS SDK).
@@ -574,13 +576,44 @@ disable automatic inclusion.
 
 ## Installation
 
-### Experimental prerelease archives
+### Release archives
 
-Once published, each experimental prerelease is a GitHub prerelease with one
-archive per platform. Download the archive for your platform, then follow the
-[tarball steps](#distributable-tarball) below. Check the
-[known limits](docs/KNOWN_LIMITS.md) first: macOS arm64 is the platform tested
-most; the other platforms are unverified.
+Each release on the [GitHub releases page](https://github.com/processone/nera/releases)
+has one archive per platform:
+
+| Archive                                           | Platform                              |
+|---------------------------------------------------|---------------------------------------|
+| `nera-<version>-aarch64-apple-darwin.tar.gz`      | macOS arm64 (tested)                  |
+| `nera-<version>-x86_64-unknown-linux-gnu.tar.gz`  | Linux x86-64 (tested)                 |
+| `nera-<version>-x86_64-apple-darwin.tar.gz`       | macOS x86-64 (cross-built, never run) |
+| `nera-<version>-aarch64-unknown-linux-gnu.tar.gz` | Linux arm64 (cross-built, never run)  |
+
+There is no Windows archive: Nera does not work on Windows yet. Check the
+[known limits](docs/KNOWN_LIMITS.md) first, then extract the archive and add its
+`bin/` directory to your `PATH`:
+
+```bash
+tar xzf nera-0.1.0-aarch64-apple-darwin.tar.gz
+export PATH="$(pwd)/nera-0.1.0-aarch64-apple-darwin/bin:$PATH"
+```
+
+`v0.1.0` is a full GitHub release that stays experimental until 1.0. Later tags
+with a suffix, such as `v0.2.0-experimental`, are published as prereleases.
+
+### Editor plugins from a release
+
+Each release also includes the editor plugins:
+
+- **VS Code** — `vscode-nera-<version>.vsix`. Install it with
+  `code --install-extension vscode-nera-<version>.vsix`. See
+  [`editors/vscode-nera`](editors/vscode-nera/README.md).
+- **JetBrains** — `jetbrains-nera-<version>.zip`. Install it from
+  **Settings → Plugins → ⚙ → Install Plugin from Disk…**. It needs a commercial
+  JetBrains IDE (such as IntelliJ IDEA Ultimate, RustRover or CLion), version
+  2025.3 or later. See [`editors/jetbrains-nera`](editors/jetbrains-nera/README.md).
+
+Both plugins need the `nera` binary on your `PATH`, or its path in the plugin
+settings.
 
 ### Local install
 
@@ -619,11 +652,6 @@ Options:
 --prefix <dir>   Install to a custom prefix (default: ~/.local)
 --debug          Use debug build instead of release
 ```
-
-### Distributable tarball
-
-For distributing to other machines, use `scripts/dist.sh` to produce a
-relocatable tarball.
 
 ### Building from source
 

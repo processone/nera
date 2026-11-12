@@ -2,7 +2,7 @@
 
 ## Overview
 
-**Experimental prereleases only (2026-11-12).** Read
+**Experimental releases only (2026-11-12).** Read
 [PROJECT_STATUS.md](PROJECT_STATUS.md) and [KNOWN_LIMITS.md](KNOWN_LIMITS.md)
 before tagging. The first release is `v0.1.0`, published as a full GitHub
 release (the tag has no suffix, so the workflow does not mark it as a
@@ -12,22 +12,10 @@ prereleases. The packaging repair adds native installed-
 archive smoke tests, but the tag workflow still does not run the full test
 suite. Packaging success is not release validation.
 
-**Private CI pause (2026-10-12):** GitHub workflows **CI** (238094760) and
-**Release** (254806391) are `disabled_manually` until Nera becomes open source.
-Their definitions remain intact. During the pause, PRs do not start new CI runs,
-and version tags do not automatically build archives, package plugins or
-publish releases. Do not rerun historical runs or add new active workflows.
-Existing runs are not cancelled, and stored caches/artifacts can still cost
-money. Permissions, protections and publication readiness are unchanged.
-
-Use the [local validation and independent-review gate](../CONTRIBUTING.md#temporary-private-ci-pause)
-on the exact proposed revision before any merge; declare known failures and
-missing platform coverage. This pause is not release validation or permission
-to publish. The procedure below applies only after deliberate reactivation.
-
-When enabled, the GitHub Actions Release workflow runs for version tags
-(e.g. `v0.1.0`): binary builds for 5 platforms, IDE plugin packaging, and GitHub
-Release creation.
+**CI and Release are active.** The private CI pause (2026-10-12) ended when
+the repository went public. Pull requests run CI, and every `v*` tag runs the
+Release workflow: binary builds for 4 platforms (no Windows yet), IDE plugin
+packaging, and GitHub Release creation.
 
 ## Resuming Workflows After Going Public
 
