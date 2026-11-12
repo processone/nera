@@ -50,9 +50,9 @@ platform and scope.
 - **Cowlib:** 2.22.0 builds and runs natively. `nera check` reports no errors
   and the [`examples/cowlib_demo`](../examples/cowlib_demo) project makes 85
   calls across all 25 modules without an exception. Its output matches OTP
-  except for map iteration order: Nera appears to iterate small maps in
-  insertion order, so `Set-Cookie` attributes, HTTP/2 pseudo-headers and
-  SETTINGS frames come out in another order. Two atoms also print without
+  except for map iteration order: Cowlib walks atom-keyed maps, and Nera orders
+  atom keys differently from OTP, so `Set-Cookie` attributes and HTTP/2
+  pseudo-headers come out in another byte order (equivalent when sorted). Two atoms also print without
   quotes. On the earlier 2.20.0 pin, `cow_cookie` failed one upstream
   assertion for the same reason. Cowlib's upstream suites have not been rerun
   on 2.22.0.
