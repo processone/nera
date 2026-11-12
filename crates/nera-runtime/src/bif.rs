@@ -1427,6 +1427,153 @@ unsafe fn format_boxed(term: ErlTerm) -> String {
     }
 }
 
+/// Format a term with a depth limit, as `~W` (`pretty = false`) or `~P`
+/// (`pretty = true`) do. A negative depth is unlimited. Terms deeper than
+/// the limit become `...`, following OTP's `io_lib:write/2` for `~W` and
+/// `io_lib_pretty` for `~P`; the two differ only for maps. Leaves use
+/// `format_term`, so `~P` shares `~p`'s rendering (no strings or line
+/// breaks).
+/// # Safety
+/// Source graphs obey the enclosing BIF live, immutable, unmoved input contract.
+pub(crate) unsafe fn format_term_limited(term: ErlTerm, depth: i64, pretty: bool) -> String {
+    let mut out = String::new();
+    write_limited(&mut out, term, depth, pretty);
+    out
+}
+
+/// # Safety
+/// Source graphs obey the enclosing BIF live, immutable, unmoved input contract.
+unsafe fn write_limited(out: &mut String, term: ErlTerm, depth: i64, pretty: bool) {
+    if depth == 0 {
+        out.push_str("...");
+        return;
+    }
+    let below = depth.saturating_sub(1);
+    if let Some(cell) = term.as_cons_ptr() {
+        if depth == 1 {
+            out.push_str("[...]");
+            return;
+        }
+        out.push('[');
+        write_limited(out, (*cell).head, below, pretty);
+        let (mut tail, mut d) = ((*cell).tail, below);
+        loop {
+            if tail.is_nil() {
+                break;
+            }
+            if d == 1 {
+                out.push_str("|...");
+                break;
+            }
+            if let Some(next) = tail.as_cons_ptr() {
+                out.push(',');
+                write_limited(out, (*next).head, d.saturating_sub(1), pretty);
+                tail = (*next).tail;
+                d = d.saturating_sub(1);
+            } else {
+                out.push('|');
+                write_limited(out, tail, d.saturating_sub(1), pretty);
+                break;
+            }
+        }
+        out.push(']');
+        return;
+    }
+    let Some(ptr) = term.as_boxed_ptr() else {
+        out.push_str(&format_term(term));
+        return;
+    };
+    let header = BoxedHeader(*ptr);
+    let arity = header.arity() as usize;
+    match header.subtype() {
+        BOXED_TUPLE if arity > 0 => {
+            if depth == 1 {
+                out.push_str("{...}");
+                return;
+            }
+            out.push('{');
+            write_limited(out, ErlTerm(*ptr.add(1)), below, pretty);
+            let mut d = below;
+            for i in 1..arity {
+                if d == 1 {
+                    out.push_str(",...");
+                    break;
+                }
+                out.push(',');
+                write_limited(out, ErlTerm(*ptr.add(1 + i)), d.saturating_sub(1), pretty);
+                d = d.saturating_sub(1);
+            }
+            out.push('}');
+        }
+        BOXED_MAP if arity > 0 => {
+            if depth == 1 {
+                out.push_str(if pretty { "#{...}" } else { "#{}" });
+                return;
+            }
+            out.push_str("#{");
+            // Each association is written one level down, and each costs
+            // one level of `left`. io_lib_pretty prints `,...` only when an
+            // association remains; io_lib:write also prints it when the
+            // count reaches 1 with nothing left.
+            let order = crate::ffi::compare::map_iteration_order(ptr, arity);
+            let mut left = depth;
+            let mut cut = false;
+            for (n, &i) in order.iter().enumerate() {
+                if left == 1 {
+                    cut = true;
+                    break;
+                }
+                if n > 0 {
+                    out.push(',');
+                }
+                write_limited(out, ErlTerm(*ptr.add(1 + i * 2)), below, pretty);
+                out.push_str(" => ");
+                write_limited(out, ErlTerm(*ptr.add(2 + i * 2)), below, pretty);
+                left = left.saturating_sub(1);
+            }
+            if cut || (!pretty && left == 1) {
+                out.push_str(",...");
+            }
+            out.push('}');
+        }
+        BOXED_BINARY | BOXED_REFC_BINARY if arity > 0 => {
+            let bit_count = arity;
+            let byte_len = bit_count.div_ceil(8);
+            let bytes: &[u8] = if header.subtype() == BOXED_BINARY {
+                std::slice::from_raw_parts(ptr.add(1) as *const u8, byte_len)
+            } else {
+                let data = &*(*ptr.add(REFC_BINARY_PTR_WORD_INDEX) as *const BinaryData);
+                let offset = *ptr.add(REFC_BINARY_OFFSET_WORD_INDEX) as usize;
+                &data[offset..offset + byte_len]
+            };
+            // Whole bytes, then the trailing bits as Value:Size. Each element
+            // costs one level; `...` replaces the rest once one level is left.
+            let full = bit_count / 8;
+            let trailing = bit_count % 8;
+            let units = full + usize::from(trailing > 0);
+            out.push_str("<<");
+            let mut d = depth;
+            for unit in 0..units {
+                if d == 1 {
+                    out.push_str("...");
+                    break;
+                }
+                if unit < full {
+                    out.push_str(&bytes[unit].to_string());
+                } else {
+                    out.push_str(&format!("{}:{}", bytes[full] >> (8 - trailing), trailing));
+                }
+                if unit + 1 < units {
+                    out.push(',');
+                }
+                d = d.saturating_sub(1);
+            }
+            out.push_str(">>");
+        }
+        _ => out.push_str(&format_term(term)),
+    }
+}
+
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------

@@ -8,7 +8,7 @@ import re
 import shutil
 import subprocess
 import sys
-from runner import HERE, ROOT, HTTP_DEPENDENCIES, external_workdir, sha, cookie_attributes
+from runner import HERE, ROOT, HTTP_DEPENDENCIES, PIN_FILES, DEFAULT_PIN, load_pin, external_workdir, sha, cookie_attributes
 from upstream_http import adapt_source, functional_inventory
 from upstream_cookie_date import PROPER_COMMIT
 
@@ -83,7 +83,9 @@ def native_source(source, module):
     # Preserve the original fragmentation helpers, including every clause.
     helpers = {'cow_http_te': ('dripfeed', 'do_body_to_chunks'),
                'cow_hpack': ('encode_indexed_names', 'dyn_field_names'),
-               'cow_http2_machine': ('collect_timeout_messages',)}.get(module, ())
+               'cow_http2_machine': ('collect_timeout_messages',),
+               # Cowlib 2.22.0's Max-Age/Expires limit test calls it.
+               'cow_cookie': ('expiry_in_window',)}.get(module, ())
     adapted, removed = adapt_source(source, module, test_helpers=helpers)
     adapted = adapted.replace(f'-module({module}).',
         f'-module({module}).\n-compile({{parse_transform,eunit_autoexport}}).', 1)
@@ -96,13 +98,15 @@ def main():
         parser.add_argument('--'+name, type=Path, required=True)
     parser.add_argument('--modules', nargs='+', choices=SUPPORTED_SUITES,
                         default=DEFAULT_SUITES, help='functional EUnit suites (default: HTTP)')
+    parser.add_argument('--pin', choices=sorted(PIN_FILES), default=DEFAULT_PIN,
+                        help='Cowlib pin the --upstream checkout must match (default: '+DEFAULT_PIN+')')
     args = parser.parse_args()
     modules = list(dict.fromkeys(args.modules))
     work = external_workdir(args.work_dir)
     work.mkdir(parents=True, exist_ok=True)
     upstream, proper, nera, eunit, tree = (p.resolve() for p in
         (args.upstream, args.proper, args.nera, args.eunit, args.gb_trees))
-    pin = json.loads((HERE / 'upstream.json').read_text())
+    pin = load_pin(args.pin)
     report = {'status': 'failed', 'scope': 'Project nera test with external OTP EUnit; Functional tests only; properties are validated separately.',
               'modules': {}, 'commands': [], 'upstream': pin}
     env = {k:v for k,v in os.environ.items() if k not in ('ERL_FLAGS', 'ERL_AFLAGS', 'ERL_ZFLAGS', 'ERL_LIBS', 'EUNIT')}
@@ -138,7 +142,7 @@ def main():
         if not (eunit/'src/eunit.erl').is_file() or not tree.is_file():
             raise ValueError('OTP source distribution required')
         report['harness_sources'] = {name:sha(HERE/name) for name in
-            ('native_eunit.py', 'upstream_http.py', 'upstream_cookie_date.py', 'runner.py', 'upstream.json')}
+            ('native_eunit.py', 'upstream_http.py', 'upstream_cookie_date.py', 'runner.py', PIN_FILES[args.pin])}
         report['cowlib_sources'] = {str(p.relative_to(upstream)):sha(p)
             for folder in ('src', 'include') for p in sorted((upstream/folder).rglob('*'))
             if p.is_file() and p.suffix in ('.erl', '.hrl')}

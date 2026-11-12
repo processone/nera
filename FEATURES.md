@@ -287,7 +287,8 @@ Supported format directives: `~w` (write term), `~p` (basic term rendering),
 `~tw`/`~tp` (Unicode term modifiers), `~d` (legacy decimal extension),
 `~b`/`~B` (integer with optional radix), `~x`/`~X` (integer with supplied
 prefix), `~+`/`~#` (integer with radix prefix), `~f`/`~e`/`~g` (float),
-`~c`/`~tc` (character), `~n` (newline), `~~` (tilde) and `~i` (ignore).
+`~c`/`~tc` (character), `~W`/`~P` (depth-limited `~w`/`~p`), `~n`
+(newline), `~~` (tilde) and `~i` (ignore).
 
 `io:format/2`, `io:fwrite/2` and `io_lib:format/2` share field parsing:
 `~F.P.PadControl` accepts literal fields or `*` arguments, including negative
@@ -296,13 +297,15 @@ truncate/pad; floats use decimal precision and BEAM-style rounding (six digits
 by default). For example, `~.3f` prints `0.019` for `0.019`, while `~5w ~w`
 prints `    a b` for `[a,b]`. Malformed fields and missing/extra arguments raise
 `badarg` before stdout output. `~p` fields consume their arguments but do not
-implement pretty-printer line wrapping/indentation. `~P`/`~W` still render
-literal placeholders, consuming the value and depth so existing EUnit failure
-reporting can complete; depth-limited rendering remains unsupported.
+implement pretty-printer line wrapping/indentation. `~W` and `~P` take a term
+and a depth and replace what lies deeper with `...`, as OTP does: `[1,2|...]`
+for `[1,2,3,4,5]` at depth 3, `...` at depth 0 and the whole term at a negative
+depth. They differ only for maps, where `~W` follows `io_lib:write/2` and `~P`
+the pretty printer.
 Unicode string directives decode each binary independently as UTF-8, falling
 back to Latin-1 bytes for that entire binary if decoding fails. The `l` modifier
-accepts printable lists as numeric lists, as basic `~p` already does; `~P`
-remains a placeholder. The `k` and `K` map-order modifiers are accepted, and `K`
+accepts printable lists as numeric lists, as basic `~p` and `~P` already do.
+The `k` and `K` map-order modifiers are accepted, and `K`
 consumes its order argument, but neither changes map output order yet.
 The separate `error_logger` renderer is unchanged.
 
@@ -460,6 +463,7 @@ numbers raise `badarith`. This does not imply other `math` APIs are supported.
 | Function | Status | Notes |
 |----------|--------|-------|
 | extension/1 | ✅ | Project-owned Erlang stdlib; Unix semantics (`/` separator, no Windows backslash handling). Binary in gives binary; atoms and nested lists give a list. |
+| flatten/1 | ✅ | Atoms and nested lists become one flat character list; a binary is returned unchanged, and binaries inside a list are kept. |
 
 
 ### binary module

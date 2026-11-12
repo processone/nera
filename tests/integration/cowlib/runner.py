@@ -25,6 +25,17 @@ MODULES = DEFAULT_MODULES + ('cow_http', 'cow_http_hd')
 # Complete runtime dependency closure for the pinned cow_http module.
 HTTP_DEPENDENCIES = ('cow_http1', 'cow_http_hd', 'cow_cookie', 'cow_date',
                      'cow_http2', 'cow_http_struct_hd', 'cow_link')
+# Pinned Cowlib releases. Earlier campaigns use 2.20.0; the cookie/date
+# suites also run on 2.22.0, the release examples/cowlib_demo builds.
+PIN_FILES = {'2.20.0': 'upstream.json', '2.22.0': 'upstream-2.22.0.json'}
+DEFAULT_PIN = '2.20.0'
+
+
+def load_pin(version=DEFAULT_PIN):
+    pin = json.loads((HERE / PIN_FILES[version]).read_text())
+    if pin.get('version') != version or not re.fullmatch(r'[0-9a-f]{40}', str(pin.get('commit', ''))):
+        raise ValueError(f'invalid Cowlib pin file for {version}')
+    return pin
 
 
 def verify_beam_modules(ebin, modules):

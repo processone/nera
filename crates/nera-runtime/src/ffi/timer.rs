@@ -47,10 +47,10 @@ unsafe fn message_timer(ctx: *mut ProcessContext, time_term: u64, dest_term: u64
                 let entry = process_table.get(&dest_pid).map(|r| r.clone());
                 if let Some(entry) = entry {
                     entry.inbox.push(fragment);
+                    // The worker cancels the receive timer; see nera_rt_send_message.
                     if entry.try_wake() {
                         runnable_count.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
                         injector.push(entry);
-                        timer_wheel.cancel_for_pid(dest_pid);
                         if let Some(sched) = crate::scheduler::global_scheduler() {
                             for t in sched.worker_threads.iter() {
                                 if let Some(t) = t.get() {

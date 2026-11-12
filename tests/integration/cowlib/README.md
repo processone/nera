@@ -3,14 +3,111 @@
 This project-owned corpus exercises the public APIs of `cow_qs`, `cow_cookie`,
 `cow_date` and `cow_base64url`, with partial `cow_http_hd`/`cow_http` coverage,
 against BEAM and Nera. Cowlib **2.20.0** is pinned
-at **c768a804565ff5b8178ed968a5921e469d6bd7b2**. No Cowlib source, headers,
-upstream tests or dependencies are copied into this repository.
+at **c768a804565ff5b8178ed968a5921e469d6bd7b2**. The cookie and date upstream
+suites also run on Cowlib **2.22.0**, pinned at
+**b92326f02df30dd62045d622a17f6ba52d96d53a** in
+[`upstream-2.22.0.json`](upstream-2.22.0.json) and selected with `--pin 2.22.0`.
+No Cowlib source, headers, upstream tests or dependencies are copied into this
+repository.
 
 **Build-path note (2026-10-20):** the allocator now includes jemalloc's
 upstream whitespace fix. A fresh locked release can use the default target
 path even when the working copy contains spaces. The external target paths
 below record historical campaign commands, not a current build requirement.
 See [the build regression](../../../CONTRIBUTING.md#building).
+
+## cow_cookie / cow_date upstream EUnit on Cowlib 2.22.0 — 2026-11-12
+
+Starting point: main **`3b2abf2`**, macOS 27 arm64, Rust 1.99.0, OTP
+**29.1.2** / EUnit 2.11, PropEr **1.5.0**. Cowlib **2.22.0** is the release
+[`examples/cowlib_demo`](../../../examples/cowlib_demo) builds. The other
+campaigns in this file keep the 2.20.0 pin, which remains the harness default.
+Cowlib, PropEr and OTP sources stay external.
+
+| Original upstream suite | BEAM | Native `nera test` |
+| --- | ---: | ---: |
+| `cow_cookie` (17 tests and generators) | **157/157** | **157/157** |
+| `cow_date` (4 tests and generators) | **27/27** | **27/27** |
+| EUnit framework controls | **pass** | **pass** |
+
+No assertion is skipped or normalized. Preparation removes the same kinds of
+code as on 2.20.0: the date property with its generators, and the `horse`
+benchmarks. It keeps `expiry_in_window/3`, a test helper that the new
+Max-Age/Expires limit test calls. Original `src/cow_cookie.erl` SHA-256
+`a9aa73b6…a3ce61` (prepared `d2e1e0e9…633a`); `src/cow_date.erl`
+`15b155bc…397de` (prepared `a2075c97…592681`).
+
+Two Nera defects stopped the run before these results:
+
+- `filename:flatten/1` was not exported. OTP's EUnit server calls it, so the
+  native EUnit build failed with "function `filename:flatten/1` is not
+  exported". It is now exported; `tests/filename_flatten.erl` checks it
+  against BEAM's results.
+- `~W` and `~P` printed a literal placeholder. EUnit's reporter formats a
+  cancelled group with `~tP` and passes the text to `io:fwrite/2` again, so the
+  leftover `~P` raised `badarg` in the reporter and the framework controls
+  failed. Both directives now print depth-limited terms as OTP does;
+  `tests/io_format_depth.erl` checks 38 BEAM results.
+
+**Intermittent hang and early exit.** Repeated native runs of `cow_cookie`
+then hung or exited early about once in 30 runs; untouched main with only the
+`filename:flatten/1` export hung 3 times in 80. Three scheduler races were the
+cause:
+
+- A sender cancelled the receiver's `receive ... after` timer after queueing
+  the receiver, which could already be in a later timed receive. That
+  receive then waited with no timer.
+- A timed receive registered its timer after publishing its wait, so a
+  late registration could replace the timer of the process's next receive.
+- The idle check counted a process whose exit cleanup was still running as
+  finished. A linked process waiting for its EXIT signal looked blocked, and
+  the program exited with status 0 before EUnit reported.
+
+Senders now leave the timer to the worker that runs the process, a wait
+registers its timer before it becomes visible, and the idle check waits for
+exit cleanup. Runtime unit tests replay each ordering and fail on the old
+code. After the fixes, 1,200 consecutive native `cow_cookie` runs pass: 600
+one at a time and 600 in four parallel loops.
+
+**Cookie attribute order.** The raw suite passes, including the
+`setcookie_test_` case that expects `Domain` before `HttpOnly` and failed on
+2.20.0. The project-owned `cookie_order_probe.erl`, built on its own, still
+prints `HttpOnly` first natively and `Domain` first on BEAM: the semantic
+comparison passes with `wire_equal` false. Atom map keys follow Nera's own
+atom-table order ([map iteration order](../../../COMPATIBILITY.md#map-iteration-order--2026-11-12)),
+so this order can differ from one program to another.
+
+**Date property: blocked natively.** Cowlib 2.22.0 renames `prop_http_date/0`
+to `prop_parse_date/0` with the same generators. `native_date.py --pin 2.22.0`
+passes it on BEAM (1,000 trials for each of three seeds, run twice). The native
+run fails because two runs from the same seed generate different inputs.
+Since the 2.20.0 date campaign, `rand:uniform/1` is a Nera built-in, and the
+compiler calls the built-in rather than the OTP `rand` module the harness
+supplies, so PropEr's `rand:seed/2` no longer controls it. The 2.20.0 property
+fails the same way on this revision. Native date-property evidence needs a
+seedable `rand` in Nera first; the other seeded native PropEr campaigns were
+not rerun.
+
+The Linux workflow fetches the pinned 2.22.0 commit and runs both suites
+through `native_eunit.py --pin 2.22.0`, keeping the report as the
+`cowlib-cookie-date-eunit-linux` artifact.
+
+```sh
+python3 tests/integration/cowlib/native_eunit.py --pin 2.22.0 \
+  --modules cow_cookie cow_date \
+  --upstream /tmp/cowlib-2.22.0 \
+  --proper /tmp/nera-proper-src \
+  --nera "$PWD/target/release/nera" \
+  --eunit "$(erl -noshell -eval 'io:format("~s", [code:lib_dir(eunit)]), halt().')" \
+  --gb-trees "$(erl -noshell -eval 'io:format("~s", [code:lib_dir(stdlib)]), halt().')/src/gb_trees.erl" \
+  --work-dir /tmp/nera-cow-cookie-date-2.22.0
+./target/release/nera test filename_flatten io_format_depth -j 1 --timeout 30
+python3 -m unittest discover -s tests/integration/cowlib -p 'test_*.py'
+```
+
+Use a pristine checkout of the pinned commit and the pinned
+[PropEr setup](../proper/README.md); the work directory must be fresh and
+outside the repository.
 
 ## cow_http2_machine upstream EUnit — 2026-10-19
 

@@ -3,13 +3,25 @@
 import json
 import re
 import sys
-from native_base64url import HERE, SEEDS, plain, _etf, configure, validate_args, proper_native
+from native_base64url import HERE, SEEDS, plain, _etf, validate_args, proper_native
+from native_base64url import configure as configure_upstream
+from runner import PIN_FILES, DEFAULT_PIN
+
+# Cowlib 2.22.0 renamed the same date property; its generators are unchanged.
+PROPERTY = {'2.20.0': 'prop_http_date', '2.22.0': 'prop_parse_date'}
+
+
+def configure(parser):
+    configure_upstream(parser)
+    parser.add_argument('--pin', choices=sorted(PIN_FILES), default=DEFAULT_PIN,
+                        help='Cowlib pin the --upstream checkout must match (default: '+DEFAULT_PIN+')')
 
 
 def prepare(args,work,report,run,beam):
     from native_base64url import prepare_module
     import hashlib
-    dependencies = prepare_module(args,work,report,run,beam,'cow_date',('prop_http_date',),('prop_http_date/0',))
+    name = PROPERTY[args.pin]
+    dependencies = prepare_module(args,work,report,run,beam,'cow_date',(name,),(name+'/0',),args.pin)
     report['cowlib_preparation_sha256'] = hashlib.sha256((HERE/'native_base64url.py').read_bytes()).hexdigest()
     return dependencies
 
@@ -31,7 +43,7 @@ seeded(Seed,Property) ->
 record(Value) -> put(date_trace,[Value|get(date_trace)]),ok.
 trace() -> lists:reverse(erase(date_trace)).
 run(Seed) ->
-    Original = cow_date:prop_http_date(),
+    Original = cow_date:PROPERTY(),
     {forall,Type,Predicate} = Original,
     Observed = proper:forall(Type,fun({_,Bin}=Input) ->
         record({Input,cow_date:parse_date(Bin)}), Predicate(Input)
@@ -51,7 +63,7 @@ run(Seed) ->
     true = proper:check(seeded(Seed,Original),Counterexample,[quiet]),
     [] = trace(),
     {Samples,Shrinking,Counterexample}.
-'''.replace('SAMPLE_COUNT',str(args.samples))
+'''.replace('SAMPLE_COUNT',str(args.samples)).replace('PROPERTY',PROPERTY[args.pin])
 
 
 MONTHS = ('Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec')

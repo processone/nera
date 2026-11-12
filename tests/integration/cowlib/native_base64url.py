@@ -82,9 +82,10 @@ def prepare(args, work, report, run, beam):
                           ('prop_identity/0','prop_identity_no_padding/0','rfc7515_test/0'))
 
 
-def prepare_module(args, work, report, run, beam, module_name, properties, exports):
+def prepare_module(args, work, report, run, beam, module_name, properties, exports, pin_version=None):
+    from runner import DEFAULT_PIN, load_pin
     upstream = args.upstream.resolve()
-    pin = json.loads((HERE/'upstream.json').read_text())
+    pin = load_pin(pin_version or DEFAULT_PIN)
     head = run('cowlib-revision',['git','rev-parse','HEAD'],upstream)
     clean = run('cowlib-status',['git','status','--porcelain','--untracked-files=all'],upstream)
     if head['returncode'] != 0 or head['stdout'].strip() != pin['commit'] or clean['returncode'] != 0 or clean['stdout'].strip():

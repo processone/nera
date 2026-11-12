@@ -271,6 +271,40 @@ jobs:
             ${{ runner.temp }}/cowlib-base64url-properties/*.stdout
             ${{ runner.temp }}/cowlib-base64url-properties/*.stderr
 
+      - name: Run Cowlib 2.22.0 cookie and date EUnit suites natively (Linux)
+        timeout-minutes: 20
+        # The original suites run on BEAM and through `nera test` with OTP's
+        # EUnit; the pin file names the release and commit.
+        run: |
+          set -euo pipefail
+          pin=tests/integration/cowlib/upstream-2.22.0.json
+          url=$(python3 -c 'import json, sys; print(json.load(open(sys.argv[1]))["url"])' "$pin")
+          commit=$(python3 -c 'import json, sys; print(json.load(open(sys.argv[1]))["commit"])' "$pin")
+          git init "$RUNNER_TEMP/cowlib-2.22.0"
+          git -C "$RUNNER_TEMP/cowlib-2.22.0" remote add origin "$url"
+          git -C "$RUNNER_TEMP/cowlib-2.22.0" fetch --depth 1 origin "$commit"
+          git -C "$RUNNER_TEMP/cowlib-2.22.0" checkout --detach FETCH_HEAD
+          eunit=$(erl -noshell -eval 'io:format("~s", [code:lib_dir(eunit)]), halt().')
+          stdlib=$(erl -noshell -eval 'io:format("~s", [code:lib_dir(stdlib)]), halt().')
+          python3 tests/integration/cowlib/native_eunit.py --pin 2.22.0 \
+            --modules cow_cookie cow_date \
+            --upstream "$RUNNER_TEMP/cowlib-2.22.0" \
+            --proper "$RUNNER_TEMP/cowlib-proper" \
+            --nera "$GITHUB_WORKSPACE/target/release/nera" \
+            --eunit "$eunit" \
+            --gb-trees "$stdlib/src/gb_trees.erl" \
+            --work-dir "$RUNNER_TEMP/cowlib-cookie-date-eunit"
+
+      - name: Preserve Cowlib cookie and date EUnit evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cowlib-cookie-date-eunit-linux
+          path: |
+            ${{ runner.temp }}/cowlib-cookie-date-eunit/report.json
+            ${{ runner.temp }}/cowlib-cookie-date-eunit/*.stdout
+            ${{ runner.temp }}/cowlib-cookie-date-eunit/*.stderr
+
   thoas:
     name: Thoas (Linux x86_64)
     needs: [changes, build]

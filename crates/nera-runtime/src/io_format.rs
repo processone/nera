@@ -323,7 +323,7 @@ unsafe fn render(fmt: &str, args: &[ErlTerm]) -> Result<String, ()> {
                     argument(args, &mut index)?;
                 }
                 // Basic ~p rendering already leaves printable lists as lists,
-                // so it honours ~l. ~P remains the chosen literal placeholder.
+                // so it honours ~l.
                 // Map ordering is not modelled: accept ~k/~K without sorting.
                 _ => {}
             }
@@ -345,14 +345,27 @@ unsafe fn render(fmt: &str, args: &[ErlTerm]) -> Result<String, ()> {
                 }
                 bif::format_term(argument(args, &mut index)?)
             }
-            'P' | 'W' => {
-                // EUnit already relies on these literal placeholders while
-                // depth-limited term rendering is unsupported. Consume both
-                // arguments so following controls stay aligned, without
-                // turning a diagnostic limitation into a reporter exception.
-                argument(args, &mut index)?;
-                argument(args, &mut index)?.as_small_int().ok_or(())?;
-                format!("~{directive}")
+            // Depth-limited ~w and ~p. EUnit's reporter prints failures with
+            // ~tP and passes the result to io:fwrite again, so a literal
+            // placeholder here made the second call fail with badarg.
+            'W' => {
+                let term = argument(args, &mut index)?;
+                let depth = argument(args, &mut index)?.as_small_int().ok_or(())?;
+                term_field(
+                    bif::format_term_limited(term, depth, false),
+                    width,
+                    precision,
+                    pad,
+                    left,
+                )?
+            }
+            'P' => {
+                if left {
+                    return Err(());
+                }
+                let term = argument(args, &mut index)?;
+                let depth = argument(args, &mut index)?.as_small_int().ok_or(())?;
+                bif::format_term_limited(term, depth, true)
             }
             's' => {
                 let term = argument(args, &mut index)?;

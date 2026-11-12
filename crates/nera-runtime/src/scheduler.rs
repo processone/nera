@@ -20,10 +20,10 @@ use std::collections::HashSet;
 
 use crate::io_pool::IoPool;
 use crate::process::{
-    MonitorRef, Process, ProcessEntry, ProcessId, ProcessState, ProcessStatus, WaitReason,
-    ASTATUS_IO_WAIT, ASTATUS_READY, ASTATUS_RUNNING, ASTATUS_WAITING, REDUCTION_LIMIT,
-    STATUS_EXCEPTION, STATUS_HIBERNATE, STATUS_IO_WAIT, STATUS_OK, STATUS_RECEIVE_WAIT,
-    STATUS_YIELD,
+    MonitorRef, Process, ProcessEntry, ProcessId, ProcessState, ProcessStatus, RuntimeProcessGuard,
+    WaitReason, ASTATUS_EXITED, ASTATUS_IO_WAIT, ASTATUS_READY, ASTATUS_RUNNING, ASTATUS_WAITING,
+    REDUCTION_LIMIT, STATUS_EXCEPTION, STATUS_HIBERNATE, STATUS_IO_WAIT, STATUS_OK,
+    STATUS_RECEIVE_WAIT, STATUS_YIELD,
 };
 #[cfg(mio_supported)]
 use crate::reactor::ReactorHandle;
@@ -720,10 +720,11 @@ fn propagate_exit_signals(
             entry.has_exit_signals.store(true, Ordering::Release);
             // Try waking the process. try_wake() handles receive-waiting,
             // try_wake_io() handles IO-waiting. Only one CAS can succeed.
+            // The worker that runs the process cancels its receive timer;
+            // see nera_rt_send_message.
             if entry.try_wake() || entry.try_wake_io() {
                 runnable_count.fetch_add(1, Ordering::AcqRel);
                 injector.push(entry);
-                timer_wheel.cancel_for_pid(*linked_pid);
                 // Best-effort unpark via global handle; if stale, workers
                 // pick up the injector item on the 2ms park_timeout.
                 if let Some(sched) = global_scheduler() {
@@ -849,10 +850,10 @@ fn propagate_exit_signals(
         entry.inbox.push(fragment);
         drop(proc);
 
+        // The worker cancels the owner's receive timer, as for a link.
         if entry.try_wake() {
             runnable_count.fetch_add(1, Ordering::AcqRel);
             injector.push(entry);
-            timer_wheel.cancel_for_pid(*owner_pid);
             if let Some(sched) = global_scheduler() {
                 for t in sched.worker_threads.iter() {
                     if let Some(t) = t.get() {
@@ -991,6 +992,87 @@ fn wake_process_for_timer(
             // threads after processing the expired batch.
         }
     }
+}
+
+/// The two moments `publish_wait_with` lets a test act in: under the
+/// process lock before Waiting is published, and after the lock is released.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum WaitWindow {
+    BeforePublish,
+    AfterPublish,
+}
+
+/// Publish `state` for a process leaving its slice to wait, releasing its
+/// runnable slot. Returns true when the wait already has a wake condition:
+/// the process is Ready again, owns a new slot, and the caller queues it.
+fn publish_wait(
+    proc: RuntimeProcessGuard<'_>,
+    entry: &ProcessEntry,
+    state: ProcessState,
+    timer_wheel: &TimerWheel,
+    runnable_count: &AtomicI64,
+) -> bool {
+    publish_wait_with(proc, entry, state, timer_wheel, runnable_count, false, |_| {})
+}
+
+/// Return a woken process that found nothing to do to the wait it was in.
+/// Its timer, if still pending, already belongs to that wait and is kept:
+/// registering it again would leave one more heap entry per such wake
+/// until the deadline.
+fn rewait(
+    proc: RuntimeProcessGuard<'_>,
+    entry: &ProcessEntry,
+    state: ProcessState,
+    timer_wheel: &TimerWheel,
+    runnable_count: &AtomicI64,
+) -> bool {
+    publish_wait_with(proc, entry, state, timer_wheel, runnable_count, true, |_| {})
+}
+
+fn publish_wait_with(
+    mut proc: RuntimeProcessGuard<'_>,
+    entry: &ProcessEntry,
+    state: ProcessState,
+    timer_wheel: &TimerWheel,
+    runnable_count: &AtomicI64,
+    same_wait: bool,
+    mut window: impl FnMut(WaitWindow),
+) -> bool {
+    let pid = proc.id;
+    let deadline = match state {
+        ProcessState::Waiting(WaitReason::Receive { timeout_deadline_ms }) => timeout_deadline_ms,
+        _ => None,
+    };
+    // Register the timer while the process is still locked. Once Waiting is
+    // published, a message can wake the process and another worker can run
+    // it into a later timed receive; a registration made after that would
+    // replace the later timer with this stale one, and the later receive
+    // would wait with no timer at all.
+    // A timer that fires between the pending check and the publish is
+    // caught by the race check below.
+    if let Some(deadline) = deadline {
+        if !(same_wait && timer_wheel.has_pending_for(pid)) {
+            timer_wheel.insert(deadline, pid);
+        }
+    }
+    window(WaitWindow::BeforePublish);
+    proc.transition(state);
+    runnable_count.fetch_sub(1, Ordering::AcqRel);
+    drop(proc);
+    window(WaitWindow::AfterPublish);
+
+    // CRITICAL RACE CHECK: a message may have reached the lock-free inbox,
+    // or the timer thread may have taken this receive's expired timer, while
+    // the process was not yet published Waiting. Either wake CAS then failed
+    // on the earlier state. The timer thread clears its map entry before its
+    // CAS, so a timer missing here has already fired or will see Waiting.
+    let wake = !entry.inbox.is_empty()
+        || (deadline.is_some() && !timer_wheel.has_pending_for(pid));
+    if wake && entry.try_wake() {
+        runnable_count.fetch_add(1, Ordering::AcqRel);
+        return true;
+    }
+    false
 }
 
 // ---------------------------------------------------------------------------
@@ -1278,29 +1360,19 @@ fn worker_loop(
             } else {
                 // Process is still waiting. Do NOT re-inject — the timer
                 // thread or send_message will wake it when appropriate.
-                let waiting = proc.scheduling_state();
-                proc.transition(waiting);
                 // The readiness notification made this process runnable,
-                // even if draining it produced no Erlang message. Release
-                // that slot before the race check can acquire a new one.
-                runnable_count.fetch_sub(1, Ordering::AcqRel);
-                drop(proc);
-
-                // CRITICAL RACE CHECK: A MessageFragment may have been
-                // pushed to the lock-free inbox between drain_inbox
-                // (line 707) and the store(ASTATUS_WAITING) above.  In
-                // that window, atomic_status was ASTATUS_READY, so
-                // reactor's deliver_fragment → try_wake() failed
-                // (CAS WAITING→READY on a READY state).  Without this
-                // check the fragment (and any in_flight flag it carries)
-                // is stranded — the reactor spins forever on stale
-                // edge-trigger events for a peer that half-closed.
-                if !proc_entry.inbox.is_empty()
-                    && proc_entry.try_wake() {
-                        runnable_count.fetch_add(1, Ordering::AcqRel);
-                        local.push(proc_entry);
-                        continue;
-                    }
+                // even if draining it produced no Erlang message;
+                // publish_wait releases that slot before its race check
+                // can acquire a new one. That check also covers a
+                // MessageFragment pushed while the state was READY, whose
+                // try_wake() failed: without it the fragment (and any
+                // in_flight flag it carries) is stranded, and the reactor
+                // spins on stale edge-trigger events for a half-closed peer.
+                let waiting = proc.scheduling_state();
+                if rewait(proc, &proc_entry, waiting, &timer_wheel, &runnable_count) {
+                    local.push(proc_entry);
+                    continue;
+                }
 
                 drop(proc_entry);
                 idle_spins += 1;
@@ -1444,29 +1516,13 @@ fn worker_loop(
             }
             STATUS_RECEIVE_WAIT => {
                 let deadline = proc.context.receive_timeout_deadline;
-                let pid = proc.id;
-
                 let reason = WaitReason::Receive {
                     timeout_deadline_ms: (deadline > 0).then_some(deadline),
                 };
-                proc.transition(ProcessState::Waiting(reason));
-                runnable_count.fetch_sub(1, Ordering::AcqRel);
-                drop(proc);
-
-                // CRITICAL RACE CHECK: A message may have arrived in the
-                // lock-free inbox between the process checking its mailbox
-                // (inside compiled code) and us setting atomic_status=WAITING.
-                // If the inbox is non-empty, re-wake immediately.
-                if !proc_entry.inbox.is_empty()
-                    && proc_entry.try_wake() {
-                        runnable_count.fetch_add(1, Ordering::AcqRel);
-                        local.push(proc_entry);
-                        continue;
-                    }
-
-                if deadline > 0 {
-                    // Register timer; the timer thread will wake this process.
-                    timer_wheel.insert(deadline, pid);
+                if publish_wait(proc, &proc_entry, ProcessState::Waiting(reason),
+                                &timer_wheel, &runnable_count) {
+                    local.push(proc_entry);
+                    continue;
                 }
                 // Do NOT re-inject — timer thread or send_message will wake.
             }
@@ -1730,9 +1786,10 @@ fn processes_are_blocked(process_table: &ProcessTable) -> bool {
                 }
                 // Need Mutex to check wait_reason and mailbox.
                 let proc = entry.lock_for_runtime();
-                // The receive deadline bridges both timer handoffs: WAITING
-                // may precede heap insertion, and expiry removes the entry
-                // before the wake CAS publishes READY. Neither is deadlock.
+                // The receive deadline bridges the expiry handoff: the timer
+                // thread removes the entry before its wake CAS publishes
+                // READY. That is not deadlock. publish_wait registers the
+                // timer before WAITING, but stays conservative here.
                 if matches!(proc.wait_reason(), Some(WaitReason::Receive {
                     timeout_deadline_ms: Some(_),
                 })) {
@@ -1746,10 +1803,16 @@ fn processes_are_blocked(process_table: &ProcessTable) -> bool {
                     return false;
                 }
             }
-            _ => {} // ASTATUS_EXITED
+            ASTATUS_EXITED => {
+                // Still in the table: its exit cleanup has released its
+                // runnable slot but not yet delivered the EXIT and DOWN
+                // signals that can wake a linked or monitoring process.
+                return false;
+            }
+            _ => {}
         }
     }
-    // All processes are either Waiting (with empty mailboxes) or Exited.
+    // All processes are Waiting with empty mailboxes.
     true
 }
 
@@ -2119,6 +2182,158 @@ mod tests {
     fn receive_timer_expiration_handoff_cannot_terminate() {
         assert!(!receive_timer_handoff_snapshot(true),
             "expired receive must stay live until its wake is published");
+    }
+
+    // The three tests below replay, step by step, how a timed receive lost its
+    // timer. Cowlib's cow_cookie EUnit suite then hung natively in a few runs
+    // out of a hundred: every process waiting, one of them in a receive whose
+    // `after` deadline had passed, and no timer left to wake it.
+    fn running_process(scheduler: &Scheduler) -> (ProcessId, Arc<ProcessEntry>) {
+        let pid = scheduler.next_pid();
+        scheduler.spawn_process(Process::new(pid));
+        let entry = match scheduler.injector.steal() {
+            Steal::Success(entry) => entry,
+            _ => panic!("new process must be queued"),
+        };
+        entry.lock_for_runtime().transition(ProcessState::Running);
+        (pid, entry)
+    }
+
+    fn timed_wait(deadline_ms: u64) -> ProcessState {
+        ProcessState::Waiting(WaitReason::Receive { timeout_deadline_ms: Some(deadline_ms) })
+    }
+
+    fn wake_expired(scheduler: &Scheduler, now_ms: u64) -> usize {
+        let expired = scheduler.timer_wheel.pop_expired(now_ms);
+        for timer in &expired {
+            wake_process_for_timer(timer.owner_pid, &scheduler.process_table,
+                &scheduler.injector, &scheduler.runnable_count);
+        }
+        expired.len()
+    }
+
+    #[test]
+    fn stale_receive_timer_cannot_replace_a_later_one() {
+        let scheduler = Scheduler::new(1);
+        let (pid, entry) = running_process(&scheduler);
+        let requeued = publish_wait_with(entry.lock_for_runtime(), &entry, timed_wait(10),
+            &scheduler.timer_wheel, &scheduler.runnable_count, false, |window| {
+                if window != WaitWindow::AfterPublish {
+                    return;
+                }
+                // Another worker, before this one continues: a message wakes
+                // the process, which runs into a later timed receive.
+                assert!(entry.try_wake());
+                scheduler.runnable_count.fetch_add(1, Ordering::AcqRel);
+                let mut proc = entry.lock_for_runtime();
+                scheduler.timer_wheel.cancel_for_pid(pid);
+                proc.transition(ProcessState::Running);
+                assert!(!publish_wait(proc, &entry, timed_wait(20),
+                    &scheduler.timer_wheel, &scheduler.runnable_count));
+            });
+        assert!(!requeued, "the later receive has its own timer");
+        assert_eq!(entry.published_status(), ASTATUS_WAITING);
+        assert_eq!(wake_expired(&scheduler, 10), 0,
+            "the first receive's timer must not stand in for the later one");
+        assert_eq!(wake_expired(&scheduler, 20), 1);
+        assert_eq!(entry.published_status(), ASTATUS_READY);
+        assert_eq!(scheduler.runnable_count.load(Ordering::Acquire), 1);
+    }
+
+    #[test]
+    fn receive_timer_taken_before_waiting_is_published_still_wakes() {
+        let scheduler = Scheduler::new(1);
+        let (pid, entry) = running_process(&scheduler);
+        let requeued = publish_wait_with(entry.lock_for_runtime(), &entry, timed_wait(1),
+            &scheduler.timer_wheel, &scheduler.runnable_count, false, |window| {
+                if window != WaitWindow::BeforePublish {
+                    return;
+                }
+                // The timer thread takes the due timer; its wake fails
+                // because the process is still running.
+                assert_eq!(wake_expired(&scheduler, 1), 1);
+                assert_ne!(entry.published_status(), ASTATUS_READY);
+                assert!(scheduler.process_table.contains_key(&pid));
+            });
+        assert!(requeued, "the expired receive must be queued again");
+        assert_eq!(entry.published_status(), ASTATUS_READY);
+        assert_eq!(scheduler.runnable_count.load(Ordering::Acquire), 1);
+        assert!(scheduler.injector.is_empty(), "the failed timer wake queued nothing");
+    }
+
+    #[test]
+    fn timer_expiring_during_a_wake_without_mail_still_wakes() {
+        let scheduler = Scheduler::new(1);
+        let (_, entry) = running_process(&scheduler);
+        assert!(!publish_wait(entry.lock_for_runtime(), &entry, timed_wait(1),
+            &scheduler.timer_wheel, &scheduler.runnable_count));
+        // A wake that brings no message, such as an ignored exit signal.
+        assert!(entry.try_wake());
+        scheduler.runnable_count.fetch_add(1, Ordering::AcqRel);
+        // The deadline passes while the process is Ready: the timer thread
+        // takes the timer and its wake fails.
+        assert_eq!(wake_expired(&scheduler, 1), 1);
+        assert_eq!(scheduler.runnable_count.load(Ordering::Acquire), 1);
+        // The worker read the clock just before the deadline, found no
+        // message, and returns the process to its wait.
+        let proc = entry.lock_for_runtime();
+        let waiting = proc.scheduling_state();
+        assert_eq!(waiting, timed_wait(1));
+        let requeued = rewait(proc, &entry, waiting,
+            &scheduler.timer_wheel, &scheduler.runnable_count);
+        if !requeued {
+            wake_expired(&scheduler, 1);
+        }
+        assert_eq!(entry.published_status(), ASTATUS_READY, "the receive must time out");
+        assert_eq!(scheduler.runnable_count.load(Ordering::Acquire), 1);
+    }
+
+    // Found in review of the fix above: returning a woken process to its wait
+    // registered its still-pending timer again, so each wake that brought
+    // nothing (socket readiness, an ignored exit signal) left one more heap
+    // entry until the deadline.
+    #[test]
+    fn waking_without_work_keeps_a_single_timer() {
+        let scheduler = Scheduler::new(1);
+        let (_, entry) = running_process(&scheduler);
+        assert!(!publish_wait(entry.lock_for_runtime(), &entry, timed_wait(1_000),
+            &scheduler.timer_wheel, &scheduler.runnable_count));
+        for _ in 0..100 {
+            assert!(entry.try_wake());
+            scheduler.runnable_count.fetch_add(1, Ordering::AcqRel);
+            let proc = entry.lock_for_runtime();
+            let waiting = proc.scheduling_state();
+            assert!(!rewait(proc, &entry, waiting,
+                &scheduler.timer_wheel, &scheduler.runnable_count));
+        }
+        assert_eq!(scheduler.timer_wheel.queued_entries(), 1);
+        assert_eq!(scheduler.runnable_count.load(Ordering::Acquire), 0);
+        assert_eq!(wake_expired(&scheduler, 1_000), 1, "the wait keeps its timeout");
+        assert_eq!(entry.published_status(), ASTATUS_READY);
+    }
+
+    // The same EUnit run also ended early about once in 300 runs, before EUnit
+    // reported: a test process had exited and released its runnable slot, but
+    // its EXIT signal had not yet reached the linked EUnit process. The idle
+    // check saw only waiting processes and stopped the runtime.
+    #[test]
+    fn exit_cleanup_in_progress_is_not_deadlock() {
+        let scheduler = Scheduler::new(1);
+        let (_, linked) = running_process(&scheduler);
+        let untimed = ProcessState::Waiting(WaitReason::Receive { timeout_deadline_ms: None });
+        assert!(!publish_wait(linked.lock_for_runtime(), &linked, untimed,
+            &scheduler.timer_wheel, &scheduler.runnable_count));
+        // The worker's exit path: Exited is published and the slot released
+        // before cleanup delivers signals and removes the process.
+        let (dying_pid, dying) = running_process(&scheduler);
+        dying.lock_for_runtime().transition(ProcessState::Exited);
+        scheduler.runnable_count.fetch_sub(1, Ordering::AcqRel);
+        assert_eq!(scheduler.runnable_count.load(Ordering::Acquire), 0);
+        assert!(!processes_are_blocked(&scheduler.process_table),
+            "the exit signal can still wake the linked process");
+        // Cleanup finished and woke nobody: now every process is blocked.
+        scheduler.process_table.remove(&dying_pid);
+        assert!(processes_are_blocked(&scheduler.process_table));
     }
 
     #[test]
