@@ -1503,7 +1503,11 @@ impl<'src> Formatter<'src> {
 
     fn format_bin_segment_expr(&mut self, seg: &BinSegment<Expr>) -> Doc {
         let value_doc = self.format_expr(&seg.value);
-        let mut parts = if needs_parens_in_bin_segment(&seg.value) {
+        // Numeric unary plus may retain several signs in its source spelling
+        // (for example +-0.0); only one bare sign is valid in a binary value.
+        let mut parts = if needs_parens_in_bin_segment(&seg.value)
+            || self.span_text(seg.value.span()).starts_with('+')
+        {
             vec![text("("), value_doc, text(")")]
         } else {
             vec![value_doc]

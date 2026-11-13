@@ -88,3 +88,24 @@ fn formatted_positive_binary_sizes_keep_required_grouping() {
         format_source(&formatted, &FormatConfig::default()).unwrap()
     );
 }
+
+// A folded number may retain compound signs in its spelling. Such spellings
+// are expressions, not bare binary values, even though the AST is a literal.
+#[test]
+fn formatted_compound_signed_binary_values_keep_grouping() {
+    let source = "-module(unary_plus). f() -> <<(+-0.0)/float, (+-1):8, (+ +1):8>>.";
+    let formatted = format_source(source, &FormatConfig::default()).unwrap();
+    let result = Parser::new(&formatted).parse_module();
+    assert!(result.errors.is_empty(), "{:?}: {formatted}", result.errors);
+    let Expr::Binary(segments, _) = &result.module.functions[0].clauses[0].body[0] else {
+        panic!("lost binary construction: {formatted}");
+    };
+    assert_eq!(segments.len(), 3);
+    assert!(matches!(&segments[0].value, Expr::Float(value, _) if value.is_sign_negative()));
+    assert!(matches!(&segments[1].value, Expr::Integer(-1, _)));
+    assert!(matches!(&segments[2].value, Expr::Integer(1, _)));
+    assert_eq!(
+        formatted,
+        format_source(&formatted, &FormatConfig::default()).unwrap()
+    );
+}
