@@ -636,10 +636,16 @@ impl Scheduler {
 // EXIT / DOWN signal propagation
 // ---------------------------------------------------------------------------
 
-/// Propagate EXIT signals to linked processes and DOWN signals to monitoring
-/// processes when a process exits. Called from the 3 exit points in
-/// `worker_loop` AFTER dropping the dying process's MutexGuard but BEFORE
-/// removing it from the process table (so its heap stays alive for deep-copy).
+/// Free a dead process's registered name, then propagate EXIT signals to
+/// linked processes and DOWN signals to monitoring processes. Called from the
+/// exit points in `worker_loop` AFTER dropping the dying process's MutexGuard
+/// but BEFORE removing it from the process table (so its heap stays alive for
+/// deep-copy).
+///
+/// The name is freed first, as on BEAM: a process woken by the 'EXIT' or
+/// 'DOWN' on another worker, such as a supervisor restarting a named child,
+/// must find the name free. A process killed by the link cascade below frees
+/// its own name the same way before its signals go out.
 ///
 /// Deadlock safety: the dying process's lock is NOT held. Each linked/monitoring
 /// process is locked individually, and the lock is dropped before any recursive
@@ -667,6 +673,8 @@ fn propagate_exit_signals(
     use crate::term::{
         BoxedHeader, ErlTerm, REFERENCE_ID_WORD_INDEX, REFERENCE_TOTAL_WORDS,
     };
+
+    unregister_dead_process(dead_pid, registered_names);
 
     let is_kill = exit_reason.as_atom_id() == Some(ATOM_KILL);
     let is_normal = exit_reason.as_atom_id() == Some(ATOM_NORMAL);
@@ -793,7 +801,6 @@ fn propagate_exit_signals(
             #[cfg(mio_supported)]
             reactor.cancel_for_pid(their_pid);
             crate::socket::remove_all_for_pid(their_pid);
-            unregister_dead_process(their_pid, registered_names);
             crate::ets::delete_tables_owned_by(their_pid);
             alive_count.fetch_sub(1, Ordering::AcqRel);
             process_table.remove(&their_pid);
@@ -867,7 +874,7 @@ fn propagate_exit_signals(
 }
 
 /// Remove a process's registered name (if any) from the global registry.
-/// Called when a process exits, before removing it from the process table.
+/// Called when a process exits, before any of its exit signals is sent.
 fn unregister_dead_process(
     pid: ProcessId,
     registered_names: &Arc<RwLock<HashMap<u32, ProcessId>>>,
@@ -876,9 +883,9 @@ fn unregister_dead_process(
     names.retain(|_name, &mut p| p != pid);
 }
 
-/// Shared cleanup for all process-death paths. Propagates EXIT/DOWN signals,
-/// cancels timers and I/O, cleans up sockets, unregisters names, deletes
-/// owned ETS tables, and removes the process from the process table.
+/// Shared cleanup for all process-death paths. Frees the registered name and
+/// propagates EXIT/DOWN signals, cancels timers and I/O, cleans up sockets,
+/// deletes owned ETS tables, and removes the process from the process table.
 #[expect(clippy::too_many_arguments, reason = "Explicit scheduler and GC state avoids changing runtime ownership and locking boundaries")]
 fn cleanup_dead_process(
     pid: ProcessId,
@@ -918,7 +925,6 @@ fn cleanup_dead_process(
     #[cfg(mio_supported)]
     reactor.cancel_for_pid(pid);
     crate::socket::remove_all_for_pid(pid);
-    unregister_dead_process(pid, registered_names);
     crate::ets::delete_tables_owned_by(pid);
     alive_count.fetch_sub(1, Ordering::AcqRel);
     process_table.remove(&pid);
@@ -1627,7 +1633,6 @@ fn worker_loop(
                     #[cfg(mio_supported)]
                     reactor.cancel_for_pid(pid);
                     crate::socket::remove_all_for_pid(pid);
-                    unregister_dead_process(pid, &registered_names);
                     crate::ets::delete_tables_owned_by(pid);
                     alive_count.fetch_sub(1, Ordering::AcqRel);
                     process_table.remove(&pid);
@@ -1971,6 +1976,77 @@ mod tests {
         { reactor.shutdown(); join.join().unwrap(); }
         assert_eq!(owner.inbox.len(), 1, "only the held monitor delivers a 'DOWN'");
         assert!(owner.lock_for_runtime().otp.monitors_outgoing.is_empty());
+    }
+
+    // A supervisor restarts a named child as soon as it gets the child's
+    // 'EXIT', so the dead process's name must already be free, as on BEAM.
+    // The dead process is linked to a named process that the exit kills in
+    // turn, and an owner monitors that second process. Holding the owner's
+    // lock stops propagation just before it delivers the 'DOWN': both names
+    // must be free by then, with nothing yet in the owner's inbox.
+    #[test]
+    fn exit_frees_registered_names_before_any_signal() {
+        let scheduler = Scheduler::new(1);
+        let atoms = crate::atom_table::global_atom_table();
+        let (dead_name, linked_name) =
+            (atoms.intern("freed_dead_name"), atoms.intern("freed_linked_name"));
+        let owner_pid = scheduler.spawn_process(Process::new(scheduler.next_pid()));
+        let linked_pid = scheduler.spawn_process(Process::new(scheduler.next_pid()));
+        let dead_pid = scheduler.next_pid();
+        let monitor = 1_u64;
+        let owner = scheduler.process_table.get(&owner_pid).unwrap().clone();
+        owner.lock_for_runtime().add_outgoing_monitor(monitor, linked_pid);
+        {
+            let linked = scheduler.process_table.get(&linked_pid).unwrap().clone();
+            let mut linked = linked.lock_for_runtime();
+            linked.add_link(dead_pid);
+            linked.add_incoming_monitor(monitor, owner_pid);
+        }
+        scheduler.registered_names.write().extend([(dead_name, dead_pid), (linked_name, linked_pid)]);
+        #[cfg(mio_supported)]
+        let (reactor, join) = crate::reactor::spawn_reactor();
+
+        let owner_guard = owner.lock_for_runtime();
+        let freed_before_down = thread::scope(|scope| {
+            let exiting = scope.spawn(|| {
+                propagate_exit_signals(
+                    dead_pid,
+                    ErlTerm::atom(crate::atom_table::ATOM_BADARG),
+                    [linked_pid].into_iter().collect(),
+                    HashMap::new(),
+                    &scheduler.process_table,
+                    &scheduler.injector,
+                    &scheduler.runnable_count,
+                    &scheduler.alive_count,
+                    &scheduler.any_crash,
+                    &scheduler.initial_pid,
+                    &scheduler.registered_names,
+                    &scheduler.timer_wheel,
+                    &scheduler.io_pool,
+                    #[cfg(mio_supported)]
+                    &reactor,
+                );
+            });
+            let deadline = Instant::now() + Duration::from_secs(5);
+            let freed = loop {
+                if scheduler.registered_names.read().is_empty() {
+                    break true;
+                }
+                if Instant::now() >= deadline {
+                    break false;
+                }
+                thread::sleep(Duration::from_millis(1));
+            };
+            let undelivered = owner.inbox.is_empty();
+            drop(owner_guard);
+            exiting.join().unwrap();
+            freed && undelivered
+        });
+        #[cfg(mio_supported)]
+        { reactor.shutdown(); join.join().unwrap(); }
+
+        assert!(freed_before_down, "both names are free before the owner gets the 'DOWN'");
+        assert_eq!(owner.inbox.len(), 1, "the owner then gets the linked process's 'DOWN'");
     }
 
     #[test]
