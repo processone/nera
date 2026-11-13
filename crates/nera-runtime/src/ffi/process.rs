@@ -111,19 +111,14 @@ pub unsafe extern "C" fn nera_rt_send_message(ctx: *mut ProcessContext, pid_term
         });
         if let Some(entry) = entry {
             // Try direct-to-heap send when the target process is not being
-            // executed by any worker. This bypasses the SegQueue entirely,
-            // eliminating fragment allocation + copy-to-heap overhead.
-            use crate::process::{ASTATUS_WAITING, ASTATUS_READY};
-            let status = entry.published_status();
-            let direct_sent = if status == ASTATUS_WAITING || status == ASTATUS_READY {
-                if let Some(mut proc) = entry.try_lock_for_runtime() {
-                    let copied = direct_copy_message(ErlTerm(msg), &mut proc.heap);
-                    proc.mailbox.send(copied);
-                    drop(proc);
-                    true
-                } else {
-                    false
-                }
+            // executed by any worker and has nothing queued in its inbox.
+            // This bypasses the SegQueue entirely, eliminating fragment
+            // allocation + copy-to-heap overhead.
+            let direct_sent = if let Some(mut proc) = entry.try_lock_for_direct_send() {
+                let copied = direct_copy_message(ErlTerm(msg), &mut proc.heap);
+                proc.mailbox.send(copied);
+                drop(proc);
+                true
             } else {
                 false
             };
@@ -397,17 +392,12 @@ pub unsafe extern "C" fn nera_rt_send_tuple(
         };
 
         if let Some(entry) = entry {
-            use crate::process::{ASTATUS_WAITING, ASTATUS_READY};
-            let status = entry.published_status();
-            let direct_sent = if status == ASTATUS_WAITING || status == ASTATUS_READY {
-                if let Some(mut proc) = entry.try_lock_for_runtime() {
-                    let tuple = build_tuple_on_heap(&mut proc.heap, arity, &raw_elems, true);
-                    proc.mailbox.send(tuple);
-                    drop(proc);
-                    true
-                } else {
-                    false
-                }
+            // As in nera_rt_send_message, a queued inbox keeps this send there.
+            let direct_sent = if let Some(mut proc) = entry.try_lock_for_direct_send() {
+                let tuple = build_tuple_on_heap(&mut proc.heap, arity, &raw_elems, true);
+                proc.mailbox.send(tuple);
+                drop(proc);
+                true
             } else {
                 false
             };
@@ -2411,6 +2401,100 @@ mod delivery_timer_tests {
             reactor.shutdown();
             reactor_thread.join().unwrap();
         }
+    }
+}
+
+#[cfg(test)]
+mod delivery_order_tests {
+    use super::*;
+    use crate::process::{ProcessId, ProcessState, WaitReason};
+    use crate::scheduler::SchedulerHandle;
+    use std::sync::atomic::{AtomicI64, AtomicU32};
+
+    // The receive_nil_message end-to-end test sometimes got [[], [], e]
+    // instead of [[], e, []] on macOS arm64. A sender's first message went to
+    // the inbox of a running receiver. The receiver's worker then published
+    // its receive wait and released the lock, so the sender's second message
+    // took the direct path into the mailbox. The first one left the inbox
+    // only on the receiver's next run, behind the second.
+    fn received_after_two_sends(send: impl Fn(&mut ProcessContext, ProcessId, i64)) -> Vec<i64> {
+        #[cfg(mio_supported)]
+        let (reactor, reactor_thread) = crate::reactor::spawn_reactor();
+        let owner = Arc::new(SchedulerHandle {
+            injector: Arc::new(crossbeam_deque::Injector::new()),
+            process_table: Arc::new(dashmap::DashMap::new()),
+            next_pid: Arc::new(crate::process::ProcessIdAllocator::starting_at(2)),
+            runnable_count: Arc::new(AtomicI64::new(0)),
+            alive_count: Arc::new(AtomicI64::new(1)),
+            registered_names: Arc::new(parking_lot::RwLock::new(std::collections::HashMap::new())),
+            timer_wheel: Arc::new(crate::timer::TimerWheel::new()),
+            worker_notify: Arc::new((parking_lot::Mutex::new(()), parking_lot::Condvar::new())),
+            io_pool: Arc::new(crate::io_pool::IoPool::new(1)),
+            #[cfg(mio_supported)]
+            reactor: reactor.clone(),
+            worker_inboxes: Arc::new(Vec::new()),
+            num_workers: 0,
+            worker_threads: Arc::new(Vec::new()),
+            dispatch_rr: AtomicU32::new(0),
+        });
+        let receiver = ProcessId::new(4_243);
+        let entry = Arc::new(ProcessEntry::new(Process::new(receiver)));
+        owner.process_table.insert(receiver, Arc::clone(&entry));
+        let mut sender = ProcessContext::new(ProcessId::new(1));
+        sender.runtime = Arc::as_ptr(&owner);
+        // Forget any entry an earlier test on this thread cached for the PID.
+        SEND_CACHE.with(|cache| *cache.borrow_mut() = None);
+
+        // The receiver is running, so the first message waits in its inbox.
+        entry.lock_for_runtime().transition(ProcessState::Running);
+        send(&mut sender, receiver, 1);
+        assert_eq!(entry.inbox.len(), 1);
+        // Its worker publishes the receive wait and releases the lock while
+        // the first message is still in the inbox.
+        entry.lock_for_runtime().transition(ProcessState::Waiting(WaitReason::Receive {
+            timeout_deadline_ms: None,
+        }));
+        send(&mut sender, receiver, 2);
+
+        // The receiver's next run drains its inbox into the mailbox.
+        let mut proc = entry.lock_for_runtime();
+        proc.drain_inbox();
+        let received = proc.mailbox.messages().map(|message| {
+            let number = match message.as_boxed_ptr() {
+                // SAFETY: a boxed message is a 2-tuple on the heap of the
+                // receiver, which stays locked and alive here.
+                Some(tuple) => ErlTerm(unsafe { *tuple.add(2) }),
+                None => message,
+            };
+            number.as_small_int().expect("a numbered message")
+        }).collect();
+        drop(proc);
+        #[cfg(mio_supported)]
+        {
+            reactor.shutdown();
+            reactor_thread.join().unwrap();
+        }
+        received
+    }
+
+    #[test]
+    fn a_later_message_does_not_overtake_a_queued_one() {
+        let received = received_after_two_sends(|sender, receiver, n| {
+            // SAFETY: the sender context and its scheduler outlive the call;
+            // the message is an immediate, so no sender heap is read.
+            unsafe { nera_rt_send_message(sender, ErlTerm::pid(receiver).0, ErlTerm::small_int(n).0) };
+        });
+        assert_eq!(received, [1, 2]);
+    }
+
+    #[test]
+    fn a_later_tuple_does_not_overtake_a_queued_one() {
+        let received = received_after_two_sends(|sender, receiver, n| {
+            let tag = ErlTerm::atom(crate::atom_table::ATOM_OK).0;
+            // SAFETY: as above; both tuple elements are immediates.
+            unsafe { nera_rt_send_tuple(sender, ErlTerm::pid(receiver).0, 2, tag, ErlTerm::small_int(n).0, 0, 0) };
+        });
+        assert_eq!(received, [1, 2]);
     }
 }
 

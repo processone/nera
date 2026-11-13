@@ -331,7 +331,7 @@ Sender Process                          Receiver ProcessEntry
 ```
 
 - `ProcessEntry` wraps `inbox: SegQueue<MessageFragment>`, `atomic_status: AtomicU32`, `proc: Mutex<Process>`
-- **Direct-to-heap send** (fast path): `try_lock()` the target when WAITING/READY, copy directly to receiver's heap using `direct_copy_message` (skips HashMap forwarding for simple tuples). Falls back to SegQueue on contention
+- **Direct-to-heap send** (fast path): `try_lock()` the target when WAITING/READY and its inbox is empty, copy directly to receiver's heap using `direct_copy_message` (skips HashMap forwarding for simple tuples). Falls back to SegQueue on contention, and while the inbox holds messages so a later message never overtakes an earlier one from the same sender
 - **Lock-free send** (fallback): deep-copy to fragment → `inbox.push()` → CAS `WAITING→READY` → inject into scheduler + notify workers
 - **Fragment types**: `Immediate(ErlTerm)` for atoms/ints/PIDs/nil, `InlineTuple` (arity ≤ 2, zero alloc), `SimpleTuple` (Vec-backed), `Heap { heap, root }` for complex terms
 - **SendDirect fusion**: IR pass `fuse_make_tuple_send` detects `MakeTuple(msg, elems) + Send(result, pid, msg)` where `msg` is single-use, fuses into `SendDirect(result, pid, elems)`. Codegen emits `nera_rt_send_tuple` which constructs the tuple directly on the receiver's heap without sender heap allocation

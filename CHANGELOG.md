@@ -2,6 +2,20 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Messages between two processes arrive in the order they were sent
+
+- A message one process sends another is now always received after the
+  messages that process sent it earlier, as on BEAM. Previously a later
+  message could be received first: when it was sent while the receiver was
+  between two runs, it went straight into the receiver's mailbox, ahead of
+  an earlier message that was still waiting to be moved there. The
+  `receive_nil_message` fixture failed this way now and then, receiving
+  `[[], [], e]` instead of `[[], e, []]`.
+- Programs that run on BEAM are unaffected.
+- The `send_order_between_processes` fixture streams numbered messages
+  between several pairs of processes and checks their order, natively and
+  on BEAM.
+
 ## Sending and storing deeply nested terms
 
 - A term nested hundreds of thousands of levels deep, such as an iolist
