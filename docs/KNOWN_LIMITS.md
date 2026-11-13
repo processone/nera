@@ -89,14 +89,15 @@ platform and scope.
 These are real differences from the BEAM that we have reproduced.
 
 - Terms nested thousands of levels deep (an iolist built by prepending, for
-  example) survive garbage collection, but other operations on them still
-  recurse on the native stack and crash. Measured on macOS arm64 with a list
-  nested in head position: storing it in ETS from about 5,000 levels,
-  comparing it with `<` or `==` from about 8,000, `term_to_binary/1` from
-  about 11,000, sending it to another process or capturing it in a spawned
-  fun from about 14,000, `erlang:phash2/1` from about 27,000 and
-  `iolist_to_binary/1` from about 45,000. `=:=`, `iolist_size/1` and sending
-  to self work at 200,000 levels. The BEAM handles all of these.
+  example) survive garbage collection, can be sent to other processes,
+  captured in spawned funs, and stored in and read back from ETS and
+  `persistent_term`, but other operations on them still recurse on the
+  native stack and crash. Measured on macOS arm64 with a list nested in head
+  position: comparing it with `<` or `==`, or using it as an `ordered_set`
+  key, from about 8,000 levels, `term_to_binary/1` from about 11,000,
+  `erlang:phash2/1` from about 27,000 and `iolist_to_binary/1` from about
+  45,000. `=:=` and `iolist_size/1` work at 200,000 levels. The BEAM handles
+  all of these.
 - Comprehension filters that are guard expressions, such as
   `[X || X <- L, map_size(X) > 0]`, are treated as plain expressions, so a
   filter that should be skipped can raise.

@@ -9,11 +9,12 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use std::sync::atomic::AtomicBool;
 
-use crate::heap::{clone_arc_from_raw, FragmentHeap, ProcessHeap};
+use crate::copy_stack::{copy_graph, SlotCopier, SlotStack};
+use crate::heap::{clone_arc_from_raw, is_plain_immediate, FragmentHeap, ProcessHeap};
 use crate::term::{
     bigint_total_words, BoxedHeader, ConsCell, ErlTerm, BOXED_BIGINT, BOXED_BINARY, BOXED_CLOSURE,
     BOXED_FLOAT, BOXED_MAP, BOXED_MATCH_CTX, BOXED_REFC_BINARY, BOXED_REFERENCE, BOXED_TUPLE,
-    REFC_BINARY_OFFSET_WORD_INDEX, REFC_BINARY_PTR_WORD_INDEX,
+    EXTERNAL_BIT, REFC_BINARY_OFFSET_WORD_INDEX, REFC_BINARY_PTR_WORD_INDEX,
     REFC_BINARY_TOTAL_WORDS, REFERENCE_TOTAL_WORDS, TAG_ATOM, TAG_BOXED,
     TAG_CONS, TAG_MASK, TAG_NIL, TAG_PID, TAG_SMALL_INT,
 };
@@ -392,7 +393,10 @@ fn copy_simple_tuple_batch(
 ///
 /// Shared sub-structure within the source term is preserved (each source
 /// address is copied at most once), but the result is completely
-/// independent of the source heap.
+/// independent of the source heap. Work still to copy waits on a
+/// heap-allocated stack (see `copy_stack`), so nesting depth costs heap,
+/// not native stack.
+///
 /// Raw terms cannot establish source validity through a safe call:
 /// ```compile_fail,E0133
 /// use nera_runtime::{message::deep_copy_term, heap::ProcessHeap, term::ErlTerm};
@@ -406,18 +410,36 @@ fn copy_simple_tuple_batch(
 /// `BorrowedTerm::copy_to_heap` when a source owner is available.
 pub unsafe fn deep_copy_term(term: ErlTerm, target_heap: &mut ProcessHeap) -> ErlTerm {
     let mut copier = TermCopier::new(target_heap);
-    copier.copy(term)
+    // SAFETY: the caller keeps the source graph live and immutable; the
+    // target heap never moves words it has already allocated.
+    ErlTerm(unsafe { copy_graph(&mut copier, term.0) })
 }
 
 // ---------------------------------------------------------------------------
 // TermCopier
 // ---------------------------------------------------------------------------
 
+/// Copies a term graph into a process heap through [`copy_graph`], so a term
+/// nested hundreds of thousands of levels deep copies without native
+/// recursion.
 struct TermCopier<'a> {
     target: &'a mut ProcessHeap,
     /// Maps source address -> copied ErlTerm (with tag) so that shared
     /// sub-structure is only copied once.
     forwarding: HashMap<usize, ErlTerm>,
+    /// Copied objects whose term slots still need copying.
+    slots: SlotStack,
+}
+
+impl SlotCopier for TermCopier<'_> {
+    fn slots(&mut self) -> &mut SlotStack {
+        &mut self.slots
+    }
+
+    unsafe fn copy_word(&mut self, word: u64) -> u64 {
+        // SAFETY: forwarded from `copy_graph`'s caller.
+        unsafe { self.copy_object(ErlTerm(word)).0 }
+    }
 }
 
 impl<'a> TermCopier<'a> {
@@ -425,6 +447,7 @@ impl<'a> TermCopier<'a> {
         TermCopier {
             target,
             forwarding: HashMap::new(),
+            slots: SlotStack::default(),
         }
     }
 
@@ -440,266 +463,250 @@ impl<'a> TermCopier<'a> {
         self.forwarding.insert(addr, new_term);
     }
 
-    fn copy(&mut self, term: ErlTerm) -> ErlTerm {
+    /// Copy one object (or a run of list cells, see `copy_list`) into the
+    /// target heap, queueing its term slots instead of copying them.
+    /// Returns the copied term.
+    unsafe fn copy_object(&mut self, term: ErlTerm) -> ErlTerm {
         // External terms point into ETS storage — strip the external bit
         // and deep-copy from the ETS CompactHeap into the target heap.
-        if term.is_external() {
-            return self.copy(term.strip_external_bit());
-        }
+        let term = if term.is_external() { term.strip_external_bit() } else { term };
         match term.tag() {
-            TAG_SMALL_INT | TAG_ATOM | TAG_PID | TAG_NIL => {
-                // Immediates require no heap allocation.
-                term
-            }
-            TAG_CONS => {
-                // Iterative cons-tail traversal to avoid Rust stack
-                // overflow on long lists.
-                let mut cursor = term;
-                let mut first_new_term: Option<ErlTerm> = None;
-                let mut prev_cons_ptr: *mut ConsCell = std::ptr::null_mut();
-
-                while cursor.tag() == TAG_CONS {
-                    let src_addr = (cursor.0 & !TAG_MASK) as usize;
-                    if let Some(forwarded) = self.forwarded(src_addr) {
-                        if first_new_term.is_none() {
-                            return forwarded;
-                        }
-                        unsafe { (*prev_cons_ptr).tail = forwarded; }
-                        return first_new_term.unwrap();
-                    }
-
-                    let src_cons = src_addr as *const ConsCell;
-                    let (src_head, src_tail) = unsafe { ((*src_cons).head, (*src_cons).tail) };
-
-                    let new_term = self.target.alloc_cons(ErlTerm::nil(), ErlTerm::nil());
-                    self.record_forwarding(src_addr, new_term);
-
-                    // Copy head (recursive — heads are typically shallow).
-                    let new_head = self.copy(src_head);
-                    unsafe {
-                        let new_cons = new_term.as_cons_ptr().unwrap() as *mut ConsCell;
-                        (*new_cons).head = new_head;
-
-                        if first_new_term.is_none() {
-                            first_new_term = Some(new_term);
-                        } else {
-                            (*prev_cons_ptr).tail = new_term;
-                        }
-                        prev_cons_ptr = new_cons;
-                    }
-
-                    // Iterate on tail instead of recursing.
-                    cursor = src_tail;
-                }
-
-                // Copy the list terminator (nil or improper tail).
-                let new_tail = self.copy(cursor);
-                if first_new_term.is_none() {
-                    return new_tail;
-                }
-                unsafe { (*prev_cons_ptr).tail = new_tail; }
-                first_new_term.unwrap()
-            }
-            TAG_BOXED => {
-                if term.0 == 0 {
-                    return term;
-                }
-                let src_addr = (term.0 & !TAG_MASK) as usize;
-                if let Some(forwarded) = self.forwarded(src_addr) {
-                    return forwarded;
-                }
-
-                let src_header_ptr = src_addr as *const u64;
-                let header = unsafe { BoxedHeader(*src_header_ptr) };
-                let arity = header.arity() as usize;
-                let subtype = header.subtype();
-
-                match subtype {
-                    BOXED_TUPLE => {
-                        // Allocate header + arity words.
-                        let new_ptr = self.target.alloc_words(1 + arity);
-                        // SAFETY: the allocation reserves u64-aligned words (and ConsCell alignment is 8).
-                        let new_term = unsafe { ErlTerm::boxed_unchecked(new_ptr as *const u64) };
-                        self.record_forwarding(src_addr, new_term);
-
-                        // Write header.
-                        unsafe {
-                            *new_ptr = header.0;
-                        }
-                        // Recursively copy each element.
-                        for i in 0..arity {
-                            let elem = unsafe { ErlTerm(*src_header_ptr.add(1 + i)) };
-                            let copied = self.copy(elem);
-                            unsafe {
-                                *new_ptr.add(1 + i) = copied.0;
-                            }
-                        }
-                        new_term
-                    }
-                    BOXED_FLOAT => {
-                        let new_ptr = self.target.alloc_words(2);
-                        // SAFETY: the allocation reserves u64-aligned words (and ConsCell alignment is 8).
-                        let new_term = unsafe { ErlTerm::boxed_unchecked(new_ptr as *const u64) };
-                        self.record_forwarding(src_addr, new_term);
-                        unsafe {
-                            *new_ptr = header.0;
-                            *new_ptr.add(1) = *src_header_ptr.add(1);
-                        }
-                        new_term
-                    }
-                    BOXED_BIGINT => {
-                        // Reserved layout:
-                        // [header(BIGINT, limb_count), sign, limbs...]
-                        let total = bigint_total_words(arity);
-                        let new_ptr = self.target.alloc_words(total);
-                        // SAFETY: the allocation reserves u64-aligned words (and ConsCell alignment is 8).
-                        let new_term = unsafe { ErlTerm::boxed_unchecked(new_ptr as *const u64) };
-                        self.record_forwarding(src_addr, new_term);
-                        unsafe {
-                            std::ptr::copy_nonoverlapping(src_header_ptr, new_ptr, total);
-                        }
-                        new_term
-                    }
-                    BOXED_REFERENCE => {
-                        // [header(REFERENCE, 0), unique_id]
-                        let new_ptr = self.target.alloc_words(REFERENCE_TOTAL_WORDS);
-                        // SAFETY: the allocation reserves u64-aligned words (and ConsCell alignment is 8).
-                        let new_term = unsafe { ErlTerm::boxed_unchecked(new_ptr as *const u64) };
-                        self.record_forwarding(src_addr, new_term);
-                        unsafe {
-                            std::ptr::copy_nonoverlapping(src_header_ptr, new_ptr, REFERENCE_TOTAL_WORDS);
-                        }
-                        new_term
-                    }
-                    BOXED_MAP => {
-                        // arity = number of key-value pairs
-                        // total elements = arity * 2 (interleaved k/v)
-                        let total_elems = arity * 2;
-                        let total = 1 + total_elems;
-                        let new_ptr = self.target.alloc_words(total);
-                        // SAFETY: the allocation reserves u64-aligned words (and ConsCell alignment is 8).
-                        let new_term = unsafe { ErlTerm::boxed_unchecked(new_ptr as *const u64) };
-                        self.record_forwarding(src_addr, new_term);
-
-                        // Write header.
-                        unsafe {
-                            *new_ptr = header.0;
-                        }
-                        // Recursively copy each key and value.
-                        for i in 0..total_elems {
-                            let elem = unsafe { ErlTerm(*src_header_ptr.add(1 + i)) };
-                            let copied = self.copy(elem);
-                            unsafe {
-                                *new_ptr.add(1 + i) = copied.0;
-                            }
-                        }
-                        new_term
-                    }
-                    BOXED_BINARY => {
-                        // arity = bit count; derive byte count
-                        let bit_count = arity;
-                        let byte_count = bit_count.div_ceil(8);
-                        let data_words = byte_count.div_ceil(8);
-                        let total = 1 + data_words;
-                        let new_ptr = self.target.alloc_words(total);
-                        // SAFETY: the allocation reserves u64-aligned words (and ConsCell alignment is 8).
-                        let new_term = unsafe { ErlTerm::boxed_unchecked(new_ptr as *const u64) };
-                        self.record_forwarding(src_addr, new_term);
-                        unsafe {
-                            std::ptr::copy_nonoverlapping(src_header_ptr, new_ptr, total);
-                        }
-                        new_term
-                    }
-                    BOXED_REFC_BINARY => {
-                        // Descriptor layout:
-                        // [header(REFC_BINARY, byte_len), raw_arc_ptr, byte_offset]
-                        let total = REFC_BINARY_TOTAL_WORDS;
-                        let new_ptr = self.target.alloc_words(total);
-                        // SAFETY: the allocation reserves u64-aligned words (and ConsCell alignment is 8).
-                        let new_term = unsafe { ErlTerm::boxed_unchecked(new_ptr as *const u64) };
-                        self.record_forwarding(src_addr, new_term);
-                        unsafe {
-                            std::ptr::copy_nonoverlapping(src_header_ptr, new_ptr, total);
-                        }
-
-                        // Clone the backing Arc (atomic refcount increment)
-                        // and register in the target heap's ownership list.
-                        let raw_arc_ptr = unsafe {
-                            *src_header_ptr.add(REFC_BINARY_PTR_WORD_INDEX)
-                        };
-                        let cloned_arc = unsafe { clone_arc_from_raw(raw_arc_ptr) };
-                        self.target.retain_refc_binary(cloned_arc);
-                        new_term
-                    }
-                    BOXED_CLOSURE => {
-                        // Closure layout: [header(CLOSURE, env_count) | fn_ptr | arity | env0 | env1 | ...]
-                        // header.arity() = env_count; fn_ptr and arity are raw words (not tagged terms).
-                        // Env vars ARE tagged ErlTerms and must be recursively copied.
-                        let env_count = arity;
-                        let total_words = 3 + env_count;
-                        let new_ptr = self.target.alloc_words(total_words);
-                        // SAFETY: the allocation reserves u64-aligned words (and ConsCell alignment is 8).
-                        let new_term = unsafe { ErlTerm::boxed_unchecked(new_ptr as *const u64) };
-                        self.record_forwarding(src_addr, new_term);
-
-                        // Copy header, fn_ptr, and closure arity as raw words.
-                        unsafe {
-                            *new_ptr = header.0;
-                            *new_ptr.add(1) = *src_header_ptr.add(1); // fn_ptr
-                            *new_ptr.add(2) = *src_header_ptr.add(2); // callable arity
-                        }
-                        // Recursively deep-copy each env var.
-                        for i in 0..env_count {
-                            let env_term = unsafe { ErlTerm(*src_header_ptr.add(3 + i)) };
-                            let copied = self.copy(env_term);
-                            unsafe {
-                                *new_ptr.add(3 + i) = copied.0;
-                            }
-                        }
-                        new_term
-                    }
-                    BOXED_MATCH_CTX => {
-                        // Materialize exactly the logical window before dropping
-                        // source ownership. Large output bytes become the owned
-                        // refc backing directly; small output lives in its heap.
-                        unsafe {
-                            let window = crate::match_context::MatchContext::view(term).unwrap();
-                            let count = window.remaining() as usize;
-                            let length = count.div_ceil(8);
-                            let (data, _) = binary_data(window.binary()).unwrap();
-                            let (new_term, subtype) = if length > crate::heap::REFC_BINARY_THRESHOLD {
-                                let mut bytes = vec![0; length];
-                                crate::binary::bit_copy::copy_bits(bytes.as_mut_ptr(),0,data,window.offset() as usize,count);
-                                let backing = Arc::new(crate::binary::BinaryData::new(bytes));
-                                (self.target.alloc_refc_binary_from_arc(backing,0,length), crate::term::BoxedSubtype::RefcBinary)
-                            } else {
-                                let result = self.target.alloc_binary_zeroed(length);
-                                let target = result.as_boxed_ptr().unwrap().add(1).cast_mut().cast::<u8>();
-                                crate::binary::bit_copy::copy_bits(target,0,data,window.offset() as usize,count);
-                                (result, crate::term::BoxedSubtype::HeapBinary)
-                            };
-                            if !count.is_multiple_of(8) {
-                                *new_term.as_boxed_ptr().unwrap().cast_mut() = BoxedHeader::new(subtype,count as u64).0;
-                            }
-                            self.record_forwarding(src_addr, new_term);
-                            new_term
-                        }
-                    }
-                    _ => {
-                        // Generic: copy header + arity data words verbatim.
-                        let total = 1 + arity;
-                        let new_ptr = self.target.alloc_words(total);
-                        // SAFETY: the allocation reserves u64-aligned words (and ConsCell alignment is 8).
-                        let new_term = unsafe { ErlTerm::boxed_unchecked(new_ptr as *const u64) };
-                        self.record_forwarding(src_addr, new_term);
-                        unsafe {
-                            std::ptr::copy_nonoverlapping(src_header_ptr, new_ptr, total);
-                        }
-                        new_term
-                    }
-                }
-            }
+            // Immediates require no heap allocation.
+            TAG_SMALL_INT | TAG_ATOM | TAG_PID | TAG_NIL => term,
+            TAG_CONS => unsafe { self.copy_list(term) },
+            TAG_BOXED => unsafe { self.copy_boxed(term) },
             _ => term,
+        }
+    }
+
+    /// Copy the cons cells of a list along its tail while their heads are
+    /// immediates, as most lists and strings need. The first cell whose head
+    /// needs copying queues its head and tail and ends the run, so the head's
+    /// subtree is copied before the rest of the list, as recursion would. A
+    /// cell copied before (shared structure) ends the run with its copy.
+    unsafe fn copy_list(&mut self, list: ErlTerm) -> ErlTerm {
+        let mut first = None;
+        let mut prev_tail: *mut u64 = std::ptr::null_mut();
+        let mut cursor = list;
+        loop {
+            let mut next = None;
+            let copied = if cursor.tag() != TAG_CONS {
+                // The terminator: nil or an improper tail.
+                unsafe { self.copy_object(cursor) }
+            } else {
+                let src_addr = (cursor.0 & !(TAG_MASK | EXTERNAL_BIT)) as usize;
+                if let Some(forwarded) = self.forwarded(src_addr) {
+                    forwarded
+                } else {
+                    let new_ptr = self.target.alloc_words(2);
+                    // SAFETY: the allocation reserves u64-aligned words (and ConsCell alignment is 8).
+                    let new_term = unsafe { ErlTerm::cons_unchecked(new_ptr as *const ConsCell) };
+                    self.record_forwarding(src_addr, new_term);
+                    // SAFETY: `src_addr` is a live source cons cell (head word
+                    // first, then tail); `new_ptr` reserves its two-word copy.
+                    unsafe {
+                        let src = src_addr as *const u64;
+                        let head = *src;
+                        if is_plain_immediate(head) {
+                            *new_ptr = head;
+                            next = Some((new_ptr.add(1), ErlTerm(*src.add(1))));
+                        } else {
+                            self.slots.push(new_ptr, src, 2);
+                        }
+                    }
+                    new_term
+                }
+            };
+            if first.is_none() {
+                first = Some(copied);
+            } else {
+                // SAFETY: the previous cell's reserved tail word, written once.
+                unsafe { *prev_tail = copied.0 };
+            }
+            match next {
+                Some((tail_slot, tail)) => (prev_tail, cursor) = (tail_slot, tail),
+                None => return first.expect("first cell copied"),
+            }
+        }
+    }
+
+    /// Copy one boxed object, queueing the term slots of tuples, maps and
+    /// closures.
+    unsafe fn copy_boxed(&mut self, term: ErlTerm) -> ErlTerm {
+        if term.0 == 0 {
+            return term;
+        }
+        let src_addr = (term.0 & !TAG_MASK) as usize;
+        if let Some(forwarded) = self.forwarded(src_addr) {
+            return forwarded;
+        }
+
+        let src_header_ptr = src_addr as *const u64;
+        let header = unsafe { BoxedHeader(*src_header_ptr) };
+        let arity = header.arity() as usize;
+        let subtype = header.subtype();
+
+        match subtype {
+            BOXED_TUPLE => {
+                // Allocate header + arity words.
+                let new_ptr = self.target.alloc_words(1 + arity);
+                // SAFETY: the allocation reserves u64-aligned words (and ConsCell alignment is 8).
+                let new_term = unsafe { ErlTerm::boxed_unchecked(new_ptr as *const u64) };
+                self.record_forwarding(src_addr, new_term);
+                // SAFETY: elements follow the header in both objects.
+                unsafe {
+                    *new_ptr = header.0;
+                    self.slots.push(new_ptr.add(1), src_header_ptr.add(1), arity);
+                }
+                new_term
+            }
+            BOXED_FLOAT => {
+                let new_ptr = self.target.alloc_words(2);
+                // SAFETY: the allocation reserves u64-aligned words (and ConsCell alignment is 8).
+                let new_term = unsafe { ErlTerm::boxed_unchecked(new_ptr as *const u64) };
+                self.record_forwarding(src_addr, new_term);
+                unsafe {
+                    *new_ptr = header.0;
+                    *new_ptr.add(1) = *src_header_ptr.add(1);
+                }
+                new_term
+            }
+            BOXED_BIGINT => {
+                // Reserved layout:
+                // [header(BIGINT, limb_count), sign, limbs...]
+                let total = bigint_total_words(arity);
+                let new_ptr = self.target.alloc_words(total);
+                // SAFETY: the allocation reserves u64-aligned words (and ConsCell alignment is 8).
+                let new_term = unsafe { ErlTerm::boxed_unchecked(new_ptr as *const u64) };
+                self.record_forwarding(src_addr, new_term);
+                unsafe {
+                    std::ptr::copy_nonoverlapping(src_header_ptr, new_ptr, total);
+                }
+                new_term
+            }
+            BOXED_REFERENCE => {
+                // [header(REFERENCE, 0), unique_id]
+                let new_ptr = self.target.alloc_words(REFERENCE_TOTAL_WORDS);
+                // SAFETY: the allocation reserves u64-aligned words (and ConsCell alignment is 8).
+                let new_term = unsafe { ErlTerm::boxed_unchecked(new_ptr as *const u64) };
+                self.record_forwarding(src_addr, new_term);
+                unsafe {
+                    std::ptr::copy_nonoverlapping(src_header_ptr, new_ptr, REFERENCE_TOTAL_WORDS);
+                }
+                new_term
+            }
+            BOXED_MAP => {
+                // arity = number of key-value pairs
+                // total elements = arity * 2 (interleaved k/v)
+                let total_elems = arity * 2;
+                let total = 1 + total_elems;
+                let new_ptr = self.target.alloc_words(total);
+                // SAFETY: the allocation reserves u64-aligned words (and ConsCell alignment is 8).
+                let new_term = unsafe { ErlTerm::boxed_unchecked(new_ptr as *const u64) };
+                self.record_forwarding(src_addr, new_term);
+                // SAFETY: keys and values follow the header in both objects.
+                unsafe {
+                    *new_ptr = header.0;
+                    self.slots.push(new_ptr.add(1), src_header_ptr.add(1), total_elems);
+                }
+                new_term
+            }
+            BOXED_BINARY => {
+                // arity = bit count; derive byte count
+                let bit_count = arity;
+                let byte_count = bit_count.div_ceil(8);
+                let data_words = byte_count.div_ceil(8);
+                let total = 1 + data_words;
+                let new_ptr = self.target.alloc_words(total);
+                // SAFETY: the allocation reserves u64-aligned words (and ConsCell alignment is 8).
+                let new_term = unsafe { ErlTerm::boxed_unchecked(new_ptr as *const u64) };
+                self.record_forwarding(src_addr, new_term);
+                unsafe {
+                    std::ptr::copy_nonoverlapping(src_header_ptr, new_ptr, total);
+                }
+                new_term
+            }
+            BOXED_REFC_BINARY => {
+                // Descriptor layout:
+                // [header(REFC_BINARY, byte_len), raw_arc_ptr, byte_offset]
+                let total = REFC_BINARY_TOTAL_WORDS;
+                let new_ptr = self.target.alloc_words(total);
+                // SAFETY: the allocation reserves u64-aligned words (and ConsCell alignment is 8).
+                let new_term = unsafe { ErlTerm::boxed_unchecked(new_ptr as *const u64) };
+                self.record_forwarding(src_addr, new_term);
+                unsafe {
+                    std::ptr::copy_nonoverlapping(src_header_ptr, new_ptr, total);
+                }
+
+                // Clone the backing Arc (atomic refcount increment)
+                // and register in the target heap's ownership list.
+                let raw_arc_ptr = unsafe {
+                    *src_header_ptr.add(REFC_BINARY_PTR_WORD_INDEX)
+                };
+                let cloned_arc = unsafe { clone_arc_from_raw(raw_arc_ptr) };
+                self.target.retain_refc_binary(cloned_arc);
+                new_term
+            }
+            BOXED_CLOSURE => {
+                // Closure layout: [header(CLOSURE, env_count) | fn_ptr | arity | env0 | env1 | ...]
+                // header.arity() = env_count; fn_ptr and arity are raw words (not tagged terms).
+                // Env vars ARE tagged ErlTerms and are queued for copying.
+                let env_count = arity;
+                let total_words = 3 + env_count;
+                let new_ptr = self.target.alloc_words(total_words);
+                // SAFETY: the allocation reserves u64-aligned words (and ConsCell alignment is 8).
+                let new_term = unsafe { ErlTerm::boxed_unchecked(new_ptr as *const u64) };
+                self.record_forwarding(src_addr, new_term);
+
+                // Copy header, fn_ptr, and closure arity as raw words; the
+                // environment follows them in both objects.
+                unsafe {
+                    *new_ptr = header.0;
+                    *new_ptr.add(1) = *src_header_ptr.add(1); // fn_ptr
+                    *new_ptr.add(2) = *src_header_ptr.add(2); // callable arity
+                    self.slots.push(new_ptr.add(3), src_header_ptr.add(3), env_count);
+                }
+                new_term
+            }
+            BOXED_MATCH_CTX => {
+                // Materialize exactly the logical window before dropping
+                // source ownership. Large output bytes become the owned
+                // refc backing directly; small output lives in its heap.
+                unsafe {
+                    let window = crate::match_context::MatchContext::view(term).unwrap();
+                    let count = window.remaining() as usize;
+                    let length = count.div_ceil(8);
+                    let (data, _) = binary_data(window.binary()).unwrap();
+                    let (new_term, subtype) = if length > crate::heap::REFC_BINARY_THRESHOLD {
+                        let mut bytes = vec![0; length];
+                        crate::binary::bit_copy::copy_bits(bytes.as_mut_ptr(),0,data,window.offset() as usize,count);
+                        let backing = Arc::new(crate::binary::BinaryData::new(bytes));
+                        (self.target.alloc_refc_binary_from_arc(backing,0,length), crate::term::BoxedSubtype::RefcBinary)
+                    } else {
+                        let result = self.target.alloc_binary_zeroed(length);
+                        let target = result.as_boxed_ptr().unwrap().add(1).cast_mut().cast::<u8>();
+                        crate::binary::bit_copy::copy_bits(target,0,data,window.offset() as usize,count);
+                        (result, crate::term::BoxedSubtype::HeapBinary)
+                    };
+                    if !count.is_multiple_of(8) {
+                        *new_term.as_boxed_ptr().unwrap().cast_mut() = BoxedHeader::new(subtype,count as u64).0;
+                    }
+                    self.record_forwarding(src_addr, new_term);
+                    new_term
+                }
+            }
+            _ => {
+                // Generic: copy header + arity data words verbatim.
+                let total = 1 + arity;
+                let new_ptr = self.target.alloc_words(total);
+                // SAFETY: the allocation reserves u64-aligned words (and ConsCell alignment is 8).
+                let new_term = unsafe { ErlTerm::boxed_unchecked(new_ptr as *const u64) };
+                self.record_forwarding(src_addr, new_term);
+                unsafe {
+                    std::ptr::copy_nonoverlapping(src_header_ptr, new_ptr, total);
+                }
+                new_term
+            }
         }
     }
 }

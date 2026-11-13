@@ -995,7 +995,7 @@ enum GcTarget<'a> {
 /// An immediate without the external bit: the collector copies it as itself
 /// with no side effect.
 #[inline]
-fn is_plain_immediate(word: u64) -> bool {
+pub(crate) fn is_plain_immediate(word: u64) -> bool {
     word & EXTERNAL_BIT == 0 && matches!(word & TAG_MASK, TAG_SMALL_INT | TAG_ATOM | TAG_PID | TAG_NIL)
 }
 

@@ -558,15 +558,20 @@ the term is **deep-copied** from A's heap into B's heap. This guarantees:
 
 ### 10.2 Deep Copy Algorithm
 
-The `deep_copy_term()` function walks the term recursively:
+The `deep_copy_term()` function walks the term depth first. The slots it
+still has to copy wait on a heap-allocated work stack instead of native
+stack frames, so a term nested hundreds of thousands of levels deep copies
+like a flat one. ETS and `persistent_term` copy terms in and out the same way.
 
 - **Immediates** (small integers, atoms, PIDs, nil): returned as-is. No
   allocation needed — the value is entirely in the 64-bit word.
-- **Cons cells**: allocate a new cell on the target heap, recursively copy
-  head and tail. A forwarding table (`HashMap<usize, ErlTerm>`) ensures
-  shared sub-structure is copied only once.
+- **Cons cells**: allocate a new cell on the target heap and copy its head
+  before its tail; a run of cells with immediate heads is copied in one loop.
+  A forwarding table (`HashMap<usize, ErlTerm>`) ensures shared
+  sub-structure is copied only once.
 - **Boxed objects** (tuples, floats, etc.): allocate header + payload words
-  on the target heap, recursively copy elements for tuples.
+  on the target heap, then copy the elements of tuples and maps and the
+  environment of closures.
 
 For the common case of simple messages (tuples of immediates + refc binaries),
 `direct_copy_message()` provides a fast path that skips the HashMap forwarding
