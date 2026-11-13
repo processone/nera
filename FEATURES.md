@@ -38,7 +38,7 @@ and known differences from BEAM.
 
 | Feature                                     | Status | Notes                         |
 |---------------------------------------------|--------|-------------------------------|
-| Arithmetic (+, -, *, /)                     | ✅      | Integer and float             |
+| Arithmetic (+, -, *, /)                     | ✅      | Integer and float; a zero divisor for `/` and a float result beyond the float range raise `badarith` |
 | Integer division (div, rem)                 | ✅      |                               |
 | Comparison (==, /=, =:=, =/=, <, >, =<, >=) | ✅      | Atoms order by name, as on BEAM; map ordering uses exact keys; `==` retains numeric map-value equality |
 | Boolean operators (and, or, not)            | ✅      |                               |
@@ -49,7 +49,7 @@ and known differences from BEAM.
 | Match operator (=)                          | ✅      | In patterns and body          |
 | Send operator (!)                           | ✅      | To PIDs and registered names  |
 | Block expressions (begin...end)             | ✅      |                               |
-| List comprehensions                         | ✅      | Generator patterns checked before filters/body; keys/sizes read outer or earlier-generator inputs |
+| List comprehensions                         | ✅      | Generator patterns checked before filters/body; filters stop at the first `false`; keys/sizes read outer or earlier-generator inputs |
 | Fun expressions (fun(...) -> ... end)       | ✅      | Closure capture includes head keys/sizes and nested callee expressions |
 | Fun references (fun F/A, fun M:F/A)         | ✅      | Local and remote; imported functions require `fun M:F/A`, as on BEAM |
 | Try/catch/after                             | 🔶      | throw/error/exit; bound pattern variables compare with `=:=`; resumed outer handlers regression-tested (P0-1 repaired) |

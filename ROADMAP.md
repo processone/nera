@@ -334,8 +334,9 @@ local calls.
 - [x] **Constant folding in IR**: Fold `1 + 2` to `3` at IR level.
       Integer arithmetic (`+`, `-`, `*`, `div`, `rem`) with overflow check,
       float division (`/`), bitwise ops (`band`, `bor`, `bxor`, `bsl`, `bsr`,
-      `bnot`), all comparisons, unary `-` and `not`. Division by zero and
-      integer overflow are preserved as runtime ops. Results chain-propagate.
+      `bnot`), all comparisons, unary `-` and `not`. Division by zero, float
+      overflow and integer overflow are preserved as runtime ops. Results
+      chain-propagate.
 
 - [x] **Dead code elimination**: Remove unreachable blocks after constant folding.
       Phase 1 simplifies constant branches (`Branch` on known true/false → `Jump`)

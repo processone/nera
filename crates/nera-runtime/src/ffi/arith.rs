@@ -27,13 +27,22 @@ pub unsafe extern "C" fn nera_rt_math_sqrt(ctx: *mut ProcessContext, value: u64)
     with_ctx_heap(ctx, |heap| heap.alloc_float(number.sqrt()).0)
 }
 
-/// A float result of a C math function, or `badarith` when it is infinite or
-/// NaN, as OTP's math module raises for overflow and domain errors.
-unsafe fn math_result(ctx: *mut ProcessContext, result: f64) -> u64 {
+/// A float result, or `badarith` when it is infinite or NaN. BEAM raises for
+/// float overflow, a zero divisor and math domain errors alike.
+unsafe fn float_result(ctx: *mut ProcessContext, result: f64) -> u64 {
     if !result.is_finite() {
         return raise_badarith(ctx);
     }
     with_ctx_heap(ctx, |heap| heap.alloc_float(result).0)
+}
+
+/// Both operands of float arithmetic as floats, or `None` when either is not
+/// a number or is an integer too large for a float, which BEAM rejects with
+/// `badarith` rather than treating as infinity.
+unsafe fn float_operands(a: ErlTerm, b: ErlTerm) -> Option<(f64, f64)> {
+    let a = extract_numeric(a).filter(|number| number.is_finite())?;
+    let b = extract_numeric(b).filter(|number| number.is_finite())?;
+    Some((a, b))
 }
 
 /// A math argument as a float: nonnumbers raise `badarg`; numbers outside the
@@ -60,7 +69,7 @@ unsafe fn raise_math_argument(ctx: *mut ProcessContext, arithmetic: bool) -> u64
 #[no_mangle]
 pub unsafe extern "C" fn nera_rt_math_exp(ctx: *mut ProcessContext, value: u64) -> u64 {
     match math_argument(ErlTerm(value)) {
-        Ok(number) => math_result(ctx, number.exp()),
+        Ok(number) => float_result(ctx, number.exp()),
         Err(arithmetic) => raise_math_argument(ctx, arithmetic),
     }
 }
@@ -73,7 +82,7 @@ pub unsafe extern "C" fn nera_rt_math_exp(ctx: *mut ProcessContext, value: u64) 
 #[no_mangle]
 pub unsafe extern "C" fn nera_rt_math_log(ctx: *mut ProcessContext, value: u64) -> u64 {
     match math_argument(ErlTerm(value)) {
-        Ok(number) => math_result(ctx, number.ln()),
+        Ok(number) => float_result(ctx, number.ln()),
         Err(arithmetic) => raise_math_argument(ctx, arithmetic),
     }
 }
@@ -90,7 +99,7 @@ pub unsafe extern "C" fn nera_rt_math_pow(ctx: *mut ProcessContext, base: u64, e
         return raise_badarg(ctx);
     }
     match (math_argument(base), math_argument(exponent)) {
-        (Ok(x), Ok(y)) => math_result(ctx, x.powf(y)),
+        (Ok(x), Ok(y)) => float_result(ctx, x.powf(y)),
         _ => raise_badarith(ctx),
     }
 }
@@ -118,10 +127,10 @@ pub unsafe extern "C" fn nera_rt_add(ctx: *mut ProcessContext, a: u64, b: u64) -
         return with_ctx_heap(ctx, |heap| bigint_to_term(heap, a_big + b_big).0);
     }
     // Float coercion (int/float mixed)
-    if let (Some(fa), Some(fb)) = (extract_numeric(ta), extract_numeric(tb)) {
-        return with_ctx_heap(ctx, |heap| heap.alloc_float(fa + fb).0);
+    match float_operands(ta, tb) {
+        Some((fa, fb)) => float_result(ctx, fa + fb),
+        None => raise_badarith(ctx),
     }
-    raise_badarith(ctx)
 }
 
 /// Arithmetic subtract.
@@ -144,10 +153,10 @@ pub unsafe extern "C" fn nera_rt_sub(ctx: *mut ProcessContext, a: u64, b: u64) -
     if let (Some(a_big), Some(b_big)) = (term_to_bigint(ta), term_to_bigint(tb)) {
         return with_ctx_heap(ctx, |heap| bigint_to_term(heap, a_big - b_big).0);
     }
-    if let (Some(fa), Some(fb)) = (extract_numeric(ta), extract_numeric(tb)) {
-        return with_ctx_heap(ctx, |heap| heap.alloc_float(fa - fb).0);
+    match float_operands(ta, tb) {
+        Some((fa, fb)) => float_result(ctx, fa - fb),
+        None => raise_badarith(ctx),
     }
-    raise_badarith(ctx)
 }
 
 /// Arithmetic multiply.
@@ -170,21 +179,19 @@ pub unsafe extern "C" fn nera_rt_mul(ctx: *mut ProcessContext, a: u64, b: u64) -
     if let (Some(a_big), Some(b_big)) = (term_to_bigint(ta), term_to_bigint(tb)) {
         return with_ctx_heap(ctx, |heap| bigint_to_term(heap, a_big * b_big).0);
     }
-    if let (Some(fa), Some(fb)) = (extract_numeric(ta), extract_numeric(tb)) {
-        return with_ctx_heap(ctx, |heap| heap.alloc_float(fa * fb).0);
+    match float_operands(ta, tb) {
+        Some((fa, fb)) => float_result(ctx, fa * fb),
+        None => raise_badarith(ctx),
     }
-    raise_badarith(ctx)
 }
 
-/// Float division (/ operator). Always returns a float in Erlang.
+/// Float division (/ operator). Always returns a float in Erlang; a zero
+/// divisor, 0.0 and -0.0 included, raises `badarith`.
 #[no_mangle]
 pub unsafe extern "C" fn nera_rt_fdiv(ctx: *mut ProcessContext, a: u64, b: u64) -> u64 {
-    let ta = ErlTerm(a);
-    let tb = ErlTerm(b);
-    if let (Some(fa), Some(fb)) = (extract_numeric(ta), extract_numeric(tb)) {
-        with_ctx_heap(ctx, |heap| heap.alloc_float(fa / fb).0)
-    } else {
-        raise_badarith(ctx)
+    match float_operands(ErlTerm(a), ErlTerm(b)) {
+        Some((fa, fb)) if fb != 0.0 => float_result(ctx, fa / fb),
+        _ => raise_badarith(ctx),
     }
 }
 
