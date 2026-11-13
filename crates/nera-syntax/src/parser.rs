@@ -1211,7 +1211,7 @@ impl<'src> Parser<'src> {
             let span_start = self.current_span();
             self.advance();
             let operand = self.parse_expr_bp(14)?;
-            let span = span_start.merge(expr_span(&operand));
+            let span = span_start.merge(self.prev_span());
             return Ok(unary_plus_expr(operand, span));
         }
         if self.check(&Token::Minus) {
@@ -2537,7 +2537,7 @@ impl<'src> Parser<'src> {
             // A segment's size colon and type slash belong to this parser,
             // not to unary expression parsing (which also reads remote calls).
             let operand = self.parse_primary()?;
-            let span = start.merge(expr_span(&operand));
+            let span = start.merge(self.prev_span());
             unary_plus_expr(operand, span)
         } else if self.check(&Token::Minus) {
             let neg_start = self.current_span();

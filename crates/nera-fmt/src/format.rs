@@ -1564,9 +1564,9 @@ impl<'src> Formatter<'src> {
     }
 
     fn bin_size_needs_parens(&self, size: &Expr) -> bool {
-        // The parser folds negative numbers into literals, but their leading
-        // minus still needs grouping in a size, including spellings like -0.
-        needs_parens_in_bin_segment(size) || self.span_text(size.span()).starts_with('-')
+        // The parser folds signed numbers into literals, but their leading
+        // sign still needs grouping in a size, including spellings like -0.
+        needs_parens_in_bin_segment(size) || self.span_text(size.span()).starts_with(['-', '+'])
     }
 
     fn format_bin_type_spec(&mut self, spec: &BinSegmentType) -> String {

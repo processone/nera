@@ -42,3 +42,49 @@ fn formatted_unary_plus_keeps_the_expression_tree() {
         format_source(&formatted, &FormatConfig::default()).unwrap()
     );
 }
+
+// Numeric normalization must keep the whole consumed spelling, including the
+// closing parenthesis, in expressions and expression-derived match patterns.
+#[test]
+fn formatted_parenthesized_positive_literals_keep_complete_spans() {
+    for literal in ["1", "9223372036854775808", "1.5"] {
+        let source = format!(
+            "-module(unary_plus). f() -> +({literal}).
+             g() -> +({literal}) = id({literal}).
+             h() -> <<+({literal})/float>>."
+        );
+        let formatted = format_source(&source, &FormatConfig::default()).unwrap();
+        let result = Parser::new(&formatted).parse_module();
+        assert!(result.errors.is_empty(), "{:?}: {formatted}", result.errors);
+        assert!(matches!(
+            &result.module.functions[0].clauses[0].body[0],
+            Expr::Integer(..) | Expr::BigInteger(..) | Expr::Float(..)
+        ));
+        assert!(matches!(
+            &result.module.functions[1].clauses[0].body[0],
+            Expr::Match(..)
+        ));
+        assert_eq!(
+            formatted,
+            format_source(&formatted, &FormatConfig::default()).unwrap()
+        );
+    }
+}
+
+// Construction and pattern segments share size formatting; both must preserve
+// the parentheses required around a signed size, including comprehension sites.
+#[test]
+fn formatted_positive_binary_sizes_keep_required_grouping() {
+    let source = "-module(unary_plus).
+        f() -> <<1:(+8)>>.
+        g(<<X:(+8)>>) -> X.
+        h() -> << <<X:(+8)>> || <<X:(+8)>> <= <<1, 2>> >>.";
+    let formatted = format_source(source, &FormatConfig::default()).unwrap();
+    let result = Parser::new(&formatted).parse_module();
+    assert!(result.errors.is_empty(), "{:?}: {formatted}", result.errors);
+    assert_eq!(result.module.functions.len(), 3);
+    assert_eq!(
+        formatted,
+        format_source(&formatted, &FormatConfig::default()).unwrap()
+    );
+}
