@@ -233,6 +233,7 @@ pub(super) unsafe fn apply_impl(
         (Some("erlang"), Some("throw"), 1) => Some(nera_rt_throw(ctx, arg_terms[0])),
         (Some("erlang"), Some("error"), 1) => Some(nera_rt_error(ctx, arg_terms[0])),
         (Some("erlang"), Some("error"), 2) => Some(nera_rt_error_2(ctx, arg_terms[0], arg_terms[1])),
+        (Some("erlang"), Some("error"), 3) => Some(nera_rt_error_3(ctx, arg_terms[0], arg_terms[1], arg_terms[2])),
         (Some("erlang"), Some("exit"), 1) => Some(nera_rt_exit(ctx, arg_terms[0])),
         (Some("erlang"), Some("halt"), 0) => Some(nera_rt_halt_0(ctx)),
         (Some("erlang"), Some("halt"), 1) => Some(nera_rt_halt_1(ctx, arg_terms[0])),

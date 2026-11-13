@@ -113,6 +113,21 @@ pub unsafe extern "C" fn nera_rt_error_2(ctx: *mut ProcessContext, reason: u64, 
     unsafe { nera_rt_error(ctx, reason) }
 }
 
+/// `erlang:error/3`: raise an error exception with `reason`.
+///
+/// Like OTP 29, accept arbitrary `args` and `options` without changing the
+/// class or reason. Nera's arity-only stack frames do not retain the arguments
+/// or the `error_info` metadata supplied in options.
+#[no_mangle]
+pub unsafe extern "C" fn nera_rt_error_3(
+    ctx: *mut ProcessContext,
+    reason: u64,
+    _args: u64,
+    _options: u64,
+) -> u64 {
+    unsafe { nera_rt_error(ctx, reason) }
+}
+
 /// Raise an exit exception.
 #[no_mangle]
 pub unsafe extern "C" fn nera_rt_exit(ctx: *mut ProcessContext, reason: u64) -> u64 {

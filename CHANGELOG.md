@@ -2,6 +2,20 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## error/3 compiles and raises its reason
+
+- `error(Reason, Args, Options)` and `erlang:error(Reason, Args, Options)`
+  now compile and raise `error:Reason`, as on BEAM OTP 29. Previously a
+  direct call failed to build as unresolved `erlang:error/3`, and dynamic
+  calls raised `error:undef`.
+- This also works through tail calls, `apply/3`, fun references and computed
+  module or function names. As on OTP 29, arbitrary `Args` and `Options`
+  do not change the exception class or reason.
+- Nera accepts the `error_info` option used by OTP libraries, but does not
+  retain that metadata or `Args` in its arity-only stacktrace frames.
+- The `error_3` fixture checks these calls, argument evaluation and exception
+  control flow natively and on BEAM.
+
 ## Binary comprehensions reject bodies that are not bitstrings
 
 - A binary comprehension whose body is not a bitstring now raises
