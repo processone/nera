@@ -11,9 +11,12 @@ All notable milestones for the nera project are documented in this file.
   exit reasons, such as a failed `gen_server` start.
 - `erlang:raise/3` keeps the supplied stacktrace's order, including when it
   re-raises a captured exception.
+- Uncaught crash reports keep the raising function first, with a corrected
+  "most recent call first" header. `process_info(self(), current_stacktrace)`
+  now lists the innermost function first too.
 - The `stacktrace_order` fixture checks caught errors, throws, exits and
-  failed matches, re-raises and stack-bearing exit reasons on native Nera
-  and BEAM.
+  failed matches, re-raises, the current stacktrace and stack-bearing exit
+  reasons on native Nera and BEAM.
 
 ## Exited processes are no longer reported alive after shutdown
 

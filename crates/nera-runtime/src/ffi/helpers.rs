@@ -171,22 +171,27 @@ fn fill_exception_trace(trace: &mut Vec<crate::process::StackFrame>, frames: Tra
     trace.clear();
     match frames {
         TraceFrames::Full(frames) => trace.extend(frames.iter().rev().copied()),
-        TraceFrames::Compact(frames) => {
-            let info_table = crate::entry::global_func_info_table();
-            trace.extend(frames.iter().rev().map(|cf| {
-                let (module, function, arity) = info_table
-                    .get(cf.func_index as usize)
-                    .copied()
-                    .unwrap_or((0, 0, 0));
-                crate::process::StackFrame {
-                    module,
-                    function,
-                    arity,
-                    line: cf.line,
-                }
-            }));
-        }
+        TraceFrames::Compact(frames) => trace.extend(compact_stacktrace(frames)),
     }
+}
+
+/// Convert an active compact call stack to Erlang's innermost-first order.
+pub(super) fn compact_stacktrace(
+    frames: &[crate::process::CompactFrame],
+) -> impl Iterator<Item = crate::process::StackFrame> + '_ {
+    let info_table = crate::entry::global_func_info_table();
+    frames.iter().rev().map(move |cf| {
+        let (module, function, arity) = info_table
+            .get(cf.func_index as usize)
+            .copied()
+            .unwrap_or((0, 0, 0));
+        crate::process::StackFrame {
+            module,
+            function,
+            arity,
+            line: cf.line,
+        }
+    })
 }
 
 /// Helper: raise an error exception and return nil.

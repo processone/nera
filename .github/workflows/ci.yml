@@ -202,6 +202,10 @@ jobs:
         # Keep timing-sensitive reactor checks isolated, as in the shell runner.
         run: ./target/release/nera test -j 1 --timeout 30 --shard ${{ matrix.part }}/3
 
+      - name: Uncaught stacktrace order
+        if: matrix.part == 1
+        run: python3 scripts/test-stacktrace-order.py
+
   cowlib:
     name: Cowlib (Linux x86_64)
     needs: [changes, build]

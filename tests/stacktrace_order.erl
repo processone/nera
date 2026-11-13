@@ -2,10 +2,11 @@
 %% Stacktraces identify the raising function before its non-tail callers,
 %% including re-raises and {Reason, Stack} exit reasons. Run on Nera and BEAM.
 -module(stacktrace_order).
--export([test/0, init/1]).
+-export([test/0, init/1, crash/0]).
 
 test() ->
     {outer, {middle, ok}} = outer(ok),
+    ok = check_current_stacktrace(),
     lists:foreach(fun check_caught/1, [error, throw, exit, badmatch]),
     lists:foreach(fun check_reraised/1, [error, throw, exit, badmatch]),
     ok = check_exit_reason(),
@@ -31,6 +32,8 @@ inner(error) -> erlang:error(boom);
 inner(throw) -> throw(boom);
 inner(exit) -> exit(boom);
 inner(badmatch) -> 1 = id(2), ok;
+inner(current_stacktrace) ->
+    {current_stacktrace, erlang:process_info(self(), current_stacktrace)};
 inner(ok) -> ok.
 
 expected(error) -> {error, boom};
@@ -45,6 +48,14 @@ check_order(Stack) ->
 
 first_calls(Stack) ->
     [{M, F, A} || {M, F, A, _} <- lists:sublist(Stack, 3)].
+
+check_current_stacktrace() ->
+    {outer, {middle, {current_stacktrace, {current_stacktrace, Stack}}}} =
+        outer(current_stacktrace),
+    %% BEAM includes a process_info/2 BIF frame that Nera does not record.
+    Calls = [Frame || {M, _, _, _} = Frame <- Stack, M =:= ?MODULE],
+    ok = check_order(Calls),
+    io:format("current stacktrace: ~p~n", [first_calls(Calls)]).
 
 check_reraised(Mode) ->
     {Class, Reason, Original} = captured(Mode),
@@ -77,6 +88,9 @@ check_failed_start() ->
     process_flag(trap_exit, Previous),
     ok = check_order(Stack),
     io:format("failed start: ~p~n", [first_calls(Stack)]).
+
+%% Uncaught entry used by scripts/test-stacktrace-order.py to check stderr.
+crash() -> {crash, outer(error)}.
 
 init([]) -> {ok, outer(error)}.
 id(X) -> X.
