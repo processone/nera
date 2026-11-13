@@ -687,8 +687,8 @@ optimization as counters — on par with BEAM performance.
 
 | Feature                       | Status | Notes                                  |
 |-------------------------------|--------|----------------------------------------|
-| gen_server                    | ✅      | start_link, call, cast, info, reply; `{error, Reason}` when init/1 fails, `ignore` when it ignores |
-| supervisor (one_for_one)      | ✅      | start_link, child specs, restart logic with retries; OTP start results: `{error, Reason}` when init/1 fails, `failed_to_start_child`, `ignore` |
+| gen_server                    | ✅      | start_link, call, cast, info, reply; `{error, Reason}` when init/1 fails, `ignore` when it ignores; stops with its parent when it traps exits |
+| supervisor (one_for_one)      | ✅      | start_link, child specs, restart logic with retries; OTP start results: `{error, Reason}` when init/1 fails, `failed_to_start_child`, `ignore`; stops with its parent and stops its children in reverse start order by their shutdown setting |
 | application                   | ✅      | start/stop, app_name → app_name_app    |
 | proc_lib                      | ✅      | spawn, spawn_link, init_ack            |
 | error_logger                  | ✅      | info/error/warning with colored output |
@@ -846,7 +846,8 @@ See [project test configuration](tests/README.md#project-eunit-configuration).
 
 OTP EUnit is an **external project dependency**, not a Nera stdlib replacement.
 Its source and the selected OTP `gb_trees` module stay outside this repository.
-`module_info/1` is generated for `exports` and `module`; other items and
+`module_info/1` is generated for `exports` and `module`; `exports` lists every
+function of a module compiled with `export_all`. Other items and
 `module_info/0` are not provided. `fun_info/2` supports `module`, `name`, `arity`,
 and `fun_info_mfa/1` returns those three values. Anonymous names belong to the
 Nera compiler and need not match BEAM's generated names.

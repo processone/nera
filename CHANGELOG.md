@@ -2,6 +2,38 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Supervisors stop with their parent and stop their children in order
+
+- A supervisor now stops when its parent, the process that started it with
+  `start_link`, exits or sends it an exit signal, and exits with the
+  parent's reason, as in OTP. Previously it ignored the signal, because it
+  traps exits, and kept running.
+- Before a supervisor exits, whether its parent stopped it, its restart
+  limit was reached or a child failed to start, it now stops its running
+  children one by one, the last started first, by each child's shutdown
+  setting: `brutal_kill` kills the child, a time in milliseconds sends
+  `shutdown` and kills the child if it is still running after that time,
+  and `infinity` waits. A child that stops with another reason is logged.
+  Previously the children stopped only through their link to the
+  supervisor, so a child supervisor or a child that traps exits kept
+  running after its supervisor was gone.
+- A supervisor checks every child spec before it starts any child, as OTP
+  does, and fails the start with `{error, {start_spec, Error}}` for an
+  invalid one, such as a shutdown setting that is not `brutal_kill`,
+  `infinity` or a non-negative integer, or a duplicate id. Previously a
+  malformed spec failed the start only after the children before it had
+  started, and an invalid shutdown setting was accepted.
+- A `gen_server` that traps exits now stops with its parent's reason, after
+  `terminate/2`, when its parent exits or sends it an exit signal, as in
+  OTP. Previously the signal reached `handle_info/2`.
+- `terminate/2` is optional, as in OTP: a `gen_server` that does not export
+  it now stops with its reason instead of crashing with `undef`.
+- `module_info(exports)` of a module compiled with `-compile(export_all)` now
+  lists every function, as on BEAM, so a `gen_server` that exports
+  `terminate/2` only through `export_all` still has it called. Previously
+  the list held only the functions named in `-export`.
+- The new `supervisor_shutdown` fixture runs natively and on BEAM.
+
 ## error/2 raises its reason instead of undef
 
 - `error(Reason, Args)` and `erlang:error(Reason, Args)` now raise

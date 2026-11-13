@@ -11,6 +11,9 @@
 %%   {shutdown, {failed_to_start_child, Id, Reason}}, a child whose start
 %%   returns ignore is kept as not running, and init/1 returning ignore makes
 %%   start_link/2,3 return ignore
+%% - Stopping as in OTP: the supervisor stops when its parent exits or sends
+%%   it an exit signal, and before it exits it stops its children one by one,
+%%   the last started first, by their shutdown setting
 %%
 %% Not supported: one_for_all, rest_for_one, simple_one_for_one,
 %%                dynamic children, which_children, count_children.
@@ -107,18 +110,23 @@ init_thrown(Mod, MaybeName, _Parent, _Ref, Else) ->
     init_failed(Mod, MaybeName, {bad_return_value, Else}, true).
 
 %% Read the flags and start the children. A child that fails to start fails
-%% the start with {shutdown, {failed_to_start_child, Id, Reason}}, as in OTP;
-%% the children started before it stop through their link to the supervisor.
-%% A crash in reading the flags or a child spec fails it with its reason.
+%% the start with {shutdown, {failed_to_start_child, Id, Reason}}, as in OTP,
+%% once the children started before it have been stopped. An invalid child
+%% spec fails it with {start_spec, Error} before any child starts, and a
+%% crash in reading the flags fails it with its reason.
 start_supervision(Mod, SupFlags, ChildSpecs, MaybeName, Parent, Ref) ->
     case start_children_safely(SupFlags, ChildSpecs) of
         {started, Strategy, MaxR, MaxT, Children} ->
             Parent ! {sup_ack, Ref, ok},
-            supervisor_loop(Strategy, MaxR, MaxT, [], Children);
-        {failed_to_start_child, _Id, _Reason} = Failure ->
+            supervisor_loop(Parent, Strategy, MaxR, MaxT, [], Children);
+        {failed_to_start_child, Id, Reason, Started} ->
+            terminate_children(Started),
             %% The child's failure is already logged; OTP does not report a
             %% shutdown as a crash.
-            init_failed(Mod, MaybeName, {shutdown, Failure}, false);
+            init_failed(Mod, MaybeName,
+                        {shutdown, {failed_to_start_child, Id, Reason}}, false);
+        {start_spec, _Error} = Reason ->
+            init_failed(Mod, MaybeName, Reason, true);
         {'EXIT', Class, Reason, Stacktrace} ->
             init_failed(Mod, MaybeName, exit_reason(Class, Reason, Stacktrace),
                         report(Class, Reason))
@@ -128,9 +136,16 @@ start_children_safely(SupFlags, ChildSpecs) ->
     try
         process_flag(trap_exit, true),
         {Strategy, MaxR, MaxT} = parse_sup_flags(SupFlags),
-        case start_children(ChildSpecs, []) of
-            {ok, Children} -> {started, Strategy, MaxR, MaxT, Children};
-            {error, Id, Why} -> {failed_to_start_child, Id, Why}
+        %% Check every child spec before starting any child, as OTP does,
+        %% so an invalid one leaves no child running.
+        case check_startspec(ChildSpecs, []) of
+            ok ->
+                case start_children(ChildSpecs, []) of
+                    {ok, Children} -> {started, Strategy, MaxR, MaxT, Children};
+                    {error, Id, Why, Started} -> {failed_to_start_child, Id, Why, Started}
+                end;
+            Error ->
+                {start_spec, Error}
         end
     catch
         Class:Reason:Stacktrace -> {'EXIT', Class, Reason, Stacktrace}
@@ -188,9 +203,63 @@ parse_sup_flags({Strategy, MaxR, MaxT}) ->
 parse_sup_flags(Strategy) when is_atom(Strategy) ->
     {Strategy, 5, 10}.
 
+%% Check the child specs as OTP's supervisor does, with its errors. Returns
+%% ok or the first error. Map child specs are not supported.
+check_startspec([], _Ids) ->
+    ok;
+check_startspec([ChildSpec | Rest], Ids) ->
+    case check_childspec(ChildSpec) of
+        {ok, Id} ->
+            case lists:member(Id, Ids) of
+                true -> {duplicate_child_name, Id};
+                false -> check_startspec(Rest, [Id | Ids])
+            end;
+        Error ->
+            Error
+    end.
+
+check_childspec({Id, MFA, Restart, Shutdown, Type, Modules}) ->
+    try
+        valid_mfa(MFA),
+        valid_restart_type(Restart),
+        valid_child_type(Type),
+        valid_shutdown(Shutdown),
+        valid_modules(Modules),
+        {ok, Id}
+    catch
+        throw:Error -> Error
+    end;
+check_childspec(ChildSpec) ->
+    {invalid_child_spec, ChildSpec}.
+
+valid_mfa({M, F, A}) when is_atom(M), is_atom(F), is_list(A) -> ok;
+valid_mfa(MFA) -> throw({invalid_mfa, MFA}).
+
+valid_restart_type(permanent) -> ok;
+valid_restart_type(temporary) -> ok;
+valid_restart_type(transient) -> ok;
+valid_restart_type(Restart) -> throw({invalid_restart_type, Restart}).
+
+valid_child_type(worker) -> ok;
+valid_child_type(supervisor) -> ok;
+valid_child_type(Type) -> throw({invalid_child_type, Type}).
+
+valid_shutdown(Shutdown) when is_integer(Shutdown), Shutdown >= 0 -> ok;
+valid_shutdown(infinity) -> ok;
+valid_shutdown(brutal_kill) -> ok;
+valid_shutdown(Shutdown) -> throw({invalid_shutdown, Shutdown}).
+
+valid_modules(dynamic) -> ok;
+valid_modules(Modules) when is_list(Modules) ->
+    lists:foreach(fun(M) when is_atom(M) -> ok;
+                     (M) -> throw({invalid_module, M})
+                  end, Modules);
+valid_modules(Modules) -> throw({invalid_modules, Modules}).
+
 %% Start the children in order, stopping at the first that fails to start.
-%% Returns {ok, [{Id, Pid, ChildSpec}]} or {error, Id, Reason}. A child whose
-%% start returned ignore is kept with the pid undefined, unless it is
+%% Returns {ok, [{Id, Pid, ChildSpec}]} or {error, Id, Reason, Started}, with
+%% the children started before the failure, both in start order. A child
+%% whose start returned ignore is kept with the pid undefined, unless it is
 %% temporary, as in OTP.
 start_children([], Acc) ->
     {ok, lists:reverse(Acc)};
@@ -204,7 +273,7 @@ start_children([ChildSpec | Rest], Acc) ->
         {error, Reason} ->
             error_logger:error_msg("Supervisor: failed to start ~p: ~p~n",
                                    [Id, Reason]),
-            {error, Id, Reason}
+            {error, Id, Reason, lists:reverse(Acc)}
     end.
 
 %% Run a child's start function and read its result as OTP's supervisor does:
@@ -228,9 +297,14 @@ start_result({error, _Reason} = Error) -> Error;
 start_result(Other) -> {error, Other}.
 
 %% Main supervisor loop — trap_exit is on, so we receive EXIT messages.
-%% RestartLog is a list of timestamps (seconds) of recent restarts.
-supervisor_loop(Strategy, MaxR, MaxT, RestartLog, Children) ->
+%% Parent is the process that started the supervisor. RestartLog is a list of
+%% timestamps (seconds) of recent restarts.
+supervisor_loop(Parent, Strategy, MaxR, MaxT, RestartLog, Children) ->
     receive
+        {'EXIT', Parent, Reason} ->
+            %% As in OTP, the parent's exit, or an exit signal from it, stops
+            %% the supervisor with that reason, after its children.
+            stop_supervisor(Reason, Children);
         {'EXIT', Pid, Reason} ->
             case find_child_by_pid(Pid, Children) of
                 {ok, {Id, _Pid, ChildSpec}} ->
@@ -239,26 +313,26 @@ supervisor_loop(Strategy, MaxR, MaxT, RestartLog, Children) ->
                         true ->
                             error_logger:info_msg("Supervisor: restarting ~p (reason: ~p)~n",
                                                   [Id, Reason]),
-                            restart_child(Strategy, MaxR, MaxT, RestartLog,
+                            restart_child(Parent, Strategy, MaxR, MaxT, RestartLog,
                                           Id, ChildSpec, Children);
                         false ->
                             NewChildren = remove_child(Pid, Children),
-                            supervisor_loop(Strategy, MaxR, MaxT, RestartLog, NewChildren)
+                            supervisor_loop(Parent, Strategy, MaxR, MaxT, RestartLog, NewChildren)
                     end;
                 none ->
                     %% Unknown child, ignore
-                    supervisor_loop(Strategy, MaxR, MaxT, RestartLog, Children)
+                    supervisor_loop(Parent, Strategy, MaxR, MaxT, RestartLog, Children)
             end;
         {'$supervisor_try_again_restart', Id, Tag} ->
             case find_child_by_id(Id, Children) of
                 {ok, {Id, {restarting, Tag}, ChildSpec}} ->
-                    restart_child(Strategy, MaxR, MaxT, RestartLog,
+                    restart_child(Parent, Strategy, MaxR, MaxT, RestartLog,
                                   Id, ChildSpec, Children);
                 _ ->
-                    supervisor_loop(Strategy, MaxR, MaxT, RestartLog, Children)
+                    supervisor_loop(Parent, Strategy, MaxR, MaxT, RestartLog, Children)
             end;
         _Other ->
-            supervisor_loop(Strategy, MaxR, MaxT, RestartLog, Children)
+            supervisor_loop(Parent, Strategy, MaxR, MaxT, RestartLog, Children)
     end.
 
 %% Keep only restart entries within the last MaxT seconds.
@@ -292,11 +366,12 @@ remove_child(Pid, [Child | Rest]) ->
     [Child | remove_child(Pid, Rest)].
 
 %% Restart a child, as OTP does. Each try counts against the restart limit,
-%% and past it the supervisor exits with shutdown. A try that fails marks the
-%% child restarting and is made again once the messages already waiting have
-%% been handled; the tag makes only that one message start the next try. A
-%% restart that returns ignore keeps the child as not running.
-restart_child(Strategy, MaxR, MaxT, RestartLog, Id, ChildSpec, Children) ->
+%% and past it the supervisor stops its other children and exits with
+%% shutdown. A try that fails marks the child restarting and is made again
+%% once the messages already waiting have been handled; the tag makes only
+%% that one message start the next try. A restart that returns ignore keeps
+%% the child as not running.
+restart_child(Parent, Strategy, MaxR, MaxT, RestartLog, Id, ChildSpec, Children) ->
     Now = erlang:system_time(second),
     NewLog = [Now | prune_restart_log(RestartLog, Now, MaxT)],
     case length(NewLog) > MaxR of
@@ -304,6 +379,7 @@ restart_child(Strategy, MaxR, MaxT, RestartLog, Id, ChildSpec, Children) ->
             error_logger:error_msg(
                 "Supervisor: max restart intensity reached (~p in ~p s), shutting down~n",
                 [MaxR, MaxT]),
+            terminate_children([C || {CId, _, _} = C <- Children, CId =/= Id]),
             exit(shutdown);
         false ->
             {_Id, MFA, _Restart, _Shutdown, _Type, _Modules} = ChildSpec,
@@ -317,7 +393,7 @@ restart_child(Strategy, MaxR, MaxT, RestartLog, Id, ChildSpec, Children) ->
                     self() ! {'$supervisor_try_again_restart', Id, Tag},
                     replace_child(Id, {restarting, Tag}, ChildSpec, Children)
             end,
-            supervisor_loop(Strategy, MaxR, MaxT, NewLog, NewChildren)
+            supervisor_loop(Parent, Strategy, MaxR, MaxT, NewLog, NewChildren)
     end.
 
 replace_child(_Id, _NewPid, _ChildSpec, []) -> [];
@@ -325,3 +401,91 @@ replace_child(Id, NewPid, ChildSpec, [{Id, _OldPid, _OldSpec} | Rest]) ->
     [{Id, NewPid, ChildSpec} | Rest];
 replace_child(Id, NewPid, ChildSpec, [Child | Rest]) ->
     [Child | replace_child(Id, NewPid, ChildSpec, Rest)].
+
+%% Stop the children, then exit with Reason. OTP reports a reason that is not
+%% a shutdown as a crash.
+stop_supervisor(Reason, Children) ->
+    terminate_children(Children),
+    case is_shutdown(Reason) of
+        true -> ok;
+        false -> error_logger:error_msg("Supervisor ~p terminating: ~p~n", [self(), Reason])
+    end,
+    exit(Reason).
+
+%% Stop the running children one by one, the last started first, as OTP
+%% does. Children are in start order; one that is not running is skipped.
+terminate_children(Children) ->
+    lists:foreach(fun terminate_child/1, lists:reverse(Children)).
+
+terminate_child({Id, Pid, ChildSpec}) when is_pid(Pid) ->
+    {_Id, _MFA, Restart, Shutdown, _Type, _Modules} = ChildSpec,
+    case shutdown(Pid, Shutdown, Restart) of
+        ok ->
+            ok;
+        {error, Reason} ->
+            error_logger:error_msg("Supervisor: ~p stopped with ~p when shut down~n",
+                                   [Id, Reason])
+    end;
+terminate_child(_NotRunning) ->
+    ok.
+
+%% Stop a child by its shutdown setting, as OTP does: brutal_kill kills it;
+%% a time in milliseconds, or infinity, sends it shutdown and kills it if it
+%% is still running after that time. The supervisor watches the child with a
+%% monitor, so a child that unlinked itself cannot make it wait forever.
+%% Returns ok, or {error, Reason} when the child stopped with another reason
+%% than expected.
+shutdown(Pid, brutal_kill, Restart) ->
+    MRef = monitor(process, Pid),
+    exit(Pid, kill),
+    receive
+        {'DOWN', MRef, process, Pid, Reason} ->
+            shutdown_result(unlink_flush(Pid, Reason), killed, Restart)
+    end;
+shutdown(Pid, Time, Restart) ->
+    MRef = monitor(process, Pid),
+    exit(Pid, shutdown),
+    receive
+        {'DOWN', MRef, process, Pid, Reason} ->
+            shutdown_result(unlink_flush(Pid, Reason), shutdown, Restart)
+    after Time ->
+        kill_child(Pid, MRef, Restart)
+    end.
+
+%% Kept out of the after body above: native code does not yet run a receive
+%% written directly in an after body correctly.
+kill_child(Pid, MRef, Restart) ->
+    exit(Pid, kill),
+    receive
+        {'DOWN', MRef, process, Pid, Reason} ->
+            shutdown_result(unlink_flush(Pid, Reason), shutdown, Restart)
+    end.
+
+%% A child that is not permanent may also stop normally or with a shutdown.
+shutdown_result(Expected, Expected, _Restart) -> ok;
+shutdown_result(normal, _Expected, Restart) when Restart =/= permanent -> ok;
+shutdown_result(shutdown, _Expected, Restart) when Restart =/= permanent -> ok;
+shutdown_result({shutdown, _}, _Expected, Restart) when Restart =/= permanent -> ok;
+shutdown_result(Reason, _Expected, _Restart) -> {error, Reason}.
+
+%% The child's real exit reason, leaving no 'EXIT' message from it behind. A
+%% child that was already gone gives noproc; while it is still linked, its
+%% 'EXIT' message is on its way and carries the reason.
+unlink_flush(Pid, noproc) ->
+    {links, Links} = process_info(self(), links),
+    Timeout = case lists:member(Pid, Links) of
+                  true -> infinity;
+                  false -> 0
+              end,
+    receive
+        {'EXIT', Pid, Reason} -> Reason
+    after Timeout ->
+        child_process_unlinked
+    end;
+unlink_flush(Pid, Reason) ->
+    unlink(Pid),
+    receive
+        {'EXIT', Pid, _} -> ok
+    after 0 -> ok
+    end,
+    Reason.

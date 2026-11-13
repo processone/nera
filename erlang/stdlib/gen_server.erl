@@ -6,7 +6,8 @@
 %% - cast/2
 %% - reply/2
 %% - handle_call, handle_cast, handle_info callbacks
-%% - terminate callback
+%% - terminate callback, optional as in OTP
+%% - a server that traps exits stops when its parent exits, as in OTP
 %%
 %% Not supported: sys protocol, code_change, format_status, hibernate.
 
@@ -41,7 +42,9 @@ start_link({local, Name}, Mod, Args, _Opts) ->
 %% as OTP's proc_lib does: {error, Reason} for a caller that traps exits or did
 %% not link. A linked caller that does not trap exits exits with Reason.
 %% When init/1 returns {error, Reason} or ignore, the server answers with that
-%% value and exits normally, so every caller gets it.
+%% value and exits normally, so every caller gets it. As in OTP, the caller of
+%% start_link is the server's parent, and a server started without a link is
+%% its own parent.
 start_internal(Mod, Args, Link, MaybeName) ->
     case whereis_name(MaybeName) of
         undefined -> spawn_server(Mod, Args, Link, MaybeName);
@@ -55,7 +58,7 @@ spawn_server(Mod, Args, Link, MaybeName) ->
         true -> [link, monitor];
         false -> [monitor]
     end,
-    {Pid, MRef} = spawn_opt(fun() -> init_it(Mod, Args, Parent, Ref, MaybeName) end,
+    {Pid, MRef} = spawn_opt(fun() -> init_it(Mod, Args, Parent, Link, Ref, MaybeName) end,
                             SpawnOpts),
     receive
         {ack, Ref, ok} ->
@@ -71,22 +74,22 @@ spawn_server(Mod, Args, Link, MaybeName) ->
             {error, Reason}
     end.
 
-init_it(Mod, Args, Parent, Ref, MaybeName) ->
+init_it(Mod, Args, Parent, Link, Ref, MaybeName) ->
     case register_name(MaybeName) of
         true ->
-            init_server(Mod, Args, Parent, Ref, MaybeName);
+            init_server(Mod, Args, Parent, Link, Ref, MaybeName);
         {false, Pid} ->
             Parent ! {nack, Ref, {error, {already_started, Pid}}}
     end.
 
-init_server(Mod, Args, Parent, Ref, MaybeName) ->
+init_server(Mod, Args, Parent, Link, Ref, MaybeName) ->
     case init_mod(Mod, Args) of
         {ok, {ok, State}} ->
             Parent ! {ack, Ref, ok},
-            loop(Mod, State);
+            loop(loop_parent(Parent, Link), Mod, State);
         {ok, {ok, State, _Timeout}} ->
             Parent ! {ack, Ref, ok},
-            loop(Mod, State);
+            loop(loop_parent(Parent, Link), Mod, State);
         {ok, {stop, Reason}} ->
             init_failed(Mod, MaybeName, Reason, not is_shutdown(Reason));
         {ok, {error, _} = Error} ->
@@ -144,6 +147,9 @@ unregister_name(Name) ->
     try unregister(Name) catch error:badarg -> ok end,
     ok.
 
+loop_parent(Parent, true) -> Parent;
+loop_parent(_Starter, false) -> self().
+
 demonitor_flush(MRef) ->
     demonitor(MRef),
     receive {'DOWN', MRef, process, _, _} -> ok after 0 -> ok end.
@@ -154,20 +160,20 @@ flush_exit(Pid) ->
     unlink(Pid),
     receive {'EXIT', Pid, _} -> ok after 0 -> ok end.
 
-loop(Mod, State) ->
+loop(Parent, Mod, State) ->
     receive
         {'$gen_call', From, Request} ->
             case Mod:handle_call(Request, From, State) of
                 {reply, Reply, NewState} ->
                     reply(From, Reply),
-                    loop(Mod, NewState);
+                    loop(Parent, Mod, NewState);
                 {reply, Reply, NewState, _Timeout} ->
                     reply(From, Reply),
-                    loop(Mod, NewState);
+                    loop(Parent, Mod, NewState);
                 {noreply, NewState} ->
-                    loop(Mod, NewState);
+                    loop(Parent, Mod, NewState);
                 {noreply, NewState, _Timeout} ->
-                    loop(Mod, NewState);
+                    loop(Parent, Mod, NewState);
                 {stop, Reason, Reply, NewState} ->
                     reply(From, Reply),
                     do_terminate(Mod, Reason, NewState);
@@ -177,25 +183,33 @@ loop(Mod, State) ->
         {'$gen_cast', Msg} ->
             case Mod:handle_cast(Msg, State) of
                 {noreply, NewState} ->
-                    loop(Mod, NewState);
+                    loop(Parent, Mod, NewState);
                 {noreply, NewState, _Timeout} ->
-                    loop(Mod, NewState);
+                    loop(Parent, Mod, NewState);
                 {stop, Reason, NewState} ->
                     do_terminate(Mod, Reason, NewState)
             end;
+        {'EXIT', Parent, Reason} ->
+            %% A server that traps exits stops with its parent's reason, as
+            %% in OTP; one that does not is stopped by the link itself.
+            do_terminate(Mod, Reason, State);
         Info ->
             case Mod:handle_info(Info, State) of
                 {noreply, NewState} ->
-                    loop(Mod, NewState);
+                    loop(Parent, Mod, NewState);
                 {noreply, NewState, _Timeout} ->
-                    loop(Mod, NewState);
+                    loop(Parent, Mod, NewState);
                 {stop, Reason, NewState} ->
                     do_terminate(Mod, Reason, NewState)
             end
     end.
 
+%% terminate/2 is optional, as in OTP.
 do_terminate(Mod, Reason, State) ->
-    Mod:terminate(Reason, State),
+    case lists:member({terminate, 2}, Mod:module_info(exports)) of
+        true -> Mod:terminate(Reason, State);
+        false -> ok
+    end,
     case Reason of
         normal -> exit(normal);
         shutdown -> exit(shutdown);

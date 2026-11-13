@@ -199,7 +199,7 @@ impl<'src> Parser<'src> {
         let mut specs: Vec<SpecDef> = Vec::new();
         let mut behaviours: Vec<BehaviourAttr> = Vec::new();
         let mut type_refs: HashSet<AtomId> = HashSet::new();
-        let mut eunit_autoexport = false;
+        let mut flags = CompileFlags::default();
 
         while !self.at_end() {
             if self.check(&Token::Minus) {
@@ -225,10 +225,11 @@ impl<'src> Parser<'src> {
                         behaviours.push(BehaviourAttr { name, span });
                     }
                     Ok(Attr::Import(decl)) => imports.push(decl),
-                    Ok(Attr::Compile(suppression, autoexport)) => {
+                    Ok(Attr::Compile(suppression, compile)) => {
                         no_auto_import.all |= suppression.all;
                         no_auto_import.functions.extend(suppression.functions);
-                        eunit_autoexport |= autoexport;
+                        flags.eunit_autoexport |= compile.eunit_autoexport;
+                        flags.export_all |= compile.export_all;
                     }
                     Ok(Attr::Unknown) => {} // silently skip unknown attributes
                     Err(e) => {
@@ -268,7 +269,7 @@ impl<'src> Parser<'src> {
 
         // Implement the export part of the standard EUnit autoexport transform.
         // Other parse transforms are not executed by Nera.
-        if eunit_autoexport {
+        if flags.eunit_autoexport {
             for function in &functions {
                 let name = self.resolve(function.name).unwrap_or("");
                 if function.arity == 0 && (name.ends_with("_test") || name.ends_with("_test_"))
@@ -315,6 +316,7 @@ impl<'src> Parser<'src> {
                 name,
                 name_span: module_name_span.unwrap_or_else(|| Span::new(0, 0)),
                 exports,
+                export_all: flags.export_all,
                 imports,
                 no_auto_import,
                 type_exports,
@@ -363,8 +365,17 @@ enum Attr {
     Spec(SpecDef, Vec<AtomId>),
     Behaviour(AtomId, Span),
     Import(ImportDecl),
-    Compile(NoAutoImport, bool),
+    Compile(NoAutoImport, CompileFlags),
     Unknown,
+}
+
+/// Compile options Nera acts on, beyond auto-import suppression.
+#[derive(Default)]
+struct CompileFlags {
+    /// `{parse_transform, eunit_autoexport}`
+    eunit_autoexport: bool,
+    /// `export_all`
+    export_all: bool,
 }
 
 impl<'src> Parser<'src> {
@@ -689,12 +700,12 @@ impl<'src> Parser<'src> {
                 self.pos = attribute_start + 1;
                 self.expect(&Token::LParen)?;
                 let mut suppression = NoAutoImport::default();
-                let mut autoexport = false;
-                self.parse_compile_option(&mut suppression, &mut autoexport)?;
+                let mut flags = CompileFlags::default();
+                self.parse_compile_option(&mut suppression, &mut flags)?;
                 self.expect(&Token::RParen)?;
                 self.expect(&Token::Dot)?;
                 debug_assert_eq!(self.pos, end);
-                Ok(Attr::Compile(suppression, autoexport))
+                Ok(Attr::Compile(suppression, flags))
             } else {
                 Ok(Attr::Unknown)
             }
@@ -704,12 +715,12 @@ impl<'src> Parser<'src> {
     fn parse_compile_option(
         &mut self,
         suppression: &mut NoAutoImport,
-        autoexport: &mut bool,
+        flags: &mut CompileFlags,
     ) -> Result<(), ParseError> {
         if self.eat(&Token::LBracket) {
             if !self.check(&Token::RBracket) {
                 loop {
-                    self.parse_compile_option(suppression, autoexport)?;
+                    self.parse_compile_option(suppression, flags)?;
                     if !self.eat(&Token::Comma) { break; }
                 }
             }
@@ -725,12 +736,16 @@ impl<'src> Parser<'src> {
             self.expect(&Token::RBrace)?;
         } else if self.check(&Token::Atom) || self.check(&Token::QuotedAtom) {
             let option = self.expect_atom_name()?;
-            suppression.all |= self.resolve(option) == Some("no_auto_import");
+            match self.resolve(option) {
+                Some("no_auto_import") => suppression.all = true,
+                Some("export_all") => flags.export_all = true,
+                _ => {}
+            }
         } else {
             // Other options remain opaque, including their nested atoms.
             // Preserve the existing EUnit transform without interpreting arbitrary tuples.
             if let Some(t) = self.tokens.get(self.pos..self.pos + 5) {
-                *autoexport |= t[0].0 == Token::LBrace && t[2].0 == Token::Comma && t[4].0 == Token::RBrace
+                flags.eunit_autoexport |= t[0].0 == Token::LBrace && t[2].0 == Token::Comma && t[4].0 == Token::RBrace
                     && self.source[t[1].1.start..t[1].1.end].trim_matches('\'') == "parse_transform"
                     && self.source[t[3].1.start..t[3].1.end].trim_matches('\'') == "eunit_autoexport";
             }

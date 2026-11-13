@@ -16,9 +16,12 @@ pub(crate) fn add_exports_info(module: &mut Module, atoms: &mut DefaultStringInt
     let erlang = intern("erlang");
     let badarg = intern("badarg");
     module.exports.push(FunArity { name: info, arity: 1, span });
+    // As on BEAM, export_all lists every function, not only the declared ones.
+    let defined = module.functions.iter().filter(|_| module.export_all).map(|f| (f.name, f.arity));
     let mut seen = HashSet::new();
-    let entries: Vec<_> = module.exports.iter().filter(|f| seen.insert((f.name, f.arity)))
-        .map(|f| Expr::Tuple(vec![Expr::Atom(f.name, span), Expr::Integer(f.arity as i64, span)], span))
+    let entries: Vec<_> = module.exports.iter().map(|f| (f.name, f.arity)).chain(defined)
+        .filter(|&key| seen.insert(key))
+        .map(|(name, arity)| Expr::Tuple(vec![Expr::Atom(name, span), Expr::Integer(arity as i64, span)], span))
         .collect();
     let exports_value = entries.into_iter().rev().fold(Expr::Nil(span), |tail, head|
         Expr::Cons(Box::new(head), Box::new(tail), span));
@@ -55,6 +58,23 @@ mod tests {
         assert_eq!(atoms.resolve(string_interner::DefaultSymbol::try_from_usize(name.0 as usize).unwrap()), Some("visible"));
         let Expr::Cons(_, tail, _) = &**rest else { panic!("missing module_info export") };
         assert!(matches!(**tail, Expr::Nil(_)));
+    }
+
+    #[test]
+    fn export_all_lists_every_function() {
+        let mut p = Parser::new("-module(probe). -compile([export_all]). -export([visible/0]). visible() -> ok. hidden(X) -> X.");
+        let mut module = p.parse_module().module;
+        let mut atoms = p.into_interner();
+        add_exports_info(&mut module, &mut atoms).unwrap();
+        let mut listed = Vec::new();
+        let mut list = &module.functions.last().unwrap().clauses[0].body[0];
+        while let Expr::Cons(head, tail, _) = list {
+            let Expr::Tuple(pair, _) = &**head else { panic!("missing export tuple") };
+            let (Expr::Atom(name, _), Expr::Integer(arity, _)) = (&pair[0], &pair[1]) else { panic!("bad export entry") };
+            listed.push((atoms.resolve(string_interner::DefaultSymbol::try_from_usize(name.0 as usize).unwrap()).unwrap().to_owned(), *arity));
+            list = tail;
+        }
+        assert_eq!(listed, [("visible".to_owned(), 0), ("module_info".to_owned(), 1), ("hidden".to_owned(), 1)]);
     }
 
     #[test]
