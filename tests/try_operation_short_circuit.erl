@@ -1,10 +1,10 @@
 %% EXPECT: try_operation_short_circuit_ok
-%% Inside a try body, an operation that raises goes to the handler at once,
-%% as on BEAM: no later send, put, receive or call runs, and a later
-%% operation cannot replace the reason. Guards inside the body still just
-%% fail. Outside try, a failed send or spawn stops the process at once, and
-%% a map update evaluates every value before it fails. Run this same fixture
-%% on native Nera and BEAM.
+%% Inside a try body, an operation or throw that raises goes to the handler
+%% at once, as on BEAM: no later send, put, receive or call runs, and a
+%% later operation cannot replace the reason. Guards inside the body still
+%% just fail. Outside try, a failed send or spawn or a throw stops the
+%% process at once, and a map update evaluates every value before it fails.
+%% Run this same fixture on native Nera and BEAM.
 -module(try_operation_short_circuit).
 -export([test/0]).
 
@@ -97,6 +97,13 @@ protected() ->
       fun() -> try case id(x) of x -> _ = 1 + id(a), self() ! sent, ok end catch C:E -> {C, E} end end},
      {try_of, {error, badarith}, [queued],
       fun() -> try _ = 1 + id(a), self() ! sent of _ -> no_exception catch C:E -> {C, E} end end},
+     {throw_mid_body, {throw, stop}, [queued],
+      fun() -> try _ = case id(bad) of bad -> throw(stop); W -> W end, self() ! sent, ok
+               catch C:E -> {C, E} end end},
+     {throw_reason_kept, {throw, stop}, [queued],
+      fun() -> try V = case id(bad) of bad -> throw(stop); W -> W end, V + 1 catch C:E -> {C, E} end end},
+     {catch_throw, stop, [queued],
+      fun() -> catch begin _ = case id(bad) of bad -> throw(stop); W -> W end, self() ! sent, ok end end},
      {catch_expression, 'EXIT', [queued],
       fun() -> element(1, catch begin _ = 1 + id(a), self() ! sent, ok end) end},
      {inner_try_rethrows, {outer, error, badarith}, [queued],
@@ -141,10 +148,15 @@ guard({Name, Body}) ->
     {Name, right} = {Name, Body()}.
 
 %% Outside try, the process stops at the failed operation. BEAM's exit
-%% reason carries the stack; native Nera's does not yet.
+%% reason carries the stack, and an uncaught throw's is {nocatch, Reason};
+%% native Nera's are not yet.
 unprotected() ->
     [{send_unregistered, badarg, [],
       fun(P) -> _ = id(no_such_registered_name) ! x, P ! sent end},
+     {send_tuple_unregistered, badarg, [],
+      fun(P) -> _ = id(no_such_registered_name) ! {x, id(y)}, P ! sent end},
+     {throw_mid_body, stop, [],
+      fun(P) -> _ = case id(bad) of bad -> throw(stop); W -> W end, P ! sent end},
      {spawn_bad_arguments, badarg, [],
       fun(P) -> _ = spawn(lists, reverse, id(notalist)), P ! sent end},
      {map_values_first, {badmap, notamap}, [value_sent],
@@ -157,7 +169,8 @@ unprotected({Name, Expected, ExpectedMessages, Body}) ->
     Reason = receive {'DOWN', Ref, process, Pid, R} -> exit_reason(R) end,
     {Name, Expected, ExpectedMessages} = {Name, Reason, flush()}.
 
-exit_reason({Reason, [_ | _]}) -> Reason;
+exit_reason({Reason, [_ | _]}) -> exit_reason(Reason);
+exit_reason({nocatch, Reason}) -> Reason;
 exit_reason(Reason) -> Reason.
 
 clause_guard(X) when X + 1 > 0 -> wrong;

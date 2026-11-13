@@ -62,8 +62,23 @@ impl IrBuilder {
             ExceptionClass::Throw,
             reason,
         ));
-        // After raising, return the result (which is just a dummy; the function
-        // will return early via the runtime setting STATUS_EXCEPTION)
+        // Nothing after a throw runs: inside a try it goes to the handler,
+        // outside one it leaves the function with the exception.
+        if self.try_exception_targets.is_empty() {
+            let failed = self.fresh_var();
+            self.emit(Instruction::CheckException(failed));
+            let leave = self.fresh_block_with_id();
+            let next = self.fresh_block_with_id();
+            self.set_terminator(Terminator::Branch(failed, leave, next));
+            self.close_current_block();
+            self.start_block(leave);
+            self.set_terminator(Terminator::Return(result));
+            self.close_current_block();
+            self.start_block(next);
+        } else {
+            self.branch_on_pending_exception();
+        }
+        // The result is a placeholder; no code after this reads it at run time.
         Ok(result)
     }
 
