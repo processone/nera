@@ -595,7 +595,8 @@ impl IrBuilder {
                 | Instruction::MakeBinary(v, _)
                 | Instruction::BinaryPutUtf8(v, _, _, _)
                 | Instruction::BinaryPutUtf16(v, _, _, _, _)
-                | Instruction::BinaryPutUtf32(v, _, _, _, _) => Some(*v),
+                | Instruction::BinaryPutUtf32(v, _, _, _, _)
+                | Instruction::Send(v, _, _) | Instruction::Spawn(v, _, _, _) => Some(*v),
                 _ => None,
             };
             if let Some(result) = result { self.protected_values.push(result); }

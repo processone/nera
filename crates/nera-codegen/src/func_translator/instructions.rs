@@ -34,7 +34,10 @@ impl FuncTranslator {
                 | Instruction::MakeBinary(v, _)
                 | Instruction::BinaryPutUtf8(v, _, _, _)
                 | Instruction::BinaryPutUtf16(v, _, _, _, _)
-                | Instruction::BinaryPutUtf32(v, _, _, _, _) => Some(v),
+                | Instruction::BinaryPutUtf32(v, _, _, _, _)
+                | Instruction::Send(v, _, _)
+                | Instruction::SendDirect(v, _, _)
+                | Instruction::Spawn(v, _, _, _) => Some(v),
             _ => None,
         };
         let is_try_protected = protected_result.is_some_and(|v| self.current_try_protected_values.contains(v));
@@ -388,9 +391,7 @@ impl FuncTranslator {
                 }
 
                 // Check for exception from slow path (badarg on non-cons)
-                if !is_try_protected {
-                    self.emit_ffi_exception_check(module, builder, ctx_var)?;
-                }
+                if !is_try_protected { self.emit_ffi_exception_check(module, builder, ctx_var)?; }
             }
 
             Instruction::ListTail(result, list) => {
@@ -431,9 +432,7 @@ impl FuncTranslator {
                 }
 
                 // Check for exception from slow path (badarg on non-cons)
-                if !is_try_protected {
-                    self.emit_ffi_exception_check(module, builder, ctx_var)?;
-                }
+                if !is_try_protected { self.emit_ffi_exception_check(module, builder, ctx_var)?; }
             }
 
             Instruction::TupleSize(result, tuple) => {
@@ -458,6 +457,8 @@ impl FuncTranslator {
                 if let Some(var) = var_map.get(result) {
                     builder.def_var(*var, ret);
                 }
+                // badarg for a destination that is not a pid or registered name
+                if !is_try_protected { self.emit_ffi_exception_check(module, builder, ctx_var)?; }
             }
 
             Instruction::SendDirect(result, pid, elems) => {
@@ -473,6 +474,7 @@ impl FuncTranslator {
                 if let Some(var) = var_map.get(result) {
                     builder.def_var(*var, ret);
                 }
+                if !is_try_protected { self.emit_ffi_exception_check(module, builder, ctx_var)?; }
             }
 
             Instruction::Spawn(result, mod_atom, fun_atom, args) => {
@@ -497,6 +499,8 @@ impl FuncTranslator {
                 if let Some(var) = var_map.get(result) {
                     builder.def_var(*var, ret);
                 }
+                // badarg for an argument list that is not a proper list
+                if !is_try_protected { self.emit_ffi_exception_check(module, builder, ctx_var)?; }
             }
 
             Instruction::Call(result, target, args) => {
@@ -1640,9 +1644,7 @@ impl FuncTranslator {
 
                 // Check for badmap/badkey exception
                 // (skip if inside a try block — CheckException handles it)
-                if !is_try_protected {
-                    self.emit_ffi_exception_check(module, builder, ctx_var)?;
-                }
+                if !is_try_protected { self.emit_ffi_exception_check(module, builder, ctx_var)?; }
             }
 
             Instruction::MapPut(result, map, key, value) => {
@@ -1655,9 +1657,7 @@ impl FuncTranslator {
                 }
 
                 // Check for badmap exception
-                if !is_try_protected {
-                    self.emit_ffi_exception_check(module, builder, ctx_var)?;
-                }
+                if !is_try_protected { self.emit_ffi_exception_check(module, builder, ctx_var)?; }
             }
 
             Instruction::MapUpdateExact(result, map, key, value) => {
@@ -1670,9 +1670,7 @@ impl FuncTranslator {
                 }
 
                 // Check for badmap/badkey exception
-                if !is_try_protected {
-                    self.emit_ffi_exception_check(module, builder, ctx_var)?;
-                }
+                if !is_try_protected { self.emit_ffi_exception_check(module, builder, ctx_var)?; }
             }
 
             Instruction::RaiseException(result, class, reason) => {
@@ -1689,7 +1687,16 @@ impl FuncTranslator {
             }
 
             Instruction::CheckException(result) => {
-                let ret = self.emit_ffi_call(module, builder, "nera_rt_check_exception", ctx_var, &[])?;
+                // Inline status read: a try body checks after every operation
+                // that can raise, so this must cost no call. The handler's
+                // Branch reads the predicate directly.
+                let ctx_val = builder.use_var(ctx_var);
+                let status = builder.ins().load(types::I32, MemFlags::trusted(), ctx_val, CTX_OFFSET_STATUS);
+                let raised = builder.ins().icmp_imm(IntCC::Equal, status, STATUS_EXCEPTION as i64);
+                self.last_branch_predicate = Some((*result, raised));
+                let true_val = self.load_true_atom(module, builder)?;
+                let false_val = self.load_false_atom(module, builder)?;
+                let ret = builder.ins().select(raised, true_val, false_val);
                 if let Some(var) = var_map.get(result) {
                     builder.def_var(*var, ret);
                 }

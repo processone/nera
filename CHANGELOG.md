@@ -2,6 +2,29 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## An error in a try body reaches the handler before later code runs
+
+- Inside `try`, an arithmetic or bitwise operator, `and`/`or`/`xor`, a
+  unary `-`, `bnot` or `not`, a map update, a send, `spawn/3` or a list
+  comprehension that raises now goes to the handler at once, as on BEAM.
+  Previously the rest of the body still ran: in
+  `try _ = 1 + id(a), self() ! sent catch error:badarith -> ok end`, the
+  message `sent` was delivered, and a later `receive` could take a queued
+  message.
+- The handler now sees the first error. Previously a later operation could
+  replace it: `try X = 1 + id(a), element(X, {1}) catch C:E -> {C, E} end`
+  gave `{error, badarg}` instead of `{error, badarith}`.
+- A map update evaluates every key and value before it applies any field,
+  as on BEAM, so a value's side effects happen even when the update then
+  fails with `badmap` or `badkey`, inside or outside `try`.
+- Outside `try`, a send to a name that is not registered, or to something
+  that is not a pid, and a `spawn/3` with bad arguments now stop the
+  process at once with `badarg`. Previously the code after them still ran.
+- A `try` body now checks for an error after each such operation with an
+  inline status read instead of a runtime call.
+- The `try_operation_short_circuit` fixture covers these cases and runs
+  natively and on BEAM.
+
 ## try ... after runs its cleanup when an exception leaves the try
 
 - A `try ... after` now runs its `after` body when the body, an `of` clause

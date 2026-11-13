@@ -20,6 +20,37 @@ impl IrBuilder {
         }
     }
 
+    /// Inside a try body, branch to the handler when the operation just
+    /// emitted raised. A protected operation only records its exception, so
+    /// without this branch the rest of the body would still run: a later
+    /// send, receive or call would happen, and a later operation could
+    /// replace the reason. Outside a try, code generation returns at once.
+    pub(super) fn branch_on_pending_exception(&mut self) {
+        if let Some(&landing_pad) = self.try_exception_targets.last() {
+            let failed = self.fresh_var();
+            self.emit(Instruction::CheckException(failed));
+            let next = self.fresh_block_with_id();
+            self.set_terminator(Terminator::Branch(failed, landing_pad, next));
+            self.close_current_block();
+            self.start_block(next);
+        }
+    }
+
+    /// Comparisons never raise; every other operator can, on a wrong type.
+    pub(super) fn binop_may_raise(op: BinOp) -> bool {
+        !matches!(
+            op,
+            BinOp::Eq
+                | BinOp::ExactEq
+                | BinOp::NotEq
+                | BinOp::ExactNotEq
+                | BinOp::Lt
+                | BinOp::Gt
+                | BinOp::LtEq
+                | BinOp::GtEq
+        )
+    }
+
     // ---- Exception handling ----
 
     /// Lower `throw(Reason)` to IR.

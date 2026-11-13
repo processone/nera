@@ -131,8 +131,8 @@ impl IrBuilder {
                         let rhs_var = self.lower_expr(rhs, false)?;
                         let result = self.fresh_var();
                         self.emit(Instruction::BinOp(result, *op, lhs_var, rhs_var));
-                        if matches!(op, BinOp::ListAppend | BinOp::ListSubtract) {
-                            self.branch_on_construction_exception();
+                        if Self::binop_may_raise(*op) {
+                            self.branch_on_pending_exception();
                         }
                         Ok(result)
                     }
@@ -143,6 +143,7 @@ impl IrBuilder {
                 let operand_var = self.lower_expr(operand, false)?;
                 let result = self.fresh_var();
                 self.emit(Instruction::UnaryOp(result, *op, operand_var));
+                self.branch_on_pending_exception();
                 Ok(result)
             }
 
@@ -323,6 +324,7 @@ impl IrBuilder {
                                         *fun_atom,
                                         vec![arg_vars[2]],
                                     ));
+                                    self.branch_on_pending_exception();
                                     return Ok(result);
                                 }
                             }
@@ -352,15 +354,8 @@ impl IrBuilder {
                     // at its own function entry. Avoids double-counting.
                     let result = self.fresh_var();
                     self.emit(Instruction::Call(result, ir_target, arg_vars));
-                    if let Some(&landing_pad) = self.try_exception_targets.last() {
-                        // Do not run later arguments or expressions after a failed call.
-                        let failed = self.fresh_var();
-                        self.emit(Instruction::CheckException(failed));
-                        let next = self.fresh_block_with_id();
-                        self.set_terminator(Terminator::Branch(failed, landing_pad, next));
-                        self.close_current_block();
-                        self.start_block(next);
-                    }
+                    // Do not run later arguments or expressions after a failed call.
+                    self.branch_on_pending_exception();
                     Ok(result)
                 }
             }
@@ -370,6 +365,7 @@ impl IrBuilder {
                 let msg = self.lower_expr(msg_expr, false)?;
                 let result = self.fresh_var();
                 self.emit(Instruction::Send(result, pid, msg));
+                self.branch_on_pending_exception();
                 Ok(result)
             }
 
@@ -409,16 +405,22 @@ impl IrBuilder {
             }
 
             ast::Expr::MapUpdate(base_expr, fields, _span) => {
-                // Lower base map, then apply each field.
+                // Lower the base map and every key and value first, as on
+                // BEAM: a value's effects happen even when the update then
+                // fails with badmap or badkey. Then apply each field.
                 // `=>` (Assoc) fields use MapPut (insert or replace).
                 // `:=` (Exact) fields use MapUpdateExact (key must exist).
                 let mut current_map = self.lower_expr(base_expr, false)?;
 
+                let mut updates = Vec::with_capacity(fields.len());
                 for field in fields {
                     let k = self.lower_expr(&field.key, false)?;
                     let v = self.lower_expr(&field.value, false)?;
+                    updates.push((field.op, k, v));
+                }
+                for (op, k, v) in updates {
                     let new_map = self.fresh_var();
-                    match field.op {
+                    match op {
                         ast::MapUpdateOp::Assoc => {
                             self.emit(Instruction::MapPut(new_map, current_map, k, v));
                         }
@@ -426,6 +428,9 @@ impl IrBuilder {
                             self.emit(Instruction::MapUpdateExact(new_map, current_map, k, v));
                         }
                     }
+                    // The first failure is the reason; a later field must
+                    // not replace it.
+                    self.branch_on_pending_exception();
                     current_map = new_map;
                 }
 
@@ -1007,18 +1012,6 @@ impl IrBuilder {
         }
     }
 
-    /// Stop construction immediately when an operation fails inside try/catch.
-    fn branch_on_construction_exception(&mut self) {
-        if let Some(&landing_pad) = self.try_exception_targets.last() {
-            let failed = self.fresh_var();
-            self.emit(Instruction::CheckException(failed));
-            let next = self.fresh_block_with_id();
-            self.set_terminator(Terminator::Branch(failed, landing_pad, next));
-            self.close_current_block();
-            self.start_block(next);
-        }
-    }
-
     /// Lower a segment value or size. Inside try/catch a failed expression,
     /// such as `1 div 0`, leaves its exception pending; branch to the handler
     /// before a segment check can replace it with badarg.
@@ -1026,7 +1019,7 @@ impl IrBuilder {
         let var = self.lower_expr(expr, false)?;
         if !matches!(expr, ast::Expr::Integer(..) | ast::Expr::BigInteger(..) | ast::Expr::Float(..)
             | ast::Expr::Atom(..) | ast::Expr::String(..) | ast::Expr::Nil(..) | ast::Expr::Variable(..)) {
-            self.branch_on_construction_exception();
+            self.branch_on_pending_exception();
         }
         Ok(var)
     }
@@ -1094,7 +1087,7 @@ impl IrBuilder {
                 let source_unit = self.emit_const(Literal::Integer(unit));
                 let checked = self.fresh_var();
                 self.emit(Instruction::Call(checked, CallTarget::Bif("binary_source_size".to_string()), vec![codepoint, source_unit]));
-                self.branch_on_construction_exception();
+                self.branch_on_pending_exception();
                 continue;
             }
 
@@ -1126,7 +1119,7 @@ impl IrBuilder {
                     let sz = self.fresh_var();
                     let source_unit = self.emit_const(Literal::Integer(unit));
                     self.emit(Instruction::Call(sz, CallTarget::Bif("binary_source_size".to_string()), vec![val_var, source_unit]));
-                    self.branch_on_construction_exception();
+                    self.branch_on_pending_exception();
                     seg_info.push((val_var, sz, None, flags, true, false, None));
                 }
             } else {
@@ -1159,7 +1152,7 @@ impl IrBuilder {
                     let checked = self.fresh_var();
                     self.emit(Instruction::Call(checked,
                         CallTarget::Bif("float_segment_size".to_string()), vec![size_var, unit_var]));
-                    self.branch_on_construction_exception();
+                    self.branch_on_pending_exception();
                     (checked, None)
                 } else if let Some(bits) = known_bits {
                     (self.emit_const(Literal::Integer(bits)), Some(bits))
@@ -1168,7 +1161,7 @@ impl IrBuilder {
                     let product = self.fresh_var();
                     self.emit(Instruction::Call(product,
                         CallTarget::Bif("binary_segment_size".to_string()), vec![size_var, unit_var]));
-                    self.branch_on_construction_exception();
+                    self.branch_on_pending_exception();
                     (product, None)
                 };
                 let flags = self.ast_type_spec_to_bin_flags(&seg.type_spec);
@@ -1204,7 +1197,7 @@ impl IrBuilder {
         // Phase 3: allocate binary (MakeBinary now takes bit count)
         let bin_var = self.fresh_var();
         self.emit(Instruction::MakeBinary(bin_var, total_bits_var));
-        self.branch_on_construction_exception();
+        self.branch_on_pending_exception();
 
         // Phase 4: put each segment — bit_offset accumulator
         let mut bit_offset_var = self.emit_const(Literal::Integer(0));
@@ -1224,14 +1217,14 @@ impl IrBuilder {
                     }
                     _ => unreachable!(),
                 }
-                self.branch_on_construction_exception();
+                self.branch_on_pending_exception();
                 // Advance offset by actual bits written (variable for UTF-8/16)
                 let new_offset = self.fresh_var();
                 self.emit(Instruction::BinOp(new_offset, BinOp::Add, bit_offset_var, bits_written));
                 bit_offset_var = new_offset;
             } else if *is_bin {
                 self.emit(Instruction::BinaryPutBinary(bin_var, bit_offset_var, *val_var, *bits_var));
-                self.branch_on_construction_exception();
+                self.branch_on_pending_exception();
                 if index == 0 {
                     bit_offset_var = *bits_var;
                 } else {
@@ -1241,7 +1234,7 @@ impl IrBuilder {
                 }
             } else if *is_float {
                 self.emit(Instruction::BinaryPutFloat(bin_var, bit_offset_var, *val_var, *bits_var, *flags));
-                self.branch_on_construction_exception();
+                self.branch_on_pending_exception();
                 if index == 0 {
                     bit_offset_var = *bits_var;
                 } else {
@@ -1251,7 +1244,7 @@ impl IrBuilder {
                 }
             } else {
                 self.emit(Instruction::BinaryPutInteger(bin_var, bit_offset_var, *val_var, *bits_var, *flags));
-                self.branch_on_construction_exception();
+                self.branch_on_pending_exception();
                 if index == 0 {
                     bit_offset_var = *bits_var;
                 } else {
