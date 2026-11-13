@@ -36,20 +36,154 @@ impl IrBuilder {
         Ok(result)
     }
 
-    /// Lower `try Body catch CatchClauses [after AfterBody] end` to IR.
-    ///
-    /// Strategy:
-    /// 1. Lower the try body
-    /// 2. Check if an exception occurred (CheckException)
-    /// 3. If exception -> jump to catch handler
-    /// 4. If no exception -> jump to continuation
-    /// 5. After block (if present) runs in both paths
+    /// Lower `try Body [of OfClauses] [catch CatchClauses] [after AfterBody] end` to IR.
     pub(super) fn lower_try(
         &mut self,
         body: &[ast::Expr],
         of_clauses: &[ast::CaseClause],
         catch_clauses: &[ast::CatchClause],
         after_body: &Option<Vec<ast::Expr>>,
+    ) -> Result<VarId, LowerError> {
+        match after_body {
+            Some(after_exprs) => self.lower_try_after(body, of_clauses, catch_clauses, after_exprs),
+            None => self.lower_try_catch(body, of_clauses, catch_clauses),
+        }
+    }
+
+    /// Lower `try ... after AfterBody end`.
+    ///
+    /// The body, `of` clauses and catch clauses run under one more handler.
+    /// The after body runs once on every way out of them. An exception is
+    /// held while it runs, with the exception state cleared, and is then
+    /// raised again with its class, reason and stacktrace; an exception
+    /// from the after body itself replaces it, as on BEAM.
+    fn lower_try_after(
+        &mut self,
+        body: &[ast::Expr],
+        of_clauses: &[ast::CaseClause],
+        catch_clauses: &[ast::CatchClause],
+        after_exprs: &[ast::Expr],
+    ) -> Result<VarId, LowerError> {
+        let exc_landing_pad = self.fresh_block_with_id();
+        let normal_block = self.fresh_block_with_id();
+        let exc_block = self.fresh_block_with_id();
+        let after_block = self.fresh_block_with_id();
+        let raise_check_block = self.fresh_block_with_id();
+        let pending_block = self.fresh_block_with_id();
+        let reraise_block = self.fresh_block_with_id();
+        let done_block = self.fresh_block_with_id();
+
+        // Written on both ways into the after body.
+        let try_result = self.fresh_var();
+        let raised = self.fresh_var();
+        let class = self.fresh_var();
+        let reason = self.fresh_var();
+        let stacktrace = self.fresh_var();
+
+        let branch = self.enter_branch();
+        let before_bindings = self.collect_all_bindings();
+
+        self.try_exception_targets.push(exc_landing_pad);
+        let protected_result = if catch_clauses.is_empty() && of_clauses.is_empty() {
+            self.lower_body(body, false)?
+        } else {
+            self.lower_try_catch(body, of_clauses, catch_clauses)?
+        };
+        self.try_exception_targets.pop();
+
+        // An exception still pending from an operation that does not branch
+        // to the landing pad itself.
+        let pending = self.fresh_var();
+        self.emit(Instruction::CheckException(pending));
+        self.set_terminator(Terminator::Branch(pending, exc_block, normal_block));
+        self.close_current_block();
+
+        self.start_block(exc_landing_pad);
+        self.set_terminator(Terminator::Jump(exc_block, vec![]));
+        self.close_current_block();
+
+        // Normal way out: keep the result, nothing to raise again.
+        self.start_block(normal_block);
+        self.emit(Instruction::Move(try_result, protected_result));
+        let false_val = self.emit_const(Literal::Atom(self.false_atom_id));
+        self.emit(Instruction::Move(raised, false_val));
+        let nil = self.emit_const(Literal::Nil);
+        self.emit(Instruction::Move(class, nil));
+        self.emit(Instruction::Move(reason, nil));
+        self.emit(Instruction::Move(stacktrace, nil));
+        self.set_terminator(Terminator::Jump(after_block, vec![]));
+        self.close_current_block();
+
+        // Exception: hold it and clear it, so the after body runs normally.
+        self.start_block(exc_block);
+        let exc_class = self.fresh_var();
+        self.emit(Instruction::GetExceptionClass(exc_class));
+        let exc_reason = self.fresh_var();
+        self.emit(Instruction::GetExceptionReason(exc_reason));
+        let exc_stacktrace = self.fresh_var();
+        self.emit(Instruction::GetExceptionStacktrace(exc_stacktrace));
+        self.emit(Instruction::ClearException);
+        self.emit(Instruction::Move(class, exc_class));
+        self.emit(Instruction::Move(reason, exc_reason));
+        self.emit(Instruction::Move(stacktrace, exc_stacktrace));
+        let true_val = self.emit_const(Literal::Atom(self.true_atom_id));
+        self.emit(Instruction::Move(raised, true_val));
+        // Not read on this way out, but defined on every way into the after body.
+        let unused = self.emit_const(Literal::Nil);
+        self.emit(Instruction::Move(try_result, unused));
+        self.set_terminator(Terminator::Jump(after_block, vec![]));
+        self.close_current_block();
+
+        // The after body sees only the bindings from before the try.
+        self.start_block(after_block);
+        if let Some(scope) = self.scopes.last_mut() {
+            *scope = before_bindings;
+        }
+        self.leave_branch(&branch);
+        let _after_result = self.lower_body(after_exprs, false)?;
+        // An exception the after body left pending replaces the held one.
+        let after_failed = self.fresh_var();
+        self.emit(Instruction::CheckException(after_failed));
+        self.set_terminator(Terminator::Branch(after_failed, pending_block, raise_check_block));
+        self.close_current_block();
+
+        self.start_block(pending_block);
+        self.set_raise_terminator(after_failed);
+        self.close_current_block();
+
+        self.start_block(raise_check_block);
+        self.set_terminator(Terminator::Branch(raised, reraise_block, done_block));
+        self.close_current_block();
+
+        // erlang:raise/3 keeps the original class and stacktrace.
+        self.start_block(reraise_block);
+        let erlang_atom = self.atom_id_for("erlang");
+        let raise_atom = self.atom_id_for("raise");
+        let reraise_result = self.fresh_var();
+        self.emit(Instruction::Call(
+            reraise_result,
+            CallTarget::Remote(erlang_atom, raise_atom),
+            vec![class, reason, stacktrace],
+        ));
+        self.set_raise_terminator(reraise_result);
+        self.close_current_block();
+
+        self.start_block(done_block);
+        Ok(try_result)
+    }
+
+    /// Lower `try Body [of OfClauses] catch CatchClauses end` to IR.
+    ///
+    /// Strategy:
+    /// 1. Lower the try body
+    /// 2. Check if an exception occurred (CheckException)
+    /// 3. If exception -> jump to catch handler
+    /// 4. If no exception -> jump to continuation
+    fn lower_try_catch(
+        &mut self,
+        body: &[ast::Expr],
+        of_clauses: &[ast::CaseClause],
+        catch_clauses: &[ast::CatchClause],
     ) -> Result<VarId, LowerError> {
         let catch_block = self.fresh_block_with_id();
         let normal_block = self.fresh_block_with_id();
@@ -174,11 +308,6 @@ impl IrBuilder {
         // Merge block: both paths have written to try_result
         self.start_block(merge_block);
         self.leave_branch(&branch);
-
-        // Handle after body if present (result is discarded)
-        if let Some(after_exprs) = after_body {
-            let _after_result = self.lower_body(after_exprs, false)?;
-        }
 
         Ok(try_result)
     }

@@ -224,6 +224,7 @@ These are automatically skipped by the runner and show up as SKIP in output.
 | `exception_basic.erl` | try/catch/throw/error/exit    | ~12        |
 | `try_of.erl`          | try...of clause               | ~6         |
 | `try_catch_bound_vars.erl` | Bound names in try-of and catch class/reason patterns: exact equality, guards, fresh names, binary tails and re-raise; also run on BEAM | Table-driven |
+| `try_after_reraise.erl` | `try ... after` as the only handler in its function: the after body runs once when the body, an `of` clause or a catch clause raises, then the same class, reason and stacktrace reach the caller; a normal return keeps the body's value; an exception from the after body replaces the held one; an after body that waits, times out and collects garbage; an uncaught exit; also run on BEAM | 28 |
 | `catch_expr.erl`      | Catch expression              | ~4         |
 
 ### Pattern Matching
