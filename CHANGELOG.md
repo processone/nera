@@ -2,6 +2,29 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Supervisors stop with their parent and stop their children in order
+
+- A supervisor now stops when its parent, the process that started it with
+  `start_link`, exits or sends it an exit signal, and exits with the
+  parent's reason, as in OTP. Previously it ignored the signal, because it
+  traps exits, and kept running.
+- Before a supervisor exits, whether its parent stopped it, its restart
+  limit was reached or a child failed to start, it now stops its running
+  children one by one, the last started first, by each child's shutdown
+  setting: `brutal_kill` kills the child, a time in milliseconds sends
+  `shutdown` and kills the child if it is still running after that time,
+  and `infinity` waits. A child that stops with another reason is logged.
+  Previously the children stopped only through their link to the
+  supervisor, so a child supervisor or a child that traps exits kept
+  running after its supervisor was gone.
+- A supervisor checks the shape of every child spec before it starts any
+  child, as OTP does, so a malformed spec no longer leaves earlier children
+  running.
+- A `gen_server` that traps exits now stops with its parent's reason, after
+  `terminate/2`, when its parent exits or sends it an exit signal, as in
+  OTP. Previously the signal reached `handle_info/2`.
+- The new `supervisor_shutdown` fixture runs natively and on BEAM.
+
 ## error/2 raises its reason instead of undef
 
 - `error(Reason, Args)` and `erlang:error(Reason, Args)` now raise

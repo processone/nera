@@ -71,11 +71,6 @@ platform and scope.
   accepted but ignored. Map-form supervisor flags and child specs crash with
   `function_clause`. `start_child/2`, `terminate_child/2` and
   `which_children/1` are missing.
-- **`supervisor` shutdown:** a supervisor never stops its children one by
-  one with their shutdown setting; they stop only through their link to it.
-  A child supervisor, or a child that traps exits, keeps running after its
-  supervisor exits, including after a failed start. A supervisor also keeps
-  running when its parent exits or sends it `shutdown`.
 - **`application`:** `get_env/1` is missing.
 - **ETS:** `ets:match/2` and `ets:select/2` are missing. `ets:new/2` without
   `named_table` returns an integer where BEAM returns a reference.
