@@ -3335,6 +3335,81 @@ fn exported_var_warnings(ws: &[Diagnostic]) -> Vec<&Diagnostic> {
     ws.iter().filter(|w| w.code.as_deref() == Some("exported_var")).collect()
 }
 
+/// Each construct binds K on every normal branch. A try binding is still
+/// unsafe to read afterwards in OTP, but a later fun/generator may shadow it.
+const FULL_K_BINDINGS: [(&str, &str); 4] = [
+    ("case", "case X of on -> K = 1; _ -> K = 2 end"),
+    ("if", "if X > 0 -> K = 1; true -> K = 2 end"),
+    ("receive", "receive {ok, K} -> K after 0 -> K = 2 end"),
+    ("try", "try X of on -> K = 1; _ -> K = 2 catch _:_ -> K = 3 end"),
+];
+
+#[test]
+fn exported_var_rebound_by_fun_head_or_generator() {
+    // Regression: these fresh bindings do not read the branch-bound K.
+    // OTP 29 with +warn_export_vars emits no exported warning for each source.
+    for later in [
+        "[K || K <- L]",
+        "<< <<K>> || K <- L >>",
+        "[K || <<K>> <= B]",
+        "<< <<K>> || <<K>> <= B >>",
+        "[K || K <- L, K > 1]",
+        "[{K, V} || {K, _} <- L, V <- [K]]",
+        "[V || K <- L, #{K := V} <- L]",
+        "[V || K <- L, <<V:K>> <= B]",
+        "[ok || K <- L]",
+        "F = fun(K) -> K end, F(1)",
+        "F = fun(K) when K > 0 -> K end, F(1)",
+        "F = fun(K) -> ok end, F(1)",
+        "F = fun K(0) -> 0; K(I) -> K(I - 1) end, F(1)",
+        "F = fun K(#{K := V}) -> V end, F(#{})",
+        "F = fun({K, _}) -> G = fun() -> K end, G() end, F({1, 2})",
+        "F = fun(<<K:8, V:K>>) -> V end, F(B)",
+    ] {
+        for (_, binding) in FULL_K_BINDINGS {
+            let source = format!("-module(test). -export([f/3]). f(X, L, B) -> {binding}, {later}.");
+            let (module, names) = parse_module(&source);
+            let diagnostics = analyze_module(&module, &names, None);
+            assert!(exported_var_warnings(&diagnostics).is_empty(), "{source}\n{diagnostics:?}");
+            assert!(!diagnostics.iter().any(|d| d.severity == nera_syntax::error::Severity::Error),
+                "{source}\n{diagnostics:?}");
+        }
+    }
+}
+
+#[test]
+fn exported_var_read_inside_fun_or_comprehension() {
+    // Preserve real enclosing reads: OTP 29 with +warn_export_vars warns for
+    // each case/if/receive source. A post-try read is unsafe in OTP instead.
+    for later in [
+        "F = fun(Y) -> K + Y end, F(1)",
+        "F = fun(Y) when Y > K -> Y; (Y) -> Y end, F(1)",
+        "F = fun({K}) -> K; (_) -> K end, F(1)",
+        "F = fun(#{K := V}) -> V end, F(#{})",
+        "F = fun(<<V:K>>) -> V end, F(B)",
+        "F = fun() -> K = 2, K end, F()",
+        "[{K, Y} || Y <- L]",
+        "[Y || Y <- L, Y > K]",
+        "[Y || Y <- K]",
+        "[K || K <- K]",
+        "[V || #{K := V} <- L]",
+        "[V || <<V:K>> <= B]",
+        "[K || Y <- L, Y > K, K <- L]",
+        "{K, [K || K <- L]}",
+        "F = fun(K) -> K end, {F(1), K}",
+    ] {
+        for (construct, binding) in FULL_K_BINDINGS.into_iter().filter(|(kind, _)| *kind != "try") {
+            let source = format!("-module(test). -export([f/3]). f(X, L, B) -> {binding}, {later}.");
+            let (module, names) = parse_module(&source);
+            let diagnostics = analyze_module(&module, &names, None);
+            let exported = exported_var_warnings(&diagnostics);
+            assert_eq!(exported.len(), 1, "{source}\n{diagnostics:?}");
+            assert_eq!(exported[0].message, format!("variable 'K' exported from '{construct}'"),
+                "{source}\n{diagnostics:?}");
+        }
+    }
+}
+
 #[test]
 fn exported_var_from_case() {
     // Y is bound in every branch and used after — exported warning.

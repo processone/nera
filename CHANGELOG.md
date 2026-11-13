@@ -34,6 +34,16 @@ All notable milestones for the nera project are documented in this file.
 - Formatting preserves unary plus and its operand grouping.
 - The `unary_plus` fixture checks these behaviors natively and on BEAM.
 
+## Exported-variable warnings respect fun and generator shadowing
+
+- Nera no longer reports `variable 'K' exported from 'case'` when a later
+  fun head or comprehension generator binds a fresh `K`, matching
+  `erlc +warn_export_vars`. This also applies after `if`, `receive` and `try`,
+  in named funs and in list and binary comprehensions.
+- A later read that still reaches the branch-bound variable keeps its
+  exported-variable warning, including captures, guards, generator sources,
+  map keys and binary sizes.
+
 ## Funs stored in ETS and persistent_term keep their captured values
 
 - A fun inserted into an ETS table or stored with `persistent_term:put/2`
