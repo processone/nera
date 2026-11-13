@@ -3,7 +3,9 @@
 %% not fit a float returned an infinite float natively instead of raising
 %% error:badarith. Integers too large for a float raise badarith too when
 %% float arithmetic needs them as floats. Results that stay finite, underflow
-%% to zero included, are unchanged. Run this fixture on native Nera and BEAM.
+%% to zero included, are unchanged. A comprehension filter that is false
+%% stops the later ones, so a filter that guards a division keeps working.
+%% Run this fixture on native Nera and BEAM.
 -module(float_arith_badarith).
 -export([test/0]).
 
@@ -68,6 +70,16 @@ test() ->
     %% In a guard, the test just fails.
     no = case id(0.0) of Z when 1 / Z > 0 -> yes; _ -> no end,
     no = case id(10.0) of T when 1.0e308 * T > 0 -> yes; _ -> no end,
+    %% A comprehension filter that is false stops the later filters, so a
+    %% division or product they guard against never runs.
+    [2.0] = [X || X <- id([0.0, 2.0]), X /= 0.0, id(1 / X) > 0],
+    [2.0] = [X || X <- id([1.0e308, 2.0]), X < 1.0e300, id(X * 10.0) > 0],
+    [3.0] = [X || X <- id([0.0, 1.0e308, 3.0]), X /= 0.0, X < 1.0e300,
+                  id(1 / X) * id(X * 10.0) > 0],
+    [{1.0, 2.0}] = [{X, Y} || X <- id([0.0, 1.0]), X /= 0.0, Y <- [2.0], id(Y / X) > 1],
+    <<2>> = << <<X>> || <<X>> <= id(<<0, 2>>), X /= 0, id(1 / X) > 0 >>,
+    [1] = [X || X <- id([1, 2, 3]), X < 2, mark(X)],
+    [{marked, 1}] = drain(),
     %% Outside try, the process exits with badarith and runs nothing after.
     badarith = uncaught(fun() -> id(1.0) / 0.0 end),
     badarith = uncaught(fun() -> id(1.0e308) * 10.0 end),
@@ -75,6 +87,16 @@ test() ->
     nothing = receive Late -> {late, Late} after 100 -> nothing end,
     io:format("float_arith_badarith_ok~n"),
     ok.
+
+mark(X) ->
+    self() ! {marked, X},
+    true.
+
+drain() ->
+    drain([]).
+
+drain(Messages) ->
+    receive Message -> drain([Message | Messages]) after 0 -> lists:reverse(Messages) end.
 
 protect(F) ->
     try F() of

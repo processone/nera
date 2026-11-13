@@ -383,33 +383,29 @@ impl IrBuilder {
             let produce_block = self.fresh_block_with_id();
             let skip_block = self.fresh_block_with_id();
 
-            let filter_var = if filters.len() == 1 {
-                self.lower_expr(filters[0], false)?
-            } else {
-                let mut result = self.lower_expr(filters[0], false)?;
-                for filter_expr in &filters[1..] {
-                    let next = self.lower_expr(filter_expr, false)?;
-                    let combined = self.fresh_var();
-                    self.emit(Instruction::BinOp(
-                        combined,
-                        BinOp::Andalso,
-                        result,
-                        next,
-                    ));
-                    result = combined;
+            // Filters run in order and stop at the first that is not true,
+            // as on BEAM: `X /= 0.0, 1 / X > 0` never divides by zero.
+            for (index, filter_expr) in filters.iter().enumerate() {
+                let filter_var = self.lower_expr(filter_expr, false)?;
+                let true_val = self.emit_const(Literal::Atom(self.true_atom_id));
+                let cmp_var = self.fresh_var();
+                self.emit(Instruction::BinOp(
+                    cmp_var,
+                    BinOp::ExactEq,
+                    filter_var,
+                    true_val,
+                ));
+                let next_block = if index + 1 == filters.len() {
+                    produce_block
+                } else {
+                    self.fresh_block_with_id()
+                };
+                self.set_terminator(Terminator::Branch(cmp_var, next_block, skip_block));
+                self.close_current_block();
+                if next_block != produce_block {
+                    self.start_block(next_block);
                 }
-                result
-            };
-            let true_val = self.emit_const(Literal::Atom(self.true_atom_id));
-            let cmp_var = self.fresh_var();
-            self.emit(Instruction::BinOp(
-                cmp_var,
-                BinOp::ExactEq,
-                filter_var,
-                true_val,
-            ));
-            self.set_terminator(Terminator::Branch(cmp_var, produce_block, skip_block));
-            self.close_current_block();
+            }
 
             // ── Produce block ──
             self.start_block(produce_block);
