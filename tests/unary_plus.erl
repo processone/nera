@@ -49,7 +49,7 @@ test() ->
     yes = guarded(id(3)),
     yes = guarded(id(1.5)),
     yes = guard_alternative(id(a)),
-    [1, 2.0] = [X || X <- id([a, 1, [], 2.0]), +X > 0],
+    [1, 2.0] = [X || X <- id([0, 1, -1, 2.0]), +X > 0],
     %% Evaluate the operand once, and retain an operand's own exception.
     put(plus_count, 0),
     42 = +counted(42),
