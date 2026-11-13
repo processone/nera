@@ -585,11 +585,16 @@ table entirely, using batch allocation for tuple elements.
    fused sends, `nera_rt_send_tuple(ctx, pid, arity, e0, e1, e2, e3)`.
 2. The runtime resolves the target PID (or registered name) via the process
    table (with thread-local cache for repeated sends to the same PID).
-3. **Direct-to-heap** (fast path): If the target is WAITING or READY and
-   `try_lock()` succeeds, the message is copied directly to the receiver's
-   heap using `direct_copy_message()`. No fragment allocation needed.
-4. **Lock-free fragment** (fallback): On contention, a `MessageFragment` is
-   created and pushed to the receiver's `SegQueue` inbox.
+3. **Direct-to-heap** (fast path): If the target is WAITING or READY,
+   `try_lock()` succeeds and its inbox is empty, the message is copied
+   directly to the receiver's heap using `direct_copy_message()`. No
+   fragment allocation needed.
+4. **Lock-free fragment** (fallback): On contention, or while the inbox still
+   holds messages, a `MessageFragment` is created and pushed to the
+   receiver's `SegQueue` inbox. Inbox messages reach the mailbox only when
+   the receiver next runs, so a direct copy would overtake them, including
+   an earlier message from the same sender; Erlang delivers the messages
+   between two processes in the order they were sent.
 5. If the target was in `Waiting` state, CAS transitions it to `Ready` and
    injects it into the scheduler's work queue.
 6. The send expression evaluates to the sent message (Erlang convention).

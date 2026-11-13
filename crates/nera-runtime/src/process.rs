@@ -396,6 +396,29 @@ impl ProcessEntry {
         self.try_lock().map(RuntimeProcessGuard)
     }
 
+    /// Lock a ready or receive-waiting process so a sender can append a
+    /// message straight to its mailbox, bypassing the inbox.
+    ///
+    /// Returns `None` when the sender must push to the inbox instead: the
+    /// process is running, waiting for I/O or exited, another thread holds
+    /// its lock, or its inbox still holds messages. Inbox messages reach the
+    /// mailbox only when the process next runs, so a message appended
+    /// directly would overtake them, including an earlier message from the
+    /// same sender. Erlang delivers the messages one process sends another in
+    /// the order they were sent.
+    #[inline]
+    pub(crate) fn try_lock_for_direct_send(&self) -> Option<RuntimeProcessGuard<'_>> {
+        let status = self.published_status();
+        if status != ASTATUS_WAITING && status != ASTATUS_READY {
+            return None;
+        }
+        let guard = self.try_lock_for_runtime()?;
+        // Only a lock holder drains the inbox, so while this guard is held
+        // nothing is between the inbox and the mailbox, and the sender's own
+        // earlier pushes are visible here.
+        self.inbox.is_empty().then_some(guard)
+    }
+
     /// Attempt to wake a process waiting for a message via CAS (`Waiting → Ready`).
     /// Only wakes RECEIVE_WAIT processes — NOT IO_WAIT processes.
     /// Returns `true` if the transition succeeded.
