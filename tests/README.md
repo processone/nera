@@ -354,6 +354,7 @@ These are automatically skipped by the runner and show up as SKIP in output.
 | `link_normal.erl`           | Normal exit through links          | ~4         |
 | `unlink_basic.erl`          | Process unlink                     | ~4         |
 | `monitor_basic.erl`         | Process monitors and DOWN messages | ~8         |
+| `uncaught_error_exit.erl` | Uncaught errors send `{Reason, Stacktrace}` in monitor `'DOWN'` and trapped-link `'EXIT'` messages: closure/MFA spawn, runtime errors, tuple reasons, resumed errors, link cascade, saved/empty traces; explicit exits, normal return and caught errors unchanged; also run on BEAM | Table-driven |
 | `monitor_noproc.erl`        | Monitor non-existent process       | ~4         |
 | `demonitor_basic.erl`       | demonitor prevents DOWN delivery   | ~4         |
 | `timer_many.erl`            | Multiple concurrent timers         | ~6         |
