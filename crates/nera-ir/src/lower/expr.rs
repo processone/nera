@@ -1608,8 +1608,8 @@ impl IrBuilder {
                 }
             }
             ast::Expr::UnaryOp(op, _operand, _) => match op {
-                // not/neg/bnot can throw (badarg/badarith) on non-boolean/non-numeric operands
-                ast::UnaryOp::Not | ast::UnaryOp::Neg | ast::UnaryOp::Bnot => true,
+                // Unary operators can throw (badarg/badarith) on invalid operand types.
+                ast::UnaryOp::Not | ast::UnaryOp::Pos | ast::UnaryOp::Neg | ast::UnaryOp::Bnot => true,
             },
             // Function calls can throw
             ast::Expr::Call(_, _, _) => true,

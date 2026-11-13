@@ -589,15 +589,18 @@ impl<'src> Formatter<'src> {
             }
             Expr::UnaryOp(op, operand, _) => {
                 let op_str = match op {
+                    UnaryOp::Pos => "+",
                     UnaryOp::Neg => "-",
                     UnaryOp::Not => "not ",
                     UnaryOp::Bnot => "bnot ",
                 };
                 let operand_doc = self.format_expr(operand);
-                // Preserve weaker-binding operands and avoid turning nested
-                // negation into the `--` token after parentheses are discarded.
+                // Preserve weaker-binding operands and avoid turning repeated
+                // signs into the `++` or `--` token after grouping is discarded.
                 let needs_grouping = matches!(operand.as_ref(),
                     Expr::BinOp(..) | Expr::Match(..) | Expr::Send(..) | Expr::Catch(..))
+                    || (*op == UnaryOp::Pos && matches!(operand.as_ref(),
+                        Expr::UnaryOp(UnaryOp::Pos, ..)))
                     || (*op == UnaryOp::Neg && match operand.as_ref() {
                         Expr::UnaryOp(UnaryOp::Neg, ..) => true,
                         Expr::Integer(value, _) => *value < 0,

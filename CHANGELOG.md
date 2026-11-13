@@ -14,6 +14,16 @@ All notable milestones for the nera project are documented in this file.
   including a pending kill signal, and checks blocked-only termination through
   the worker's idle path. Ready, running and unwoken waits are controls.
 
+## Unary plus compiles and checks its operand
+
+- Unary plus expressions such as `+X` and `+id(1)` now compile natively.
+  As on BEAM, a number is returned unchanged, including big integers and
+  the sign of floating-point zero; a non-number raises `error:badarith`.
+- In a guard, an invalid operand fails the guard. In a `try` body, the
+  error reaches the handler before later expressions run.
+- Formatting preserves unary plus and its operand grouping.
+- The `unary_plus` fixture checks these behaviors natively and on BEAM.
+
 ## Funs stored in ETS and persistent_term keep their captured values
 
 - A fun inserted into an ETS table or stored with `persistent_term:put/2`

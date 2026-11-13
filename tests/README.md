@@ -112,6 +112,7 @@ These are automatically skipped by the runner and show up as SKIP in output.
 |------------------------|----------------------------------------|------------|
 | `arith_basic.erl`      | Integer arithmetic, bitwise ops        | ~20        |
 | `arith_float.erl`      | Float arithmetic                       | ~10        |
+| `unary_plus.erl` | Unary plus numeric identity (big integers, float bits and signed zero), non-number badarith, ignored results, guards, try short-circuiting, precedence and operand evaluation; also run on BEAM | Table-driven |
 | `float_arith_badarith.erl` | `/` with a zero divisor, signed zeros included, float overflow of `+`, `-`, `*` and `/`, and integers too large for a float raise `badarith`: inside `try` before a later send, in guards and in an uncaught process; literal operands; finite and underflowing results unchanged; a false list or binary comprehension filter stops the later filters; also run on BEAM | Table-driven |
 | `base_n_integer.erl`   | Base-N integer literals (16#FF, 2#101) | ~8         |
 | `number_separators.erl` | Decimal/base-N/big integer and float separators, macros, patterns and binaries | 11 |

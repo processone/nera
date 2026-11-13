@@ -1207,6 +1207,13 @@ impl<'src> Parser<'src> {
     }
 
     fn parse_unary(&mut self) -> Result<Expr, ParseError> {
+        if self.check(&Token::Plus) {
+            let span_start = self.current_span();
+            self.advance();
+            let operand = self.parse_expr_bp(14)?;
+            let span = span_start.merge(expr_span(&operand));
+            return Ok(Expr::UnaryOp(UnaryOp::Pos, Box::new(operand), span));
+        }
         if self.check(&Token::Minus) {
             let span_start = self.current_span();
             self.advance();
