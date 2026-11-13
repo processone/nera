@@ -419,6 +419,7 @@ These are automatically skipped by the runner and show up as SKIP in output.
 |------------------|---------------------------------------|------------|
 | `ets_basic.erl`  | ETS new/insert/lookup/delete/tab2list | ~15        |
 | `ets_keypos.erl` | ETS keypos and named tables           | ~8         |
+| `ets_stored_fun.erl` | A fun stored in ETS (at the top of a row, nested in a list, tuple and map, after `update_element/3`) or `persistent_term` by a process that then exits or collects garbage keeps its captured list, binaries, tuple, map, float, bignum and inner fun when looked up and called; a fun read by `tab2list/1` or `persistent_term:get/1` still works after the table or term is deleted; completion marker; also run on BEAM | ~16 |
 | `ets_named_table_return.erl` | ets:new/2 with `named_table` returns the name (Cowboy's `?MODULE = ets:new(?MODULE, [named_table, ...])`): every table type, apply, variable module and fun calls; a table without `named_table` does not take the name, and creating or deleting one leaves a named table with the same atom reachable; the name is released by ets:delete/1; a table created in another process is reached by its name; also run on BEAM | Table-driven |
 
 ### Stdlib
