@@ -108,6 +108,12 @@ protected() ->
      {inner_catch_clause, {outer, error, badarith}, [queued],
       fun() -> try try throw(x) catch throw:x -> _ = 1 + id(a), self() ! sent end
                catch C:E -> {outer, C, E} end end},
+     %% The after body still runs once, after the handler.
+     {catch_and_after, {error, badarith}, [queued, cleaned],
+      fun() -> try _ = 1 + id(a), self() ! sent, ok catch C:E -> {C, E} after self() ! cleaned end end},
+     {after_only, {outer, error, badarith}, [queued, cleaned],
+      fun() -> try try _ = 1 + id(a), self() ! sent, ok after self() ! cleaned end
+               catch C:E -> {outer, C, E} end end},
      {no_error, ok, [queued, {sent, 3, [{a, 2}, {b, 3}]}],
       fun() -> try X = 1 + id(2), M = (id(#{a => 1}))#{a := 2, b => 3},
                    self() ! {sent, X, lists:sort(maps:to_list(M))}, ok
