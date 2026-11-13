@@ -6,11 +6,11 @@
 %% stall patterns: re-arms that keep waiting for a fallback wakeup, and
 %% throughput that degrades while a connection keeps running.
 %%
-%% A pattern recurs. The host can pause this process once, for tens of
-%% milliseconds, whatever the runtime does; that slows a single batch. On a
-%% loaded host the same loop on OTP 29 also fails a single-batch rule. Each
-%% check therefore fails only when the slowdown shows in at least two
-%% batches. Batches are timed in microseconds.
+%% One slow batch is not a pattern. The host can pause this process once,
+%% for tens of milliseconds, whatever the runtime does; that slows a single
+%% batch. On a loaded host an equivalent loop on OTP 29 also fails a
+%% single-batch rule. Each check therefore fails only when the slowdown
+%% shows in at least two batches. Batches are timed in microseconds.
 
 test() ->
     ok = test_active_once_batch_consistency(),

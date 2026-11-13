@@ -173,13 +173,14 @@ enabled tests. The original timeout's location and root cause remain
 unproven. Background compiler load is a hypothesis, not an established excuse.
 
 `tcp_reactor_perf` used to fail when a single batch took more than five
-times the median. On a loaded macOS host, the same loop on OTP 29 failed
-that rule too, and unchanged Nera builds failed it in roughly one run in
-250. One host pause can slow any one batch. The test now times batches
-in microseconds and fails only when a stall or degradation shows in at
-least two batches. Injected 100 ms stalls on every connection's first
-round, recurring stalls, and early or late degradation still fail it. One
-isolated pause does not.
+times the median. On a loaded macOS host, an equivalent loop on OTP 29
+failed that rule too, and unchanged Nera builds failed it in roughly one
+run in 250. One host pause can slow any one batch. The test now times
+batches in microseconds and fails only when a stall or slowdown shows in
+at least two batches. Injected 100 ms stalls on every connection's first
+round, recurring 100 ms stalls, and a 1 ms slowdown per round from a
+connection's 300th or 600th round still fail it. One isolated pause does
+not, and neither does a real stall that happens only once per run.
 
 The test runner accepts exit 0 without proof of completion unless `%% EXPECT:`
 is supplied. P0-1 demonstrates why this is insufficient. Several reactor tests
