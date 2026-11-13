@@ -224,6 +224,7 @@ Maintainers with OTP 29.0.4 installed can verify the catalogue with
 | get_keys/0,1        | ✅      | All keys or keys whose values match exactly (`=:=`); order unspecified |
 | error/1             | ✅      |                       |
 | error/2             | ✅      | Raises error:Reason through direct, apply and fun calls; Args is not kept, so the top stacktrace frame shows the arity, not the arguments |
+| error/3             | 🔶      | Raises error:Reason through direct, apply and fun calls; Args and Options are accepted but not kept in the stacktrace, including error_info metadata |
 | exit/1,2            | ✅      |                       |
 | throw/1             | ✅      |                       |
 | apply/3             | ✅      | Via nera_rt_apply    |
