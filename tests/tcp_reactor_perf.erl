@@ -1,9 +1,18 @@
 -module(tcp_reactor_perf).
 -export([test/0]).
 
-%% Performance regression tests for TCP reactor using self-referential
-%% ratios (no absolute thresholds). Catches stall patterns where
-%% throughput degrades over time.
+%% Performance regression tests for the TCP reactor's {active, once} re-arm
+%% path, using self-referential ratios (no absolute thresholds). They catch
+%% stall patterns: re-arms that keep waiting for a fallback wakeup, and
+%% throughput that degrades while a connection keeps running.
+%%
+%% One slow batch is not a pattern. On a busy host, a burst of activity
+%% slows many rounds a little, and the host can pause the whole program for
+%% tens of milliseconds. Either can put one batch nearly 100 ms over the
+%% others while no single round takes that long. On a loaded host an
+%% equivalent loop on OTP 29 also fails a single-batch rule. Each check
+%% therefore fails only when the slowdown shows in at least two batches.
+%% Batches are timed in microseconds.
 
 test() ->
     ok = test_active_once_batch_consistency(),
@@ -11,81 +20,79 @@ test() ->
     halt(0).
 
 %% -------------------------------------------------------------------
-%% Test 1: Batch consistency — 5 batches of 200 rounds each.
-%% If max batch time > 5x median → stall detected.
-%% Machine-independent: compares within the same run.
+%% Test 1: Batch consistency — 10 batches of 200 rounds, alternating
+%% between two connections. A batch over 5x the median batch is stalled;
+%% two stalled batches are a stall pattern. That covers a stall that
+%% recurs within a connection and one that hits every connection (each
+%% connection's first batch holds its first re-arm).
 %% -------------------------------------------------------------------
 test_active_once_batch_consistency() ->
-    {ok, LSock} = gen_tcp:listen(0, [{active, false}, binary, {packet, line}]),
-    {ok, Port} = inet:port(LSock),
-    {ok, CSock} = gen_tcp:connect({127,0,0,1}, Port, [{active, false}, binary]),
-    {ok, SSock} = gen_tcp:accept(LSock),
-    ok = gen_tcp:close(LSock),
+    A = connected_pair(),
+    B = connected_pair(),
+    Times = measure_batches(A, B, 10, 200, []),
 
-    Times = measure_batches(SSock, CSock, 5, 200, []),
-
-    Sorted = lists:sort(Times),
-    Median = lists:nth(3, Sorted),
-    Max = lists:last(Sorted),
-
-    %% If max > 5x median, something stalled
-    case Median > 0 andalso Max > Median * 5 of
+    Median = lists:nth(5, lists:sort(Times)),
+    Stalled = [T || T <- Times, T > Median * 5],
+    case length(Stalled) >= 2 of
         true ->
-            erlang:error({batch_variance_stall, Max, Median, Sorted});
+            erlang:error({batch_variance_stall, Stalled, Median, Times});
         false -> ok
     end,
 
-    ok = gen_tcp:close(CSock),
-    ok = gen_tcp:close(SSock),
+    ok = close_pair(A),
+    ok = close_pair(B),
     ok.
 
-measure_batches(_SSock, _CSock, 0, _Size, Acc) -> lists:reverse(Acc);
-measure_batches(SSock, CSock, Batches, Size, Acc) ->
-    T0 = erlang:monotonic_time(millisecond),
-    ok = perf_rearm_loop(SSock, CSock, Size),
-    Elapsed = erlang:monotonic_time(millisecond) - T0,
-    measure_batches(SSock, CSock, Batches - 1, Size, [Elapsed | Acc]).
+measure_batches(_Pair, _Other, 0, _Size, Acc) -> lists:reverse(Acc);
+measure_batches(Pair, Other, Batches, Size, Acc) ->
+    Elapsed = timed_rounds(Pair, Size),
+    measure_batches(Other, Pair, Batches - 1, Size, [Elapsed | Acc]).
 
 %% -------------------------------------------------------------------
-%% Test 2: Sustained throughput ratio — warmup vs sustained.
-%% Phase 1 (warmup): 200 rounds. Phase 2 (sustained): 600 rounds.
-%% Sustained should take ~3x warmup. If sustained > 9x warmup → stall.
-%% Catches "works fine initially then stalls" pattern.
+%% Test 2: Sustained throughput — on a fresh connection, 200 warmup
+%% rounds, then 600 sustained rounds in three batches of 200. Each
+%% sustained batch should take about as long as the warmup; two over 3x
+%% the warmup are a degradation. Catches the "works fine initially then
+%% stalls" pattern.
 %% -------------------------------------------------------------------
 test_sustained_throughput_ratio() ->
-    {ok, LSock} = gen_tcp:listen(0, [{active, false}, binary, {packet, line}]),
-    {ok, Port} = inet:port(LSock),
-    {ok, CSock} = gen_tcp:connect({127,0,0,1}, Port, [{active, false}, binary]),
-    {ok, SSock} = gen_tcp:accept(LSock),
-    ok = gen_tcp:close(LSock),
+    Pair = connected_pair(),
 
-    %% Phase 1: warmup
-    T1 = erlang:monotonic_time(millisecond),
-    ok = perf_rearm_loop(SSock, CSock, 200),
-    Warmup = erlang:monotonic_time(millisecond) - T1,
+    Warmup = max(1, timed_rounds(Pair, 200)),
+    Sustained = [timed_rounds(Pair, 200) || _ <- [1, 2, 3]],
 
-    %% Phase 2: sustained
-    T2 = erlang:monotonic_time(millisecond),
-    ok = perf_rearm_loop(SSock, CSock, 600),
-    Sustained = erlang:monotonic_time(millisecond) - T2,
-
-    %% Sustained (3x rounds) should take ~3x warmup time.
-    %% If it takes >9x warmup, something degraded.
-    %% Guard against Warmup=0 (very fast machine) by using max(1, Warmup).
-    EffWarmup = max(1, Warmup),
-    case Sustained > EffWarmup * 9 of
+    Degraded = [T || T <- Sustained, T > Warmup * 3],
+    case length(Degraded) >= 2 of
         true ->
             erlang:error({throughput_regression, Sustained, Warmup});
         false -> ok
     end,
 
-    ok = gen_tcp:close(CSock),
-    ok = gen_tcp:close(SSock),
+    ok = close_pair(Pair),
     ok.
 
 %% -------------------------------------------------------------------
-%% Shared helper: {active, once} re-arm loop with per-round timeout
+%% Shared helpers
 %% -------------------------------------------------------------------
+connected_pair() ->
+    {ok, LSock} = gen_tcp:listen(0, [{active, false}, binary, {packet, line}]),
+    {ok, Port} = inet:port(LSock),
+    {ok, CSock} = gen_tcp:connect({127,0,0,1}, Port, [{active, false}, binary]),
+    {ok, SSock} = gen_tcp:accept(LSock),
+    ok = gen_tcp:close(LSock),
+    {SSock, CSock}.
+
+close_pair({SSock, CSock}) ->
+    ok = gen_tcp:close(CSock),
+    gen_tcp:close(SSock).
+
+%% Microseconds taken by N re-arm rounds.
+timed_rounds({SSock, CSock}, N) ->
+    T0 = erlang:monotonic_time(microsecond),
+    ok = perf_rearm_loop(SSock, CSock, N),
+    erlang:monotonic_time(microsecond) - T0.
+
+%% {active, once} re-arm loop with per-round timeout.
 perf_rearm_loop(_SSock, _CSock, 0) -> ok;
 perf_rearm_loop(SSock, CSock, N) ->
     ok = inet:setopts(SSock, [{active, once}]),
