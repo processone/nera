@@ -1683,12 +1683,26 @@ fn worker_loop(
                         2 => "exit",
                         _ => "unknown",
                     };
-                    exit_reason = crate::term::ErlTerm(proc.context.result);
+                    let reason = crate::term::ErlTerm(proc.context.result);
+                    exit_reason = if proc.context.exception_class == 1 {
+                        // Uncaught errors exit with {Reason, Stacktrace}, as on
+                        // BEAM. Build it before propagation while the dying
+                        // process still owns the reason and captured trace.
+                        // SAFETY: run_slice refreshed the context's heap/trace
+                        // pointers; the process is locked and no GC or compiled
+                        // execution runs before its signals have been copied.
+                        let stack = unsafe {
+                            crate::ffi::nera_rt_get_exception_stacktrace(&mut proc.context)
+                        };
+                        proc.heap.alloc_tuple(&[reason, crate::term::ErlTerm(stack)])
+                    } else {
+                        reason
+                    };
                     let is_exit_class = proc.context.exception_class == 2;
                     if !is_exit_class {
                         // SAFETY: the process guard keeps its heap and borrowed
                         // owners live. Formatting cannot reenter or run moving GC.
-                        let reason_str = unsafe { crate::bif::format_term(exit_reason) };
+                        let reason_str = unsafe { crate::bif::format_term(reason) };
                         eprintln!(
                             "Error in process <0.{}.0>: {}:{}",
                             pid, class_name, reason_str

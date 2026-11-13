@@ -40,6 +40,21 @@ All notable milestones for the nera project are documented in this file.
 - The `error_3` fixture checks these calls, argument evaluation and exception
   control flow natively and on BEAM.
 
+## Uncaught errors include their stacktrace in exit reasons
+
+- A process that dies from an uncaught error now exits with
+  `{Reason, Stacktrace}`, as on BEAM. Monitors receive it in `'DOWN'`
+  messages, and linked processes receive the same reason, including a
+  process trapping exits in an `'EXIT'` message. Previously they received
+  only `Reason`, so a match on `{Reason, Stack}` could fail.
+- The runtime uses the captured exception trace, including a trace supplied
+  by `erlang:raise/3`. An explicit `exit/1` or `exit/2`, a normal return and
+  a caught error are unchanged. Uncaught throws and stack-frame ordering
+  are not changed.
+- The `uncaught_error_exit` fixture checks monitor and link delivery,
+  propagation through a non-trapping link, saved and empty traces, and
+  explicit-exit controls, natively and on BEAM.
+
 ## Binary comprehensions reject bodies that are not bitstrings
 
 - A binary comprehension whose body is not a bitstring now raises

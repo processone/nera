@@ -88,6 +88,7 @@ mod misc;
 pub(crate) use helpers::binary_data;
 pub use helpers::binary_data_pub;
 pub use receive::take_pending_resumes;
+pub(crate) use exception::nera_rt_get_exception_stacktrace;
 
 #[cfg(test)]
 mod tests {
