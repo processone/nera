@@ -2,6 +2,25 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## try ... after runs its cleanup when an exception leaves the try
+
+- A `try ... after` now runs its `after` body when the body, an `of` clause
+  or a catch clause raises, and then raises the same exception again with its
+  class, reason and stacktrace, as on BEAM. Previously, when no handler around
+  it was in the same function, the exception left at once: in
+  `f() -> try error(boom) after self() ! cleaned end.` called from another
+  function's `try`, the caller saw `error:boom` but `cleaned` was never sent.
+  A process with no handler left also skipped its cleanup before exiting.
+- An exception raised by the `after` body itself replaces the one being
+  raised again, as on BEAM: `try error(first) after throw(second) end` raises
+  `throw:second`.
+- The `after` body now runs with no exception pending. Inside another `try`,
+  a `receive ... after T` in a cleanup block now waits for its timeout, and a
+  receive with an invalid timeout there raises `timeout_value` rather than the
+  body's earlier error.
+- The `try_after_reraise` fixture covers these ways out and runs natively and
+  on BEAM.
+
 ## An invalid receive timeout raises only when the receive would wait
 
 - A `receive` whose `after` value is not a valid timeout (`infinity` or an
