@@ -1309,6 +1309,10 @@ fn worker_loop(
         // Execute the process for one time-slice.
         let mut proc = proc_entry.lock_for_runtime();
 
+        // Drain even a dead process's inbox: active-read notifications must
+        // release their in-flight flags without reading the socket.
+        proc.drain_inbox();
+
         // A linked-exit cascade may have killed this queued process and already
         // released its slot. Do not process pending signals and clean it up a
         // second time, even when the wake itself carried an exit signal.
@@ -1318,9 +1322,6 @@ fn worker_loop(
             idle_spins += 1;
             continue;
         }
-
-        // Drain lock-free inbox into process mailbox.
-        proc.drain_inbox();
 
         // Process EXIT signals in the mailbox (from exit/2 or link cascade).
         // Only scan when signals are actually pending (avoids O(mailbox) scan per wake).
@@ -2503,6 +2504,22 @@ mod tests {
                 linked.lock_for_runtime().transition(state);
                 scheduler.injector.push(linked.clone());
             }
+            // Socket readiness can be the wake source too. Keep real sockets
+            // alive beyond the killed process, as when ownership has moved.
+            // One notification exercises the single-fragment drain; a queued
+            // kill plus two notifications exercises the batch drain.
+            let active_reads: Vec<_> = (0..if wake { if pending_exit { 2 } else { 1 } } else { 0 })
+                .map(|_| {
+                    let listener = std::net::TcpListener::bind(("127.0.0.1", 0)).unwrap();
+                    let socket = crate::socket::connect("127.0.0.1",
+                        listener.local_addr().unwrap().port()).unwrap();
+                    let (peer, _) = listener.accept().unwrap();
+                    let in_flight = Arc::new(AtomicBool::new(true));
+                    linked.inbox.push(crate::message::MessageFragment::ActiveReadReady {
+                        stream_handle: socket, in_flight: in_flight.clone(),
+                    });
+                    (socket, peer, in_flight)
+                }).collect();
             #[cfg(mio_supported)]
             let (reactor, join) = crate::reactor::spawn_reactor();
             propagate_exit_signals(
@@ -2542,8 +2559,15 @@ mod tests {
             #[cfg(mio_supported)]
             { reactor.shutdown(); join.join().unwrap(); }
             let after_worker = scheduler.runnable_count.load(Ordering::Acquire);
+            let active_reads_cleared = active_reads.iter()
+                .all(|(_, _, in_flight)| !in_flight.load(Ordering::Acquire));
+            for (socket, _, _) in active_reads {
+                crate::socket::remove(socket);
+            }
+            assert!(active_reads_cleared, "stale entries must release every readiness flag");
             eprintln!("linked exit: state={state:?} wake={wake} pending_exit={pending_exit} \
-                after_exit={after_exit} after_worker={after_worker} forced_stop={}", forced_stop.get());
+                after_exit={after_exit} after_worker={after_worker} active_reads_cleared={active_reads_cleared} \
+                forced_stop={}", forced_stop.get());
             assert_eq!(after_exit, 0, "cascade releases the slot for {state:?}, wake={wake}");
             assert_eq!(after_worker, 0, "the stale queue entry must not release it twice");
             assert!(!forced_stop.get(), "the blocked-only scheduler must stop on its own");
