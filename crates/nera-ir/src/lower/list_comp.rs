@@ -104,6 +104,8 @@ impl IrBuilder {
             CallTarget::Local(helpers[0].0),
             args,
         ));
+        // An error in the comprehension skips the rest of a try body.
+        self.branch_on_pending_exception();
 
         Ok(call_result)
     }
