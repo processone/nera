@@ -23,6 +23,7 @@ All notable milestones for the nera project are documented in this file.
   could raise or have side effects for an element an earlier one rejected.
 - The `float_arith_badarith` fixture covers these cases and runs natively
   and on BEAM.
+
 ## Supervisors stop with their parent and stop their children in order
 
 - A supervisor now stops when its parent, the process that started it with
