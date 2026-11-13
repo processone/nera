@@ -2,6 +2,19 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Stacktraces list the raising function first
+
+- Captured exception stacktraces now list the raising function before its
+  callers, as on BEAM. Previously they listed the outermost caller first,
+  so `hd(Stack)` in `try ... catch Class:Reason:Stack` identified the wrong
+  function. This also corrects captured traces carried in `{Reason, Stack}`
+  exit reasons, such as a failed `gen_server` start.
+- `erlang:raise/3` keeps the supplied stacktrace's order, including when it
+  re-raises a captured exception.
+- The `stacktrace_order` fixture checks caught errors, throws, exits and
+  failed matches, re-raises and stack-bearing exit reasons on native Nera
+  and BEAM.
+
 ## Exited processes are no longer reported alive after shutdown
 
 - `is_process_alive/1` now returns `false` once a process publishes its exit,

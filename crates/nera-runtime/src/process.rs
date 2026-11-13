@@ -1270,7 +1270,8 @@ pub struct Process {
     /// Compact call stack used by compiled code (func_index + line).
     /// Pre-allocated to STACK_DEPTH_LIMIT for cursor-based addressing.
     pub compact_stack: Vec<CompactFrame>,
-    /// Captured stack trace for the last raised exception in this process.
+    /// Stack trace for the last raised exception, innermost (raising) frame first.
+    /// Captures and traces supplied to erlang:raise/3 use the same order.
     pub exception_trace: Vec<StackFrame>,
     /// Long-lived OTP-oriented state (waiting reason, links, monitors,
     /// registration hooks, timer ownership).

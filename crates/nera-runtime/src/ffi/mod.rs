@@ -123,6 +123,12 @@ mod tests {
 
     #[test]
     fn exception_capture_snapshots_and_clears_trace() {
+        // Legacy FFI stack hooks mirror the real non-tail callers in
+        // tests/stacktrace_order.erl; native execution covers compact frames.
+        let atoms = crate::atom_table::global_atom_table();
+        let module = ErlTerm::atom(atoms.intern("stacktrace_order"));
+        let outer = ErlTerm::atom(atoms.intern("outer"));
+        let inner = ErlTerm::atom(atoms.intern("inner"));
         let mut stack = Vec::new();
         let mut trace = Vec::new();
         let mut ctx = ProcessContext::new(crate::process::ProcessId::new(1));
@@ -131,18 +137,16 @@ mod tests {
 
         // SAFETY: ctx points to a valid ProcessContext with valid stack/trace pointers.
         unsafe {
-            nera_rt_stack_push(&mut ctx, ErlTerm::atom(100).0, ErlTerm::atom(200).0, 1, 0);
-            nera_rt_stack_push(&mut ctx, ErlTerm::atom(100).0, ErlTerm::atom(201).0, 2, 0);
+            nera_rt_stack_push(&mut ctx, module.0, outer.0, 1, 0);
+            nera_rt_stack_push(&mut ctx, module.0, inner.0, 1, 0);
         }
-        let reason = ErlTerm::small_int(42).0;
+        let reason = ErlTerm::atom(atoms.intern("boom")).0;
         // SAFETY: ctx points to a valid ProcessContext with valid stack/trace pointers.
         let _ = unsafe { nera_rt_error(&mut ctx, reason) };
 
         assert_eq!(ctx.status, STATUS_EXCEPTION);
         assert_eq!(ctx.result, reason);
-        assert_eq!(trace.len(), 2);
-        assert_eq!(trace[0].function, 200);
-        assert_eq!(trace[1].function, 201);
+        assert_eq!(trace, stack.iter().rev().copied().collect::<Vec<_>>());
 
         // SAFETY: ctx points to a valid ProcessContext with valid stack/trace pointers.
         unsafe {

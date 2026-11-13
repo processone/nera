@@ -132,7 +132,8 @@ where
 /// Snapshot the current call stack into `ctx.exception_trace_ptr`.
 /// Reads compact frames from the cursor-based stack and reconstructs
 /// full StackFrames using the global func_info_table. Falls back to
-/// stack_ptr (Vec<StackFrame>) for tests and legacy callers (nera_rt_raise).
+/// stack_ptr (Vec<StackFrame>) for tests and legacy callers. Captured traces
+/// are innermost-first, like Erlang stacktrace lists supplied to raise/3.
 /// # Safety
 /// The context and the pointees accessed by this operation must be live and
 /// exclusively accessible on this thread; no competing process execution or
@@ -169,10 +170,10 @@ enum TraceFrames<'a> {
 fn fill_exception_trace(trace: &mut Vec<crate::process::StackFrame>, frames: TraceFrames<'_>) {
     trace.clear();
     match frames {
-        TraceFrames::Full(frames) => trace.extend_from_slice(frames),
+        TraceFrames::Full(frames) => trace.extend(frames.iter().rev().copied()),
         TraceFrames::Compact(frames) => {
             let info_table = crate::entry::global_func_info_table();
-            trace.extend(frames.iter().map(|cf| {
+            trace.extend(frames.iter().rev().map(|cf| {
                 let (module, function, arity) = info_table
                     .get(cf.func_index as usize)
                     .copied()
