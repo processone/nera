@@ -26,6 +26,16 @@ All notable milestones for the nera project are documented in this file.
   `term_to_binary/1`, `erlang:phash2/1` or `iolist_to_binary/1` on them can
   still crash; [known limits](docs/KNOWN_LIMITS.md) gives the depths.
 
+## Unmatched try-of clauses keep the unmatched value in their error
+
+- When no `try ... of` clause matches, Nera now raises
+  `error:{try_clause, Value}` with the try body's unmatched result, as on
+  BEAM. Previously it raised the bare atom `try_clause`.
+- The exception still bypasses that try's own catch clauses, and any
+  `after` body runs once before an enclosing handler receives the error.
+- The `try_clause` fixture checks unmatched terms, failed guards, matching
+  clauses and exception handling natively and on BEAM.
+
 ## error/3 compiles and raises its reason
 
 - `error(Reason, Args, Options)` and `erlang:error(Reason, Args, Options)`

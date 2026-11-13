@@ -2143,6 +2143,47 @@ fn case_clause_reason_retains_scrutinee_in_each_context() {
 }
 
 #[test]
+fn try_clause_reason_retains_body_result() {
+    // The runtime fixture owns observable exception behavior. This test owns
+    // the lowering contract: the error tuple must use the try body's result.
+    let source = include_str!("../../../../tests/try_clause.erl");
+    let ir = lower_source(source).unwrap();
+    let mut parser = Parser::new(source);
+    parser.parse_module();
+    let atoms = parser.atom_names();
+    let atom = |name: &str| {
+        *atoms.iter().find(|(_, text)| text.as_str() == name).unwrap().0
+    };
+    for name in ["unmatched", "guarded", "with_after", "with_catch_after"] {
+        let function = ir.functions.iter().find(|f| f.name == atom(name)).unwrap();
+        let instructions: Vec<_> = function.blocks.iter()
+            .flat_map(|block| &block.instructions).collect();
+        let body_result = instructions.iter().find_map(|instruction| match instruction {
+            Instruction::Call(result, CallTarget::Local(target), args)
+                if *target == atom("id") && args == &function.params => Some(*result),
+            _ => None,
+        }).expect("fixture must pass its argument through id/1");
+        let mut checked = 0;
+        for instruction in &instructions {
+            if let Instruction::RaiseException(_, ExceptionClass::Error, reason) = instruction {
+                let fields = instructions.iter().find_map(|instruction| match instruction {
+                    Instruction::MakeTuple(dst, fields) if dst == reason => Some(fields),
+                    _ => None,
+                }).expect("try_clause reason must be a tuple");
+                assert_eq!(fields.len(), 2);
+                assert_eq!(fields[1], body_result, "{name} lost the try body's result");
+                assert!(instructions.iter().any(|instruction| matches!(instruction,
+                    Instruction::Const(dst, Literal::Atom(tag))
+                    if *dst == fields[0] && *tag == atom("try_clause")
+                )));
+                checked += 1;
+            }
+        }
+        assert_eq!(checked, 1, "expected one try-of failure path in {name}");
+    }
+}
+
+#[test]
 fn try_protection_is_lexical_not_forward_reachable() {
     let ir = lower_source("-module(test). -export([f/0]). f() -> g(), try g() catch throw:E -> E end, ok. g() -> ok.").unwrap();
     let f = &ir.functions[0];

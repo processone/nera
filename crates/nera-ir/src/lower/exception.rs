@@ -307,7 +307,9 @@ impl IrBuilder {
                 self.emit_set_line(first_clause.span);
             }
             let tc_atom = self.atom_id_for("try_clause");
-            let reason = self.emit_const(Literal::Atom(tc_atom));
+            let reason_atom = self.emit_const(Literal::Atom(tc_atom));
+            let reason = self.fresh_var();
+            self.emit(Instruction::MakeTuple(reason, vec![reason_atom, body_result]));
             let exc_result = self.fresh_var();
             self.emit(Instruction::RaiseException(exc_result, ExceptionClass::Error, reason));
             self.set_raise_terminator(exc_result);
