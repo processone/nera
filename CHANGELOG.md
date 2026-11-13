@@ -2,6 +2,19 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Binary comprehensions reject bodies that are not bitstrings
+
+- A binary comprehension whose body is not a bitstring now raises
+  `error:badarg` at the iteration that yields it, as on BEAM:
+  `<< (id(1)) || _ <- [a] >>` and `<< (id([1,2])) || _ <- [a] >>` raise
+  `badarg`. Previously the comprehension joined its pieces like an iolist,
+  so these returned `<<1>>` and `<<1,2>>`.
+- The failing iteration's body runs first; no later filter or body runs.
+  An exception raised by the body itself is kept.
+- Programs that run on BEAM are unaffected.
+- The `bin_comp_badarg` fixture runs these comprehensions natively and on
+  BEAM.
+
 ## Float division by zero and float overflow raise badarith
 
 - `/` with a zero divisor, `0.0` and `-0.0` included, now raises
