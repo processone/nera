@@ -1,3 +1,4 @@
+%% EXPECT: list_operator_contracts_ok
 -module(list_operator_contracts).
 -export([test/0]).
 test() ->
@@ -30,8 +31,9 @@ test() ->
     caught = try [1|bad] -- [], error(continued_after_subtract)
              catch error:badarg -> caught end,
     {Pid, Monitor} = spawn_monitor(fun() -> append([1|bad], []), error(continued_after_append) end),
-    receive {'DOWN', Monitor, process, Pid, badarg} -> ok
+    receive {'DOWN', Monitor, process, Pid, {badarg, _Stack}} -> ok
     after 2000 -> error(missing_list_error) end,
+    io:format("list_operator_contracts_ok~n"),
     ok.
 append(A,B) -> A ++ B.
 subtract(A,B) -> A -- B.

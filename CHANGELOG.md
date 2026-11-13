@@ -42,8 +42,9 @@ All notable milestones for the nera project are documented in this file.
 
 ## Uncaught errors include their stacktrace in exit reasons
 
-- A process that dies from an uncaught error now exits with
-  `{Reason, Stacktrace}`, as on BEAM. Monitors receive it in `'DOWN'`
+- A process started directly with the native spawn BIFs that dies from an
+  uncaught error now exits with `{Reason, Stacktrace}`, as on BEAM.
+  Monitors receive it in `'DOWN'`
   messages, and linked processes receive the same reason, including a
   process trapping exits in an `'EXIT'` message. Previously they received
   only `Reason`, so a match on `{Reason, Stack}` could fail.
@@ -51,6 +52,9 @@ All notable milestones for the nera project are documented in this file.
   by `erlang:raise/3`. An explicit `exit/1` or `exit/2`, a normal return and
   a caught error are unchanged. Uncaught throws and stack-frame ordering
   are not changed.
+- Processes started through the bundled `proc_lib` spawn wrappers are not
+  covered: those wrappers catch errors and explicitly exit with the bare
+  reason. Their behavior is unchanged.
 - The `uncaught_error_exit` fixture checks monitor and link delivery,
   propagation through a non-trapping link, saved and empty traces, and
   explicit-exit controls, natively and on BEAM.

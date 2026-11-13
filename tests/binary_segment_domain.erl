@@ -1,3 +1,4 @@
+%% EXPECT: binary_segment_domain_ok
 -module(binary_segment_domain).
 -export([test/0]).
 test() ->
@@ -20,8 +21,9 @@ test() ->
     caught = try <<1:(size_value())>>, error(continued_after_invalid)
              catch error:badarg -> caught end,
     {Pid, Ref} = spawn_monitor(fun() -> integer(1.5), error(continued_after_invalid) end),
-    receive {'DOWN', Ref, process, Pid, badarg} -> ok
+    receive {'DOWN', Ref, process, Pid, {badarg, _Stack}} -> ok
     after 2000 -> error(missing_binary_error) end,
+    io:format("binary_segment_domain_ok~n"),
     ok.
 integer(N) -> <<1:N>>.
 compensated(N) -> <<1:N, 2:16>>.
