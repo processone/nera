@@ -9,6 +9,9 @@ All notable milestones for the nera project are documented in this file.
   `try error(x, [a]) catch C:E -> {C, E} end` returned `{error, undef}`
   instead of `{error, x}`. The same holds for `apply(erlang, error, [R, A])`,
   `fun erlang:error/2` and a call through a computed module.
+- The bundled `queue` module raises its errors this way, so
+  `queue:get(queue:new())` now fails with `error:empty` and a bad queue
+  argument with `error:badarg`, as on BEAM, instead of `error:undef`.
 - As on BEAM, `Args` may be any term and does not change the class or the
   reason. Nera's stacktrace frames record only arities, so the arguments do
   not appear in the top frame as they do on BEAM.
