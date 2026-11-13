@@ -2064,6 +2064,101 @@ mod tests {
         assert_eq!(owner.inbox.len(), 1, "the owner then gets the linked process's 'DOWN'");
     }
 
+    // supervisor_shutdown sometimes found a stopped child still alive: the
+    // supervisor got the child's 'DOWN' and exited, and the test got the
+    // supervisor's 'DOWN' and called is_process_alive/1 on the child, all
+    // before the child's worker removed it from the process table. On BEAM
+    // an exiting process is not alive, so once its 'DOWN' is out the answer
+    // is false. This replays the child's exit up to that point: published,
+    // its 'DOWN' delivered, its table entry not yet removed.
+    #[test]
+    fn exiting_process_is_not_alive_once_its_down_is_out() {
+        let scheduler = Scheduler::new(1);
+        let supervisor_pid = scheduler.spawn_process(Process::new(scheduler.next_pid()));
+        let child_pid = scheduler.spawn_process(Process::new(scheduler.next_pid()));
+        let monitor = 1_u64;
+        let supervisor = scheduler.process_table.get(&supervisor_pid).unwrap().clone();
+        let child = scheduler.process_table.get(&child_pid).unwrap().clone();
+        supervisor
+            .lock_for_runtime()
+            .add_outgoing_monitor(monitor, child_pid);
+        child
+            .lock_for_runtime()
+            .add_incoming_monitor(monitor, supervisor_pid);
+        #[cfg(mio_supported)]
+        let (reactor, join) = crate::reactor::spawn_reactor();
+        let handle = SchedulerHandle {
+            injector: Arc::clone(&scheduler.injector),
+            process_table: Arc::clone(&scheduler.process_table),
+            next_pid: Arc::clone(&scheduler.next_pid),
+            runnable_count: Arc::clone(&scheduler.runnable_count),
+            alive_count: Arc::clone(&scheduler.alive_count),
+            registered_names: Arc::clone(&scheduler.registered_names),
+            timer_wheel: Arc::clone(&scheduler.timer_wheel),
+            worker_notify: Arc::clone(&scheduler.worker_notify),
+            io_pool: Arc::clone(&scheduler.io_pool),
+            #[cfg(mio_supported)]
+            reactor: reactor.clone(),
+            worker_inboxes: Arc::clone(&scheduler.worker_inboxes),
+            num_workers: 1,
+            worker_threads: Arc::new(Vec::new()),
+            dispatch_rr: AtomicU32::new(0),
+        };
+        // The test process asks, through the BIF, with its own context.
+        let mut observer = crate::process::ProcessContext::new(scheduler.next_pid());
+        observer.runtime = &handle;
+        let mut is_alive = |pid: ProcessId| {
+            // SAFETY: the context and the scheduler handle it points to
+            // outlive the call; a PID is an immediate term.
+            let answer = unsafe {
+                crate::ffi::process::nera_rt_is_process_alive(&mut observer, ErlTerm::pid(pid).0)
+            };
+            ErlTerm(answer).as_atom_id() == Some(crate::atom_table::ATOM_TRUE)
+        };
+        assert!(is_alive(child_pid), "a running child is alive");
+
+        // The child's worker publishes its exit and takes its monitors, as
+        // every exit path does, then sends its signals.
+        let monitors_in = {
+            let mut child = child.lock_for_runtime();
+            child.transition(ProcessState::Exited);
+            std::mem::take(&mut child.otp.monitors_incoming)
+        };
+        propagate_exit_signals(
+            child_pid,
+            ErlTerm::atom(crate::atom_table::global_atom_table().intern("shutdown")),
+            HashSet::new(),
+            monitors_in,
+            &scheduler.process_table,
+            &scheduler.injector,
+            &scheduler.runnable_count,
+            &scheduler.alive_count,
+            &scheduler.any_crash,
+            &scheduler.initial_pid,
+            &scheduler.registered_names,
+            &scheduler.timer_wheel,
+            &scheduler.io_pool,
+            #[cfg(mio_supported)]
+            &reactor,
+        );
+        #[cfg(mio_supported)]
+        {
+            reactor.shutdown();
+            join.join().unwrap();
+        }
+        assert_eq!(
+            supervisor.inbox.len(),
+            1,
+            "the supervisor has the child's 'DOWN'"
+        );
+        assert!(
+            scheduler.process_table.contains_key(&child_pid),
+            "the child's entry is not yet removed"
+        );
+        assert!(!is_alive(child_pid), "a child whose 'DOWN' is out is not alive");
+        assert!(is_alive(supervisor_pid), "the supervisor is still alive");
+    }
+
     #[test]
     fn spawn_and_run_single_process() {
         let scheduler = Scheduler::new(2);

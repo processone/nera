@@ -1856,6 +1856,10 @@ pub unsafe extern "C" fn nera_rt_spawn_monitor(
 }
 
 /// erlang:is_process_alive/1 — check if a process is alive.
+///
+/// Exit signals can reach observers before the worker removes the process
+/// table entry. Observe the published exit state, as link/1 and monitor/2 do,
+/// so a process whose 'EXIT' or 'DOWN' has arrived is no longer alive.
 #[no_mangle]
 pub unsafe extern "C" fn nera_rt_is_process_alive(ctx: *mut ProcessContext, term: u64) -> u64 {
     let pid_id = match ErlTerm(term).as_pid_id() {
@@ -1864,7 +1868,10 @@ pub unsafe extern "C" fn nera_rt_is_process_alive(ctx: *mut ProcessContext, term
     };
     with_sched_from_ctx(ctx, #[inline(always)] |scheduler| {
         let alive = match scheduler {
-            Some(sched) => sched.process_table.contains_key(&pid_id),
+            Some(sched) => sched
+                .process_table
+                .get(&pid_id)
+                .is_some_and(|entry| entry.published_status() != crate::process::ASTATUS_EXITED),
             None => false,
         };
         if alive {
