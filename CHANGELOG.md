@@ -2,6 +2,20 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Funs stored in ETS and persistent_term keep their captured values
+
+- A fun inserted into an ETS table or stored with `persistent_term:put/2`
+  now carries its own copy of its captured values, as on BEAM. Previously
+  the stored fun pointed into the heap of the process that stored it, so
+  once that process exited or collected garbage, calling the fun read freed
+  memory: it could return a wrong result, raise `badfun` or crash.
+- This holds for a fun nested in a list, tuple or map in the row, and after
+  `ets:update_element/3` copies the row again.
+- A fun read with `ets:tab2list/1` or `persistent_term:get/1` is now a copy
+  in the reading process, so it keeps working after the table or the
+  persistent term is deleted.
+- The `ets_stored_fun` fixture checks these cases natively and on BEAM.
+
 ## Messages between two processes arrive in the order they were sent
 
 - A message one process sends another is now always received after the

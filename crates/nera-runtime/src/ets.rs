@@ -26,7 +26,13 @@ use crate::ets_pool::{EtsAllocation, EtsRegionPool};
 use crate::ffi::compare::compare_terms;
 use crate::copy_stack::{copy_graph, SlotCopier, SlotStack, WorkStack};
 use crate::heap::{is_plain_immediate, ProcessHeap};
-use crate::term::{BoxedHeader, ErlTerm, BOXED_TUPLE};
+use crate::term::{BoxedHeader, ErlTerm, BOXED_CLOSURE, BOXED_TUPLE};
+
+/// Raw words between a closure's header and its captured values:
+/// `[header(CLOSURE, env_count) | fn_ptr | arity | env0 | env1 | ...]`.
+/// The code pointer and the fun's arity are not terms; they are copied as
+/// they are.
+const CLOSURE_CODE_WORDS: usize = 2;
 
 /// A unique table identifier (small integer handle).
 pub type TableId = u64;
@@ -425,6 +431,14 @@ unsafe fn object_heap_words(term: ErlTerm, pending: &mut WorkStack<ErlTerm>) -> 
                     }
                     return 1 + total_elems;
                 }
+                BOXED_CLOSURE => {
+                    let env_count = header.arity() as usize;
+                    let env = 1 + CLOSURE_CODE_WORDS;
+                    for i in 0..env_count {
+                        queue(ErlTerm(unsafe { *ptr.add(env + i) }));
+                    }
+                    return env + env_count;
+                }
                 BOXED_FLOAT => return 2,
                 BOXED_BIGINT => {
                     let limb_count = header.arity() as usize;
@@ -637,9 +651,9 @@ impl CopyTarget for ProcessHeap {
 
 /// Copies a term into a `CopyTarget` through `copy_graph`: work still to
 /// copy waits on a heap-allocated stack, so nesting depth costs heap, not
-/// native stack. Lists, tuples and maps are copied here; other terms through
-/// `CopyTarget::copy_leaf`. A subterm shared within the term is copied once
-/// for each place that holds it.
+/// native stack. Lists, tuples, maps and closures are copied here; other
+/// terms through `CopyTarget::copy_leaf`. A subterm shared within the term is
+/// copied once for each place that holds it.
 struct EtsCopier<'a, T: CopyTarget> {
     target: &'a mut T,
     slots: SlotStack,
@@ -666,8 +680,9 @@ impl<'a, T: CopyTarget> EtsCopier<'a, T> {
         ErlTerm(unsafe { copy_graph(&mut copier, term.0) })
     }
 
-    /// Copy one term, queueing the elements of tuples and maps instead of
-    /// copying them; a list copies a run of cells (see `copy_list`).
+    /// Copy one term, queueing the elements of tuples and maps and the
+    /// captured values of closures instead of copying them; a list copies a
+    /// run of cells (see `copy_list`).
     unsafe fn copy_object(&mut self, term: ErlTerm) -> ErlTerm {
         if is_unboxed(term) {
             return term;
@@ -678,17 +693,27 @@ impl<'a, T: CopyTarget> EtsCopier<'a, T> {
         if !unsafe { term.is_binary() } {
             if let Some(ptr) = term.as_boxed_ptr() {
                 let header = BoxedHeader(unsafe { *ptr });
-                let (subtype, slots) = match header.subtype() {
-                    BOXED_TUPLE => (crate::term::BoxedSubtype::Tuple, header.arity() as usize),
-                    crate::term::BOXED_MAP => (crate::term::BoxedSubtype::Map, 2 * header.arity() as usize),
+                let (subtype, raw, slots) = match header.subtype() {
+                    BOXED_TUPLE => (crate::term::BoxedSubtype::Tuple, 0, header.arity() as usize),
+                    crate::term::BOXED_MAP => (crate::term::BoxedSubtype::Map, 0, 2 * header.arity() as usize),
+                    // The captured values are copied too: a stored fun must
+                    // not point into the heap of the process that stored it,
+                    // and a fun read back must not point into the table.
+                    BOXED_CLOSURE => (
+                        crate::term::BoxedSubtype::Closure,
+                        CLOSURE_CODE_WORDS,
+                        header.arity() as usize,
+                    ),
                     _ => return unsafe { self.target.copy_leaf(term) },
                 };
-                // [header | slots...], with the elements (or interleaved
-                // keys and values) queued for copying.
-                let words = self.target.alloc_words(1 + slots);
+                // [header | raw words... | slots...], with the elements (or
+                // interleaved keys and values, or captured values) queued
+                // for copying.
+                let words = self.target.alloc_words(1 + raw + slots);
                 unsafe {
                     *words = BoxedHeader::new(subtype, header.arity()).0;
-                    self.slots.push(words.add(1), ptr.add(1), slots);
+                    std::ptr::copy_nonoverlapping(ptr.add(1), words.add(1), raw);
+                    self.slots.push(words.add(1 + raw), ptr.add(1 + raw), slots);
                     return ErlTerm::boxed_unchecked(words);
                 }
             }
