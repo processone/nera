@@ -17,8 +17,8 @@ All notable milestones for the nera project are documented in this file.
 - The error reaches a `try` handler, makes a guard fail and stops a process
   outside `try`, like any other `badarith`. Results that stay finite,
   underflow to zero included, are unchanged.
-- A list or binary comprehension now stops at the first filter that is not
-  `true`, as on BEAM, so `[X || X <- L, X /= 0.0, 1 / X > 0]` never divides
+- A list or binary comprehension now stops at the first filter that is
+  `false`, as on BEAM, so `[X || X <- L, X /= 0.0, 1 / X > 0]` never divides
   by zero. Previously every filter ran for every element, and a later filter
   could raise or have side effects for an element an earlier one rejected.
 - The `float_arith_badarith` fixture covers these cases and runs natively

@@ -385,22 +385,16 @@ impl IrBuilder {
 
             // Filters run in order and stop at the first that is not true,
             // as on BEAM: `X /= 0.0, 1 / X > 0` never divides by zero.
+            // A branch takes its first target only when its condition is the
+            // atom `true`.
             for (index, filter_expr) in filters.iter().enumerate() {
                 let filter_var = self.lower_expr(filter_expr, false)?;
-                let true_val = self.emit_const(Literal::Atom(self.true_atom_id));
-                let cmp_var = self.fresh_var();
-                self.emit(Instruction::BinOp(
-                    cmp_var,
-                    BinOp::ExactEq,
-                    filter_var,
-                    true_val,
-                ));
                 let next_block = if index + 1 == filters.len() {
                     produce_block
                 } else {
                     self.fresh_block_with_id()
                 };
-                self.set_terminator(Terminator::Branch(cmp_var, next_block, skip_block));
+                self.set_terminator(Terminator::Branch(filter_var, next_block, skip_block));
                 self.close_current_block();
                 if next_block != produce_block {
                     self.start_block(next_block);
