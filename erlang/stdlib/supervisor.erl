@@ -379,7 +379,7 @@ restart_child(Parent, Strategy, MaxR, MaxT, RestartLog, Id, ChildSpec, Children)
             error_logger:error_msg(
                 "Supervisor: max restart intensity reached (~p in ~p s), shutting down~n",
                 [MaxR, MaxT]),
-            terminate_children(lists:keydelete(Id, 1, Children)),
+            terminate_children([C || {CId, _, _} = C <- Children, CId =/= Id]),
             exit(shutdown);
         false ->
             {_Id, MFA, _Restart, _Shutdown, _Type, _Modules} = ChildSpec,

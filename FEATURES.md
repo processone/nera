@@ -846,7 +846,8 @@ See [project test configuration](tests/README.md#project-eunit-configuration).
 
 OTP EUnit is an **external project dependency**, not a Nera stdlib replacement.
 Its source and the selected OTP `gb_trees` module stay outside this repository.
-`module_info/1` is generated for `exports` and `module`; other items and
+`module_info/1` is generated for `exports` and `module`; `exports` lists every
+function of a module compiled with `export_all`. Other items and
 `module_info/0` are not provided. `fun_info/2` supports `module`, `name`, `arity`,
 and `fun_info_mfa/1` returns those three values. Anonymous names belong to the
 Nera compiler and need not match BEAM's generated names.

@@ -28,6 +28,10 @@ All notable milestones for the nera project are documented in this file.
   OTP. Previously the signal reached `handle_info/2`.
 - `terminate/2` is optional, as in OTP: a `gen_server` that does not export
   it now stops with its reason instead of crashing with `undef`.
+- `module_info(exports)` of a module compiled with `-compile(export_all)` now
+  lists every function, as on BEAM, so a `gen_server` that exports
+  `terminate/2` only through `export_all` still has it called. Previously
+  the list held only the functions named in `-export`.
 - The new `supervisor_shutdown` fixture runs natively and on BEAM.
 
 ## error/2 raises its reason instead of undef
