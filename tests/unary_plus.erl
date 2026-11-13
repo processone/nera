@@ -3,8 +3,10 @@
 %% other type. Run the same fixture natively and on BEAM.
 -module(unary_plus).
 -export([test/0]).
+-define(IDENTITY(X), X).
 
 test() ->
+    ok = syntax_contexts(),
     %% Variables and calls must retain the numeric type, value and float bits.
     Numbers = [0, 1, -1, 576460752303423487, -576460752303423488,
                9223372036854775808, -9223372036854775809, 1 bsl 1100,
@@ -55,6 +57,44 @@ test() ->
     {error, operand_error} = protect(fun() -> +erlang:error(operand_error) end),
     io:format("unary_plus_ok~n"),
     ok.
+
+%% Every shared parser entry point must admit unary plus, not just a body.
+syntax_contexts() ->
+    X = id(1),
+    1 = id(+X),
+    1 = erlang:abs(+X),
+    F = fun id/1,
+    1 = F(+X),
+    {1} = {+X},
+    1 = ?IDENTITY(+X),
+    1 = maybe +X end,
+    <<1>> = <<+1>>,
+    <<1:16>> = <<+X:16/integer>>,
+    <<1, 2>> = << <<+N>> || N <- [1, 2] >>,
+    +1 = id(1),
+    +1.5 = id(1.5),
+    +9223372036854775808 = id(9223372036854775808),
+    {+1} = {1},
+    literal = literal_head(id(1)),
+    literal = (fun(+1) -> literal end)(id(1)),
+    literal = case id(1) of +1 -> literal end,
+    self() ! 1,
+    literal = receive +1 -> literal after 0 -> missing end,
+    literal = try id(1) of +1 -> literal catch _:_ -> wrong end,
+    literal = try throw(1) catch throw:+1 -> literal end,
+    2 = maybe +1 ?= id(1), +id(2) end,
+    [matched] = [matched || +1 <- [1, 2]],
+    [matched] = [matched || <<+1>> <= <<1, 2>>],
+    ok = conditional(),
+    ok.
+
+literal_head(+1) -> literal.
+
+-if(+1 =:= 1).
+conditional() -> ok.
+-else.
+conditional() -> wrong.
+-endif.
 
 guarded(X) when +X > 0 -> yes;
 guarded(_) -> no.

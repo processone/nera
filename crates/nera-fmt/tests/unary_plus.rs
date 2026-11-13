@@ -8,7 +8,10 @@ use nera_syntax::{
 // of a weaker-binding operand when a program is formatted.
 #[test]
 fn formatted_unary_plus_keeps_the_expression_tree() {
-    let source = "-module(unary_plus). f(X) -> +(+X). g(X) -> +(X + 2) * 2.";
+    let source = "-module(unary_plus).
+        f(X) -> +(+X).
+        g(X) -> +(X + 2) * 2.
+        h(X) -> id((+X)), m:f((+X)), F((+X)), {(+X)}, ?IDENTITY((+X)), maybe (+X) end.";
     let formatted = format_source(source, &FormatConfig::default()).unwrap();
     let result = Parser::new(&formatted).parse_module();
     assert!(result.errors.is_empty(), "{:?}", result.errors);
@@ -24,6 +27,16 @@ fn formatted_unary_plus_keeps_the_expression_tree() {
         matches!(positive.as_ref(), Expr::UnaryOp(UnaryOp::Pos, operand, _)
         if matches!(operand.as_ref(), Expr::BinOp(BinOp::Add, ..)))
     );
+    let body = &result.module.functions[2].clauses[0].body;
+    for call in &body[..3] {
+        assert!(matches!(call, Expr::Call(_, args, _)
+            if matches!(args.as_slice(), [Expr::UnaryOp(UnaryOp::Pos, _, _)])));
+    }
+    assert!(matches!(&body[3], Expr::Tuple(elements, _)
+        if matches!(elements.as_slice(), [Expr::UnaryOp(UnaryOp::Pos, _, _)])));
+    assert!(matches!(&body[4], Expr::MacroCall { args: Some(args), .. }
+        if matches!(args.as_slice(), [Expr::UnaryOp(UnaryOp::Pos, _, _)])));
+    assert!(matches!(&body[5], Expr::Maybe { .. }));
     assert_eq!(
         formatted,
         format_source(&formatted, &FormatConfig::default()).unwrap()

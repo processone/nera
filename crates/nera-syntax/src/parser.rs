@@ -1212,7 +1212,7 @@ impl<'src> Parser<'src> {
             self.advance();
             let operand = self.parse_expr_bp(14)?;
             let span = span_start.merge(expr_span(&operand));
-            return Ok(Expr::UnaryOp(UnaryOp::Pos, Box::new(operand), span));
+            return Ok(unary_plus_expr(operand, span));
         }
         if self.check(&Token::Minus) {
             let span_start = self.current_span();
@@ -1722,7 +1722,7 @@ impl<'src> Parser<'src> {
                         | Token::KwBnot | Token::KwFun | Token::KwModule | Token::KwExport
                         | Token::KwImport | Token::KwThrow | Token::KwBegin | Token::KwMaybe
                         | Token::KwTry | Token::LParen | Token::LBrace | Token::LBracket
-                        | Token::BinOpen | Token::Hash | Token::Minus
+                        | Token::BinOpen | Token::Hash | Token::Minus | Token::Plus
                         | Token::MacroFunctionName | Token::MacroFunctionArity)
                 } {
                     self.advance();
@@ -1953,6 +1953,7 @@ impl<'src> Parser<'src> {
                 | Token::BinOpen
                 | Token::Hash
                 | Token::Minus
+                | Token::Plus
                 | Token::MacroFunctionName
                 | Token::MacroFunctionArity
                 | Token::Question
@@ -2177,16 +2178,17 @@ impl<'src> Parser<'src> {
                 }
                 Ok(Pattern::String(content, str_span))
             }
-            Token::Minus => {
-                // Negative number pattern
+            Token::Plus | Token::Minus => {
+                // Signed numeric literal pattern.
+                let negative = tok == Token::Minus;
                 self.advance();
                 if let Some((Token::Integer(n), int_span)) = self.peek_token() {
                     let n = *n;
                     let int_span = *int_span;
                     self.advance();
-                    Ok(Pattern::Integer(-n, span.merge(int_span)))
+                    Ok(Pattern::Integer(if negative { -n } else { n }, span.merge(int_span)))
                 } else if let Some((Token::BigInteger(value), int_span)) = self.peek_token() {
-                    let value = format!("-{value}");
+                    let value = if negative { format!("-{value}") } else { value.clone() };
                     let span = span.merge(*int_span);
                     self.advance();
                     Ok(match value.parse::<i64>() {
@@ -2197,10 +2199,10 @@ impl<'src> Parser<'src> {
                     let f = *f;
                     let f_span = *f_span;
                     self.advance();
-                    Ok(Pattern::Float(-f, span.merge(f_span)))
+                    Ok(Pattern::Float(if negative { -f } else { f }, span.merge(f_span)))
                 } else {
                     Err(ParseError::UnexpectedToken {
-                        expected: "number after '-' in pattern".into(),
+                        expected: format!("number after {} in pattern", tok.description()),
                         found: self.current_description(),
                         span,
                         hint: None,
@@ -2352,6 +2354,7 @@ impl<'src> Parser<'src> {
                 | Token::KwFalse
                 | Token::KwThrow
                 | Token::Minus
+                | Token::Plus
                 | Token::LBrace
                 | Token::LBracket
                 | Token::LParen
@@ -2530,7 +2533,13 @@ impl<'src> Parser<'src> {
         let start = self.current_span();
         // Handle unary minus for negative numeric literals in binary segments
         // e.g., <<-1.5:64/float>> or <<-42:16>>
-        let value = if self.check(&Token::Minus) {
+        let value = if self.eat(&Token::Plus) {
+            // A segment's size colon and type slash belong to this parser,
+            // not to unary expression parsing (which also reads remote calls).
+            let operand = self.parse_primary()?;
+            let span = start.merge(expr_span(&operand));
+            unary_plus_expr(operand, span)
+        } else if self.check(&Token::Minus) {
             let neg_start = self.current_span();
             self.advance();
             if let Some((Token::Integer(n), int_span)) = self.peek_token() {
@@ -3621,8 +3630,19 @@ impl<'src> Parser<'src> {
 }
 
 // ---------------------------------------------------------------------------
-// Span helpers for AST nodes
+// AST construction and span helpers
 // ---------------------------------------------------------------------------
+
+// Keep numeric unary plus usable wherever a literal is required, while
+// retaining the checked operation for every dynamic or nonnumeric operand.
+fn unary_plus_expr(operand: Expr, span: Span) -> Expr {
+    match operand {
+        Expr::Integer(value, _) => Expr::Integer(value, span),
+        Expr::BigInteger(value, _) => Expr::BigInteger(value, span),
+        Expr::Float(value, _) => Expr::Float(value, span),
+        other => Expr::UnaryOp(UnaryOp::Pos, Box::new(other), span),
+    }
+}
 
 fn expr_span(expr: &Expr) -> Span {
     match expr {
