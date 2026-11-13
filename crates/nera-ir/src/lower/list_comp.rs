@@ -16,8 +16,9 @@ type QualifierGroups<'a> = (Vec<GeneratorGroup<'a>>, Vec<bool>);
 impl IrBuilder {
     /// Lower either comprehension form with tail-recursive auxiliary helpers.
     /// Binary comprehensions use the same iteration, capture and accumulation
-    /// path, then finalize with `list_to_bitstring(lists:reverse(Acc))`, which
-    /// packs bodies that are not whole bytes (`<<X:4>>`) without padding.
+    /// path, raise badarg at an iteration whose body is not a bitstring, then
+    /// finalize with `list_to_bitstring(lists:reverse(Acc))`, which packs
+    /// bodies that are not whole bytes (`<<X:4>>`) without padding.
     ///
     /// Uses the **accumulator + reverse** approach (like BEAM): each helper
     /// prepends elements to an accumulator list and tail-calls itself. When
@@ -196,6 +197,38 @@ impl IrBuilder {
         });
     }
 
+    /// Evaluate one iteration's body. A binary comprehension appends it as
+    /// `<<Acc/bitstring, Body/bitstring>>` on BEAM, so a body that is not a
+    /// bitstring raises badarg at this iteration, after its own side effects
+    /// and before later iterations run. Binary bodies need no check.
+    fn lower_comprehension_body(
+        &mut self, body_expr: &ast::Expr, finalize_as_binary: bool,
+    ) -> Result<VarId, LowerError> {
+        let elem = self.lower_expr(body_expr, false)?;
+        if !finalize_as_binary
+            || matches!(body_expr, ast::Expr::Binary(..) | ast::Expr::BinComp(..))
+        {
+            return Ok(elem);
+        }
+        let is_bits = self.fresh_var();
+        self.emit(Instruction::TypeTest(is_bits, TypeTestKind::IsBitstring, elem));
+        let append_block = self.fresh_block_with_id();
+        let invalid_block = self.fresh_block_with_id();
+        self.set_terminator(Terminator::Branch(is_bits, append_block, invalid_block));
+        self.close_current_block();
+        // An exception raised by the body has already left this helper, so
+        // badarg never replaces it.
+        self.start_block(invalid_block);
+        let badarg = self.atom_id_for("badarg");
+        let badarg = self.emit_const(Literal::Atom(badarg));
+        let raised = self.fresh_var();
+        self.emit(Instruction::RaiseException(raised, ExceptionClass::Error, badarg));
+        self.set_terminator(Terminator::Return(raised));
+        self.close_current_block();
+        self.start_block(append_block);
+        Ok(elem)
+    }
+
     /// Build one LC helper function (helper_k of n total).
     ///
     /// Parameters for helper_k:
@@ -349,7 +382,7 @@ impl IrBuilder {
         if filters.is_empty() {
             // ── No filters ──
             if is_innermost {
-                let elem = self.lower_expr(body_expr, false)?;
+                let elem = self.lower_comprehension_body(body_expr, finalize_as_binary)?;
 
                 // Prepend element to accumulator: new_acc = [elem | acc]
                 let new_acc = self.fresh_var();
@@ -404,7 +437,7 @@ impl IrBuilder {
             // ── Produce block ──
             self.start_block(produce_block);
             if is_innermost {
-                let elem = self.lower_expr(body_expr, false)?;
+                let elem = self.lower_comprehension_body(body_expr, finalize_as_binary)?;
 
                 // Prepend element to accumulator: new_acc = [elem | acc]
                 let new_acc = self.fresh_var();
