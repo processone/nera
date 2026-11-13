@@ -102,6 +102,17 @@ pub unsafe extern "C" fn nera_rt_error(ctx: *mut ProcessContext, reason: u64) ->
     ErlTerm::nil().0
 }
 
+/// `erlang:error/2`: raise an error exception with `reason`.
+///
+/// On BEAM, `args` (normally the current function's arguments, or `none`)
+/// replaces the arity in the top stacktrace frame, and any term is accepted.
+/// Nera's stack frames record only arities, so `args` is not kept; the class
+/// and reason are the same as on BEAM.
+#[no_mangle]
+pub unsafe extern "C" fn nera_rt_error_2(ctx: *mut ProcessContext, reason: u64, _args: u64) -> u64 {
+    unsafe { nera_rt_error(ctx, reason) }
+}
+
 /// Raise an exit exception.
 #[no_mangle]
 pub unsafe extern "C" fn nera_rt_exit(ctx: *mut ProcessContext, reason: u64) -> u64 {

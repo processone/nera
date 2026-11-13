@@ -215,7 +215,7 @@ pub const BIF_TABLE: &[BifEntry] = &[
     // -------------------------------------------------------------------------
     BifEntry { module: "erlang", function: "throw", arity: 1, ffi_symbol: Some("nera_rt_throw"), param_names: None, spec: Some("-spec throw(Any) -> no_return().") },
     BifEntry { module: "erlang", function: "error", arity: 1, ffi_symbol: Some("nera_rt_error"), param_names: None, spec: Some("-spec error(Reason) -> no_return().") },
-    BifEntry { module: "erlang", function: "error", arity: 2, ffi_symbol: None,                   param_names: Some(&["Reason", "Args"]), spec: Some("-spec error(Reason, Args) -> no_return().") },
+    BifEntry { module: "erlang", function: "error", arity: 2, ffi_symbol: Some("nera_rt_error_2"), param_names: Some(&["Reason", "Args"]), spec: Some("-spec error(Reason, Args) -> no_return().") },
     BifEntry { module: "erlang", function: "exit",  arity: 1, ffi_symbol: Some("nera_rt_exit"),  param_names: None, spec: Some("-spec exit(Reason) -> no_return().") },
     BifEntry { module: "erlang", function: "raise", arity: 3, ffi_symbol: Some("nera_rt_raise"), param_names: Some(&["Class", "Reason", "Stacktrace"]), spec: Some("-spec raise(Class, Reason, Stacktrace) -> no_return() when Class :: error | exit | throw.") },
     BifEntry { module: "erlang", function: "halt",  arity: 0, ffi_symbol: Some("nera_rt_halt_0"), param_names: None, spec: Some("-spec halt() -> no_return().") },
