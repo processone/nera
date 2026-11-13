@@ -2,6 +2,21 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## error/2 raises its reason instead of undef
+
+- `error(Reason, Args)` and `erlang:error(Reason, Args)` now raise
+  `error:Reason`, as on BEAM. Previously they raised `error:undef`:
+  `try error(x, [a]) catch C:E -> {C, E} end` returned `{error, undef}`
+  instead of `{error, x}`. The same holds for `apply(erlang, error, [R, A])`,
+  `fun erlang:error/2` and a call through a computed module.
+- The bundled `queue` module raises its errors this way, so
+  `queue:get(queue:new())` now fails with `error:empty` and a bad queue
+  argument with `error:badarg`, as on BEAM, instead of `error:undef`.
+- As on BEAM, `Args` may be any term and does not change the class or the
+  reason. Nera's stacktrace frames record only arities, so the arguments do
+  not appear in the top frame as they do on BEAM.
+- The `error_2` fixture covers these calls and runs natively and on BEAM.
+
 ## A dead process's name is free before its exit signals arrive
 
 - When a registered process exits, its name is now free before any linked
