@@ -361,6 +361,7 @@ These are automatically skipped by the runner and show up as SKIP in output.
 | `process_flag_fullsweep.erl`    | process_flag(fullsweep_after, N)       | ~4         |
 | `garbage_collect_bif.erl` | Real garbage_collect/0 suspension, local/dictionary/mailbox roots and dynamic calls | ~9 |
 | `gc_deep_nesting.erl` | An iolist, tuple, map and closure chain nested 200,000 levels deep survive requested and allocation-driven collections with every level intact; completion marker; also run on BEAM | ~10 |
+| `copy_deep_nesting.erl` | An iolist, tuple, map and closure chain nested 200,000 levels deep sent to another process and back and captured in spawned funs; the iolist, tuple and map stored in a `set` ETS table and read back by lookup, `tab2list/1` and from another process; a 200,000-level iolist as a key found with an equal term; every level checked; completion marker; also run on BEAM | ~20 |
 | `max_heap_size.erl` | Integer/map max_heap_size kills allocating workers; completion marker | 2 kills |
 | `max_heap_size_map.erl` | Default-policy size maps, nominal error_logger=true, previous flags and errors | ~13 |
 | `hibernate_basic.erl`           | erlang:hibernate/3 wake on message     | ~4         |

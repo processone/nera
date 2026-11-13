@@ -2,6 +2,30 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Sending and storing deeply nested terms
+
+- A term nested hundreds of thousands of levels deep, such as an iolist
+  built by prepending (`[Acc, Chunk]`) or a chain of tuples or maps, can now
+  be sent to another process, captured in a spawned fun, stored in ETS and
+  read back with `ets:lookup/2` or `ets:tab2list/1`, as on BEAM. Previously
+  the program died with a bus error: in ETS from about 5,000 levels, when
+  sent or captured from about 14,000.
+- Such a term also works as the key of a `set` table, and with
+  `persistent_term:put/2` and `persistent_term:get/1`.
+- The message copier, the ETS copies and the encoding of ETS keys keep the
+  work still to do on a heap-allocated stack, as the garbage collector does,
+  so nesting depth costs memory instead of native stack. A message still
+  copies shared subterms once.
+- The ETS copies no longer build a temporary vector for each list, tuple or
+  map. In a benchmark, inserting rows that hold lists, tuples or maps took
+  about 30% less time and reading the table with `ets:tab2list/1` about 50%
+  less; sending, spawning and rows of plain values were unchanged.
+- The `copy_deep_nesting` fixture sends, captures and stores 200,000-level
+  iolists, tuples and maps, and sends and captures closure chains, natively
+  and on BEAM. Comparing such terms, using one as an `ordered_set` key, and
+  `term_to_binary/1`, `erlang:phash2/1` or `iolist_to_binary/1` on them can
+  still crash; [known limits](docs/KNOWN_LIMITS.md) gives the depths.
+
 ## error/3 compiles and raises its reason
 
 - `error(Reason, Args, Options)` and `erlang:error(Reason, Args, Options)`

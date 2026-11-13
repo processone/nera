@@ -16,6 +16,7 @@
 
 use crate::process::{ProcessId, AtomicProcessId};
 use crate::binary::BinaryData;
+use std::cell::Cell;
 use std::collections::{btree_map::Entry, BTreeMap, HashMap, HashSet};
 use std::sync::atomic::Ordering;
 use std::sync::{Arc, Mutex, OnceLock, RwLock};
@@ -23,7 +24,8 @@ use std::sync::{Arc, Mutex, OnceLock, RwLock};
 use crate::atom_table::ATOM_UNDEFINED;
 use crate::ets_pool::{EtsAllocation, EtsRegionPool};
 use crate::ffi::compare::compare_terms;
-use crate::heap::{MapPairs, ProcessHeap};
+use crate::copy_stack::{copy_graph, SlotCopier, SlotStack, WorkStack};
+use crate::heap::{is_plain_immediate, ProcessHeap};
 use crate::term::{BoxedHeader, ErlTerm, BOXED_TUPLE};
 
 /// A unique table identifier (small integer handle).
@@ -174,10 +176,40 @@ impl TermKey {
         TermKey::Boxed(bytes)
     }
 
+    /// Append the canonical bytes of `term` to `out`. Parts still to
+    /// serialize wait on a heap-allocated stack, so nesting depth costs heap,
+    /// not native stack.
     /// # Safety
     /// All input terms and reachable objects must remain live and unmoved by GC
     /// for this call. Binary backing bytes must not be concurrently mutated.
     unsafe fn serialize_term(term: ErlTerm, out: &mut Vec<u8>) {
+        let mut pending = WorkStack::new(&SPARE_KEY_PARTS);
+        Self::serialize_part(KeyPart::Term(term), out, &mut pending);
+        while let Some(part) = pending.pop() {
+            Self::serialize_part(part, out, &mut pending);
+        }
+    }
+
+    /// Serialize one term (or the next cell of a list), pushing the parts
+    /// it contains on `pending` in reverse, so they pop in order.
+    /// # Safety
+    /// As for `serialize_term`.
+    unsafe fn serialize_part(part: KeyPart, out: &mut Vec<u8>, pending: &mut WorkStack<KeyPart>) {
+        let term = match part {
+            KeyPart::Term(term) => term,
+            KeyPart::ListRest(cursor) => {
+                if let Some(ptr) = cursor.as_cons_ptr() {
+                    unsafe {
+                        pending.push(KeyPart::ListRest((*ptr).tail));
+                        pending.push(KeyPart::Term((*ptr).head));
+                    }
+                } else {
+                    out.push(b'E'); // end of list marker
+                    pending.push(KeyPart::Term(cursor)); // tail (nil or improper)
+                }
+                return;
+            }
+        };
         // Atoms, small ints, pids, nil — just use the raw u64
         if term.is_atom() || term.is_small_int() || term.is_pid() || term.is_nil() {
             out.extend_from_slice(&term.0.to_le_bytes());
@@ -193,22 +225,10 @@ impl TermKey {
             }
             return;
         }
-        // Cons (list)
+        // Cons (list): each head, then the end marker and the tail
         if term.is_cons() {
             out.push(b'L');
-            let mut cursor = term;
-            while cursor.is_cons() {
-                if let Some(ptr) = cursor.as_cons_ptr() {
-                    unsafe {
-                        Self::serialize_term((*ptr).head, out);
-                        cursor = (*ptr).tail;
-                    }
-                } else {
-                    break;
-                }
-            }
-            out.push(b'E'); // end of list marker
-            Self::serialize_term(cursor, out); // tail (nil or improper)
+            pending.push(KeyPart::ListRest(term));
             return;
         }
         // Tuple
@@ -225,9 +245,8 @@ impl TermKey {
                     let arity = header.arity() as usize;
                     out.push(b'T');
                     out.extend_from_slice(&(arity as u64).to_le_bytes());
-                    for i in 0..arity {
-                        let elem = ErlTerm(unsafe { *ptr.add(1 + i) });
-                        Self::serialize_term(elem, out);
+                    for i in (0..arity).rev() {
+                        pending.push(KeyPart::Term(ErlTerm(unsafe { *ptr.add(1 + i) })));
                     }
                     return;
                 }
@@ -236,6 +255,18 @@ impl TermKey {
         // Fallback: raw u64
         out.extend_from_slice(&term.0.to_le_bytes());
     }
+}
+
+/// A part of a key still to serialize: a whole term, or the rest of a list
+/// from a cell (or its tail) onward.
+enum KeyPart {
+    Term(ErlTerm),
+    ListRest(ErlTerm),
+}
+
+thread_local! {
+    static SPARE_KEY_PARTS: Cell<Vec<KeyPart>> = const { Cell::new(Vec::new()) };
+    static SPARE_TERMS: Cell<Vec<ErlTerm>> = const { Cell::new(Vec::new()) };
 }
 
 /// Compare a stored ErlTerm against a pre-computed TermKey.
@@ -305,17 +336,47 @@ impl Ord for OrdTermKey {
 /// Count the number of heap words needed to deep-copy a term.
 /// This is a pre-pass before `deep_copy_into_compact` to determine the
 /// exact Vec capacity needed, preventing reallocation (and thus pointer
-/// invalidation) during the copy phase.
+/// invalidation) during the copy phase. Terms still to count wait on a
+/// heap-allocated stack, so nesting depth costs heap, not native stack.
 /// # Safety
 /// All input terms and reachable objects must remain live and unmoved by GC
 /// for this call. Binary backing bytes must not be concurrently mutated.
 pub(crate) unsafe fn count_heap_words(term: ErlTerm) -> usize {
+    if is_unboxed(term) {
+        return 0;
+    }
+    let mut pending = WorkStack::new(&SPARE_TERMS);
+    // SAFETY: forwarded from the caller, for the root and every term it reaches.
+    let mut count = unsafe { object_heap_words(term, &mut pending) };
+    while let Some(term) = pending.pop() {
+        count += unsafe { object_heap_words(term, &mut pending) };
+    }
+    count
+}
+
+/// True for the terms ETS copies stand alone: atoms, small integers, pids and nil.
+#[inline]
+fn is_unboxed(term: ErlTerm) -> bool {
+    term.is_atom() || term.is_small_int() || term.is_pid() || term.is_nil()
+}
+
+/// Words a term's own storage needs in a `CompactHeap` (for a list, every
+/// cell along its tail), queueing the contained terms that need words of
+/// their own on `pending`.
+/// # Safety
+/// As for `count_heap_words`.
+unsafe fn object_heap_words(term: ErlTerm, pending: &mut WorkStack<ErlTerm>) -> usize {
     use crate::heap::REFC_BINARY_THRESHOLD;
     use crate::term::{BOXED_MAP, BOXED_FLOAT, BOXED_BIGINT,
                       BOXED_REFERENCE, BoxedHeader,
                       REFC_BINARY_TOTAL_WORDS, REFERENCE_TOTAL_WORDS};
 
-    if term.is_atom() || term.is_small_int() || term.is_pid() || term.is_nil() {
+    let mut queue = |term: ErlTerm| {
+        if !is_unboxed(term) {
+            pending.push(term);
+        }
+    };
+    if is_unboxed(term) {
         return 0;
     }
     if term.is_cons() {
@@ -324,14 +385,15 @@ pub(crate) unsafe fn count_heap_words(term: ErlTerm) -> usize {
         while cursor.is_cons() {
             if let Some(ptr) = cursor.as_cons_ptr() {
                 unsafe {
-                    count += 2 + count_heap_words((*ptr).head);
+                    count += 2;
+                    queue((*ptr).head);
                     cursor = (*ptr).tail;
                 }
             } else {
                 break;
             }
         }
-        count += count_heap_words(cursor); // tail
+        queue(cursor); // tail
         return count;
     }
     if term.is_binary() {
@@ -350,22 +412,18 @@ pub(crate) unsafe fn count_heap_words(term: ErlTerm) -> usize {
             match header.subtype() {
                 BOXED_TUPLE => {
                     let arity = header.arity() as usize;
-                    let mut count = 1 + arity; // header + element slots
                     for i in 0..arity {
-                        let elem = ErlTerm(unsafe { *ptr.add(1 + i) });
-                        count += count_heap_words(elem);
+                        queue(ErlTerm(unsafe { *ptr.add(1 + i) }));
                     }
-                    return count;
+                    return 1 + arity; // header + element slots
                 }
                 BOXED_MAP => {
                     let num_pairs = header.arity() as usize;
                     let total_elems = num_pairs * 2;
-                    let mut count = 1 + total_elems;
                     for i in 0..total_elems {
-                        let elem = ErlTerm(unsafe { *ptr.add(1 + i) });
-                        count += count_heap_words(elem);
+                        queue(ErlTerm(unsafe { *ptr.add(1 + i) }));
                     }
-                    return count;
+                    return 1 + total_elems;
                 }
                 BOXED_FLOAT => return 2,
                 BOXED_BIGINT => {
@@ -412,121 +470,97 @@ unsafe fn alloc_compact_for_elements(pool: &Mutex<EtsRegionPool>, elements: &[Er
     CompactHeap::from_pool(allocation)
 }
 
-/// Deep-copy a term into a `CompactHeap` (flat word buffer).
+/// Deep-copy a term into a `CompactHeap` (flat word buffer), which must hold
+/// the `count_heap_words` words the term needs.
 /// # Safety
 /// All input terms and reachable objects must remain live and unmoved by GC
 /// for this call. Binary backing bytes must not be concurrently mutated.
 pub(crate) unsafe fn deep_copy_into_compact(term: ErlTerm, heap: &mut CompactHeap) -> ErlTerm {
-    use crate::heap::REFC_BINARY_THRESHOLD;
-    use crate::term::{BOXED_MAP, BOXED_FLOAT, BOXED_BIGINT,
-                      BOXED_REFERENCE, BoxedHeader,
-                      REFC_BINARY_TOTAL_WORDS, REFC_BINARY_PTR_WORD_INDEX,
-                      REFC_BINARY_OFFSET_WORD_INDEX, REFERENCE_TOTAL_WORDS,
-                      REFERENCE_ID_WORD_INDEX};
+    if is_unboxed(term) {
+        return term;
+    }
+    // SAFETY: forwarded from the caller; compact heap words never move.
+    unsafe { EtsCopier::copy(term, heap) }
+}
 
-    if term.is_atom() || term.is_small_int() || term.is_pid() || term.is_nil() {
+/// Deep-copy a term into a `ProcessHeap` (used for lookup — copying stored
+/// terms back into a process's bumpalo arena).
+/// # Safety
+/// All input terms and reachable objects must remain live and unmoved by GC
+/// for this call. Binary backing bytes must not be concurrently mutated.
+pub(crate) unsafe fn deep_copy_into_heap(term: ErlTerm, heap: &mut ProcessHeap) -> ErlTerm {
+    if is_unboxed(term) {
         return term;
     }
-    if term.is_cons() {
-        let mut elems = Vec::new();
-        let mut cursor = term;
-        while cursor.is_cons() {
-            if let Some(ptr) = cursor.as_cons_ptr() {
-                unsafe {
-                    elems.push(deep_copy_into_compact((*ptr).head, heap));
-                    cursor = (*ptr).tail;
-                }
-            } else {
-                break;
-            }
-        }
-        let tail = deep_copy_into_compact(cursor, heap);
-        // Build list in reverse using compact heap
-        let mut result = tail;
-        for elem in elems.into_iter().rev() {
-            let words = heap.alloc_words(2);
-            unsafe {
-                *words = elem.0;
-                *words.add(1) = result.0;
-            }
-            result = ErlTerm::cons_unchecked(words as *const crate::term::ConsCell);
-        }
-        return result;
+    // SAFETY: forwarded from the caller; process heap words never move
+    // during the copy.
+    unsafe { EtsCopier::copy(term, heap) }
+}
+
+/// Where an ETS copy allocates: a stored entry's `CompactHeap`, or the
+/// process heap a stored term is read back into.
+trait CopyTarget {
+    /// Allocate `n` uninitialized words that stay in place.
+    fn alloc_words(&mut self, n: usize) -> *mut u64;
+
+    /// Copy a boxed term that holds no other terms (a binary, float, bigint
+    /// or reference); any other term is kept as it is.
+    /// # Safety
+    /// As for `deep_copy_into_compact`.
+    unsafe fn copy_leaf(&mut self, term: ErlTerm) -> ErlTerm;
+}
+
+impl CopyTarget for CompactHeap {
+    fn alloc_words(&mut self, n: usize) -> *mut u64 {
+        CompactHeap::alloc_words(self, n)
     }
-    if term.is_binary() {
-        if let Some((ptr, len)) = unsafe { crate::ffi::binary_data_pub(term) } {
-            let bytes = unsafe { std::slice::from_raw_parts(ptr, len) };
-            if len <= REFC_BINARY_THRESHOLD {
-                // Inline heap binary: [header | data words...]
-                let data_words = len.div_ceil(8);
-                let total_words = 1 + data_words;
-                let words = heap.alloc_words(total_words);
-                unsafe {
-                    *words = BoxedHeader::new(crate::term::BoxedSubtype::HeapBinary, (len * 8) as u64).0;
-                    std::ptr::copy_nonoverlapping(
-                        bytes.as_ptr(),
-                        (words.add(1)) as *mut u8,
-                        len,
-                    );
+
+    unsafe fn copy_leaf(&mut self, term: ErlTerm) -> ErlTerm {
+        use crate::heap::REFC_BINARY_THRESHOLD;
+        use crate::term::{BOXED_FLOAT, BOXED_BIGINT, BOXED_REFERENCE,
+                          REFC_BINARY_TOTAL_WORDS, REFC_BINARY_PTR_WORD_INDEX,
+                          REFC_BINARY_OFFSET_WORD_INDEX, REFERENCE_TOTAL_WORDS,
+                          REFERENCE_ID_WORD_INDEX};
+
+        if term.is_binary() {
+            if let Some((ptr, len)) = unsafe { crate::ffi::binary_data_pub(term) } {
+                let bytes = unsafe { std::slice::from_raw_parts(ptr, len) };
+                if len <= REFC_BINARY_THRESHOLD {
+                    // Inline heap binary: [header | data words...]
+                    let data_words = len.div_ceil(8);
+                    let total_words = 1 + data_words;
+                    let words = self.alloc_words(total_words);
+                    unsafe {
+                        *words = BoxedHeader::new(crate::term::BoxedSubtype::HeapBinary, (len * 8) as u64).0;
+                        std::ptr::copy_nonoverlapping(
+                            bytes.as_ptr(),
+                            (words.add(1)) as *mut u8,
+                            len,
+                        );
+                    }
+                    return ErlTerm::boxed_unchecked(words as *const u64);
+                } else {
+                    // Refc binary: [header | arc_ptr | offset]
+                    let data: Arc<BinaryData> = Arc::new(BinaryData::new(bytes.to_vec()));
+                    let raw_arc_ptr = Arc::as_ptr(&data) as u64;
+                    let words = self.alloc_words(REFC_BINARY_TOTAL_WORDS);
+                    unsafe {
+                        *words = BoxedHeader::new(crate::term::BoxedSubtype::RefcBinary, (len * 8) as u64).0;
+                        *words.add(REFC_BINARY_PTR_WORD_INDEX) = raw_arc_ptr;
+                        *words.add(REFC_BINARY_OFFSET_WORD_INDEX) = 0;
+                    }
+                    self.refc_binaries.push(data);
+                    return ErlTerm::boxed_unchecked(words as *const u64);
                 }
-                return ErlTerm::boxed_unchecked(words as *const u64);
-            } else {
-                // Refc binary: [header | arc_ptr | offset]
-                let data: Arc<BinaryData> = Arc::new(BinaryData::new(bytes.to_vec()));
-                let raw_arc_ptr = Arc::as_ptr(&data) as u64;
-                let words = heap.alloc_words(REFC_BINARY_TOTAL_WORDS);
-                unsafe {
-                    *words = BoxedHeader::new(crate::term::BoxedSubtype::RefcBinary, (len * 8) as u64).0;
-                    *words.add(REFC_BINARY_PTR_WORD_INDEX) = raw_arc_ptr;
-                    *words.add(REFC_BINARY_OFFSET_WORD_INDEX) = 0;
-                }
-                heap.refc_binaries.push(data);
-                return ErlTerm::boxed_unchecked(words as *const u64);
             }
+            return term;
         }
-        return term;
-    }
-    if term.is_boxed() {
         if let Some(ptr) = term.as_boxed_ptr() {
             let header = BoxedHeader(unsafe { *ptr });
             match header.subtype() {
-                BOXED_TUPLE => {
-                    let arity = header.arity() as usize;
-                    let mut elems = Vec::with_capacity(arity);
-                    for i in 0..arity {
-                        let elem = ErlTerm(unsafe { *ptr.add(1 + i) });
-                        elems.push(deep_copy_into_compact(elem, heap));
-                    }
-                    // Allocate tuple in compact heap: [header | elem0 | elem1 | ...]
-                    let words = heap.alloc_words(1 + arity);
-                    unsafe {
-                        *words = BoxedHeader::new(crate::term::BoxedSubtype::Tuple, arity as u64).0;
-                        for (i, &elem) in elems.iter().enumerate() {
-                            *words.add(1 + i) = elem.0;
-                        }
-                    }
-                    return ErlTerm::boxed_unchecked(words as *const u64);
-                }
-                BOXED_MAP => {
-                    let num_pairs = header.arity() as usize;
-                    let total_elems = num_pairs * 2;
-                    let mut flat = Vec::with_capacity(total_elems);
-                    for i in 0..total_elems {
-                        let elem = ErlTerm(unsafe { *ptr.add(1 + i) });
-                        flat.push(deep_copy_into_compact(elem, heap));
-                    }
-                    let words = heap.alloc_words(1 + total_elems);
-                    unsafe {
-                        *words = BoxedHeader::new(crate::term::BoxedSubtype::Map, num_pairs as u64).0;
-                        for (i, &elem) in flat.iter().enumerate() {
-                            *words.add(1 + i) = elem.0;
-                        }
-                    }
-                    return ErlTerm::boxed_unchecked(words as *const u64);
-                }
                 BOXED_FLOAT => {
                     let bits = unsafe { *ptr.add(1) };
-                    let words = heap.alloc_words(2);
+                    let words = self.alloc_words(2);
                     unsafe {
                         *words = BoxedHeader::new(crate::term::BoxedSubtype::Float, 0).0;
                         *words.add(1) = bits;
@@ -539,13 +573,13 @@ pub(crate) unsafe fn deep_copy_into_compact(term: ErlTerm, heap: &mut CompactHea
                         // transfer the words to compact heap.
                         let mut tmp = ProcessHeap::new();
                         let tmp_term = crate::bigint::bigint_to_term(&mut tmp, big);
-                        return copy_from_process_heap_to_compact(tmp_term, heap);
+                        return copy_from_process_heap_to_compact(tmp_term, self);
                     }
                     return term;
                 }
                 BOXED_REFERENCE => {
                     let ref_id = unsafe { *ptr.add(REFERENCE_ID_WORD_INDEX) };
-                    let words = heap.alloc_words(REFERENCE_TOTAL_WORDS);
+                    let words = self.alloc_words(REFERENCE_TOTAL_WORDS);
                     unsafe {
                         *words = header.0;
                         *words.add(REFERENCE_ID_WORD_INDEX) = ref_id;
@@ -555,8 +589,155 @@ pub(crate) unsafe fn deep_copy_into_compact(term: ErlTerm, heap: &mut CompactHea
                 _ => return term,
             }
         }
+        term
     }
-    term
+}
+
+impl CopyTarget for ProcessHeap {
+    fn alloc_words(&mut self, n: usize) -> *mut u64 {
+        ProcessHeap::alloc_words(self, n)
+    }
+
+    unsafe fn copy_leaf(&mut self, term: ErlTerm) -> ErlTerm {
+        if term.is_binary() {
+            if let Some((ptr, len)) = unsafe { crate::ffi::binary_data_pub(term) } {
+                let bytes = unsafe { std::slice::from_raw_parts(ptr, len) };
+                return self.alloc_binary_auto(bytes);
+            }
+            return term;
+        }
+        if let Some(ptr) = term.as_boxed_ptr() {
+            let header = BoxedHeader(unsafe { *ptr });
+            match header.subtype() {
+                crate::term::BOXED_FLOAT => {
+                    let bits = unsafe { *ptr.add(1) };
+                    return self.alloc_float(f64::from_bits(bits));
+                }
+                crate::term::BOXED_BIGINT => {
+                    if let Some(big) = crate::bigint::term_to_bigint(term) {
+                        return crate::bigint::bigint_to_term(self, big);
+                    }
+                    return term;
+                }
+                crate::term::BOXED_REFERENCE => {
+                    let ref_id = unsafe { *ptr.add(crate::term::REFERENCE_ID_WORD_INDEX) };
+                    let words = self.alloc_words(crate::term::REFERENCE_TOTAL_WORDS);
+                    unsafe {
+                        *words = header.0;
+                        *words.add(crate::term::REFERENCE_ID_WORD_INDEX) = ref_id;
+                    }
+                    return ErlTerm::boxed_unchecked(words);
+                }
+                _ => return term,
+            }
+        }
+        term
+    }
+}
+
+/// Copies a term into a `CopyTarget` through `copy_graph`: work still to
+/// copy waits on a heap-allocated stack, so nesting depth costs heap, not
+/// native stack. Lists, tuples and maps are copied here; other terms through
+/// `CopyTarget::copy_leaf`. A subterm shared within the term is copied once
+/// for each place that holds it.
+struct EtsCopier<'a, T: CopyTarget> {
+    target: &'a mut T,
+    slots: SlotStack,
+}
+
+impl<T: CopyTarget> SlotCopier for EtsCopier<'_, T> {
+    fn slots(&mut self) -> &mut SlotStack {
+        &mut self.slots
+    }
+
+    unsafe fn copy_word(&mut self, word: u64) -> u64 {
+        // SAFETY: forwarded from `copy_graph`'s caller.
+        unsafe { self.copy_object(ErlTerm(word)).0 }
+    }
+}
+
+impl<'a, T: CopyTarget> EtsCopier<'a, T> {
+    /// # Safety
+    /// As for `deep_copy_into_compact`, and `target` never moves words it
+    /// has allocated.
+    unsafe fn copy(term: ErlTerm, target: &'a mut T) -> ErlTerm {
+        let mut copier = EtsCopier { target, slots: SlotStack::default() };
+        // SAFETY: forwarded from the caller.
+        ErlTerm(unsafe { copy_graph(&mut copier, term.0) })
+    }
+
+    /// Copy one term, queueing the elements of tuples and maps instead of
+    /// copying them; a list copies a run of cells (see `copy_list`).
+    unsafe fn copy_object(&mut self, term: ErlTerm) -> ErlTerm {
+        if is_unboxed(term) {
+            return term;
+        }
+        if term.is_cons() {
+            return unsafe { self.copy_list(term) };
+        }
+        if !unsafe { term.is_binary() } {
+            if let Some(ptr) = term.as_boxed_ptr() {
+                let header = BoxedHeader(unsafe { *ptr });
+                let (subtype, slots) = match header.subtype() {
+                    BOXED_TUPLE => (crate::term::BoxedSubtype::Tuple, header.arity() as usize),
+                    crate::term::BOXED_MAP => (crate::term::BoxedSubtype::Map, 2 * header.arity() as usize),
+                    _ => return unsafe { self.target.copy_leaf(term) },
+                };
+                // [header | slots...], with the elements (or interleaved
+                // keys and values) queued for copying.
+                let words = self.target.alloc_words(1 + slots);
+                unsafe {
+                    *words = BoxedHeader::new(subtype, header.arity()).0;
+                    self.slots.push(words.add(1), ptr.add(1), slots);
+                    return ErlTerm::boxed_unchecked(words);
+                }
+            }
+        }
+        unsafe { self.target.copy_leaf(term) }
+    }
+
+    /// Copy the cells of a list along its tail while their heads are
+    /// immediates. The first cell whose head needs copying queues its head
+    /// and tail and ends the run, so the head is copied before the rest of
+    /// the list.
+    unsafe fn copy_list(&mut self, list: ErlTerm) -> ErlTerm {
+        let mut first = None;
+        let mut prev_tail: *mut u64 = std::ptr::null_mut();
+        let mut cursor = list;
+        loop {
+            let mut next = None;
+            let copied = match cursor.as_cons_ptr() {
+                // The terminator: nil or an improper tail.
+                None => unsafe { self.copy_object(cursor) },
+                Some(cell) => {
+                    let words = self.target.alloc_words(2);
+                    // SAFETY: `cell` is a live source cons cell (head word
+                    // first, then tail); `words` reserves its two-word copy.
+                    unsafe {
+                        let src = cell as *const u64;
+                        let head = *src;
+                        if is_plain_immediate(head) {
+                            *words = head;
+                            next = Some((words.add(1), (*cell).tail));
+                        } else {
+                            self.slots.push(words, src, 2);
+                        }
+                        ErlTerm::cons_unchecked(words as *const crate::term::ConsCell)
+                    }
+                }
+            };
+            if first.is_none() {
+                first = Some(copied);
+            } else {
+                // SAFETY: the previous cell's reserved tail word, written once.
+                unsafe { *prev_tail = copied.0 };
+            }
+            match next {
+                Some((tail_slot, tail)) => (prev_tail, cursor) = (tail_slot, tail),
+                None => return first.expect("first cell copied"),
+            }
+        }
+    }
 }
 
 /// Deep-copy a term from a process heap into a `CompactHeap`.
@@ -579,91 +760,6 @@ fn copy_from_process_heap_to_compact(term: ErlTerm, heap: &mut CompactHeap) -> E
                 }
                 // SAFETY: the allocation reserves u64-aligned words (and ConsCell alignment is 8).
                 return unsafe { ErlTerm::boxed_unchecked(words as *const u64) };
-            }
-        }
-    }
-    term
-}
-
-/// Deep-copy a term into a `ProcessHeap` (used for lookup — copying stored
-/// terms back into a process's bumpalo arena).
-/// # Safety
-/// All input terms and reachable objects must remain live and unmoved by GC
-/// for this call. Binary backing bytes must not be concurrently mutated.
-pub(crate) unsafe fn deep_copy_into_heap(term: ErlTerm, heap: &mut ProcessHeap) -> ErlTerm {
-    if term.is_atom() || term.is_small_int() || term.is_pid() || term.is_nil() {
-        return term;
-    }
-    if term.is_cons() {
-        let mut elems = Vec::new();
-        let mut cursor = term;
-        while cursor.is_cons() {
-            if let Some(ptr) = cursor.as_cons_ptr() {
-                unsafe {
-                    elems.push(deep_copy_into_heap((*ptr).head, heap));
-                    cursor = (*ptr).tail;
-                }
-            } else {
-                break;
-            }
-        }
-        let tail = deep_copy_into_heap(cursor, heap);
-        let mut result = tail;
-        for elem in elems.into_iter().rev() {
-            result = heap.alloc_cons(elem, result);
-        }
-        return result;
-    }
-    if term.is_binary() {
-        if let Some((ptr, len)) = unsafe { crate::ffi::binary_data_pub(term) } {
-            let bytes = unsafe { std::slice::from_raw_parts(ptr, len) };
-            return heap.alloc_binary_auto(bytes);
-        }
-        return term;
-    }
-    if term.is_boxed() {
-        if let Some(ptr) = term.as_boxed_ptr() {
-            let header = BoxedHeader(unsafe { *ptr });
-            match header.subtype() {
-                BOXED_TUPLE => {
-                    let arity = header.arity() as usize;
-                    let mut elems = Vec::with_capacity(arity);
-                    for i in 0..arity {
-                        let elem = ErlTerm(unsafe { *ptr.add(1 + i) });
-                        elems.push(deep_copy_into_heap(elem, heap));
-                    }
-                    return heap.alloc_tuple(&elems);
-                }
-                crate::term::BOXED_MAP => {
-                    let num_pairs = header.arity() as usize;
-                    let mut pairs = Vec::with_capacity(num_pairs);
-                    for i in 0..num_pairs {
-                        let key = ErlTerm(unsafe { *ptr.add(1 + i * 2) });
-                        let value = ErlTerm(unsafe { *ptr.add(2 + i * 2) });
-                        pairs.push([deep_copy_into_heap(key, heap), deep_copy_into_heap(value, heap)]);
-                    }
-                    return heap.alloc_map(MapPairs::new(&pairs));
-                }
-                crate::term::BOXED_FLOAT => {
-                    let bits = unsafe { *ptr.add(1) };
-                    return heap.alloc_float(f64::from_bits(bits));
-                }
-                crate::term::BOXED_BIGINT => {
-                    if let Some(big) = crate::bigint::term_to_bigint(term) {
-                        return crate::bigint::bigint_to_term(heap, big);
-                    }
-                    return term;
-                }
-                crate::term::BOXED_REFERENCE => {
-                    let ref_id = unsafe { *ptr.add(crate::term::REFERENCE_ID_WORD_INDEX) };
-                    let words = heap.alloc_words(crate::term::REFERENCE_TOTAL_WORDS);
-                    unsafe {
-                        *words = header.0;
-                        *words.add(crate::term::REFERENCE_ID_WORD_INDEX) = ref_id;
-                    }
-                    return ErlTerm::boxed_unchecked(words);
-                }
-                _ => return term,
             }
         }
     }
@@ -2211,6 +2307,7 @@ mod tests {
     }
     use super::*;
     use crate::atom_table::global_atom_table;
+    use crate::heap::MapPairs;
 
     /// Helper: create a unique ETS table for each test to avoid cross-test
     /// interference (the global registry is shared within a test binary).

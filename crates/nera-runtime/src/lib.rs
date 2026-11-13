@@ -54,6 +54,7 @@ pub mod binary;
 pub mod match_context;
 pub mod atom_table;
 pub mod heap;
+mod copy_stack;
 pub mod process;
 pub mod message;
 pub mod scheduler;
