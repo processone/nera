@@ -6,7 +6,7 @@
 %% - cast/2
 %% - reply/2
 %% - handle_call, handle_cast, handle_info callbacks
-%% - terminate callback
+%% - terminate callback, optional as in OTP
 %% - a server that traps exits stops when its parent exits, as in OTP
 %%
 %% Not supported: sys protocol, code_change, format_status, hibernate.
@@ -204,8 +204,12 @@ loop(Parent, Mod, State) ->
             end
     end.
 
+%% terminate/2 is optional, as in OTP.
 do_terminate(Mod, Reason, State) ->
-    Mod:terminate(Reason, State),
+    case lists:member({terminate, 2}, Mod:module_info(exports)) of
+        true -> Mod:terminate(Reason, State);
+        false -> ok
+    end,
     case Reason of
         normal -> exit(normal);
         shutdown -> exit(shutdown);

@@ -17,12 +17,17 @@ All notable milestones for the nera project are documented in this file.
   Previously the children stopped only through their link to the
   supervisor, so a child supervisor or a child that traps exits kept
   running after its supervisor was gone.
-- A supervisor checks the shape of every child spec before it starts any
-  child, as OTP does, so a malformed spec no longer leaves earlier children
-  running.
+- A supervisor checks every child spec before it starts any child, as OTP
+  does, and fails the start with `{error, {start_spec, Error}}` for an
+  invalid one, such as a shutdown setting that is not `brutal_kill`,
+  `infinity` or a non-negative integer, or a duplicate id. Previously a
+  malformed spec failed the start only after the children before it had
+  started, and an invalid shutdown setting was accepted.
 - A `gen_server` that traps exits now stops with its parent's reason, after
   `terminate/2`, when its parent exits or sends it an exit signal, as in
   OTP. Previously the signal reached `handle_info/2`.
+- `terminate/2` is optional, as in OTP: a `gen_server` that does not export
+  it now stops with its reason instead of crashing with `undef`.
 - The new `supervisor_shutdown` fixture runs natively and on BEAM.
 
 ## error/2 raises its reason instead of undef

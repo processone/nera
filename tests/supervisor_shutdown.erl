@@ -1,4 +1,5 @@
 %% EXPECT: supervisor_shutdown_ok
+%% MODULES: _supervisor_shutdown_server.erl
 %% Regression: how a one_for_one supervisor and a gen_server stop, as on
 %% BEAM (OTP 29).
 %% - A supervisor stops when its parent, the process that started it with
@@ -11,11 +12,16 @@
 %%   kills the child; a time in milliseconds sends shutdown and kills the
 %%   child if it is still running after that time; infinity waits. A child
 %%   supervisor stops its own children the same way, and a gen_server child
-%%   that traps exits runs terminate/2. A child that exited meanwhile is not
-%%   waited for.
+%%   that traps exits runs terminate/2, which it need not export. A child that
+%%   is not running is skipped, and one that exited meanwhile is not waited
+%%   for.
+%% - An invalid child spec, such as a shutdown setting the supervisor could
+%%   not stop the child by, fails the start with {start_spec, Error} before
+%%   any child starts.
 %% - A gen_server that traps exits stops with its parent's reason, after
 %%   terminate/2, when its parent exits or sends it an exit signal; an exit
-%%   signal from another process reaches handle_info/2.
+%%   signal from another process reaches handle_info/2, as does its
+%%   starter's when it was started without a link.
 %% Before the fix, native Nera's supervisor ignored its parent's exit, never
 %% stopped its children itself, and left a child supervisor or a child that
 %% traps exits running after it exited. Run this same fixture on native Nera
@@ -33,6 +39,7 @@ test() ->
     other_process_exit(),
     restart_limit(),
     failed_start(),
+    bad_child_spec(),
     gen_server_parent(),
     io:format("supervisor_shutdown_ok~n"),
     ok.
@@ -46,11 +53,14 @@ parent_shutdown() ->
                                [worker(first, Test),
                                 sup_child(inner, Test, [worker(inner_worker, Test)]),
                                 plain_worker(plain, Test),
+                                child(ignored, {return, ignore}, Test, 5000, worker),
+                                no_terminate(no_terminate, Test),
                                 stubborn(stubborn, Test, 300),
                                 brutal(brutal, Test),
                                 worker(last, Test)])),
     Sup = await_started(top),
-    Children = await_all([first, inner, inner_worker, plain, stubborn, brutal, last]),
+    Children = await_all([first, inner, inner_worker, plain, no_terminate,
+                          stubborn, brutal, last]),
     Watched = watch(Children),
     Started = erlang:monotonic_time(millisecond),
     exit(Sup, shutdown),
@@ -69,8 +79,8 @@ parent_shutdown() ->
      {terminated, first, shutdown}] = stop_log(4),
     expect_downs(Watched, [{first, shutdown}, {inner, shutdown},
                            {inner_worker, shutdown}, {plain, shutdown},
-                           {stubborn, killed}, {brutal, killed},
-                           {last, shutdown}]),
+                           {no_terminate, shutdown}, {stubborn, killed},
+                           {brutal, killed}, {last, shutdown}]),
     no_messages().
 
 %% A child that exits while the supervisor is stopping another one is not
@@ -185,6 +195,26 @@ failed_start() ->
      {terminated, first, shutdown}] = stop_log(3),
     no_messages().
 
+%% An invalid child spec fails the start before any child starts.
+bad_child_spec() ->
+    Test = self(),
+    {error, {start_spec, {invalid_shutdown, forever}}} =
+        supervisor:start_link(?MODULE, sup(top, Test,
+                                           [worker(first, Test),
+                                            child(bad, {worker, true}, Test, forever, worker)])),
+    {error, {start_spec, {invalid_mfa, {?MODULE, start}}}} =
+        supervisor:start_link(?MODULE, sup(top, Test,
+                                           [worker(first, Test),
+                                            {bad, {?MODULE, start}, permanent, 5000, worker,
+                                             [?MODULE]}])),
+    {error, {start_spec, {invalid_child_spec, not_a_spec}}} =
+        supervisor:start_link(?MODULE, sup(top, Test, [worker(first, Test), not_a_spec])),
+    {error, {start_spec, {duplicate_child_name, first}}} =
+        supervisor:start_link(?MODULE, sup(top, Test, [worker(first, Test),
+                                                       worker(first, Test)])),
+    _ = [await_started(top) || _ <- [1, 2, 3, 4]],
+    no_messages().
+
 %% A gen_server that traps exits stops when its parent sends it an exit
 %% signal or exits; another process's exit signal reaches handle_info/2.
 gen_server_parent() ->
@@ -210,6 +240,27 @@ gen_server_parent() ->
     Parent ! stop,
     expect_downs(Watched, [{server, normal}]),
     [{terminated, server, normal}] = stop_log(1),
+
+    %% A server started without a link is its own parent, so its starter's
+    %% exit signal reaches handle_info/2.
+    Starter = spawn(fun() ->
+        {ok, Unlinked} = gen_server:start(?MODULE, {worker, unlinked, Test, true}, []),
+        link(Unlinked),
+        Test ! {linked, Unlinked},
+        receive stop -> exit(bye) end
+    end),
+    Unlinked = await_started(unlinked),
+    receive {linked, Unlinked} -> ok after 5000 -> error(not_linked) end,
+    Starter ! stop,
+    receive
+        {info, unlinked, {'EXIT', Starter, bye}} -> ok
+    after 5000 ->
+        error(no_handle_info)
+    end,
+    true = is_process_alive(Unlinked),
+    UnlinkedWatched = watch([{unlinked, Unlinked}]),
+    exit(Unlinked, kill),
+    expect_downs(UnlinkedWatched, [{unlinked, killed}]),
     no_messages().
 
 %% Supervisor and gen_server callbacks.
@@ -271,6 +322,11 @@ worker(Id, Test) -> child(Id, {worker, true}, Test, 5000, worker).
 plain_worker(Id, Test) -> child(Id, {worker, false}, Test, 5000, worker).
 
 brutal(Id, Test) -> child(Id, {worker, true}, Test, brutal_kill, worker).
+
+%% A gen_server that traps exits and does not export terminate/2.
+no_terminate(Id, Test) ->
+    {Id, {supervisor_shutdown_server, start_link, [Id, Test]}, permanent, 5000,
+     worker, [supervisor_shutdown_server]}.
 
 stubborn(Id, Test, Time) -> child(Id, stubborn, Test, Time, worker).
 

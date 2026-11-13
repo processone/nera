@@ -68,9 +68,10 @@ platform and scope.
   implemented. Nera runs single-node programs.
 - **Hot code upgrade and code loading:** not supported.
 - **`supervisor`:** only `one_for_one` is honoured; other strategies are
-  accepted but ignored. Map-form supervisor flags and child specs crash with
-  `function_clause`. `start_child/2`, `terminate_child/2` and
-  `which_children/1` are missing.
+  accepted but ignored. Map-form supervisor flags crash with
+  `function_clause`, and map-form child specs are refused with
+  `{start_spec, {invalid_child_spec, Spec}}`. `start_child/2`,
+  `terminate_child/2` and `which_children/1` are missing.
 - **`application`:** `get_env/1` is missing.
 - **ETS:** `ets:match/2` and `ets:select/2` are missing. `ets:new/2` without
   `named_table` returns an integer where BEAM returns a reference.

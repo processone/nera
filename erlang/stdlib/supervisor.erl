@@ -111,8 +111,9 @@ init_thrown(Mod, MaybeName, _Parent, _Ref, Else) ->
 
 %% Read the flags and start the children. A child that fails to start fails
 %% the start with {shutdown, {failed_to_start_child, Id, Reason}}, as in OTP,
-%% once the children started before it have been stopped. A crash in reading
-%% the flags or a child spec fails it with its reason before any child starts.
+%% once the children started before it have been stopped. An invalid child
+%% spec fails it with {start_spec, Error} before any child starts, and a
+%% crash in reading the flags fails it with its reason.
 start_supervision(Mod, SupFlags, ChildSpecs, MaybeName, Parent, Ref) ->
     case start_children_safely(SupFlags, ChildSpecs) of
         {started, Strategy, MaxR, MaxT, Children} ->
@@ -124,6 +125,8 @@ start_supervision(Mod, SupFlags, ChildSpecs, MaybeName, Parent, Ref) ->
             %% shutdown as a crash.
             init_failed(Mod, MaybeName,
                         {shutdown, {failed_to_start_child, Id, Reason}}, false);
+        {start_spec, _Error} = Reason ->
+            init_failed(Mod, MaybeName, Reason, true);
         {'EXIT', Class, Reason, Stacktrace} ->
             init_failed(Mod, MaybeName, exit_reason(Class, Reason, Stacktrace),
                         report(Class, Reason))
@@ -133,12 +136,16 @@ start_children_safely(SupFlags, ChildSpecs) ->
     try
         process_flag(trap_exit, true),
         {Strategy, MaxR, MaxT} = parse_sup_flags(SupFlags),
-        %% Read every child spec before starting any child, as OTP does, so
-        %% a bad one leaves no child running.
-        lists:foreach(fun check_child_spec/1, ChildSpecs),
-        case start_children(ChildSpecs, []) of
-            {ok, Children} -> {started, Strategy, MaxR, MaxT, Children};
-            {error, Id, Why, Started} -> {failed_to_start_child, Id, Why, Started}
+        %% Check every child spec before starting any child, as OTP does,
+        %% so an invalid one leaves no child running.
+        case check_startspec(ChildSpecs, []) of
+            ok ->
+                case start_children(ChildSpecs, []) of
+                    {ok, Children} -> {started, Strategy, MaxR, MaxT, Children};
+                    {error, Id, Why, Started} -> {failed_to_start_child, Id, Why, Started}
+                end;
+            Error ->
+                {start_spec, Error}
         end
     catch
         Class:Reason:Stacktrace -> {'EXIT', Class, Reason, Stacktrace}
@@ -196,9 +203,58 @@ parse_sup_flags({Strategy, MaxR, MaxT}) ->
 parse_sup_flags(Strategy) when is_atom(Strategy) ->
     {Strategy, 5, 10}.
 
-check_child_spec(ChildSpec) ->
-    {_Id, _MFA, _Restart, _Shutdown, _Type, _Modules} = ChildSpec,
-    ok.
+%% Check the child specs as OTP's supervisor does, with its errors. Returns
+%% ok or the first error. Map child specs are not supported.
+check_startspec([], _Ids) ->
+    ok;
+check_startspec([ChildSpec | Rest], Ids) ->
+    case check_childspec(ChildSpec) of
+        {ok, Id} ->
+            case lists:member(Id, Ids) of
+                true -> {duplicate_child_name, Id};
+                false -> check_startspec(Rest, [Id | Ids])
+            end;
+        Error ->
+            Error
+    end.
+
+check_childspec({Id, MFA, Restart, Shutdown, Type, Modules}) ->
+    try
+        valid_mfa(MFA),
+        valid_restart_type(Restart),
+        valid_child_type(Type),
+        valid_shutdown(Shutdown),
+        valid_modules(Modules),
+        {ok, Id}
+    catch
+        throw:Error -> Error
+    end;
+check_childspec(ChildSpec) ->
+    {invalid_child_spec, ChildSpec}.
+
+valid_mfa({M, F, A}) when is_atom(M), is_atom(F), is_list(A) -> ok;
+valid_mfa(MFA) -> throw({invalid_mfa, MFA}).
+
+valid_restart_type(permanent) -> ok;
+valid_restart_type(temporary) -> ok;
+valid_restart_type(transient) -> ok;
+valid_restart_type(Restart) -> throw({invalid_restart_type, Restart}).
+
+valid_child_type(worker) -> ok;
+valid_child_type(supervisor) -> ok;
+valid_child_type(Type) -> throw({invalid_child_type, Type}).
+
+valid_shutdown(Shutdown) when is_integer(Shutdown), Shutdown >= 0 -> ok;
+valid_shutdown(infinity) -> ok;
+valid_shutdown(brutal_kill) -> ok;
+valid_shutdown(Shutdown) -> throw({invalid_shutdown, Shutdown}).
+
+valid_modules(dynamic) -> ok;
+valid_modules(Modules) when is_list(Modules) ->
+    lists:foreach(fun(M) when is_atom(M) -> ok;
+                     (M) -> throw({invalid_module, M})
+                  end, Modules);
+valid_modules(Modules) -> throw({invalid_modules, Modules}).
 
 %% Start the children in order, stopping at the first that fails to start.
 %% Returns {ok, [{Id, Pid, ChildSpec}]} or {error, Id, Reason, Started}, with
