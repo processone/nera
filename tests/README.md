@@ -373,6 +373,7 @@ These are automatically skipped by the runner and show up as SKIP in output.
 | `register_registered.erl` | registered/0 BIF                       | ~4         |
 | `register_reuse.erl`      | Re-register after process death        | ~4         |
 | `register_self_send.erl`  | Self-send via registered name          | ~4         |
+| `register_freed_before_signal.erl` | A dead process's name is free when its `'EXIT'` or `'DOWN'` arrives: normal exit, own reason, trapped link, `exit(Pid, kill)` and link cascade, 500 rounds each; a supervisor restarts its named child 100 times; also run on BEAM | 7 |
 
 ### Cross-Module & Dynamic Dispatch
 

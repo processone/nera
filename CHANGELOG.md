@@ -2,6 +2,22 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## A dead process's name is free before its exit signals arrive
+
+- When a registered process exits, its name is now free before any linked
+  process gets its `'EXIT'` or any monitoring process gets its `'DOWN'`, as
+  on BEAM. Previously the runtime delivered the signals first and freed the
+  name afterwards, so a process woken by the signal on another scheduler
+  could still find the name taken: `register/2` raised `badarg`, and a
+  supervisor restarting a named child right after its `'EXIT'` could get
+  `{error, {already_started, DeadPid}}`. The supervisor logged the failed
+  restart and tried again, and each try counted against its restart limit.
+- This holds for every way a process exits, including a process killed
+  because a process linked to it died.
+- The `register_freed_before_signal` fixture registers the name again the
+  moment the first signal arrives, in each of these cases, and restarts a
+  supervisor's named child 100 times; it runs natively and on BEAM.
+
 ## An error in a try body reaches the handler before later code runs
 
 - Inside `try`, an arithmetic or bitwise operator, `and`/`or`/`xor`, a
