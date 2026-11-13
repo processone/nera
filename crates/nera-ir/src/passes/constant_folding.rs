@@ -77,45 +77,22 @@ fn fold_binop(
                 i64::checked_rem(*a, *b).map(Literal::Integer)
             }
         }
-        // Float division — result is always float; skip if divisor is 0
-        (Div, Literal::Integer(a), Literal::Integer(b)) => {
-            if *b == 0 {
-                None
-            } else {
-                Some(Literal::Float(*a as f64 / *b as f64))
-            }
-        }
-        (Div, Literal::Float(a), Literal::Integer(b)) => {
-            if *b == 0 {
-                None
-            } else {
-                Some(Literal::Float(*a / *b as f64))
-            }
-        }
-        (Div, Literal::Integer(a), Literal::Float(b)) => {
-            if *b == 0.0 {
-                None
-            } else {
-                Some(Literal::Float(*a as f64 / *b))
-            }
-        }
-        (Div, Literal::Float(a), Literal::Float(b)) => {
-            if *b == 0.0 {
-                None
-            } else {
-                Some(Literal::Float(*a / *b))
-            }
-        }
-        // Float arithmetic (at least one float)
-        (Add, Literal::Float(a), Literal::Float(b)) => Some(Literal::Float(*a + *b)),
-        (Add, Literal::Float(a), Literal::Integer(b)) => Some(Literal::Float(*a + *b as f64)),
-        (Add, Literal::Integer(a), Literal::Float(b)) => Some(Literal::Float(*a as f64 + *b)),
-        (Sub, Literal::Float(a), Literal::Float(b)) => Some(Literal::Float(*a - *b)),
-        (Sub, Literal::Float(a), Literal::Integer(b)) => Some(Literal::Float(*a - *b as f64)),
-        (Sub, Literal::Integer(a), Literal::Float(b)) => Some(Literal::Float(*a as f64 - *b)),
-        (Mul, Literal::Float(a), Literal::Float(b)) => Some(Literal::Float(*a * *b)),
-        (Mul, Literal::Float(a), Literal::Integer(b)) => Some(Literal::Float(*a * *b as f64)),
-        (Mul, Literal::Integer(a), Literal::Float(b)) => Some(Literal::Float(*a as f64 * *b)),
+        // Float division and arithmetic with at least one float. An infinite
+        // or NaN result, which includes every zero divisor, is not folded:
+        // the operation then runs and raises `badarith`, as on BEAM.
+        (Div, Literal::Integer(a), Literal::Integer(b)) => finite_float(*a as f64 / *b as f64),
+        (Div, Literal::Float(a), Literal::Integer(b)) => finite_float(*a / *b as f64),
+        (Div, Literal::Integer(a), Literal::Float(b)) => finite_float(*a as f64 / *b),
+        (Div, Literal::Float(a), Literal::Float(b)) => finite_float(*a / *b),
+        (Add, Literal::Float(a), Literal::Float(b)) => finite_float(*a + *b),
+        (Add, Literal::Float(a), Literal::Integer(b)) => finite_float(*a + *b as f64),
+        (Add, Literal::Integer(a), Literal::Float(b)) => finite_float(*a as f64 + *b),
+        (Sub, Literal::Float(a), Literal::Float(b)) => finite_float(*a - *b),
+        (Sub, Literal::Float(a), Literal::Integer(b)) => finite_float(*a - *b as f64),
+        (Sub, Literal::Integer(a), Literal::Float(b)) => finite_float(*a as f64 - *b),
+        (Mul, Literal::Float(a), Literal::Float(b)) => finite_float(*a * *b),
+        (Mul, Literal::Float(a), Literal::Integer(b)) => finite_float(*a * *b as f64),
+        (Mul, Literal::Integer(a), Literal::Float(b)) => finite_float(*a as f64 * *b),
 
         // Integer bitwise ops
         (Band, Literal::Integer(a), Literal::Integer(b)) => Some(Literal::Integer(*a & *b)),
@@ -207,6 +184,11 @@ fn fold_unaryop(
         (Bnot, Literal::Integer(n)) => Some(Literal::Integer(!n)),
         _ => None,
     }
+}
+
+/// A folded float result, or no fold when it is infinite or NaN.
+fn finite_float(value: f64) -> Option<Literal> {
+    value.is_finite().then_some(Literal::Float(value))
 }
 
 /// Produce a boolean atom literal.

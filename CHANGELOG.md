@@ -2,6 +2,23 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Float division by zero and float overflow raise badarith
+
+- `/` with a zero divisor, `0.0` and `-0.0` included, now raises
+  `error:badarith`, as on BEAM. Previously `1 / 0` and `1.0 / 0.0` returned
+  an infinite float, which prints as `inf`, and `0.0 / 0.0` returned `NaN`.
+- `+`, `-`, `*` and `/` whose float result is beyond the float range now
+  raise `error:badarith`: `1.0e308 * 10.0` and `1.0e308 + 1.0e308` no longer
+  return `inf`. This holds for literal operands too, which the compiler had
+  folded into an infinite constant.
+- An integer too large for a float, such as `1 bsl 1100`, now raises
+  `badarith` in float arithmetic, as on BEAM. Previously it became an
+  infinite float, so `1 / (1 bsl 1100)` returned `0.0`.
+- The error reaches a `try` handler, makes a guard fail and stops a process
+  outside `try`, like any other `badarith`. Results that stay finite,
+  underflow to zero included, are unchanged.
+- The `float_arith_badarith` fixture covers these cases and runs natively
+  and on BEAM.
 ## Supervisors stop with their parent and stop their children in order
 
 - A supervisor now stops when its parent, the process that started it with

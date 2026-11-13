@@ -1122,6 +1122,36 @@ f() -> 10 / 0.
     }
 
     #[test]
+    fn test_fold_nonfinite_float_preserved() {
+        // A zero divisor or a result beyond the float range must stay a
+        // runtime operation, which raises badarith, never an infinite or NaN
+        // literal.
+        for (expr, op) in [
+            ("1.0 / 0.0", BinOp::Div),
+            ("1.0 / -0.0", BinOp::Div),
+            ("0.0 / 0.0", BinOp::Div),
+            ("1 / 0.0", BinOp::Div),
+            ("1.0e308 / 1.0e-10", BinOp::Div),
+            ("1.0e308 * 10.0", BinOp::Mul),
+            ("1.0e308 * 10", BinOp::Mul),
+            ("1.0e308 + 1.0e308", BinOp::Add),
+            ("-1.0e308 - 1.0e308", BinOp::Sub),
+        ] {
+            let source = format!("-module(test).\n-export([f/0]).\n\nf() -> {expr}.\n");
+            let ir = lower_source(&source).unwrap();
+            let instructions = || ir.functions[0].blocks.iter().flat_map(|b| b.instructions.iter());
+            assert!(
+                instructions().any(|i| matches!(i, Instruction::BinOp(_, o, _, _) if *o == op)),
+                "{expr} should be preserved as a runtime BinOp"
+            );
+            assert!(
+                !instructions().any(|i| matches!(i, Instruction::Const(_, Literal::Float(f)) if !f.is_finite())),
+                "{expr} should not be folded to a nonfinite float"
+            );
+        }
+    }
+
+    #[test]
     fn test_fold_integer_overflow_preserved() {
         // i64::MAX + 1 would overflow — should be left as runtime op
         let source = r#"
