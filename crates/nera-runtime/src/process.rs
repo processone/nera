@@ -2142,8 +2142,8 @@ impl Process {
 ///
 /// - `kill` reason: always kill (untrappable) — returns `Some(ATOM_KILLED)`
 /// - `trap_exit=true` + non-kill: leave in mailbox as regular message
-/// - `trap_exit=false` + `normal`: silently remove (BEAM ignores normal exits)
-/// - `trap_exit=false` + non-normal, non-kill: kill — returns `Some(reason)`
+/// - `trap_exit=false` + `normal` from another process: silently remove
+/// - `trap_exit=false` + self-sent `normal` or any other reason: kill
 ///
 /// Returns `Some(exit_reason)` if the process should die.
 ///
@@ -2223,8 +2223,11 @@ pub(crate) unsafe fn process_exit_signals(proc: &mut Process) -> Option<ErlTerm>
             continue;
         }
 
-        // trap_exit=false
-        if reason_atom == Some(ATOM_NORMAL) {
+        // A normal signal from another process is ignored, but an explicit
+        // exit(self(), normal) terminates a process that is not trapping exits.
+        // SAFETY: the same live three-element tuple contains its sender PID.
+        let from_pid = unsafe { ErlTerm(*ptr.add(2)) };
+        if reason_atom == Some(ATOM_NORMAL) && from_pid != ErlTerm::pid(proc.id) {
             // SAFETY: this live slot was just read from the stable scan buffer;
             // no intervening operation changes storage or removes this slot.
             unsafe {
@@ -2233,7 +2236,7 @@ pub(crate) unsafe fn process_exit_signals(proc: &mut Process) -> Option<ErlTerm>
             continue;
         }
 
-        // Non-normal, non-kill: kill the process with this reason
+        // Fatal signal, including self-sent normal: exit with this reason
         // SAFETY: this live slot belongs to the unchanged scan buffer.
         unsafe {
             proc.mailbox.remove_scanned_slot(physical);

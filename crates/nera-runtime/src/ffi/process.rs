@@ -1874,7 +1874,7 @@ pub unsafe extern "C" fn nera_rt_is_process_alive(ctx: *mut ProcessContext, term
     })
 }
 
-/// erlang:exit/2 — send an exit signal to another process.
+/// erlang:exit/2 — send an exit signal, yielding immediately for a fatal self-signal.
 #[no_mangle]
 pub unsafe extern "C" fn nera_rt_exit_2(ctx: *mut ProcessContext, pid_term: u64, reason: u64) -> u64 {
     let target_pid = match ErlTerm(pid_term).as_pid_id() {
@@ -1894,6 +1894,15 @@ pub unsafe extern "C" fn nera_rt_exit_2(ctx: *mut ProcessContext, pid_term: u64,
                 });
                 let fragment = crate::message::MessageFragment::from_term(exit_msg);
                 entry.inbox.push(crate::message::MessageFragment::ExitSignal(Box::new(fragment)));
+                if target_pid == self_pid && !ctx.is_null() {
+                    let trap_exit = unsafe { (*(*ctx).otp_ptr).trap_exit };
+                    if !trap_exit || ErlTerm(reason).as_atom_id() == Some(crate::atom_table::ATOM_KILL) {
+                        // Return to the scheduler before the next expression.
+                        // It consumes the queued signal before resuming any
+                        // caller, so neither catch nor after can intercept it.
+                        unsafe { (*ctx).status = crate::process::STATUS_YIELD; }
+                    }
+                }
                 // Try waking the process. try_wake() handles receive-waiting
                 // (ASTATUS_WAITING), try_wake_io() handles IO-waiting
                 // (ASTATUS_IO_WAIT). Only one CAS can succeed.

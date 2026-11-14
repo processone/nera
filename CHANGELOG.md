@@ -2,6 +2,17 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Fatal self-exit signals stop execution immediately
+
+- `exit(self(), Reason)` now stops before the next expression when the signal
+  is fatal: `kill` even while trapping exits, or any reason while not trapping.
+  Catch handlers and `after` bodies do not run for an exit signal, as on BEAM.
+- A self-sent `normal` signal terminates a process that is not trapping exits;
+  `normal` from another process is still ignored. Trapped non-`kill` signals
+  remain messages, and `kill` still becomes the monitor reason `killed`.
+- The `exit_self` regression runs unchanged natively and on BEAM, covering
+  direct and dynamic calls, tail calls, handlers and receive resumption.
+
 ## Closures compare by code and captured values
 
 - Closures created from the same fun expression with equal captured values
