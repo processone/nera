@@ -1,5 +1,5 @@
-//! Check the real private EXIT adapter requires an unsafe call inside the crate,
-//! independently of its visibility to external library users.
+//! Check the real private EXIT adapter's unsafe call boundary independently of
+//! its external visibility. Runtime tests own traversal and signal semantics.
 use std::process::Command;
 
 #[test]
@@ -7,49 +7,45 @@ fn raw_exit_scan_requires_an_unsafe_call() {
     let source = include_str!("../src/process.rs");
     let signature = source.find("fn process_exit_signals").unwrap();
     let start = source[..signature].rfind('\n').unwrap() + 1;
-    let end = source[start..]
-        .find("\n// ---------------------------------------------------------------------------")
+    let end = source[signature..].find('{').unwrap() + signature;
+    let declaration = &source[start..end];
+    // Only the declaration controls whether a call requires unsafe. Compile it
+    // with the real runtime types, without duplicating private mailbox state or
+    // substituting fake term/heap operations for the implementation.
+    let adapter = format!("{declaration}{{ unreachable!() }}");
+    let dependencies = std::env::current_exe()
         .unwrap()
-        + start;
-    let adapter = &source[start..end];
+        .parent()
+        .unwrap()
+        .to_path_buf();
+    let library = std::fs::read_dir(&dependencies)
+        .unwrap()
+        .map(|entry| entry.unwrap().path())
+        .find(|path| {
+            path.extension()
+                .is_some_and(|extension| extension == "rlib")
+                && path
+                    .file_name()
+                    .unwrap()
+                    .to_string_lossy()
+                    .starts_with("libnera_runtime-")
+        })
+        .expect("the runtime library built for this integration test");
     let directory = std::env::temp_dir().join(format!("nera-exit-contract-{}", std::process::id()));
     std::fs::create_dir_all(&directory).unwrap();
     let file = directory.join("contract.rs");
-    let prelude = r#"
-mod atom_table {
-    pub const ATOM_EXIT_SIGNAL: u32 = 1;
-    pub const ATOM_KILL: u32 = 2;
-    pub const ATOM_KILLED: u32 = 3;
-    pub const ATOM_NORMAL: u32 = 4;
-}
-mod term {
-    pub const BOXED_TUPLE: u64 = 1;
-    pub const TOMBSTONE_VALUE: u64 = 7;
-    pub struct BoxedHeader(pub u64);
-    impl BoxedHeader {
-        pub fn subtype(&self) -> u64 { 0 }
-        pub fn arity(&self) -> usize { 0 }
-    }
-}
-pub struct ErlTerm(pub u64);
-impl ErlTerm {
-    fn is_boxed(&self) -> bool { false }
-    fn as_boxed_ptr(&self) -> Option<*const u64> { None }
-    fn as_atom_id(&self) -> Option<u32> { None }
-    fn atom(id: u32) -> Self { Self(id as u64) }
-}
-struct Mailbox { head: u32, capacity: u32, buf: *mut u64 }
-impl Mailbox {
-    fn slot_count(&self) -> u32 { 0 }
-    unsafe fn remove_scanned_slot(&mut self, _: usize) {}
-}
-struct Otp { trap_exit: bool }
-pub struct Process { mailbox: Mailbox, otp: Otp }
-"#;
     let compile = |body: &str| {
-        std::fs::write(&file, format!("{prelude}\n{adapter}\n{body}")).unwrap();
+        std::fs::write(
+            &file,
+            format!("use nera_runtime::{{process::Process, term::ErlTerm}};\n{adapter}\n{body}"),
+        )
+        .unwrap();
         Command::new("rustc")
             .args(["--edition=2021", "--crate-type=lib", "--emit=metadata"])
+            .arg("--extern")
+            .arg(format!("nera_runtime={}", library.display()))
+            .arg("-L")
+            .arg(format!("dependency={}", dependencies.display()))
             .arg(&file)
             .arg("-o")
             .arg(directory.join("contract.rmeta"))
