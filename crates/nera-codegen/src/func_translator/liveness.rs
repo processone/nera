@@ -99,7 +99,7 @@ pub(super) fn compute_suspend_points(
 
     let mut successors: HashMap<BlockId, Vec<BlockId>> = HashMap::new();
     for block in &ir_func.blocks {
-        let succs = terminator_successors(&block.terminator);
+        let succs = block.successors();
         successors.insert(block.id, succs);
     }
 
@@ -195,6 +195,7 @@ pub(super) fn compute_suspend_points(
 /// Collect VarIds defined (written) by an instruction.
 pub(super) fn collect_instruction_defs(inst: &Instruction, defs: &mut HashSet<VarId>) {
     match inst {
+        Instruction::Arithmetic(site) => defs.extend(site.result),
         Instruction::Const(v, _)
         | Instruction::BinOp(v, _, _, _)
         | Instruction::UnaryOp(v, _, _)
@@ -286,6 +287,7 @@ pub(super) fn collect_instruction_defs(inst: &Instruction, defs: &mut HashSet<Va
 /// Collect VarIds used (read) by an instruction.
 pub(super) fn collect_instruction_uses(inst: &Instruction, uses: &mut HashSet<VarId>) {
     match inst {
+        Instruction::Arithmetic(site) => uses.extend(site.operation.operands()),
         Instruction::Const(_, _) => {}
         Instruction::BinOp(_, _, a, b) => { uses.insert(*a); uses.insert(*b); }
         Instruction::UnaryOp(_, _, a) => { uses.insert(*a); }
@@ -414,6 +416,7 @@ pub(super) fn collect_terminator_uses(term: &Terminator, uses: &mut HashSet<VarI
 
 /// Get successor BlockIds from a terminator.
 /// Delegates to `Terminator::successors()` in the IR crate.
+#[cfg(test)]
 pub(super) fn terminator_successors(term: &Terminator) -> Vec<BlockId> {
     term.successors()
 }

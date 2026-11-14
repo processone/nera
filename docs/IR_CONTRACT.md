@@ -54,9 +54,11 @@ in the entry block's reserved parameter list.
   semantics. Source `receive` lowers to ordinary blocks and runtime calls such
   as `receive_peek`. The native translator's `Receive` arm is a placeholder.
 
-Vector order is not execution order. Successors determine reachability. The
-explicit CFG does not describe all backend-created exits, exception propagation,
-or suspend/resume paths.
+Vector order is not execution order. Successors determine reachability.
+`BasicBlock::successors()` includes the normal terminator successors and the
+arithmetic instructions' explicit local failure destinations. Use it for block
+reachability; `Terminator::successors()` alone describes only normal edges.
+Unmigrated backend-created exits and suspend/resume paths remain implicit.
 
 ## Reads, writes and payloads
 
@@ -82,10 +84,31 @@ verification cannot prove operand types, pointer validity, rooting or lifetime.
 
 ## Exceptions, scheduling and source information
 
+`Arithmetic` is the single executable representation for binary `+`, `-`, `*`,
+`/` and unary minus, `bnot`, `not`. Each instruction carries a function-local
+`OperationId`, an optional result register, an evaluation context (body, try,
+guard or cleanup), and a failure destination (propagation or a local block).
+Each identity names an operation site even when operations rewrite the same
+register or discard their results. Raw `BinOp` and
+`UnaryOp` instructions remain for unmigrated operators, including unary plus.
+The verifier rejects migrated operators in those raw variants.
+
+On arithmetic failure, the instruction transfers immediately, without defining
+its result or executing its block's remaining instructions. Local failure edges
+therefore carry only the definitions preceding the operation. Try and guard
+contexts require local handlers. A local destination must reach exception
+accessors and `ClearException` through landing-pad jumps before ordinary code
+can execute; missing destinations, duplicate identities and unsafe paths fail
+verification. Native translation uses the same checked helper emission for
+inline slow paths and helper-only arithmetic. Immediate-integer arithmetic and
+boolean-not fast paths do not load exception status.
+
 `RaiseException` writes a result register and changes runtime exception state;
 it is an instruction, not a terminator. `CheckException`, exception accessors,
 `ClearException` and ordinary branches express part of exception handling.
-Calls can also trigger backend-generated exception checks and suspension.
+Calls and unmigrated operations can also trigger backend-generated exception
+checks and suspension. Their existing protected-result metadata and suspension
+mechanism are unchanged; arithmetic does not use protected-result routing.
 `CheckReductions` and `YieldCheck` are distinct scheduling operations, not pure
 computations. Do not remove or reorder them merely because they have no result.
 
@@ -110,8 +133,8 @@ Unreachable code is checked for undeclared registers but not path-sensitive
 initialization: there is no entry state for an unreachable component.
 
 Success does **not** prove Erlang semantics, static types, call resolution or
-call arities, closure target linkage, atom-table validity, exception-handler
-balance, suspension safety, GC safety, optimization correctness, or backend
+call arities, closure target linkage, atom-table validity, unmigrated
+exception-handler balance, suspension safety, GC safety, optimization correctness, or backend
 support for every representable operation. Those require separate checks.
 
 When adding an instruction, update its documented operands/results, exhaustive

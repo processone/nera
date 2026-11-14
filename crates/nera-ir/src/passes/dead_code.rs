@@ -69,7 +69,7 @@ pub fn eliminate_dead_code(func: &mut IrFunction, true_atom_id: AtomId, false_at
 
     while let Some(block_id) = queue.pop_front() {
         if let Some(block) = func.blocks.iter().find(|b| b.id == block_id) {
-            for succ in block.terminator.successors() {
+            for succ in block.successors() {
                 if reachable.insert(succ) {
                     queue.push_back(succ);
                 }

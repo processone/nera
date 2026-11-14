@@ -130,8 +130,9 @@ impl IrBuilder {
                         let lhs_var = self.lower_expr(lhs, false)?;
                         let rhs_var = self.lower_expr(rhs, false)?;
                         let result = self.fresh_var();
-                        self.emit(Instruction::BinOp(result, *op, lhs_var, rhs_var));
-                        if Self::binop_may_raise(*op) {
+                        self.emit_binop(result, *op, lhs_var, rhs_var);
+                        if Self::binop_may_raise(*op)
+                            && ArithmeticOp::from_binary(*op, lhs_var, rhs_var).is_none() {
                             self.branch_on_pending_exception();
                         }
                         Ok(result)
@@ -142,8 +143,10 @@ impl IrBuilder {
             ast::Expr::UnaryOp(op, operand, _) => {
                 let operand_var = self.lower_expr(operand, false)?;
                 let result = self.fresh_var();
-                self.emit(Instruction::UnaryOp(result, *op, operand_var));
-                self.branch_on_pending_exception();
+                self.emit_unaryop(result, *op, operand_var);
+                if matches!(op, ast::UnaryOp::Pos) {
+                    self.branch_on_pending_exception();
+                }
                 Ok(result)
             }
 
@@ -192,7 +195,7 @@ impl IrBuilder {
                                     if let Some(remaining_bits) = mc_remaining {
                                         let seven = self.emit_const(Literal::Integer(7));
                                         let rounded_bits = self.fresh_var();
-                                        self.emit(Instruction::BinOp(rounded_bits, BinOp::Add, remaining_bits, seven));
+                                        self.emit_binop(rounded_bits, BinOp::Add, remaining_bits, seven);
                                         let eight = self.emit_const(Literal::Integer(8));
                                         let result = self.fresh_var();
                                         self.emit(Instruction::BinOp(result, BinOp::IntDiv, rounded_bits, eight));
@@ -1188,7 +1191,7 @@ impl IrBuilder {
                 .unwrap_or_else(|| self.emit_const(Literal::Integer(0)));
             for si in sizes {
                 let new_sum = self.fresh_var();
-                self.emit(Instruction::BinOp(new_sum, BinOp::Add, sum, si.1));
+                self.emit_binop(new_sum, BinOp::Add, sum, si.1);
                 sum = new_sum;
             }
             sum
@@ -1220,7 +1223,7 @@ impl IrBuilder {
                 self.branch_on_pending_exception();
                 // Advance offset by actual bits written (variable for UTF-8/16)
                 let new_offset = self.fresh_var();
-                self.emit(Instruction::BinOp(new_offset, BinOp::Add, bit_offset_var, bits_written));
+                self.emit_binop(new_offset, BinOp::Add, bit_offset_var, bits_written);
                 bit_offset_var = new_offset;
             } else if *is_bin {
                 self.emit(Instruction::BinaryPutBinary(bin_var, bit_offset_var, *val_var, *bits_var));
@@ -1229,7 +1232,7 @@ impl IrBuilder {
                     bit_offset_var = *bits_var;
                 } else {
                     let new_offset = self.fresh_var();
-                    self.emit(Instruction::BinOp(new_offset, BinOp::Add, bit_offset_var, *bits_var));
+                    self.emit_binop(new_offset, BinOp::Add, bit_offset_var, *bits_var);
                     bit_offset_var = new_offset;
                 }
             } else if *is_float {
@@ -1239,7 +1242,7 @@ impl IrBuilder {
                     bit_offset_var = *bits_var;
                 } else {
                     let new_offset = self.fresh_var();
-                    self.emit(Instruction::BinOp(new_offset, BinOp::Add, bit_offset_var, *bits_var));
+                    self.emit_binop(new_offset, BinOp::Add, bit_offset_var, *bits_var);
                     bit_offset_var = new_offset;
                 }
             } else {
@@ -1249,7 +1252,7 @@ impl IrBuilder {
                     bit_offset_var = *bits_var;
                 } else {
                     let new_offset = self.fresh_var();
-                    self.emit(Instruction::BinOp(new_offset, BinOp::Add, bit_offset_var, *bits_var));
+                    self.emit_binop(new_offset, BinOp::Add, bit_offset_var, *bits_var);
                     bit_offset_var = new_offset;
                 }
             }
@@ -1337,10 +1340,13 @@ impl IrBuilder {
         let branch = self.enter_branch();
 
         // Lower the guard expression
+        let previous_context = self.evaluation_context;
+        self.evaluation_context = EvaluationContext::Guard;
         let expr_val = self.lower_expr(expr, false).unwrap_or_else(|_| {
             self.emit_const(Literal::Atom(self.false_atom_id))
         });
 
+        self.evaluation_context = previous_context;
         self.try_exception_targets.pop();
 
         // Check if an FFI call raised an exception

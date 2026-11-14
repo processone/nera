@@ -2,8 +2,8 @@
 %% Inside a try body, an operation or throw that raises goes to the handler
 %% at once, as on BEAM: no later send, put, receive or call runs, and a
 %% later operation cannot replace the reason. Guards inside the body still
-%% just fail. Outside try, a failed send or spawn or a throw stops the
-%% process at once, and a map update evaluates every value before it fails.
+%% just fail. Outside try, migrated arithmetic, a failed send, spawn or throw
+%% stops the process at once, and a map update evaluates every value before it fails.
 %% Run this same fixture on native Nera and BEAM.
 -module(try_operation_short_circuit).
 -export([test/0]).
@@ -134,7 +134,15 @@ check({Name, Expected, ExpectedMessages, Body}) ->
 
 %% A guard that raises inside a try body fails the guard; the body goes on.
 guards() ->
-    [{guard_arith, fun() -> try case id(a) of X when X + 1 > 0 -> wrong; _ -> right end
+    [{guard_subtract, fun() -> try case id(a) of X when X - 1 > 0 -> wrong; _ -> right end
+                               catch C:E -> {C, E} end end},
+     {guard_divide, fun() -> try case id(0) of X when 1 / X > 0 -> wrong; _ -> right end
+                             catch C:E -> {C, E} end end},
+     {guard_negate, fun() -> try case id(a) of X when -X > 0 -> wrong; _ -> right end
+                             catch C:E -> {C, E} end end},
+     {guard_bnot, fun() -> try case id(a) of X when bnot X > 0 -> wrong; _ -> right end
+                           catch C:E -> {C, E} end end},
+     {guard_arith, fun() -> try case id(a) of X when X + 1 > 0 -> wrong; _ -> right end
                             catch C:E -> {C, E} end end},
      {guard_not, fun() -> try case id(a) of X when not X -> wrong; _ -> right end
                           catch C:E -> {C, E} end end},
@@ -147,11 +155,18 @@ guards() ->
 guard({Name, Body}) ->
     {Name, right} = {Name, Body()}.
 
-%% Outside try, the process stops at the failed operation. BEAM's exit
-%% reason carries the stack, and an uncaught throw's is {nocatch, Reason};
-%% native Nera's are not yet.
+%% Outside try, the process stops at the failed operation. This fixture
+%% owns the reason and side effects, not the complete exit envelope;
+%% uncaught_error_exit owns the stricter error-envelope assertions.
 unprotected() ->
-    [{send_unregistered, badarg, [],
+    [{add, badarith, [], fun(P) -> _ = 1 + id(a), P ! sent end},
+     {subtract, badarith, [], fun(P) -> _ = id(a) - 1, P ! sent end},
+     {multiply, badarith, [], fun(P) -> _ = id(a) * 2, P ! sent end},
+     {divide, badarith, [], fun(P) -> _ = 1 / id(0), P ! sent end},
+     {negate, badarith, [], fun(P) -> _ = -id(a), P ! sent end},
+     {bit_not, badarith, [], fun(P) -> _ = bnot id(a), P ! sent end},
+     {bool_not, badarg, [], fun(P) -> _ = not id(a), P ! sent end},
+     {send_unregistered, badarg, [],
       fun(P) -> _ = id(no_such_registered_name) ! x, P ! sent end},
      {send_tuple_unregistered, badarg, [],
       fun(P) -> _ = id(no_such_registered_name) ! {x, id(y)}, P ! sent end},

@@ -4,46 +4,53 @@
 use crate::ir::{CallTarget, Instruction, Terminator, VarId};
 use std::collections::HashSet;
 
-/// Collect VarIds used (read) by an instruction. Self-contained version for nera-ir crate.
+/// Collect distinct reads for consumers that only ask whether a value is used.
 pub(super) fn collect_instruction_uses(inst: &Instruction, uses: &mut HashSet<VarId>) {
+    uses.extend(instruction_reads(inst));
+}
+
+/// Preserve every operand occurrence for single-use optimization decisions.
+pub(super) fn instruction_reads(inst: &Instruction) -> Vec<VarId> {
+    let mut uses = Vec::new();
     match inst {
+        Instruction::Arithmetic(site) => uses.extend(site.operation.operands()),
         Instruction::Const(_, _) => {}
         Instruction::BinOp(_, _, a, b) => {
-            uses.insert(*a);
-            uses.insert(*b);
+            uses.push(*a);
+            uses.push(*b);
         }
         Instruction::UnaryOp(_, _, a) => {
-            uses.insert(*a);
+            uses.push(*a);
         }
         Instruction::MakeTuple(_, args) => {
             for a in args {
-                uses.insert(*a);
+                uses.push(*a);
             }
         }
         Instruction::MakeCons(_, h, t) => {
-            uses.insert(*h);
-            uses.insert(*t);
+            uses.push(*h);
+            uses.push(*t);
         }
         Instruction::TupleElement(_, t, _) => {
-            uses.insert(*t);
+            uses.push(*t);
         }
         Instruction::ListHead(_, l) => {
-            uses.insert(*l);
+            uses.push(*l);
         }
         Instruction::ListTail(_, l) => {
-            uses.insert(*l);
+            uses.push(*l);
         }
         Instruction::Call(_, target, args) => {
             for a in args {
-                uses.insert(*a);
+                uses.push(*a);
             }
             match target {
                 CallTarget::Closure(v) => {
-                    uses.insert(*v);
+                    uses.push(*v);
                 }
                 CallTarget::Apply(m, f) => {
-                    uses.insert(*m);
-                    uses.insert(*f);
+                    uses.push(*m);
+                    uses.push(*f);
                 }
                 _ => {}
             }
@@ -51,110 +58,110 @@ pub(super) fn collect_instruction_uses(inst: &Instruction, uses: &mut HashSet<Va
         Instruction::GetSelf(_) => {}
         Instruction::Spawn(_, _, _, args) => {
             for a in args {
-                uses.insert(*a);
+                uses.push(*a);
             }
         }
         Instruction::Send(_, pid, msg) => {
-            uses.insert(*pid);
-            uses.insert(*msg);
+            uses.push(*pid);
+            uses.push(*msg);
         }
         Instruction::SendDirect(_, pid, elems) => {
-            uses.insert(*pid);
+            uses.push(*pid);
             for e in elems {
-                uses.insert(*e);
+                uses.push(*e);
             }
         }
         Instruction::TypeTest(_, _, val) => {
-            uses.insert(*val);
+            uses.push(*val);
         }
         Instruction::Move(_, src) => {
-            uses.insert(*src);
+            uses.push(*src);
         }
         Instruction::TupleSize(_, t) => {
-            uses.insert(*t);
+            uses.push(*t);
         }
         Instruction::MakeBinary(_, size) => {
-            uses.insert(*size);
+            uses.push(*size);
         }
         Instruction::BinaryPutInteger(bin, off, val, size, _) => {
-            uses.insert(*bin);
-            uses.insert(*off);
-            uses.insert(*val);
-            uses.insert(*size);
+            uses.push(*bin);
+            uses.push(*off);
+            uses.push(*val);
+            uses.push(*size);
         }
         Instruction::BinaryPutFloat(bin, off, val, size, _) => {
-            uses.insert(*bin);
-            uses.insert(*off);
-            uses.insert(*val);
-            uses.insert(*size);
+            uses.push(*bin);
+            uses.push(*off);
+            uses.push(*val);
+            uses.push(*size);
         }
         Instruction::BinaryPutBinary(dest, off, src, count) => {
-            uses.insert(*dest);
-            uses.insert(*off);
-            uses.insert(*src);
-            uses.insert(*count);
+            uses.push(*dest);
+            uses.push(*off);
+            uses.push(*src);
+            uses.push(*count);
         }
         Instruction::BinaryGetInteger(_, bin, off, size, _) => {
-            uses.insert(*bin);
-            uses.insert(*off);
-            uses.insert(*size);
+            uses.push(*bin);
+            uses.push(*off);
+            uses.push(*size);
         }
         Instruction::BinaryGetFloat(_, bin, off, size, _) => {
-            uses.insert(*bin);
-            uses.insert(*off);
-            uses.insert(*size);
+            uses.push(*bin);
+            uses.push(*off);
+            uses.push(*size);
         }
         Instruction::BinaryGetBinary(_, bin, off, size) => {
-            uses.insert(*bin);
-            uses.insert(*off);
-            uses.insert(*size);
+            uses.push(*bin);
+            uses.push(*off);
+            uses.push(*size);
         }
         Instruction::BsMatchBitOffset(_, bin) | Instruction::BinarySize(_, bin) => {
-            uses.insert(*bin);
+            uses.push(*bin);
         }
         Instruction::BsStartMatch(_, _, bin) => {
-            uses.insert(*bin);
+            uses.push(*bin);
         }
         Instruction::BsMatchStart2(_, _, _, input) => {
-            uses.insert(*input);
+            uses.push(*input);
         }
         Instruction::BsMatchCtxAdvance(mc, off) => {
-            uses.insert(*mc);
-            uses.insert(*off);
+            uses.push(*mc);
+            uses.push(*off);
         }
         Instruction::BsGetIntegerInline(_, base, off, count, _) => {
-            uses.insert(*base);
-            uses.insert(*off);
-            uses.insert(*count);
+            uses.push(*base);
+            uses.push(*off);
+            uses.push(*count);
         }
         Instruction::BsMaterialize(_, orig, off, count) => {
-            uses.insert(*orig);
-            uses.insert(*off);
-            uses.insert(*count);
+            uses.push(*orig);
+            uses.push(*off);
+            uses.push(*count);
         }
         Instruction::MakeMap(_, pairs) => {
             for p in pairs {
-                uses.insert(*p);
+                uses.push(*p);
             }
         }
         Instruction::MapGet(_, map, key) => {
-            uses.insert(*map);
-            uses.insert(*key);
+            uses.push(*map);
+            uses.push(*key);
         }
         Instruction::MapPut(_, map, key, val) => {
-            uses.insert(*map);
-            uses.insert(*key);
-            uses.insert(*val);
+            uses.push(*map);
+            uses.push(*key);
+            uses.push(*val);
         }
         Instruction::MapUpdateExact(_, map, key, val) => {
-            uses.insert(*map);
-            uses.insert(*key);
-            uses.insert(*val);
+            uses.push(*map);
+            uses.push(*key);
+            uses.push(*val);
         }
         Instruction::CheckReductions => {}
         Instruction::YieldCheck => {}
         Instruction::RaiseException(_, _, reason) => {
-            uses.insert(*reason);
+            uses.push(*reason);
         }
         Instruction::GetExceptionClass(_) => {}
         Instruction::GetExceptionReason(_) => {}
@@ -163,81 +170,87 @@ pub(super) fn collect_instruction_uses(inst: &Instruction, uses: &mut HashSet<Va
         Instruction::CheckException(_) => {}
         Instruction::MakeClosure(_, _, _, env_vars) => {
             for ev in env_vars {
-                uses.insert(*ev);
+                uses.push(*ev);
             }
         }
         Instruction::MakeRemoteFunRef(_, _, _, _) => {}
         Instruction::MakeDynamicRemoteFunRef(_, m, f, a) => {
-            uses.insert(*m);
-            uses.insert(*f);
-            uses.insert(*a);
+            uses.push(*m);
+            uses.push(*f);
+            uses.push(*a);
         }
         Instruction::BinaryPutUtf8(_, bin, off, cp) => {
-            uses.insert(*bin);
-            uses.insert(*off);
-            uses.insert(*cp);
+            uses.push(*bin);
+            uses.push(*off);
+            uses.push(*cp);
         }
         Instruction::BinaryPutUtf16(_, bin, off, cp, _) => {
-            uses.insert(*bin);
-            uses.insert(*off);
-            uses.insert(*cp);
+            uses.push(*bin);
+            uses.push(*off);
+            uses.push(*cp);
         }
         Instruction::BinaryPutUtf32(_, bin, off, cp, _) => {
-            uses.insert(*bin);
-            uses.insert(*off);
-            uses.insert(*cp);
+            uses.push(*bin);
+            uses.push(*off);
+            uses.push(*cp);
         }
         Instruction::BsGetUtf8(_, _, base, off, total) => {
-            uses.insert(*base);
-            uses.insert(*off);
-            uses.insert(*total);
+            uses.push(*base);
+            uses.push(*off);
+            uses.push(*total);
         }
         Instruction::BsGetUtf16(_, _, base, off, total, _) => {
-            uses.insert(*base);
-            uses.insert(*off);
-            uses.insert(*total);
+            uses.push(*base);
+            uses.push(*off);
+            uses.push(*total);
         }
         Instruction::BsGetUtf32(_, _, base, off, total, _) => {
-            uses.insert(*base);
-            uses.insert(*off);
-            uses.insert(*total);
+            uses.push(*base);
+            uses.push(*off);
+            uses.push(*total);
         }
         Instruction::BinaryResize(bin, size) => {
-            uses.insert(*bin);
-            uses.insert(*size);
+            uses.push(*bin);
+            uses.push(*size);
         }
         Instruction::SetLine(_) => {}
     }
+    uses
 }
 
-/// Collect VarIds used (read) by a terminator. Self-contained version for nera-ir crate.
+/// Collect distinct terminator reads for set-based consumers.
 pub(super) fn collect_terminator_uses(term: &Terminator, uses: &mut HashSet<VarId>) {
+    uses.extend(terminator_reads(term));
+}
+
+pub(super) fn terminator_reads(term: &Terminator) -> Vec<VarId> {
+    let mut uses = Vec::new();
     match term {
         Terminator::Return(v) => {
-            uses.insert(*v);
+            uses.push(*v);
         }
         Terminator::Jump(_, args) => {
             for a in args {
-                uses.insert(*a);
+                uses.push(*a);
             }
         }
         Terminator::Branch(v, _, _) => {
-            uses.insert(*v);
+            uses.push(*v);
         }
         Terminator::Switch { scrutinee, .. } => {
-            uses.insert(*scrutinee);
+            uses.push(*scrutinee);
         }
         Terminator::TailCall(target, args) => {
             for a in args {
-                uses.insert(*a);
+                uses.push(*a);
             }
             match target {
                 CallTarget::Closure(v) => {
-                    uses.insert(*v);
+                    uses.push(*v);
                 }
                 CallTarget::Apply(m, f) => {
-                    uses.insert(*m);
-                    uses.insert(*f);
+                    uses.push(*m);
+                    uses.push(*f);
                 }
                 _ => {}
             }
@@ -246,12 +259,13 @@ pub(super) fn collect_terminator_uses(term: &Terminator, uses: &mut HashSet<VarI
             clauses, timeout, ..
         } => {
             for c in clauses {
-                uses.insert(c.binding);
+                uses.push(c.binding);
             }
             if let Some((t, _)) = timeout {
-                uses.insert(*t);
+                uses.push(*t);
             }
         }
         Terminator::Unreachable => {}
     }
+    uses
 }

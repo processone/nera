@@ -114,13 +114,13 @@ add(A, B) -> A + B.
 "#;
         let ir = lower_source(source).unwrap();
         assert_eq!(ir.functions.len(), 1);
-        // Check that the IR contains a BinOp instruction
+        // Check that the IR contains a checked arithmetic instruction
         let has_binop = ir.functions[0].blocks.iter().any(|block| {
             block.instructions.iter().any(|inst| {
-                matches!(inst, Instruction::BinOp(_, BinOp::Add, _, _))
+                matches!(inst, Instruction::Arithmetic(ArithmeticSite { operation: ArithmeticOp::Add(..), .. }))
             })
         });
-        assert!(has_binop, "Expected Add BinOp in IR");
+        assert!(has_binop, "Expected checked Add operation in IR");
     }
 
     // ── Adversarial pattern matching tests ──────────────────────
@@ -1063,11 +1063,11 @@ f() -> 1 + 2.
             b.instructions.iter().any(|i| matches!(i, Instruction::Const(_, Literal::Integer(3))))
         );
         assert!(has_const_3, "1 + 2 should be folded to Const(3)");
-        // No BinOp::Add should remain for the constant expression
+        // No checked Add should remain for the constant expression
         let has_add = ir.functions[0].blocks.iter().any(|b|
-            b.instructions.iter().any(|i| matches!(i, Instruction::BinOp(_, BinOp::Add, _, _)))
+            b.instructions.iter().any(|i| matches!(i, Instruction::Arithmetic(ArithmeticSite { operation: ArithmeticOp::Add(..), .. })))
         );
-        assert!(!has_add, "BinOp::Add should be eliminated by constant folding");
+        assert!(!has_add, "Checked Add should be eliminated by constant folding");
     }
 
     #[test]
@@ -1114,11 +1114,11 @@ f() -> 10 / 4.
 f() -> 10 / 0.
 "#;
         let ir = lower_source(source).unwrap();
-        // Division by zero should NOT be folded — must remain as BinOp
+        // Division by zero must remain as checked runtime arithmetic
         let has_div = ir.functions[0].blocks.iter().any(|b|
-            b.instructions.iter().any(|i| matches!(i, Instruction::BinOp(_, BinOp::Div, _, _)))
+            b.instructions.iter().any(|i| matches!(i, Instruction::Arithmetic(ArithmeticSite { operation: ArithmeticOp::Divide(..), .. })))
         );
-        assert!(has_div, "Division by zero should be preserved as runtime BinOp");
+        assert!(has_div, "Division by zero should be preserved as runtime arithmetic operation");
     }
 
     #[test]
@@ -1141,8 +1141,10 @@ f() -> 10 / 0.
             let ir = lower_source(&source).unwrap();
             let instructions = || ir.functions[0].blocks.iter().flat_map(|b| b.instructions.iter());
             assert!(
-                instructions().any(|i| matches!(i, Instruction::BinOp(_, o, _, _) if *o == op)),
-                "{expr} should be preserved as a runtime BinOp"
+                instructions().any(|i| matches!(i, Instruction::Arithmetic(site) if matches!((site.operation, op),
+                    (ArithmeticOp::Add(..), BinOp::Add) | (ArithmeticOp::Subtract(..), BinOp::Sub)
+                    | (ArithmeticOp::Multiply(..), BinOp::Mul) | (ArithmeticOp::Divide(..), BinOp::Div)))),
+                "{expr} should be preserved as a runtime arithmetic operation"
             );
             assert!(
                 !instructions().any(|i| matches!(i, Instruction::Const(_, Literal::Float(f)) if !f.is_finite())),
@@ -1180,7 +1182,13 @@ f() -> 4611686018427387903 + 4611686018427387903.
                 instructions: vec![
                     Instruction::Const(VarId(0), Literal::Integer(i64::MAX)),
                     Instruction::Const(VarId(1), Literal::Integer(1)),
-                    Instruction::BinOp(VarId(2), BinOp::Add, VarId(0), VarId(1)),
+                    Instruction::Arithmetic(ArithmeticSite {
+                        id: OperationId(1),
+                        result: Some(VarId(2)),
+                        operation: ArithmeticOp::Add(VarId(0), VarId(1)),
+                        context: EvaluationContext::Body,
+                        failure: FailureDestination::Propagate,
+                    }),
                 ],
                 terminator: Terminator::Return(VarId(2)),
             }],
@@ -1190,9 +1198,9 @@ f() -> 4611686018427387903 + 4611686018427387903.
         fold_constants(&mut func, AtomId(100), AtomId(101));
         assert_valid(&func, "after standalone pass");
 
-        // Should still be a BinOp (overflow not folded)
+        // Overflow remains checked runtime arithmetic
         assert!(
-            matches!(&func.blocks[0].instructions[2], Instruction::BinOp(_, BinOp::Add, _, _)),
+            matches!(&func.blocks[0].instructions[2], Instruction::Arithmetic(ArithmeticSite { operation: ArithmeticOp::Add(..), .. })),
             "i64::MAX + 1 should NOT be folded (overflow)"
         );
     }
@@ -1250,7 +1258,7 @@ f() -> 1.5 + 2.5.
             let expected_atom = atom_result(&ir.functions[1]).unwrap();
             assert_eq!(atom_result(&ir.functions[0]), Some(expected_atom), "{expression}");
             assert!(!ir.functions[0].blocks.iter().flat_map(|block| &block.instructions)
-                .any(|instruction| matches!(instruction, Instruction::BinOp(..))),
+                .any(|instruction| matches!(instruction, Instruction::BinOp(..) | Instruction::Arithmetic(..))),
                 "{expression} must fold to a literal");
             println!("folded {expression} -> {expected}");
         }
@@ -1335,7 +1343,13 @@ f() -> -42.
                 params: vec![],
                 instructions: vec![
                     Instruction::Const(VarId(0), Literal::Atom(AtomId(100))), // true
-                    Instruction::UnaryOp(VarId(1), nera_syntax::ast::UnaryOp::Not, VarId(0)),
+                    Instruction::Arithmetic(ArithmeticSite {
+                        id: OperationId(2),
+                        result: Some(VarId(1)),
+                        operation: ArithmeticOp::Not(VarId(0)),
+                        context: EvaluationContext::Body,
+                        failure: FailureDestination::Propagate,
+                    }),
                 ],
                 terminator: Terminator::Return(VarId(1)),
             }],
@@ -1367,7 +1381,13 @@ f() -> -42.
                 params: vec![],
                 instructions: vec![
                     Instruction::Const(VarId(0), Literal::Integer(0)),
-                    Instruction::UnaryOp(VarId(1), nera_syntax::ast::UnaryOp::Bnot, VarId(0)),
+                    Instruction::Arithmetic(ArithmeticSite {
+                        id: OperationId(3),
+                        result: Some(VarId(1)),
+                        operation: ArithmeticOp::BitNot(VarId(0)),
+                        context: EvaluationContext::Body,
+                        failure: FailureDestination::Propagate,
+                    }),
                 ],
                 terminator: Terminator::Return(VarId(1)),
             }],
@@ -1400,9 +1420,21 @@ f() -> -42.
                 instructions: vec![
                     Instruction::Const(VarId(0), Literal::Integer(1)),
                     Instruction::Const(VarId(1), Literal::Integer(2)),
-                    Instruction::BinOp(VarId(2), BinOp::Add, VarId(0), VarId(1)),
+                    Instruction::Arithmetic(ArithmeticSite {
+                        id: OperationId(4),
+                        result: Some(VarId(2)),
+                        operation: ArithmeticOp::Add(VarId(0), VarId(1)),
+                        context: EvaluationContext::Body,
+                        failure: FailureDestination::Propagate,
+                    }),
                     Instruction::Const(VarId(3), Literal::Integer(3)),
-                    Instruction::BinOp(VarId(4), BinOp::Add, VarId(2), VarId(3)),
+                    Instruction::Arithmetic(ArithmeticSite {
+                        id: OperationId(5),
+                        result: Some(VarId(4)),
+                        operation: ArithmeticOp::Add(VarId(2), VarId(3)),
+                        context: EvaluationContext::Body,
+                        failure: FailureDestination::Propagate,
+                    }),
                 ],
                 terminator: Terminator::Return(VarId(4)),
             }],
@@ -1429,7 +1461,7 @@ f(X) -> X + 1.
 "#;
         let ir = lower_source(source).unwrap();
         let has_add = ir.functions[0].blocks.iter().any(|b|
-            b.instructions.iter().any(|i| matches!(i, Instruction::BinOp(_, BinOp::Add, _, _)))
+            b.instructions.iter().any(|i| matches!(i, Instruction::Arithmetic(ArithmeticSite { operation: ArithmeticOp::Add(..), .. })))
         );
         assert!(has_add, "X + 1 should NOT be folded (X is unknown)");
     }

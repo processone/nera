@@ -1,6 +1,6 @@
 //! Existing block-local constant evaluation.
 
-use crate::ir::{Instruction, IrFunction, Literal, VarId};
+use crate::ir::{ArithmeticOp, Instruction, IrFunction, Literal, VarId};
 use nera_syntax::ast::{AtomId, BinOp, UnaryOp};
 
 /// Constant folding pass: evaluate compile-time-known arithmetic, bitwise,
@@ -14,6 +14,33 @@ pub fn fold_constants(func: &mut IrFunction, true_atom_id: AtomId, false_atom_id
 
         for inst in &mut block.instructions {
             match inst {
+                Instruction::Arithmetic(site) => {
+                    let folded = match site.operation {
+                        ArithmeticOp::Add(a, b) | ArithmeticOp::Subtract(a, b)
+                        | ArithmeticOp::Multiply(a, b) | ArithmeticOp::Divide(a, b) => {
+                            let op = match site.operation {
+                                ArithmeticOp::Add(..) => BinOp::Add,
+                                ArithmeticOp::Subtract(..) => BinOp::Sub,
+                                ArithmeticOp::Multiply(..) => BinOp::Mul,
+                                _ => BinOp::Div,
+                            };
+                            known.get(&a).zip(known.get(&b))
+                                .and_then(|(a, b)| fold_binop(op, a, b, true_atom_id, false_atom_id))
+                        }
+                        ArithmeticOp::Negate(a) | ArithmeticOp::BitNot(a) | ArithmeticOp::Not(a) => {
+                            let op = match site.operation {
+                                ArithmeticOp::Negate(_) => UnaryOp::Neg,
+                                ArithmeticOp::BitNot(_) => UnaryOp::Bnot,
+                                _ => UnaryOp::Not,
+                            };
+                            known.get(&a).and_then(|a| fold_unaryop(op, a, true_atom_id, false_atom_id))
+                        }
+                    };
+                    if let (Some(result), Some(folded)) = (site.result, folded) {
+                        known.insert(result, folded.clone());
+                        *inst = Instruction::Const(result, folded);
+                    }
+                }
                 Instruction::Const(var, lit) => {
                     known.insert(*var, lit.clone());
                 }

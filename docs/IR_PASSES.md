@@ -11,7 +11,7 @@ The source-function pipeline runs once, in this order:
 
 | Step | Pass | Existing effect |
 | --- | --- | --- |
-| 1 | `insert_backedge_yield_checks` | Append scheduling checks at DFS back-edge sources when needed. |
+| 1 | `insert_backedge_yield_checks` | Insert scheduling checks before each source block's earliest DFS back-edge exit when needed. |
 | 2 | `fuse_make_tuple_send` | Replace eligible tuple construction and send pairs with `SendDirect`, retaining a nil definition of the tuple register. |
 | 3 | `eliminate_dead_match_contexts` | Replace `BsMatchStart2` with `BsStartMatch` when the context result has no uses. |
 | 4 | `fold_constants` | Fold supported operations from constants tracked within each block. |
@@ -32,14 +32,28 @@ interactions alongside tuple/send fusion and match-context removal.
 Each pass mutates one completed `IrFunction` in place. Folding and dead-code
 elimination additionally receive the module's true/false atom IDs. Passes do not
 allocate registers or blocks, change function signatures, or resolve calls.
-Only dead-code elimination changes the CFG; the other passes change instructions.
+Dead-code elimination changes normal CFG edges. Successful arithmetic folding
+replaces the entire operation site with a constant, removing its now-impossible
+failure edge; failed folds retain the site, context and destination unchanged.
+Dead-code elimination and back-edge analysis follow both normal and arithmetic
+failure edges through `BasicBlock::successors()`.
 Each invocation builds its own local maps and sets. There are no cached analyses
 or invalidation protocol.
 
-`uses.rs` contains the operand collectors shared by tuple/send fusion and
-match-context removal. Their existing traversal and counting behavior is
-preserved. The structural verifier keeps its own operand handling; extracting
-passes does not unify these analyses or alter optimization eligibility.
+`uses.rs` owns operand-read enumeration shared by tuple/send fusion and
+match-context removal. Fusion counts every read occurrence, including multiple
+reads in one instruction or block; a per-block set cannot establish single use.
+Match-context removal still asks only whether any read exists and therefore
+collects a set. The structural verifier keeps its own operand handling.
+
+Back-edge analysis retains each exit's instruction position. Normal edges leave
+at the terminator; an arithmetic failure leaves at that instruction, bypassing
+its suffix. A reduction check must precede the earliest raising back-edge exit, not merely
+appear at the end of its block. Landing-pad chains may contain only exception
+accessors and jumps before consuming the pending exception. If such a prefix
+closes a cycle, its scheduling check runs immediately after the chain's
+`ClearException`, never inside the pending prefix. Existing adjacent checks
+are retained, and repeating the pass inserts no additional check.
 
 ## Verification
 

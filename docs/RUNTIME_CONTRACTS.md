@@ -2,9 +2,9 @@
 
 This index assigns each compatibility fact to an existing Erlang fixture. The
 focused runner executes those assertions unchanged on native Nera (default and
-one scheduler) and Erlang/OTP 29. It changes checking, not product behavior or
-language support. This is the first guardrail for incremental compiler/runtime
-refactoring, not an exception-routing refactor or a claim of full BEAM parity.
+one scheduler) and Erlang/OTP 29. The runner changes checking, not product
+behavior or language support. These contracts guard the compiler's bounded arithmetic exception-routing refactor;
+they are not a claim of full BEAM parity.
 
 ## Contract index
 
@@ -15,7 +15,7 @@ refactoring, not an exception-routing refactor or a claim of full BEAM parity.
 | [`error_2`](../tests/error_2.erl) | The fixture's stated intent: `error/2` raises the supplied reason through direct, tail, apply, fun and computed-module calls. | Checks exact class/reason, non-returning behavior, catch envelope and list-shaped traces. Does not assert retention of `Args`, file metadata or `error_info`. |
 | [`float_arith_badarith`](../tests/float_arith_badarith.erl) | The fixture's stated regression: non-finite arithmetic and unrepresentable float operands raise `badarith`; earlier false filters stop evaluation. | Checks zero divisors, overflow, large operands, literal folds, finite results, signed zero/underflow, guard rejection and side effects. Existing uncaught-reason projection does not prove exit-envelope parity or numeric-conversion compatibility. |
 | [`bin_comp_badarg`](../tests/bin_comp_badarg.erl) | The fixture's stated regression: each binary-comprehension body must be a bitstring at that iteration, not an iolist. | Checks invalid bodies, exact class/reason, preserved body exceptions, valid controls and ordered filter/body effects. The existing monitor assertion accepts two exit-envelope shapes; this runner does not strengthen or normalize them. |
-| [`resume_exception`](../tests/resume_exception.erl) | [Suspended exception repair](PROJECT_STATUS.md#p0-1--exception-handlers-lost-across-suspension--repaired): handlers must survive receive suspension. | Checks exit/throw/error, nested callers, absent later dictionary effects, cleanup, message wakeup and normal return. Does not yet own the later arithmetic-context suspension pilot. |
+| [`resume_exception`](../tests/resume_exception.erl) | [Suspended exception repair](PROJECT_STATUS.md#p0-1--exception-handlers-lost-across-suspension--repaired): handlers must survive receive suspension. | Checks exit/throw/error, nested callers, absent later dictionary effects, cleanup, message wakeup and normal return. Also checks an arithmetic operand whose callee suspends until a message, then raises: no normal body effect resumes, and cleanup runs exactly once. |
 
 Each fact stays in its owning fixture. The runner adds no second implementation
 of Erlang semantics and performs no textual equality comparison of crash reports,
@@ -116,6 +116,10 @@ and shutdown changes follow their own contributing-guide conditions.
 A passing result proves only the assertions listed above on the recorded engine,
 artifacts and platform. macOS native execution does not prove Linux or Windows
 execution; cross-object generation does not prove target-native execution.
-No new architecture, performance result or broader language support follows from
-these contracts. Refactoring arithmetic exception routing remains a separate
-change after these guardrails merge.
+No performance result or broader language support follows from these contracts.
+The compiler's arithmetic routing representation is documented in
+[the IR contract](IR_CONTRACT.md#exceptions-scheduling-and-source-information).
+The short-circuit fixture additionally owns ordinary-body failure transfer for
+all migrated operators and their guard rejection. The cleanup fixture owns
+replacement by each migrated operator's exception, exactly-once cleanup entry
+and the absence of subsequent cleanup effects.

@@ -144,9 +144,10 @@ pub struct FuncTranslator {
     pub(super) current_ir_block_id: Option<BlockId>,
     /// Per-function: the instruction index within the current block.
     pub(super) current_inst_idx: usize,
-    /// Per-function: set of block IDs that contain CheckException.
-    /// BinOp/UnaryOp FFI calls in these blocks should not emit exception
-    /// checks because try/catch will handle them.
+    pub(super) current_blocks: HashMap<BlockId, cranelift_codegen::ir::Block>,
+    /// Per-function: protected result registers for calls and unmigrated
+    /// operations whose existing IR checks handle exceptions. Arithmetic sites
+    /// never consult this set; their destinations are instruction-local.
     pub(super) current_try_protected_values: std::collections::HashSet<VarId>,
     /// Per-function: Cranelift Variable that holds the reduction counter.
     /// Kept in a CPU register across self-tail-call loop iterations;
@@ -177,6 +178,7 @@ impl FuncTranslator {
             current_call_result_vars: Vec::new(),
             current_ir_block_id: None,
             current_inst_idx: 0,
+            current_blocks: HashMap::new(),
             current_try_protected_values: std::collections::HashSet::new(),
             reds_var: None,
             last_branch_predicate: None,
@@ -293,10 +295,17 @@ impl FuncTranslator {
             var_map.entry(var_id).or_insert_with(|| builder.declare_var(types::I64));
         };
 
+        self.current_blocks = block_map.clone();
+
         // Pre-declare all variables used in the function
         for ir_block in &ir_func.blocks {
             for inst in &ir_block.instructions {
                 match inst {
+                    Instruction::Arithmetic(site) => {
+                        if let Some(v) = site.result {
+                            declare_var(v, &mut var_map, &mut builder);
+                        }
+                    }
                     Instruction::Const(v, _)
                     | Instruction::BinOp(v, _, _, _)
                     | Instruction::UnaryOp(v, _, _)

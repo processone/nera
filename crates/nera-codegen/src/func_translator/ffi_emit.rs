@@ -39,6 +39,67 @@ impl FuncTranslator {
         Ok(builder.inst_results(call)[0])
     }
 
+    /// All migrated runtime-helper and inline slow paths share this check.
+    pub(super) fn emit_checked_arithmetic_call(
+        &mut self,
+        module: &mut ObjectModule,
+        builder: &mut FunctionBuilder,
+        name: &str,
+        ctx_var: Variable,
+        operands: &[Value],
+        failure: Option<cranelift_codegen::ir::Block>,
+    ) -> Result<Value, TranslateError> {
+        let value = self.emit_ffi_call(module, builder, name, ctx_var, operands)?;
+        let ctx = builder.use_var(ctx_var);
+        let status = builder.ins().load(types::I32, MemFlags::trusted(), ctx, CTX_OFFSET_STATUS);
+        let failed = builder.ins().icmp_imm(IntCC::Equal, status, STATUS_EXCEPTION as i64);
+        let next = builder.create_block();
+        match failure {
+            Some(target) => { builder.ins().brif(failed, target, &[], next, &[]); }
+            None => {
+                let leave = builder.create_block();
+                builder.ins().brif(failed, leave, &[], next, &[]);
+                builder.switch_to_block(leave);
+                let nil = builder.ins().iconst(types::I64, NIL_VALUE as i64);
+                self.emit_stack_pop_and_return(module, builder, ctx_var, nil)?;
+            }
+        }
+        builder.switch_to_block(next);
+        Ok(value)
+    }
+
+    pub(super) fn emit_inline_not(
+        &mut self,
+        module: &mut ObjectModule,
+        builder: &mut FunctionBuilder,
+        ctx_var: Variable,
+        operand: Value,
+        failure: Option<cranelift_codegen::ir::Block>,
+    ) -> Result<Value, TranslateError> {
+        let true_atom = self.load_true_atom(module, builder)?;
+        let false_atom = self.load_false_atom(module, builder)?;
+        let is_true = builder.ins().icmp(IntCC::Equal, operand, true_atom);
+        let is_false = builder.ins().icmp(IntCC::Equal, operand, false_atom);
+        let is_bool = builder.ins().bor(is_true, is_false);
+        let fast = builder.create_block();
+        let slow = builder.create_block();
+        builder.set_cold_block(slow);
+        let merge = builder.create_block();
+        builder.append_block_param(merge, types::I64);
+        builder.ins().brif(is_bool, fast, &[], slow, &[]);
+        builder.switch_to_block(fast);
+        builder.seal_block(fast);
+        let flipped = builder.ins().select(is_true, false_atom, true_atom);
+        builder.ins().jump(merge, &[BlockArg::Value(flipped)]);
+        builder.switch_to_block(slow);
+        builder.seal_block(slow);
+        let value = self.emit_checked_arithmetic_call(module, builder, "nera_rt_bool_not", ctx_var, &[operand], failure)?;
+        builder.ins().jump(merge, &[BlockArg::Value(value)]);
+        builder.switch_to_block(merge);
+        builder.seal_block(merge);
+        Ok(builder.block_params(merge)[0])
+    }
+
     /// Emit a call to a void FFI function (no return value used).
     pub(super) fn emit_ffi_call_void(
         &mut self,
@@ -176,7 +237,7 @@ impl FuncTranslator {
         lhs: Value,
         rhs: Value,
         operation: InlineArithmetic,
-        check_exception_in_slow_path: bool,
+        failure: Option<cranelift_codegen::ir::Block>,
     ) -> Result<Value, TranslateError> {
 
 
@@ -244,23 +305,7 @@ impl FuncTranslator {
         // Slow path: FFI fallback
         builder.switch_to_block(slow_block);
         builder.seal_block(slow_block);
-        let slow_ret = self.emit_ffi_call(module, builder, ffi_name, ctx_var, &[lhs, rhs])?;
-        if check_exception_in_slow_path {
-            // Check for exception here so the fast path (which never raises) avoids the cost.
-            let ctx_val = builder.use_var(ctx_var);
-            let status = builder.ins().load(types::I32, MemFlags::trusted(), ctx_val, CTX_OFFSET_STATUS);
-            let exc_const = builder.ins().iconst(types::I32, STATUS_EXCEPTION as i64);
-            let is_exc = builder.ins().icmp(IntCC::Equal, status, exc_const);
-            let exc_block = builder.create_block();
-            let slow_ok_block = builder.create_block();
-            builder.ins().brif(is_exc, exc_block, &[], slow_ok_block, &[]);
-
-            builder.switch_to_block(exc_block);
-            let nil = builder.ins().iconst(types::I64, NIL_VALUE as i64);
-            self.emit_stack_pop_and_return(module, builder, ctx_var, nil)?;
-
-            builder.switch_to_block(slow_ok_block);
-        }
+        let slow_ret = self.emit_checked_arithmetic_call(module, builder, ffi_name, ctx_var, &[lhs, rhs], failure)?;
         builder.ins().jump(merge_block, &[BlockArg::Value(slow_ret)]);
 
         // Merge

@@ -8,7 +8,7 @@ use cranelift_frontend::{FunctionBuilder, Variable};
 use cranelift_module::Module;
 use cranelift_object::ObjectModule;
 
-use nera_ir::ir::{CallTarget, Instruction, Literal, VarId};
+use nera_ir::ir::{ArithmeticOp, FailureDestination, CallTarget, Instruction, Literal, VarId};
 use crate::term_layout::*;
 use super::ffi_emit::SegmentSizeKind;
 use super::{ModuleContext, declare_runtime_func,
@@ -42,6 +42,39 @@ impl FuncTranslator {
         };
         let is_try_protected = protected_result.is_some_and(|v| self.current_try_protected_values.contains(v));
         match inst {
+            Instruction::Arithmetic(site) => {
+                let failure = match site.failure {
+                    FailureDestination::Propagate => None,
+                    FailureDestination::Block(target) => Some(*self.current_blocks.get(&target)
+                        .ok_or_else(|| TranslateError::Module("missing arithmetic failure destination".into()))?),
+                };
+                let operands: Vec<_> = site.operation.operands().iter()
+                    .map(|v| builder.use_var(var_map[v])).collect();
+                let value = match site.operation {
+                    ArithmeticOp::Add(..) | ArithmeticOp::Subtract(..) | ArithmeticOp::Multiply(..) => {
+                        use super::ffi_emit::InlineArithmetic;
+                        let operation = match site.operation {
+                            ArithmeticOp::Add(..) => InlineArithmetic::Add,
+                            ArithmeticOp::Subtract(..) => InlineArithmetic::Subtract,
+                            _ => InlineArithmetic::Multiply,
+                        };
+                        self.emit_inline_arith(module, builder, ctx_var, operands[0], operands[1], operation, failure)?
+                    }
+                    ArithmeticOp::Not(_) => self.emit_inline_not(module, builder, ctx_var, operands[0], failure)?,
+                    _ => {
+                        let name = match site.operation {
+                            ArithmeticOp::Divide(..) => "nera_rt_fdiv",
+                            ArithmeticOp::Negate(_) => "nera_rt_negate",
+                            ArithmeticOp::BitNot(_) => "nera_rt_bnot",
+                            _ => unreachable!(),
+                        };
+                        self.emit_checked_arithmetic_call(module, builder, name, ctx_var, &operands, failure)?
+                    }
+                };
+                if let Some(var) = site.result.and_then(|v| var_map.get(&v)) {
+                    builder.def_var(*var, value);
+                }
+            }
             Instruction::Const(result, lit) => {
                 let val = match lit {
                     Literal::Integer(n) => {
@@ -91,16 +124,9 @@ impl FuncTranslator {
                 let check_exc_in_slow = !is_try_protected;
 
                 let val = match op {
-                    // --- Inline small-int arithmetic fast paths ---
-                    nera_syntax::ast::BinOp::Add | nera_syntax::ast::BinOp::Sub | nera_syntax::ast::BinOp::Mul => {
-                        use super::ffi_emit::InlineArithmetic;
-                        let operation = match op {
-                            nera_syntax::ast::BinOp::Add => InlineArithmetic::Add,
-                            nera_syntax::ast::BinOp::Sub => InlineArithmetic::Subtract,
-                            _ => InlineArithmetic::Multiply,
-                        };
-                        self.emit_inline_arith(module, builder, ctx_var, lhs_val, rhs_val,
-                            operation, check_exc_in_slow)?
+                    nera_syntax::ast::BinOp::Add | nera_syntax::ast::BinOp::Sub
+                    | nera_syntax::ast::BinOp::Mul | nera_syntax::ast::BinOp::Div => {
+                        return Err(TranslateError::Module("arithmetic requires an explicit operation site".into()));
                     }
                     nera_syntax::ast::BinOp::IntDiv => {
                         self.emit_inline_div_rem(module, builder, ctx_var, lhs_val, rhs_val, "nera_rt_int_div", false, check_exc_in_slow)?
@@ -230,10 +256,6 @@ impl FuncTranslator {
                         builder.seal_block(merge_block);
                         builder.block_params(merge_block)[0]
                     }
-                    nera_syntax::ast::BinOp::Div => {
-                        needs_exception_check = true;
-                        self.emit_ffi_call(module, builder, "nera_rt_fdiv", ctx_var, &[lhs_val, rhs_val])?
-                    }
                     nera_syntax::ast::BinOp::ListAppend => {
                         needs_exception_check = true;
                         self.emit_ffi_call(module, builder, "nera_rt_list_append", ctx_var, &[lhs_val, rhs_val])?
@@ -256,62 +278,15 @@ impl FuncTranslator {
             }
 
             Instruction::UnaryOp(result, op, operand) => {
+                if !matches!(op, nera_syntax::ast::UnaryOp::Pos) {
+                    return Err(TranslateError::Module("arithmetic requires an explicit operation site".into()));
+                }
                 let operand_val = builder.use_var(var_map[operand]);
-
-                let needs_exception_check = true;
-
-                let val = match op {
-                    nera_syntax::ast::UnaryOp::Pos => {
-                        self.emit_ffi_call(module, builder, "nera_rt_unary_plus", ctx_var, &[operand_val])?
-                    }
-                    nera_syntax::ast::UnaryOp::Neg => {
-                        self.emit_ffi_call(module, builder, "nera_rt_negate", ctx_var, &[operand_val])?
-                    }
-                    nera_syntax::ast::UnaryOp::Not => {
-                        // Logical not: true -> false, false -> true.
-                        // Raises badarg if operand is not a boolean atom.
-                        let true_atom = self.load_true_atom(module, builder)?;
-                        let false_atom = self.load_false_atom(module, builder)?;
-                        let is_true = builder.ins().icmp(IntCC::Equal, operand_val, true_atom);
-                        let is_false = builder.ins().icmp(IntCC::Equal, operand_val, false_atom);
-                        let is_bool = builder.ins().bor(is_true, is_false);
-
-                        let fast_block = builder.create_block();
-                        let slow_block = builder.create_block();
-                        builder.set_cold_block(slow_block);
-                        let merge_block = builder.create_block();
-                        builder.append_block_param(merge_block, types::I64);
-
-                        builder.ins().brif(is_bool, fast_block, &[], slow_block, &[]);
-
-                        // Fast path: flip true<->false
-                        builder.switch_to_block(fast_block);
-                        builder.seal_block(fast_block);
-                        let fast_result = builder.ins().select(is_true, false_atom, true_atom);
-                        builder.ins().jump(merge_block, &[BlockArg::Value(fast_result)]);
-
-                        // Slow path: FFI call that raises badarg
-                        builder.switch_to_block(slow_block);
-                        builder.seal_block(slow_block);
-                        let slow_ret = self.emit_ffi_call(module, builder, "nera_rt_bool_not", ctx_var, &[operand_val])?;
-                        builder.ins().jump(merge_block, &[BlockArg::Value(slow_ret)]);
-
-                        builder.switch_to_block(merge_block);
-                        builder.seal_block(merge_block);
-                        builder.block_params(merge_block)[0]
-                    }
-                    nera_syntax::ast::UnaryOp::Bnot => {
-                        self.emit_ffi_call(module, builder, "nera_rt_bnot", ctx_var, &[operand_val])?
-                    }
-                };
-
+                let val = self.emit_ffi_call(module, builder, "nera_rt_unary_plus", ctx_var, &[operand_val])?;
                 if let Some(var) = var_map.get(result) {
                     builder.def_var(*var, val);
                 }
-
-                // Check for exception after the unary operation
-                // (skip if inside a try block — CheckException handles it)
-                if needs_exception_check && !is_try_protected {
+                if !is_try_protected {
                     self.emit_ffi_exception_check(module, builder, ctx_var)?;
                 }
             }
