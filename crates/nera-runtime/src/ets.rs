@@ -402,7 +402,7 @@ unsafe fn object_heap_words(term: ErlTerm, pending: &mut WorkStack<ErlTerm>) -> 
         queue(cursor); // tail
         return count;
     }
-    if term.is_binary() {
+    if term.is_bitstring() {
         if let Some((_ptr, len)) = unsafe { crate::ffi::binary_data_pub(term) } {
             if len <= REFC_BINARY_THRESHOLD {
                 return 1 + len.div_ceil(8); // header + data words
@@ -517,7 +517,7 @@ trait CopyTarget {
     /// Allocate `n` uninitialized words that stay in place.
     fn alloc_words(&mut self, n: usize) -> *mut u64;
 
-    /// Copy a boxed term that holds no other terms (a binary, float, bigint
+    /// Copy a boxed term that holds no other terms (a bitstring, float, bigint
     /// or reference); any other term is kept as it is.
     /// # Safety
     /// As for `deep_copy_into_compact`.
@@ -536,16 +536,17 @@ impl CopyTarget for CompactHeap {
                           REFC_BINARY_OFFSET_WORD_INDEX, REFERENCE_TOTAL_WORDS,
                           REFERENCE_ID_WORD_INDEX};
 
-        if term.is_binary() {
+        if term.is_bitstring() {
             if let Some((ptr, len)) = unsafe { crate::ffi::binary_data_pub(term) } {
                 let bytes = unsafe { std::slice::from_raw_parts(ptr, len) };
+                let bit_len = unsafe { term.binary_bit_size().unwrap() } as u64;
                 if len <= REFC_BINARY_THRESHOLD {
                     // Inline heap binary: [header | data words...]
                     let data_words = len.div_ceil(8);
                     let total_words = 1 + data_words;
                     let words = self.alloc_words(total_words);
                     unsafe {
-                        *words = BoxedHeader::new(crate::term::BoxedSubtype::HeapBinary, (len * 8) as u64).0;
+                        *words = BoxedHeader::new(crate::term::BoxedSubtype::HeapBinary, bit_len).0;
                         std::ptr::copy_nonoverlapping(
                             bytes.as_ptr(),
                             (words.add(1)) as *mut u8,
@@ -559,7 +560,7 @@ impl CopyTarget for CompactHeap {
                     let raw_arc_ptr = Arc::as_ptr(&data) as u64;
                     let words = self.alloc_words(REFC_BINARY_TOTAL_WORDS);
                     unsafe {
-                        *words = BoxedHeader::new(crate::term::BoxedSubtype::RefcBinary, (len * 8) as u64).0;
+                        *words = BoxedHeader::new(crate::term::BoxedSubtype::RefcBinary, bit_len).0;
                         *words.add(REFC_BINARY_PTR_WORD_INDEX) = raw_arc_ptr;
                         *words.add(REFC_BINARY_OFFSET_WORD_INDEX) = 0;
                     }
@@ -613,10 +614,16 @@ impl CopyTarget for ProcessHeap {
     }
 
     unsafe fn copy_leaf(&mut self, term: ErlTerm) -> ErlTerm {
-        if term.is_binary() {
+        if term.is_bitstring() {
             if let Some((ptr, len)) = unsafe { crate::ffi::binary_data_pub(term) } {
                 let bytes = unsafe { std::slice::from_raw_parts(ptr, len) };
-                return self.alloc_binary_auto(bytes);
+                let bit_len = unsafe { term.binary_bit_size().unwrap() } as u64;
+                let copy = self.alloc_binary_auto(bytes);
+                // Allocation rounds up to bytes; preserve the logical bit
+                // length rather than turning the trailing bits into a byte.
+                let header = copy.as_boxed_ptr().unwrap().cast_mut();
+                unsafe { *header = BoxedHeader(*header).with_arity(bit_len).0; }
+                return copy;
             }
             return term;
         }
@@ -690,7 +697,7 @@ impl<'a, T: CopyTarget> EtsCopier<'a, T> {
         if term.is_cons() {
             return unsafe { self.copy_list(term) };
         }
-        if !unsafe { term.is_binary() } {
+        if !unsafe { term.is_bitstring() } {
             if let Some(ptr) = term.as_boxed_ptr() {
                 let header = BoxedHeader(unsafe { *ptr });
                 let (subtype, raw, slots) = match header.subtype() {
@@ -3781,3 +3788,7 @@ mod tests {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "ets_bitstring_tests.rs"]
+mod bitstring_tests;
