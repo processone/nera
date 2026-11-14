@@ -48,6 +48,33 @@ a dependency, or using the editor tools does not establish runtime compatibility
 Dated Thoas sections below preserve historical evidence; the table above and
 the integration README summary define the current verdict.
 
+## proc_lib startup failure regression
+
+On macOS arm64 with Rust 1.99.0 and Erlang/OTP 29.1.2, the same
+`tests/proc_lib_init_crash.erl` fixture passes natively and on BEAM.
+Before the fix, main `036272267d8b578c1354f178f395f29f907676f2` fails the
+first trapping-caller start with `start_link_still_waiting` after five seconds.
+With the fix, both `proc_lib:start_link/3,5` return `{error, Reason}` to
+trapping callers and exit non-trapping linked callers with BEAM's reason for
+an error, exit or uncaught throw before acknowledgement. The fixture also
+checks normal pre-ack termination, mailbox cleanup, both `init_ack` forms,
+metadata and preserved post-ack links.
+
+Reproduce with a freshly built runtime and compiler:
+
+```sh
+./target/release/nera test proc_lib_init_crash -j 1 --timeout 30
+beam_dir=$(mktemp -d)
+erlc -o "$beam_dir" tests/proc_lib_init_crash.erl
+erl -noshell -pa "$beam_dir" -eval 'ok = proc_lib_init_crash:test(), halt().'
+rm -rf "$beam_dir"
+```
+
+The fixture must reach `proc_lib_init_crash_ok`; the native test runner checks
+this completion marker, and BEAM prints it. This is a scoped regression, not a successful
+Ranch or Cowboy startup: neither integration was rerun for this change.
+`start_link/5` still ignores finite timeouts and spawn options.
+
 ## Cowboy analysis — 2026-10-20
 
 Cowboy **2.20.0** (`0a51d96698e1496720f9e13b4c1b91106dcc8a49`)
