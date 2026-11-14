@@ -19,7 +19,7 @@ use nera_syntax::ast::{self, AtomId};
 use nera_syntax::error::Diagnostic;
 use nera_syntax::span::Span;
 
-use super::ast_walkers::{collect_pattern_bindings, collect_expr_refs};
+use super::ast_walkers::{collect_enclosing_refs, collect_pattern_bindings};
 
 /// Check a function for exported variable references.
 pub(super) fn check_exported_variables_fn(
@@ -56,10 +56,11 @@ fn check_exported_in_body(
         let exported_vars = collect_exported_from_expr(expr, &scope);
 
         if !exported_vars.is_empty() {
-            // Collect all variable references in the remaining body expressions.
+            // Fun heads and generator patterns bind fresh names, not reads
+            // of the same-named variable exported by this expression.
             let mut later_refs = HashSet::new();
             for later_expr in &body[i + 1..] {
-                collect_expr_refs(later_expr, &mut later_refs);
+                collect_enclosing_refs(later_expr, &mut later_refs);
             }
 
             for (var_id, construct, construct_span) in &exported_vars {
