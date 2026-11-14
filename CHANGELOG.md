@@ -2,6 +2,14 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Formatter preserves negated negative literals
+
+- Formatting `-(-0)` and negated negative big integers retains the grouping
+  needed to keep the two minus signs separate. Previously these expressions
+  could become an invalid `--` token.
+- The formatted Erlang parses successfully and remains unchanged on a second
+  formatting pass, including base-prefixed and underscore-separated literals.
+
 ## Process exits release ETS tables before exit signals
 
 - A dead process's ETS tables are deleted before linked processes receive
