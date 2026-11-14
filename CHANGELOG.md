@@ -2,6 +2,16 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Exited processes are no longer reported alive after shutdown
+
+- `is_process_alive/1` now returns `false` once a process publishes its exit,
+  even if its worker has not yet removed the process table entry. Previously
+  a supervisor could finish stopping its children and exit, yet an observer
+  receiving its `DOWN` could briefly see a stopped child as still alive.
+- A deterministic runtime regression holds that ordering between exit-signal
+  delivery and table removal. The existing `supervisor_shutdown` fixture
+  continues to check that all children are stopped before shutdown completes.
+
 ## Linked exits release a woken process's runnable slot once
 
 - When a linked process exits and kills a process that was woken but has not

@@ -250,7 +250,7 @@ Maintainers with OTP 29.0.4 installed can verify the catalogue with
 | cancel_timer/1,2    | ✅      | Cancels send_after/start_timer; async/info boolean options; already sent messages remain |
 | binary_part/3       | ✅      |                       |
 | process_info/2      | ✅      | Item atom or list; see notes below |
-| is_process_alive/1  | ✅      |                       |
+| is_process_alive/1  | ✅      | Exited processes return `false` before their process table entry is removed. |
 | halt/0,1            | ✅      | Immediate termination |
 | make_tuple/2,3      | ✅      |                       |
 | atom_to_binary/1,2  | ✅      | /1: UTF-8; /2: latin1, unicode or utf8; latin1 rejects characters above 255 |
