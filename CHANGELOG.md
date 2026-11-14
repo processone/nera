@@ -2,6 +2,16 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Process exits release ETS tables before exit signals
+
+- A dead process's ETS tables are deleted before linked processes receive
+  `EXIT` or monitoring processes receive `DOWN`, as on BEAM. This also covers
+  processes killed by a linked process's exit.
+- A child restarted by its supervisor can immediately create the same named
+  table without racing the previous owner's cleanup.
+- The `ets_freed_before_signal` regression checks five exit paths and repeated
+  supervised restarts, unchanged natively and on BEAM.
+
 ## Stored bitstrings keep their bytes and exact bit length
 
 - ETS and `persistent_term` now own copies of non-byte-aligned bitstrings,

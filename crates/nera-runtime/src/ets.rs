@@ -3701,9 +3701,9 @@ mod tests {
     }
 
     // Regression: a process exit releases the names of the named tables it
-    // owned, and only those. The Erlang fixture ets_named_table_return cannot
-    // check this deterministically: natively the monitor message is sent
-    // before the exiting process's tables are deleted.
+    // owned, and only those. The scheduler's exit_deletes_ets_before_any_signal
+    // test owns the ordering relative to exit signals; this test owns isolation
+    // between named and unnamed tables belonging to different processes.
     #[test]
     fn owner_exit_releases_only_its_named_table() {
         let name = global_atom_table().intern("test_owner_exit_named");
