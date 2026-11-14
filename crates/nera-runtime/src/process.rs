@@ -3101,7 +3101,7 @@ mod tests {
             let kept = proc.mailbox.messages().next().unwrap();
             // SAFETY: the original and delivered tuple are still owned and live.
             assert_eq!(unsafe {
-                crate::ffi::nera_rt_exact_eq(std::ptr::null_mut(), kept.0, ordinary.0)
+                crate::ffi::compare::nera_rt_exact_eq(std::ptr::null_mut(), kept.0, ordinary.0)
             }, ErlTerm::atom(ATOM_TRUE).0);
             assert_eq!(proc.mailbox.len(), 1);
         }
