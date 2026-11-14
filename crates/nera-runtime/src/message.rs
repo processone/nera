@@ -164,7 +164,12 @@ pub enum MessageFragment {
     /// Pending exit/2 signal, distinct from an ordinary {'EXIT', Pid, Reason}
     /// message. Classification travels with the payload in one queue push;
     /// inbox draining retains it until signal processing.
-    ExitSignal(Box<MessageFragment>),
+    ExitSignal {
+        message: Box<MessageFragment>,
+        /// An untrapped exit(self(), normal) is a suicide request. Capture this
+        /// per signal: later trap_exit changes must not create such a request.
+        normal_self_exit: bool,
+    },
     /// Immediate value (atom, small int, pid, nil) — no heap needed.
     Immediate(ImmediateTerm),
     /// Heap-backed term with its own mini-heap (boxed to shrink the enum).
@@ -334,7 +339,7 @@ impl MessageFragment {
                 target.adopt_fragment(frag.heap);
                 frag.root
             }
-            MessageFragment::ActiveReadReady { .. } | MessageFragment::ExitSignal(_) => {
+            MessageFragment::ActiveReadReady { .. } | MessageFragment::ExitSignal { .. } => {
                 panic!("runtime notifications must be intercepted by drain_inbox, not copy_to_heap");
             }
         }

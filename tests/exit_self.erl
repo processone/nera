@@ -19,6 +19,7 @@ test() ->
     lists:foreach(fun trapped/1, [normal, shutdown, killed,
                                  {shutdown, [worker, 42]}, 17, <<"stopped">>]),
     ok = external_normal(),
+    ok = pending_trapped_normal(),
     lists:foreach(fun(Source) ->
         ok = mailbox_control(Source, kill),
         ok = mailbox_control(Source, external_normal)
@@ -140,6 +141,27 @@ external_normal() ->
     after 5000 -> error(external_normal_timeout)
     end,
     await_exit(Pid, Ref, normal).
+
+%% A normal self-signal sent while trapping is not a suicide request. Turning
+%% trapping off before the pending signal is handled must still let us resume.
+pending_trapped_normal() ->
+    Parent = self(),
+    {Pid, Ref} = spawn_monitor(fun() ->
+        false = process_flag(trap_exit, true),
+        true = exit(self(), normal),
+        true = process_flag(trap_exit, false),
+        Parent ! {ready, self()},
+        receive
+            go -> Parent ! {survived, self()}
+        after 5000 -> error(pending_normal_timeout)
+        end
+    end),
+    receive {ready, Pid} -> Pid ! go after 5000 -> error(ready_timeout) end,
+    receive
+        {survived, Pid} -> await_exit(Pid, Ref, normal);
+        {'DOWN', Ref, process, Pid, Reason} -> error({pending_self_normal_exited, Reason})
+    after 5000 -> error(pending_normal_timeout)
+    end.
 
 %% An ordinary or previously trapped EXIT tuple is never a pending signal.
 %% Check both fused tuple sends and sends of an existing tuple. The trapped
