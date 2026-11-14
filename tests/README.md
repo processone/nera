@@ -186,6 +186,9 @@ These are automatically skipped by the runner and show up as SKIP in output.
 | `binary_segment_specifiers.erl` | Signed UTF construction and patterns, ignored flags, repeated identical declarations and binary alias units; same fixture on BEAM | Table-driven |
 | `binary_segment_type_conflict.erl` | Reject conflicting binary-utf8 construction types with OTP's conflict message | (compile error) |
 | `binary_segment_pattern_conflict.erl` | Reject utf8-signed-binary patterns with OTP's conflict message | (compile error) |
+| `bitstring_unit_conflict.erl` | Reject an explicit non-one `/bitstring` unit with OTP's ordered unit-conflict message | (compile error) |
+| `bits_unit_zero.erl` | Reject `/bits-unit:0` with OTP's undefined-unit message | (compile error) |
+| `bitstring_unit_out_of_range.erl` | Reject an out-of-range unit before `/bitstring` in a pattern with OTP's undefined-unit message | (compile error) |
 | `binary_match.erl`             | Binary pattern matching                    | ~12        |
 | `binary_pattern_size_overflow.erl` | Debug-safe constant size/unit pre-binding and UTF minimum sums: overflowing and at-limit sizes, case, heads, funs, receive, try/catch, binary/bitstring segments, huge prefixes before UTF-8/16/32 and ordinary extraction controls; also run on BEAM | 23 |
 | `binary_string_construction.erl` | Codepoint string segments in construction: UTF-16/32 big, little and native byte order and surrogate pairs, literal and dynamic sizes, units, flags, floats, empty strings, binary-type badarg, arithmetic failures caught in try, guards, try and comprehensions; also run on BEAM | Table-driven |

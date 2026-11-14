@@ -26,6 +26,9 @@ pub enum ParseError {
     #[error("invalid float literal")]
     InvalidFloat { span: Span },
 
+    #[error("bit type {{unit,{value}}} undefined")]
+    InvalidBinaryUnit { value: String, span: Span },
+
     #[error("lexer error")]
     LexerError { position: usize },
 
@@ -67,6 +70,7 @@ impl ParseError {
             ParseError::UnexpectedToken { span, .. } => Some(*span),
             ParseError::InvalidInteger { span } => Some(*span),
             ParseError::InvalidFloat { span } => Some(*span),
+            ParseError::InvalidBinaryUnit { span, .. } => Some(*span),
             ParseError::LexerError { position } => {
                 Some(Span::new(*position, *position + 1))
             }
@@ -90,6 +94,7 @@ impl ParseError {
             ParseError::UnexpectedEof { .. } => "unexpected end of file",
             ParseError::InvalidInteger { .. } => "invalid integer literal",
             ParseError::InvalidFloat { .. } => "invalid float literal",
+            ParseError::InvalidBinaryUnit { .. } => "binary segment unit must be in 1..=256",
             ParseError::LexerError { .. } => "unrecognized token",
             ParseError::UndefinedMacro { .. } => "undefined macro",
             ParseError::UnclosedConditional { .. } => "unclosed conditional",

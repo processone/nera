@@ -2614,6 +2614,29 @@ fn binary_specifier_conflicts_follow_otp_merge_order() {
 }
 
 #[test]
+fn bitstring_non_one_units_conflict_in_both_orders() {
+    // OTP fixes both spellings to unit:1, in construction and patterns.
+    for typ in ["bitstring", "bits"] {
+        for unit in [2, 8, 256] {
+            for (spec, new, previous) in [
+                (format!("{typ}-unit:{unit}"), unit, 1),
+                (format!("unit:{unit}-{typ}"), 1, unit),
+            ] {
+                let expected = format!("conflict in unit specification for bit field: '{new}' and '{previous}'");
+                for body in [format!("f(X) -> <<X/{spec}>>."), format!("f(<<X/{spec}>>) -> X.")] {
+                    assert_eq!(error_messages(&body), vec![expected.clone()], "{body}");
+                }
+            }
+        }
+        for spec in [typ.to_string(), format!("{typ}-unit:1"), format!("unit:1-{typ}")] {
+            for body in [format!("f(X) -> <<X/{spec}>>."), format!("f(<<X/{spec}>>) -> X.")] {
+                assert!(error_messages(&body).is_empty(), "{body}");
+            }
+        }
+    }
+}
+
+#[test]
 fn nonconflicting_binary_specifiers_are_accepted() {
     // NERA-112: signed UTF, ignored flags and identical declarations are
     // accepted by OTP 29, not conflicts with the implicit defaults.

@@ -10,6 +10,17 @@ All notable milestones for the nera project are documented in this file.
 - The formatted Erlang parses successfully and remains unchanged on a second
   formatting pass, including base-prefixed and underscore-separated literals.
 
+## Bitstring segment unit diagnostics match BEAM
+
+- `/bitstring` and `/bits` reject every explicit unit other than 1 in
+  construction and patterns. Valid-range conflicts retain BEAM's unit message
+  and declaration order.
+- Zero and out-of-range units now report `bit type {unit,N} undefined`, as on
+  BEAM, including integer literals too large for a machine word. The parser
+  still rejects invalid units before converting them to its stored unit type.
+- Direct compile-error regressions cover `/bitstring-unit:8`, a zero `/bits`
+  unit and an out-of-range `/bitstring` pattern unit.
+
 ## Process exits release ETS tables before exit signals
 
 - A dead process's ETS tables are deleted before linked processes receive
