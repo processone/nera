@@ -345,6 +345,7 @@ These are automatically skipped by the runner and show up as SKIP in output.
 | `list_append.erl`        | ++ and -- operators                  | ~15        |
 | `lists_member_exact.erl` | lists:member/2 exact equality: integer/float and signed-zero distinctions, compound terms, separately constructed equals, empty/later matches and direct/apply/dynamic/fun calls; numeric key-search controls; also run on BEAM | Table-driven |
 | `list_comprehension.erl` | Basic LC, filters, pattern gen       | ~8         |
+| `comprehension_leading_filter.erl` | Leading and filter-only list/binary comprehensions: boolean results, short-circuit order, list/binary sources, captures, bitstrings and exceptions; same fixture on native and BEAM | Table-driven |
 | `lc_nested.erl`          | Nested list comprehension generators | ~8         |
 | `string_as_list.erl`     | String operations, comparison        | ~12        |
 | `string_codepoints.erl` | Non-ASCII expressions, full octal escape range, adjacency, list operations, patterns and Unicode format padding; also run on BEAM | 28 |
