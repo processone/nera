@@ -753,13 +753,11 @@ fn propagate_exit_signals(
                 exit_reason
             };
 
-            // Only decrement runnable_count if the process was actually
-            // runnable. Waiting processes were already decremented when
-            // they entered the wait state.
-            let was_runnable = matches!(proc.status(), ProcessStatus::Ready | ProcessStatus::Running);
-
+            // Take the published state atomically with Exited: a lock-free
+            // wake owns a runnable slot even while the locked state is Waiting.
+            // An unwoken wait has already released its slot.
             proc.exit_reason = Some(cascade_reason);
-            proc.transition(ProcessState::Exited);
+            let was_runnable = proc.transition_exited();
 
             // Extract this process's links/monitors for recursive propagation
             let their_links = std::mem::take(&mut proc.otp.links);
@@ -1311,8 +1309,19 @@ fn worker_loop(
         // Execute the process for one time-slice.
         let mut proc = proc_entry.lock_for_runtime();
 
-        // Drain lock-free inbox into process mailbox.
+        // Drain even a dead process's inbox: active-read notifications must
+        // release their in-flight flags without reading the socket.
         proc.drain_inbox();
+
+        // A linked-exit cascade may have killed this queued process and already
+        // released its slot. Do not process pending signals and clean it up a
+        // second time, even when the wake itself carried an exit signal.
+        if proc.status() == ProcessStatus::Exited {
+            drop(proc);
+            drop(proc_entry);
+            idle_spins += 1;
+            continue;
+        }
 
         // Process EXIT signals in the mailbox (from exit/2 or link cascade).
         // Only scan when signals are actually pending (avoids O(mailbox) scan per wake).
@@ -1362,14 +1371,6 @@ fn worker_loop(
             }
         } // has_exit_signals
 
-        // Skip processes that have already exited or are waiting.
-        if proc.status() == ProcessStatus::Exited {
-            // Already counted as non-runnable; just drop the Arc.
-            drop(proc);
-            drop(proc_entry);
-            idle_spins += 1;
-            continue;
-        }
         if proc.status() == ProcessStatus::Waiting {
             // Safety net: drain_inbox may have delivered messages that arrived
             // via the lock-free inbox after the process entered receive_wait.
@@ -2449,6 +2450,133 @@ mod tests {
         // Cleanup finished and woke nobody: now every process is blocked.
         scheduler.process_table.remove(&dying_pid);
         assert!(processes_are_blocked(&scheduler.process_table));
+    }
+
+    // A linked exit can acquire the process lock after a lock-free wake, but
+    // before a worker reconciles Waiting with the published Ready state. The
+    // queued entry still owns one runnable slot; dropping it after the cascade
+    // must not release that slot a second time or prevent blocked-only shutdown.
+    #[test]
+    fn linked_exit_releases_runnable_slot_once() {
+        let receive = ProcessState::Waiting(WaitReason::Receive { timeout_deadline_ms: None });
+        let io = ProcessState::Waiting(WaitReason::IoWait);
+        for (state, wake, pending_exit) in [
+            (ProcessState::Ready, false, false),
+            (ProcessState::Running, false, false),
+            (receive, false, false),
+            (io, false, false),
+            (receive, true, false),
+            (io, true, false),
+            (receive, true, true),
+            (io, true, true),
+        ] {
+            let scheduler = Scheduler::new(1);
+            let (_, blocked) = running_process(&scheduler);
+            assert!(!publish_wait(blocked.lock_for_runtime(), &blocked, receive,
+                &scheduler.timer_wheel, &scheduler.runnable_count));
+            let (linked_pid, linked) = running_process(&scheduler);
+            let dead_pid = scheduler.next_pid();
+            linked.lock_for_runtime().add_link(dead_pid);
+            if matches!(state, ProcessState::Waiting(_)) {
+                assert!(!publish_wait(linked.lock_for_runtime(), &linked, state,
+                    &scheduler.timer_wheel, &scheduler.runnable_count));
+                if wake {
+                    if pending_exit {
+                        use crate::message::{FragmentElem, ImmediateTerm, MessageFragment};
+                        // exit/2 can wake the target before another process's
+                        // linked exit kills it; the queued kill is now stale.
+                        linked.inbox.push(MessageFragment::SimpleTuple(vec![
+                            FragmentElem::Immediate(ImmediateTerm::new(ErlTerm::atom(
+                                crate::atom_table::ATOM_EXIT_SIGNAL))),
+                            FragmentElem::Immediate(ImmediateTerm::new(ErlTerm::pid(dead_pid))),
+                            FragmentElem::Immediate(ImmediateTerm::new(ErlTerm::atom(
+                                crate::atom_table::ATOM_KILL))),
+                        ]));
+                        linked.has_exit_signals.store(true, Ordering::Release);
+                    }
+                    assert!(if state == io { linked.try_wake_io() } else { linked.try_wake() });
+                    scheduler.runnable_count.fetch_add(1, Ordering::AcqRel);
+                    scheduler.injector.push(linked.clone());
+                    assert_eq!(linked.published_status(), ASTATUS_READY);
+                    assert_eq!(linked.lock_for_runtime().status(), ProcessStatus::Waiting);
+                }
+            } else {
+                linked.lock_for_runtime().transition(state);
+                scheduler.injector.push(linked.clone());
+            }
+            // Socket readiness can be the wake source too. Keep real sockets
+            // alive beyond the killed process, as when ownership has moved.
+            // One notification exercises the single-fragment drain; a queued
+            // kill plus two notifications exercises the batch drain.
+            let active_reads: Vec<_> = (0..if wake { if pending_exit { 2 } else { 1 } } else { 0 })
+                .map(|_| {
+                    let listener = std::net::TcpListener::bind(("127.0.0.1", 0)).unwrap();
+                    let socket = crate::socket::connect("127.0.0.1",
+                        listener.local_addr().unwrap().port()).unwrap();
+                    let (peer, _) = listener.accept().unwrap();
+                    let in_flight = Arc::new(AtomicBool::new(true));
+                    linked.inbox.push(crate::message::MessageFragment::ActiveReadReady {
+                        stream_handle: socket, in_flight: in_flight.clone(),
+                    });
+                    (socket, peer, in_flight)
+                }).collect();
+            #[cfg(mio_supported)]
+            let (reactor, join) = crate::reactor::spawn_reactor();
+            propagate_exit_signals(
+                dead_pid, ErlTerm::atom(crate::atom_table::ATOM_BADARG),
+                [linked_pid].into_iter().collect(), HashMap::new(),
+                &scheduler.process_table, &scheduler.injector,
+                &scheduler.runnable_count, &scheduler.alive_count,
+                &scheduler.any_crash, &scheduler.initial_pid,
+                &scheduler.registered_names, &scheduler.timer_wheel, &scheduler.io_pool,
+                #[cfg(mio_supported)]
+                &reactor,
+            );
+            let after_exit = scheduler.runnable_count.load(Ordering::Acquire);
+            // Consume the stale queue entry through the real worker, then take
+            // its idle/deadlock path. Controlled park returns avoid sleeps; the
+            // cap makes a broken runnable count fail rather than hang the suite.
+            let worker = Worker::new_fifo();
+            let stealers = Arc::new(vec![worker.stealer()]);
+            let parks = std::cell::Cell::new(0);
+            let forced_stop = std::cell::Cell::new(false);
+            worker_loop(0, worker, scheduler.injector.clone(), stealers,
+                scheduler.process_table.clone(), scheduler.shutdown.clone(),
+                scheduler.runnable_count.clone(), scheduler.alive_count.clone(),
+                scheduler.any_crash.clone(), scheduler.initial_pid.clone(), 1,
+                scheduler.registered_names.clone(), scheduler.timer_wheel.clone(),
+                scheduler.io_pool.clone(), scheduler.worker_stats[0].clone(),
+                scheduler.worker_inboxes[0].clone(), Arc::new(vec![]),
+                |_| {
+                    parks.set(parks.get() + 1);
+                    if parks.get() > 16 {
+                        forced_stop.set(true);
+                        scheduler.shutdown.store(true, Ordering::SeqCst);
+                    }
+                },
+                #[cfg(mio_supported)]
+                reactor.clone());
+            #[cfg(mio_supported)]
+            { reactor.shutdown(); join.join().unwrap(); }
+            let after_worker = scheduler.runnable_count.load(Ordering::Acquire);
+            let active_reads_cleared = active_reads.iter()
+                .all(|(_, _, in_flight)| !in_flight.load(Ordering::Acquire));
+            for (socket, _, _) in active_reads {
+                crate::socket::remove(socket);
+            }
+            assert!(active_reads_cleared, "stale entries must release every readiness flag");
+            eprintln!("linked exit: state={state:?} wake={wake} pending_exit={pending_exit} \
+                after_exit={after_exit} after_worker={after_worker} active_reads_cleared={active_reads_cleared} \
+                forced_stop={}", forced_stop.get());
+            assert_eq!(after_exit, 0, "cascade releases the slot for {state:?}, wake={wake}");
+            assert_eq!(after_worker, 0, "the stale queue entry must not release it twice");
+            assert!(!forced_stop.get(), "the blocked-only scheduler must stop on its own");
+            assert!(scheduler.shutdown.load(Ordering::Acquire));
+            assert!(scheduler.injector.is_empty());
+            assert_eq!(linked.published_status(), ASTATUS_EXITED);
+            assert_eq!(scheduler.alive_count.load(Ordering::Acquire), 1);
+            assert!(processes_are_blocked(&scheduler.process_table));
+        }
     }
 
     // send_after and start_timer messages now come from the timer thread. Like

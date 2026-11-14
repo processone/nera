@@ -531,6 +531,19 @@ impl RuntimeProcessGuard<'_> {
         self.0.transition(next);
     }
 
+    /// Publish a linked-exit kill and report whether its runnable slot is owed.
+    /// A lock-free wake can publish Ready while the locked state still says
+    /// Waiting. Swapping to Exited also closes that wake race: a successful
+    /// earlier wake owns a slot, and a later wake cannot acquire one.
+    #[inline]
+    pub(crate) fn transition_exited(&mut self) -> bool {
+        self.0.process.transition_to(ProcessState::Exited);
+        matches!(
+            self.0.entry.atomic_status.swap(ASTATUS_EXITED, Ordering::AcqRel),
+            ASTATUS_READY | ASTATUS_RUNNING
+        )
+    }
+
     #[inline]
     pub(crate) fn drain_inbox(&mut self) {
         self.0.drain_inbox();

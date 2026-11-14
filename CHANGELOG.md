@@ -2,6 +2,18 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Linked exits release a woken process's runnable slot once
+
+- When a linked process exits and kills a process that was woken but has not
+  run yet, the scheduler now releases that process's runnable slot once.
+  Previously the slot stayed counted, so a program whose remaining processes
+  were all blocked could hang instead of ending.
+- A killed queue entry is discarded before handling pending exit signals,
+  preventing a second cleanup and runnable-count decrement.
+- A runtime regression replays receive and I/O wakes before the linked exit,
+  including a pending kill signal, and checks blocked-only termination through
+  the worker's idle path. Ready, running and unwoken waits are controls.
+
 ## Funs stored in ETS and persistent_term keep their captured values
 
 - A fun inserted into an ETS table or stored with `persistent_term:put/2`
