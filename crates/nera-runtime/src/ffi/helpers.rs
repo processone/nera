@@ -132,7 +132,8 @@ where
 /// Snapshot the current call stack into `ctx.exception_trace_ptr`.
 /// Reads compact frames from the cursor-based stack and reconstructs
 /// full StackFrames using the global func_info_table. Falls back to
-/// stack_ptr (Vec<StackFrame>) for tests and legacy callers (nera_rt_raise).
+/// stack_ptr (Vec<StackFrame>) for tests and legacy callers. Captured traces
+/// are innermost-first, like Erlang stacktrace lists supplied to raise/3.
 /// # Safety
 /// The context and the pointees accessed by this operation must be live and
 /// exclusively accessible on this thread; no competing process execution or
@@ -169,23 +170,28 @@ enum TraceFrames<'a> {
 fn fill_exception_trace(trace: &mut Vec<crate::process::StackFrame>, frames: TraceFrames<'_>) {
     trace.clear();
     match frames {
-        TraceFrames::Full(frames) => trace.extend_from_slice(frames),
-        TraceFrames::Compact(frames) => {
-            let info_table = crate::entry::global_func_info_table();
-            trace.extend(frames.iter().map(|cf| {
-                let (module, function, arity) = info_table
-                    .get(cf.func_index as usize)
-                    .copied()
-                    .unwrap_or((0, 0, 0));
-                crate::process::StackFrame {
-                    module,
-                    function,
-                    arity,
-                    line: cf.line,
-                }
-            }));
-        }
+        TraceFrames::Full(frames) => trace.extend(frames.iter().rev().copied()),
+        TraceFrames::Compact(frames) => trace.extend(compact_stacktrace(frames)),
     }
+}
+
+/// Convert an active compact call stack to Erlang's innermost-first order.
+pub(super) fn compact_stacktrace(
+    frames: &[crate::process::CompactFrame],
+) -> impl Iterator<Item = crate::process::StackFrame> + '_ {
+    let info_table = crate::entry::global_func_info_table();
+    frames.iter().rev().map(move |cf| {
+        let (module, function, arity) = info_table
+            .get(cf.func_index as usize)
+            .copied()
+            .unwrap_or((0, 0, 0));
+        crate::process::StackFrame {
+            module,
+            function,
+            arity,
+            line: cf.line,
+        }
+    })
 }
 
 /// Helper: raise an error exception and return nil.

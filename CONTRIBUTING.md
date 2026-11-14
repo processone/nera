@@ -227,6 +227,7 @@ cargo clippy --workspace --all-targets --locked -- -D warnings
 cargo test --workspace --locked --no-fail-fast
 python3 scripts/test-allocator-config.py
 ./target/release/nera test -j 1 --timeout 30
+python3 scripts/test-stacktrace-order.py
 ```
 
 For runtime shutdown changes, build the runtime before the compiler (so native

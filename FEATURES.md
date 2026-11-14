@@ -59,7 +59,7 @@ and known differences from BEAM.
 | Implicit string concatenation               | ✅      | Adjacent strings merged       |
 | Record index (#rec.field)                   | ✅      | Returns 1-based field index   |
 | Named funs (fun Name(...) -> ... end)       | ✅      | With self-recursion           |
-| 3-part catch (Class:Reason:Stacktrace)      | ✅      | OTP 21+ stacktrace binding   |
+| 3-part catch (Class:Reason:Stacktrace)      | ✅      | OTP 21+ binding; raising function first, then callers, as on BEAM |
 | maybe expression (OTP 25+)                  | ✅      | `?=` cond match, else clauses |
 | Map comprehensions (OTP 26+)                | ❌      |                               |
 | Sigils / triple-quoted strings (OTP 27+)    | ❌      |                               |

@@ -1711,8 +1711,8 @@ fn worker_loop(
                         let trace = &proc.exception_trace;
                         if !trace.is_empty() {
                             let atoms = crate::atom_table::global_atom_table();
-                            eprintln!("Stacktrace (most recent call last):");
-                            for frame in trace.iter().rev() {
+                            eprintln!("Stacktrace (most recent call first):");
+                            for frame in trace.iter() {
                                 let mod_name = atoms
                                     .resolve(frame.module)
                                     .unwrap_or_else(|| "?".to_string());

@@ -288,7 +288,7 @@ Runtime crash output (`crates/nera-runtime/src/scheduler.rs`, lines 784-803):
 
 ```
 Error in process <0.42.0>: {error, badarg}
-Stacktrace (most recent call last):
+Stacktrace (most recent call first):
   lists:member/2
   main:start/0
 ```
@@ -396,7 +396,7 @@ stack frame — negligible.
 **Instead of:**
 ```
 Error in process <0.5.0>: {error, {badmatch, {error, timeout}}}
-Stacktrace (most recent call last):
+Stacktrace (most recent call first):
   main:handle_request/1
   main:loop/1
 ```
@@ -431,7 +431,7 @@ Stack:
 **Instead of:**
 ```
 Error in process <0.5.0>: {error, function_clause}
-Stacktrace (most recent call last):
+Stacktrace (most recent call first):
   main:process/1
   main:start/0
 ```
@@ -494,7 +494,7 @@ Stack:
 **Instead of:**
 ```
 Error in process <0.5.0>: {error, badarg}
-Stacktrace (most recent call last):
+Stacktrace (most recent call first):
   erlang:list_to_integer/1
   main:parse_id/1
 ```
@@ -811,7 +811,7 @@ Did you mean `lists:map/2`? (from the stdlib)
 **Before:**
 ```
 Error in process <0.5.0>: {error, {badmatch, {error, timeout}}}
-Stacktrace (most recent call last):
+Stacktrace (most recent call first):
   main:handle_request/1
   main:loop/1
 ```

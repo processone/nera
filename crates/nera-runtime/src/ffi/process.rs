@@ -1101,15 +1101,7 @@ unsafe fn gather_process_info_snapshot(
             if !base.is_null() && cursor > base {
                 let depth = (cursor as usize - base as usize) / std::mem::size_of::<crate::process::CompactFrame>();
                 let frames = unsafe { std::slice::from_raw_parts(base, depth) };
-                let info_table = crate::entry::global_func_info_table();
-                frames.iter().map(|cf| {
-                    let (module, function, arity) = if (cf.func_index as usize) < info_table.len() {
-                        info_table[cf.func_index as usize]
-                    } else {
-                        (0, 0, 0)
-                    };
-                    crate::process::StackFrame { module, function, arity, line: cf.line }
-                }).collect()
+                compact_stacktrace(frames).collect()
             } else {
                 Vec::new()
             }
