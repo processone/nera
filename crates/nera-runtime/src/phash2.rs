@@ -36,8 +36,8 @@ fn hc(n: u32) -> u32 {
 
 fn block_hash(bytes: &[u8], initial: u32) -> u32 {
     let (mut a, mut b, mut c) = (H, H, initial);
-    let mut chunks = bytes.chunks_exact(12);
-    for chunk in &mut chunks {
+    let (chunks, remainder) = bytes.as_chunks::<12>();
+    for chunk in chunks {
         a = a.wrapping_add(u32::from_le_bytes(chunk[..4].try_into().unwrap()));
         b = b.wrapping_add(u32::from_le_bytes(chunk[4..8].try_into().unwrap()));
         c = c.wrapping_add(u32::from_le_bytes(chunk[8..].try_into().unwrap()));
@@ -45,7 +45,7 @@ fn block_hash(bytes: &[u8], initial: u32) -> u32 {
         mix_words(&mut a, &mut b, &mut c);
     }
     c = c.wrapping_add(bytes.len() as u32);
-    for (i, &byte) in chunks.remainder().iter().enumerate() {
+    for (i, &byte) in remainder.iter().enumerate() {
         match i {
             0..=3 => a = a.wrapping_add((byte as u32) << (8 * i)),
             4..=7 => b = b.wrapping_add((byte as u32) << (8 * (i - 4))),
