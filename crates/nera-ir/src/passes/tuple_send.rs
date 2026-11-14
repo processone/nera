@@ -1,8 +1,7 @@
-//! Tuple/send fusion using the existing per-block use-count heuristic.
+//! Tuple/send fusion only when the tuple has exactly one operand read.
 
-use super::uses::{collect_instruction_uses, collect_terminator_uses};
+use super::uses::{instruction_reads, terminator_reads};
 use crate::ir::{Instruction, IrFunction, Literal, VarId};
-use std::collections::HashSet;
 
 /// Fuse MakeTuple + Send into SendDirect when the tuple is single-use.
 /// This avoids allocating the tuple on the sender heap; the FFI function
@@ -13,13 +12,13 @@ pub fn fuse_make_tuple_send(func: &mut IrFunction) {
     // Pass 1: count uses of each VarId across all blocks.
     let mut use_count: HashMap<VarId, u32> = HashMap::new();
     for block in &func.blocks {
-        let mut uses = HashSet::new();
-        for inst in &block.instructions {
-            collect_instruction_uses(inst, &mut uses);
-        }
-        collect_terminator_uses(&block.terminator, &mut uses);
-        for v in uses {
-            *use_count.entry(v).or_insert(0) += 1;
+        for value in block
+            .instructions
+            .iter()
+            .flat_map(instruction_reads)
+            .chain(terminator_reads(&block.terminator))
+        {
+            *use_count.entry(value).or_insert(0) += 1;
         }
     }
 

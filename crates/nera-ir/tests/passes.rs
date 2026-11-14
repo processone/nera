@@ -161,3 +161,94 @@ fn pipeline_preserves_yield_before_folding_and_dead_code() {
     ]);
     assert_eq!(format!("{func:#?}"), format!("{expected:#?}"));
 }
+
+#[test]
+fn exceptional_backedges_check_reductions_before_the_raising_instruction() {
+    // The explicit arithmetic CFG permits a handler to retry an operation.
+    // A suffix check is unreachable when that operation fails back to it.
+    for suffix in [
+        None,
+        Some(Instruction::YieldCheck),
+        Some(Instruction::CheckReductions),
+    ] {
+        let mut body = vec![
+            Instruction::Const(VarId(2), Literal::Integer(1)),
+            Instruction::Arithmetic(ArithmeticSite {
+                id: OperationId(0),
+                result: Some(VarId(3)),
+                operation: ArithmeticOp::Add(VarId(0), VarId(2)),
+                context: EvaluationContext::Try,
+                failure: FailureDestination::Block(BlockId(0)),
+            }),
+            Instruction::Arithmetic(ArithmeticSite {
+                id: OperationId(1),
+                result: None,
+                operation: ArithmeticOp::Negate(VarId(0)),
+                context: EvaluationContext::Try,
+                failure: FailureDestination::Block(BlockId(0)),
+            }),
+        ];
+        body.extend(suffix);
+        let mut func = function(vec![
+            block(
+                0,
+                vec![Instruction::ClearException],
+                Terminator::Jump(BlockId(1), vec![]),
+            ),
+            block(1, body, Terminator::Return(VarId(0))),
+        ]);
+        run_verified(&mut func, insert_backedge_yield_checks);
+        assert!(matches!(
+            func.blocks[1].instructions[0],
+            Instruction::Const(..)
+        ));
+        assert!(matches!(
+            func.blocks[1].instructions[1],
+            Instruction::YieldCheck
+        ));
+        assert!(matches!(
+            func.blocks[1].instructions[2],
+            Instruction::Arithmetic(ArithmeticSite {
+                id: OperationId(0),
+                ..
+            })
+        ));
+        assert!(matches!(
+            func.blocks[1].instructions[3],
+            Instruction::Arithmetic(ArithmeticSite {
+                id: OperationId(1),
+                ..
+            })
+        ));
+        let once = format!("{func:#?}");
+        run_verified(&mut func, insert_backedge_yield_checks);
+        assert_eq!(format!("{func:#?}"), once);
+    }
+}
+
+#[test]
+fn tuple_send_fusion_counts_each_read_not_each_using_block() {
+    let original = vec![
+        Instruction::MakeTuple(VarId(2), vec![VarId(1)]),
+        Instruction::BinOp(VarId(3), BinOp::ExactEq, VarId(2), VarId(1)),
+        Instruction::Send(VarId(4), VarId(0), VarId(2)),
+    ];
+    let mut func = function(vec![block(0, original, Terminator::Return(VarId(3)))]);
+    let before = format!("{func:#?}");
+    run_verified(&mut func, fuse_make_tuple_send);
+    assert_eq!(format!("{func:#?}"), before);
+
+    // Two reads within Send itself are also not single-use: the tuple may
+    // not be replaced while its original value is still the recipient.
+    let mut func = function(vec![block(
+        0,
+        vec![
+            Instruction::MakeTuple(VarId(2), vec![VarId(1)]),
+            Instruction::Send(VarId(3), VarId(2), VarId(2)),
+        ],
+        Terminator::Return(VarId(3)),
+    )]);
+    let before = format!("{func:#?}");
+    run_verified(&mut func, fuse_make_tuple_send);
+    assert_eq!(format!("{func:#?}"), before);
+}
