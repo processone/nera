@@ -18,6 +18,18 @@ All notable milestones for the nera project are documented in this file.
   memory reservation does not guarantee sufficient physical memory; this
   change does not contain operating-system out-of-memory termination.
 
+## Native test executables use fresh private storage
+
+- `nera test` no longer compiles into a predictable PID-based directory that
+  another local user could pre-create. Every test gets exclusively created,
+  randomized temporary storage, retained through execution and cleaned on all
+  normal result paths. EUnit uses the same storage policy.
+- On Unix, test directories are created with mode 0700 even under a permissive
+  umask. Nera checks temporary-root ancestry against rename attacks, falls back
+  to a protected home directory when needed, and fails before compilation if
+  neither location is safe. Existing paths are never repaired or removed.
+- Relative test fixtures still resolve from the project working directory.
+
 ## Stacktraces list the raising function first
 
 - Captured exception stacktraces now list the raising function before its

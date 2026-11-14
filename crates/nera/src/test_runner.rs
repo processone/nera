@@ -95,9 +95,6 @@ pub fn run_tests(opts: &TestOpts) -> Result<(), Box<dyn std::error::Error>> {
     let total = tests.len();
     let num_threads = opts.jobs.min(total).max(1);
 
-    let tmp_dir = std::env::temp_dir().join(format!("nera_tests_{}", std::process::id()));
-    std::fs::create_dir_all(&tmp_dir)?;
-
     println!(
         "{}Running {} tests ({} threads){}",
         c.bold, total, num_threads, c.reset
@@ -114,7 +111,6 @@ pub fn run_tests(opts: &TestOpts) -> Result<(), Box<dyn std::error::Error>> {
             let work = Arc::clone(&work);
             let tx = tx.clone();
             let nera_bin = nera_bin.clone();
-            let tmp_dir = tmp_dir.clone();
             let include_paths = Arc::clone(&include_paths);
             let no_stdlib = opts.no_stdlib;
             let no_warnings = opts.no_warnings;
@@ -124,7 +120,7 @@ pub fn run_tests(opts: &TestOpts) -> Result<(), Box<dyn std::error::Error>> {
                 let test = { work.lock().unwrap().next() };
                 let Some(test) = test else { break };
                 let result = run_single_test(
-                    &test, &nera_bin, &tmp_dir, &include_paths, no_stdlib, no_warnings, timeout,
+                    &test, &nera_bin, &include_paths, no_stdlib, no_warnings, timeout,
                 );
                 if tx.send(result).is_err() {
                     break;
@@ -203,7 +199,6 @@ pub fn run_tests(opts: &TestOpts) -> Result<(), Box<dyn std::error::Error>> {
     }
 
     println!();
-    let _ = std::fs::remove_dir_all(&tmp_dir);
 
     if failed > 0 {
         println!("{}{}SOME TESTS FAILED{}", c.red, c.bold, c.reset);
@@ -470,7 +465,6 @@ pub(crate) fn glob_match(pattern: &str, name: &str) -> bool {
 fn run_single_test(
     test: &TestDescriptor,
     nera_bin: &Path,
-    tmp_dir: &Path,
     include_paths: &[PathBuf],
     no_stdlib: bool,
     no_warnings: bool,
@@ -489,20 +483,21 @@ fn run_single_test(
         };
     }
 
-    // Per-test temp subdirectory (avoids .o file collisions between parallel builds)
-    let test_tmp = tmp_dir.join(&test.name);
-    if std::fs::create_dir_all(&test_tmp).is_err() {
-        return TestResult {
+    // Keep this exclusive owner-only directory alive through compile, execution
+    // and output capture. Its guard also cleans up every early error return.
+    let test_tmp = match crate::test_storage::new() {
+        Ok(directory) => directory,
+        Err(error) => return TestResult {
             name: test.name.clone(),
             outcome: TestOutcome::Fail {
-                reason: "cannot create temp dir".to_string(),
-                detail: None,
+                reason: "cannot create private test directory".to_string(),
+                detail: Some(error.to_string()),
             },
             duration: start.elapsed(),
-        };
-    }
+        },
+    };
 
-    let binary = test_tmp.join(&test.name);
+    let binary = test_tmp.path().join(&test.name);
     let entry = format!("{}:test", test.name);
 
     // Make source paths absolute (CWD will be the per-test tmp dir)
@@ -516,7 +511,7 @@ fn run_single_test(
 
     // ── Compile ──────────────────────────────────────────────────
     let mut cmd = std::process::Command::new(nera_bin);
-    cmd.current_dir(&test_tmp);
+    cmd.current_dir(test_tmp.path());
     cmd.arg("build");
     cmd.arg(&abs_test_path);
     for m in &abs_extra {
@@ -787,6 +782,7 @@ mod tests {
         let compiler = tmp.path().join("compiler");
         // Exercise the real compile/execute/kill/report path with a tiny fixture.
         fs::write(&compiler, r#"#!/bin/sh
+printf '%s' "$PWD" > "$0.cwd"
 while [ "$1" != "-o" ]; do shift; done
 shift
 cat > "$1" <<'PROGRAM'
@@ -808,7 +804,9 @@ chmod +x "$1"
             expected_compile_error: None,
             extra_modules: vec![],
         };
-        let result = run_single_test(&test, &compiler, tmp.path(), &[], false, false, 1);
+        let result = run_single_test(&test, &compiler, &[], false, false, 1);
+        let directory = fs::read_to_string(compiler.with_extension("cwd")).unwrap();
+        assert!(!Path::new(&directory).exists(), "leaked timed-out executable");
         match result.outcome {
             TestOutcome::Fail { reason, detail } => {
                 assert_eq!(reason, "timeout after 1s");
@@ -817,6 +815,50 @@ chmod +x "$1"
                 assert!(detail.contains("reactor diagnostic: pending read"), "{detail}");
             }
             _ => panic!("fixture must time out"),
+        }
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn private_storage_is_removed_on_each_compile_and_runtime_result() {
+        use std::os::unix::fs::PermissionsExt;
+        let fixture = crate::test_storage::new().unwrap();
+        let compiler = fixture.path().join("compiler");
+        let source = fixture.path().join("probe.erl");
+        fs::write(&source, "").unwrap();
+        for (compile, program, expected_error, expected_output, passes) in [
+            ("exit 0", "echo complete", None, Some("complete"), true),
+            ("echo deliberate >&2; exit 1", "", None, None, false),
+            ("echo deliberate >&2; exit 1", "", Some("deliberate"), None, true),
+            ("echo deliberate >&2; exit 1", "", Some("different"), None, false),
+            ("exit 0", "echo complete", Some("deliberate"), None, false),
+            ("exit 0", "exit 1", None, None, false),
+            ("exit 0", "echo wrong", None, Some("complete"), false),
+        ] {
+            fs::write(&compiler, format!(r#"#!/bin/sh
+printf '%s' "$PWD" > "$0.cwd"
+while [ "$1" != "-o" ]; do shift; done
+shift
+cat > "$1" <<'PROGRAM'
+#!/bin/sh
+{program}
+PROGRAM
+chmod +x "$1"
+{compile}
+"#)).unwrap();
+            fs::set_permissions(&compiler, fs::Permissions::from_mode(0o700)).unwrap();
+            let test = TestDescriptor {
+                name: "probe".into(),
+                path: source.clone(),
+                skip_reason: None,
+                expected_output: expected_output.map(str::to_owned),
+                expected_compile_error: expected_error.map(str::to_owned),
+                extra_modules: vec![],
+            };
+            let result = run_single_test(&test, &compiler, &[], false, false, 1);
+            assert_eq!(matches!(result.outcome, TestOutcome::Pass), passes);
+            let directory = fs::read_to_string(compiler.with_extension("cwd")).unwrap();
+            assert!(!Path::new(&directory).exists(), "leaked {compile}: {program}");
         }
     }
 

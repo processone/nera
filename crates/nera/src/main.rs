@@ -29,6 +29,7 @@ mod test_runner;
 mod eunit_runner;
 mod module_info;
 mod runtime_cache;
+mod test_storage;
 
 // ── Embedded stdlib ──────────────────────────────────────────────────
 

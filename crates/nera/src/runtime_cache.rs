@@ -101,7 +101,7 @@ fn effective_uid() -> u32 {
 /// Canonicalize before validation so a mutable ancestor symlink is not retained
 /// in the path passed to the linker. System-owned sticky /tmp is allowed.
 #[cfg(unix)]
-fn protected_base(base: &Path, uid: u32) -> std::io::Result<PathBuf> {
+pub(crate) fn protected_base(base: &Path, uid: u32) -> std::io::Result<PathBuf> {
     let base = base.canonicalize()?;
     protected_ancestors(&base, uid, None, "TMPDIR")?;
     Ok(base)
@@ -166,7 +166,7 @@ fn kernel_overflow_uid() -> Option<u32> {
 
 /// The configured account home must protect its cache entries from replacement.
 #[cfg(unix)]
-fn home_base(home: &Path, uid: u32) -> std::io::Result<PathBuf> {
+pub(crate) fn home_base(home: &Path, uid: u32) -> std::io::Result<PathBuf> {
     use std::os::unix::fs::MetadataExt;
 
     if !home.is_absolute() {

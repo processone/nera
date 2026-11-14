@@ -77,6 +77,9 @@ class ChangeMapTest(unittest.TestCase):
         self.assertEqual(selected([".github/release-target.json",
                                    ".github/workflows/release-milestone.yml"]), set())
 
+    def test_native_test_storage_regression_runs_with_the_compiler(self):
+        self.assertEqual(selected(["scripts/test-test-storage.py"]), {"build", "e2e"})
+
     def test_cross_script(self):
         self.assertEqual(selected(["scripts/test-cross.sh"]), {"build", "cross"})
 

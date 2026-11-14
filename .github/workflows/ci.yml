@@ -206,6 +206,10 @@ jobs:
         if: matrix.part == 1
         run: python3 scripts/test-stacktrace-order.py
 
+      - name: Private native test storage
+        if: matrix.part == 1
+        run: python3 scripts/test-test-storage.py
+
   cowlib:
     name: Cowlib (Linux x86_64)
     needs: [changes, build]
