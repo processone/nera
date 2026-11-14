@@ -34,6 +34,23 @@ The legacy shell script `./tests/run_tests.sh` is still available but `nera test
 is the recommended runner — it runs tests in parallel, has colored output, and
 produces a failure summary.
 
+## Focused runtime contracts
+
+The [runtime contract index](../docs/RUNTIME_CONTRACTS.md) names the semantic
+responsibility and limits of six existing fixtures. Run their assertions
+unchanged on native default/single schedulers and a recorded OTP 29 patch:
+
+```sh
+python3 scripts/test-runtime-contracts.py \
+  --compiler-source "$(git rev-parse HEAD)" --out /external/results/contracts.json
+python3 scripts/test-runtime-contracts-runner.py \
+  --out /external/results/contract-rejections.json
+```
+
+Build the matching runtime before the compiler. These focused journeys retain
+exit, assertion and completion evidence in JSON; they do not replace the full
+project gate or establish compatibility beyond their owning assertions.
+
 ## Project EUnit configuration
 
 A project can select EUnit in `nera.toml`:
