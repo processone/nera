@@ -23,8 +23,8 @@ ets_lifetime(Lifetime) ->
     [{bits, Actual, unchanged}] = ets:lookup(T, bits),
     equal({ets, Lifetime}, values(), Actual),
     %% Updating another element copies the bitstrings again.
-    true = ets:update_element(T, bits, {3, updated}),
-    [{bits, Listed, updated}] = ets:tab2list(T),
+    true = ets:update_element(T, bits, {3, [updated]}),
+    [{bits, Listed, [updated]}] = ets:tab2list(T),
     true = ets:delete(T),
     churn(),
     equal({tab2list, Lifetime}, values(), Listed),

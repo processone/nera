@@ -1,6 +1,6 @@
-//! Ownership checks for the bitstring storage regression. The Erlang fixture
-//! owns observable lifetime/equality behavior; this test deterministically
-//! rejects descriptor aliasing before either source allocation is released.
+//! Focused invariants for the bitstring storage regressions. The Erlang
+//! fixtures own observable lifetime/key behavior; these tests deterministically
+//! check descriptor independence and insignificant backing-byte padding.
 
 use super::*;
 use crate::binary::BinarySlice;
@@ -75,5 +75,42 @@ fn bitstring_copies_own_descriptors_in_both_directions() {
                 assert_eq!(roots[0].binary_bytes_any(), Some(bytes.as_slice()));
             }
         }
+    }
+}
+
+// Storage copies must not turn equal bitstring keys into
+// address-based keys. A real byte window can retain bits beyond its logical end.
+#[test]
+fn bitstring_keys_ignore_padding_but_preserve_significant_bits_and_length() {
+    let mut heap = ProcessHeap::new();
+    let bytes = b"abcdefghP"; // Last byte's high nibble is <<5:4>>.
+    let bits = bytes.len() * 8 - 4;
+    let make_heap_bits = |heap: &mut ProcessHeap, data: &[u8], bits: usize| {
+        let term = heap.alloc_binary(data);
+        // SAFETY: the test exclusively owns the descriptor and only shortens
+        // its bit window within initialized bytes.
+        unsafe {
+            *term.as_boxed_ptr().unwrap().cast_mut() =
+                BoxedHeader::new(BoxedSubtype::HeapBinary, bits as u64).0;
+        }
+        term
+    };
+    let original = make_heap_bits(&mut heap, bytes, bits);
+    let prefix = b"prefix";
+    let framed = [prefix.as_slice(), b"abcdefghZ", b"suffix"].concat();
+    let window =
+        BinarySlice::new_bits(Arc::new(BinaryData::new(framed)), prefix.len(), bits).unwrap();
+    let same_bits = heap.alloc_binary_slice(window);
+    let different_bits = make_heap_bits(&mut heap, b"abcdefgh@", bits);
+    let different_length = make_heap_bits(&mut heap, bytes, bits + 1);
+    let whole_bytes = heap.alloc_binary(bytes);
+
+    // SAFETY: heap keeps all immutable input descriptors and bytes live.
+    unsafe {
+        let key = TermKey::from_term(original);
+        assert!(key == TermKey::from_term(same_bits));
+        assert!(key != TermKey::from_term(different_bits));
+        assert!(key != TermKey::from_term(different_length));
+        assert!(key != TermKey::from_term(whole_bytes));
     }
 }

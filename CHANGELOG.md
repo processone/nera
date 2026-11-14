@@ -10,8 +10,12 @@ All notable milestones for the nera project are documented in this file.
   or collects garbage, as on BEAM.
 - Copying reads preserve the final partial byte's logical bit length and remain
   valid after the table is deleted or the persistent term is erased.
-- The `ets_stored_bitstring` regression exercises both writer lifetimes and
-  both storage APIs unchanged natively and on BEAM.
+- Bitstring keys and bag duplicate checks compare significant bits and exact
+  length, not descriptor addresses or unused trailing bits, so copies remain
+  interchangeable as keys, including inside lists and tuples.
+- The `ets_stored_bitstring` and `ets_bitstring_keys` regressions exercise
+  writer lifetimes, copying reads, boxed updates and copied-key operations
+  unchanged natively and on BEAM.
 
 ## Receives nested in after bodies resume at their own wait
 

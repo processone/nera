@@ -221,13 +221,20 @@ impl TermKey {
             out.extend_from_slice(&term.0.to_le_bytes());
             return;
         }
-        // Binary — serialize content bytes
-        if term.is_binary() {
+        // Bitstring identity is its exact length and significant bits, not
+        // the descriptor address or unused bits in the final backing byte.
+        if term.is_bitstring() {
             out.push(b'B');
             if let Some((ptr, len)) = unsafe { crate::ffi::binary_data_pub(term) } {
                 let slice = unsafe { std::slice::from_raw_parts(ptr, len) };
-                out.extend_from_slice(&(len as u64).to_le_bytes());
-                out.extend_from_slice(slice);
+                let bits = unsafe { term.binary_bit_size().unwrap() };
+                out.extend_from_slice(&(bits as u64).to_le_bytes());
+                let whole_bytes = bits / 8;
+                out.extend_from_slice(&slice[..whole_bytes]);
+                let trailing_bits = bits % 8;
+                if trailing_bits != 0 {
+                    out.push(slice[whole_bytes] & (u8::MAX << (8 - trailing_bits)));
+                }
             }
             return;
         }
