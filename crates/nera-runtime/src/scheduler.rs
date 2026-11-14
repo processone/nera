@@ -726,7 +726,9 @@ fn propagate_exit_signals(
             };
             drop(proc);
 
-            entry.inbox.push(MessageFragment::ExitSignal(Box::new(fragment)));
+            // Trapping has already converted this link signal into a message.
+            // Do not reinterpret it if trap_exit changes before delivery.
+            entry.inbox.push(fragment);
             // Try waking the process. try_wake() handles receive-waiting,
             // try_wake_io() handles IO-waiting. Only one CAS can succeed.
             // The worker that runs the process cancels its receive timer;

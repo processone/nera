@@ -161,9 +161,9 @@ pub struct HeapFragment {
 /// inbox (`SegQueue`). The receiving worker drains fragments into the process
 /// mailbox under its own Mutex.
 pub enum MessageFragment {
-    /// EXIT classification travels with the payload in the same queue push.
-    /// The worker marks the mailbox for signal handling when it drains this,
-    /// before a self-wake can treat the payload as ordinary mail.
+    /// Pending exit/2 signal, distinct from an ordinary {'EXIT', Pid, Reason}
+    /// message. Classification travels with the payload in one queue push;
+    /// inbox draining retains it until signal processing.
     ExitSignal(Box<MessageFragment>),
     /// Immediate value (atom, small int, pid, nil) — no heap needed.
     Immediate(ImmediateTerm),
@@ -313,7 +313,6 @@ impl MessageFragment {
     /// Consumes the fragment.
     pub fn copy_to_heap(self, target: &mut ProcessHeap) -> ErlTerm {
         match self {
-            MessageFragment::ExitSignal(signal) => signal.copy_to_heap(target),
             MessageFragment::Immediate(term) => term.get(),
             MessageFragment::RefcBinary(range) => {
                 // Move the validated window and its Arc without another check or clone.
@@ -335,8 +334,8 @@ impl MessageFragment {
                 target.adopt_fragment(frag.heap);
                 frag.root
             }
-            MessageFragment::ActiveReadReady { .. } => {
-                panic!("ActiveReadReady must be intercepted by drain_inbox, not copy_to_heap");
+            MessageFragment::ActiveReadReady { .. } | MessageFragment::ExitSignal(_) => {
+                panic!("runtime notifications must be intercepted by drain_inbox, not copy_to_heap");
             }
         }
     }

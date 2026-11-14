@@ -10,6 +10,9 @@ All notable milestones for the nera project are documented in this file.
 - A self-sent `normal` signal terminates a process that is not trapping exits;
   `normal` from another process is still ignored. Trapped non-`kill` signals
   remain messages, and `kill` still becomes the monitor reason `killed`.
+- Pending signals retain their provenance separately from message contents.
+  Ordinary or already-trapped `{'EXIT', Pid, Reason}` messages cannot become
+  fatal signals when a later exit signal arrives.
 - The `exit_self` regression runs unchanged natively and on BEAM, covering
   direct and dynamic calls, tail calls, handlers and receive resumption.
 

@@ -19,6 +19,10 @@ test() ->
     lists:foreach(fun trapped/1, [normal, shutdown, killed,
                                  {shutdown, [worker, 42]}, 17, <<"stopped">>]),
     ok = external_normal(),
+    lists:foreach(fun(Source) ->
+        ok = mailbox_control(Source, kill),
+        ok = mailbox_control(Source, external_normal)
+    end, [literal, variable, trapped]),
     io:format("exit_self_ok~n"),
     ok.
 
@@ -136,5 +140,56 @@ external_normal() ->
     after 5000 -> error(external_normal_timeout)
     end,
     await_exit(Pid, Ref, normal).
+
+%% An ordinary or previously trapped EXIT tuple is never a pending signal.
+%% Check both fused tuple sends and sends of an existing tuple. The trapped
+%% case leaves the delivered message queued while a selective receive waits.
+mailbox_control(Source, Next) ->
+    Parent = self(),
+    {Pid, Ref} = spawn_monitor(fun() ->
+        Self = self(),
+        case Source of
+            literal -> Self ! {'EXIT', Self, normal};
+            variable ->
+                Message = id({'EXIT', Self, normal}),
+                Self ! Message;
+            trapped ->
+                false = process_flag(trap_exit, true),
+                true = exit(Self, normal),
+                Parent ! {ready, Self},
+                receive go -> ok after 5000 -> error(trap_barrier_timeout) end,
+                true = process_flag(trap_exit, false)
+        end,
+        case Next of
+            kill ->
+                exit(Self, kill),
+                effect(Parent, mailbox_after_kill);
+            external_normal ->
+                Parent ! {normal_ready, Self},
+                receive go -> ok after 5000 -> error(normal_barrier_timeout) end,
+                receive
+                    {'EXIT', Self, normal} -> Parent ! {checked, Self}
+                after 5000 -> error(missing_ordinary_exit_message)
+                end
+        end
+    end),
+    case Next of
+        kill -> await_exit(Pid, Ref, killed);
+        external_normal -> await_checked(Pid, Ref)
+    end.
+
+await_checked(Pid, Ref) ->
+    receive
+        {ready, Pid} ->
+            Pid ! go,
+            await_checked(Pid, Ref);
+        {normal_ready, Pid} ->
+            true = exit(Pid, normal),
+            Pid ! go,
+            await_checked(Pid, Ref);
+        {checked, Pid} -> await_exit(Pid, Ref, normal);
+        {'DOWN', Ref, process, Pid, Why} -> error({ordinary_exit_became_signal, Why})
+    after 5000 -> error(mailbox_control_timeout)
+    end.
 
 id(Value) -> Value.
