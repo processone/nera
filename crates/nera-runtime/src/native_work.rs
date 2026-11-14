@@ -16,16 +16,17 @@ pub(crate) enum WorkError {
 }
 
 pub(crate) trait BinaryWork: Send {
-    /// Logical input bytes per reduction, calibrated per operation.
+    /// Logical work bytes per reduction, calibrated per operation (input bytes
+    /// for codecs, output bytes for repetition).
     fn bytes_per_reduction(&self) -> usize;
-    /// Non-final steps must end at this input boundary.
+    /// Non-final steps must end at this work boundary.
     fn quantum(&self) -> usize {
         1
     }
     fn max_bytes(&self) -> usize;
     fn offset(&self) -> usize;
     fn output(&mut self) -> &mut Vec<u8>;
-    /// Process at most `limit` input bytes. Return Ok(true) when complete, or a terminal error.
+    /// Process at most `limit` work bytes. Return Ok(true) when complete, or a terminal error.
     fn step(&mut self, input: &[u8], limit: usize) -> Result<bool, WorkError>;
 }
 

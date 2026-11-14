@@ -2,6 +2,22 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Oversized binary copies raise Erlang errors
+
+- `binary:copy/2` checks result-size multiplication and the binary header's
+  bit-length limit before reserving storage. Impossible sizes and refused
+  reservations raise `system_limit` instead of panicking across the native
+  boundary and aborting the program.
+- Counts accept unsigned machine-word integers, including boxed integers;
+  invalid counts and non-binary inputs raise `badarg`, as on OTP, even when
+  the result would otherwise be empty.
+- Copies charge reductions for output bytes and yield between bounded chunks.
+  A small input repeated many times no longer monopolizes a scheduler. The
+  completed output reuses its allocation rather than copying it again.
+- Allocation and garbage collection remain synchronous. A successful virtual
+  memory reservation does not guarantee sufficient physical memory; this
+  change does not contain operating-system out-of-memory termination.
+
 ## Stacktraces list the raising function first
 
 - Captured exception stacktraces now list the raising function before its
