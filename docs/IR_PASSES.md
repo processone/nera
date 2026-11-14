@@ -48,9 +48,12 @@ collects a set. The structural verifier keeps its own operand handling.
 
 Back-edge analysis retains each exit's instruction position. Normal edges leave
 at the terminator; an arithmetic failure leaves at that instruction, bypassing
-its suffix. A reduction check must precede the earliest back-edge exit, not
-merely appear at the end of its block. An existing immediately preceding check
-is retained, and repeating the pass inserts no additional check.
+its suffix. A reduction check must precede the earliest raising back-edge exit, not merely
+appear at the end of its block. Landing-pad chains may contain only exception
+accessors and jumps before consuming the pending exception. If such a prefix
+closes a cycle, its scheduling check runs immediately after the chain's
+`ClearException`, never inside the pending prefix. Existing adjacent checks
+are retained, and repeating the pass inserts no additional check.
 
 ## Verification
 

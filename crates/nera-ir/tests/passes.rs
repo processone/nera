@@ -252,3 +252,68 @@ fn tuple_send_fusion_counts_each_read_not_each_using_block() {
     run_verified(&mut func, fuse_make_tuple_send);
     assert_eq!(format!("{func:#?}"), before);
 }
+
+#[test]
+fn exceptional_backedges_preserve_pending_landing_pad_prefixes() {
+    // A failure can traverse empty pads or capture exception fields before
+    // reaching ClearException. Yielding inside that pending prefix is invalid.
+    for prefix in [
+        vec![],
+        vec![Instruction::GetExceptionReason(VarId(4))],
+        vec![
+            Instruction::GetExceptionClass(VarId(4)),
+            Instruction::GetExceptionStacktrace(VarId(5)),
+        ],
+    ] {
+        let mut func = function(vec![
+            block(0, vec![], Terminator::Jump(BlockId(4), vec![])),
+            block(
+                1,
+                vec![
+                    Instruction::Arithmetic(ArithmeticSite {
+                        id: OperationId(0),
+                        result: Some(VarId(2)),
+                        operation: ArithmeticOp::Add(VarId(0), VarId(1)),
+                        context: EvaluationContext::Try,
+                        failure: FailureDestination::Block(BlockId(2)),
+                    }),
+                    Instruction::Arithmetic(ArithmeticSite {
+                        id: OperationId(1),
+                        result: None,
+                        operation: ArithmeticOp::Negate(VarId(0)),
+                        context: EvaluationContext::Try,
+                        failure: FailureDestination::Block(BlockId(2)),
+                    }),
+                ],
+                Terminator::Return(VarId(0)),
+            ),
+            block(2, vec![], Terminator::Jump(BlockId(3), vec![])),
+            block(3, prefix, Terminator::Jump(BlockId(0), vec![])),
+            block(
+                4,
+                vec![
+                    Instruction::GetExceptionClass(VarId(6)),
+                    Instruction::ClearException,
+                ],
+                Terminator::Jump(BlockId(1), vec![]),
+            ),
+        ]);
+        let pads_before = format!("{:?}", (&func.blocks[0], &func.blocks[2..4]));
+        run_verified(&mut func, insert_backedge_yield_checks);
+        assert_eq!(
+            format!("{:?}", (&func.blocks[0], &func.blocks[2..4])),
+            pads_before
+        );
+        assert!(matches!(
+            func.blocks[4].instructions.as_slice(),
+            [
+                Instruction::GetExceptionClass(_),
+                Instruction::ClearException,
+                Instruction::YieldCheck
+            ]
+        ));
+        let once = format!("{func:#?}");
+        run_verified(&mut func, insert_backedge_yield_checks);
+        assert_eq!(format!("{func:#?}"), once);
+    }
+}

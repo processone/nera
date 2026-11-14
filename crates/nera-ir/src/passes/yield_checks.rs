@@ -80,17 +80,78 @@ pub fn insert_backedge_yield_checks(func: &mut IrFunction) {
         &mut backedge_sources,
     );
 
+    // A landing-pad chain still carries a pending exception. Its backedge
+    // cannot yield until ClearException has consumed that state. Defer only
+    // accessor/empty jump prefixes; ordinary source blocks keep their checks.
+    let mut checkpoints: HashMap<BlockId, usize> = HashMap::new();
+    for (source, position) in backedge_sources {
+        let block = &func.blocks[block_index[&source]];
+        let consumed = if position == block.instructions.len()
+            && block.instructions.iter().all(is_exception_accessor)
+        {
+            match &block.terminator {
+                crate::ir::Terminator::Jump(next, args) if args.is_empty() => {
+                    exception_consumption(*next, &func.blocks, &block_index)
+                }
+                _ => None,
+            }
+        } else {
+            None
+        };
+        let (target, position) = consumed.unwrap_or((source, position));
+        checkpoints
+            .entry(target)
+            .and_modify(|earliest| *earliest = (*earliest).min(position))
+            .or_insert(position);
+    }
+
     // A failing arithmetic instruction skips its suffix, so a final check
-    // cannot cover its backedge. The immediately preceding check does cover
-    // this exit and every later exit; retaining it also makes this idempotent.
+    // cannot cover its backedge. At a deferred consumption point a check may
+    // already follow ClearException; retain it as well as preceding checks.
     for block in &mut func.blocks {
-        if let Some(&position) = backedge_sources.get(&block.id) {
-            let already_has = block.instructions[..position].last().is_some_and(|inst| {
+        if let Some(&position) = checkpoints.get(&block.id) {
+            let is_check = |inst: &Instruction| {
                 matches!(inst, Instruction::YieldCheck | Instruction::CheckReductions)
-            });
+            };
+            let already_has = block.instructions[..position].last().is_some_and(is_check)
+                || block.instructions.get(position).is_some_and(is_check);
             if !already_has {
                 block.instructions.insert(position, Instruction::YieldCheck);
             }
         }
     }
+}
+
+fn is_exception_accessor(inst: &Instruction) -> bool {
+    matches!(
+        inst,
+        Instruction::GetExceptionClass(_)
+            | Instruction::GetExceptionReason(_)
+            | Instruction::GetExceptionStacktrace(_)
+    )
+}
+
+/// Follow only the pending-exception prefixes accepted by the IR contract.
+fn exception_consumption(
+    mut target: BlockId,
+    blocks: &[BasicBlock],
+    block_index: &HashMap<BlockId, usize>,
+) -> Option<(BlockId, usize)> {
+    let mut visited = HashSet::new();
+    while visited.insert(target) {
+        let block = &blocks[*block_index.get(&target)?];
+        for (position, inst) in block.instructions.iter().enumerate() {
+            if matches!(inst, Instruction::ClearException) {
+                return Some((target, position + 1));
+            }
+            if !is_exception_accessor(inst) {
+                return None;
+            }
+        }
+        match &block.terminator {
+            crate::ir::Terminator::Jump(next, args) if args.is_empty() => target = *next,
+            _ => return None,
+        }
+    }
+    None
 }
