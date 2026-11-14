@@ -376,6 +376,7 @@ These are automatically skipped by the runner and show up as SKIP in output.
 | `selective_receive.erl`     | Selective receive (mailbox scan)   | ~6         |
 | `receive_after.erl`         | Receive with timeout               | ~4         |
 | `receive_timeout_domain.erl` | `after` values outside `infinity` and 0..4294967295: a matching queued message is received first, including selective receive and inside `try`; with no match, `error:timeout_value` at once, queued messages kept, no wait for a later sender, and as an uncaught exit; an error in the `after` expression or earlier in a `try` body comes first; valid boundaries; also run on BEAM | Table-driven |
+| `receive_nested_after.erl` | Receive directly in an after body: delayed messages, own timeout, earlier values, tail position, deeper nesting and successive inner receives; also run on BEAM | 5 scenarios |
 | `receive_nil_message.erl`   | The message `[]` is received like any other: first, middle and last in the mailbox, `[]` patterns and guards, `after 0` and no `after`, selective receive skipping it, and a waiting process woken by it; later messages still arrive; also run on BEAM | ~21 |
 | `send_order_between_processes.erl` | Messages one process sends another arrive in the order they were sent: four senders each stream 100,000 numbers to their own receiver, and 2,000 bursts of three come back from an echo process in order; also run on BEAM | 3 |
 | `process_dict.erl`          | put/get/erase/get_keys             | ~10        |

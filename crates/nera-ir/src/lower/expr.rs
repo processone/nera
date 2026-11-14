@@ -849,26 +849,11 @@ impl IrBuilder {
         let before = self.collect_all_bindings();
         let mut exits = Vec::new();
 
-        // --- After body block (shared target for timeout paths) ---
-        let after_block = if let Some(after_clause) = after {
-            let ab = self.fresh_block_with_id();
-            // Like a clause body, the after body binds in its own scope.
-            self.push_scope();
-            self.start_block(ab);
-            let after_result = self.lower_body(&after_clause.body, is_tail)?;
-            if !is_tail {
-                self.emit(Instruction::Move(result_var, after_result));
-                self.set_terminator(Terminator::Jump(join_block, vec![]));
-                exits.extend(self.branch_exit(&before));
-            } else if self.current_terminator.is_none() {
-                self.set_terminator(Terminator::Return(after_result));
-            }
-            self.close_current_block();
-            self.pop_scope();
-            Some(ab)
-        } else {
-            None
-        };
+        // Allocate the after target now, but emit its body after the wait.
+        // Codegen associates receive_wait with the last receive_peek in block
+        // order. A nested receive in this body must not take ownership of the
+        // enclosing receive's wait (or its saved live variables).
+        let after_block = after.map(|_| self.fresh_block_with_id());
 
         // --- Empty block: no messages (or all scanned, none matched) ---
         self.start_block(empty_block);
@@ -911,6 +896,23 @@ impl IrBuilder {
             ));
             self.set_terminator(Terminator::Return(wait_result));
             self.close_current_block();
+        }
+
+        // --- After body block (shared target for timeout paths) ---
+        if let (Some(after_clause), Some(ab)) = (after, after_block) {
+            // Like a clause body, the after body binds in its own scope.
+            self.push_scope();
+            self.start_block(ab);
+            let after_result = self.lower_body(&after_clause.body, is_tail)?;
+            if !is_tail {
+                self.emit(Instruction::Move(result_var, after_result));
+                self.set_terminator(Terminator::Jump(join_block, vec![]));
+                exits.extend(self.branch_exit(&before));
+            } else if self.current_terminator.is_none() {
+                self.set_terminator(Terminator::Return(after_result));
+            }
+            self.close_current_block();
+            self.pop_scope();
         }
 
         // --- Build match clauses ---
