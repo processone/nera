@@ -64,6 +64,7 @@ EXACT_RULES = {
     "Cargo.lock": COMPILER,
     "rust-toolchain.toml": COMPILER,
     "scripts/test-cross.sh": frozenset({"build", "cross"}),
+    "scripts/test-test-storage.py": frozenset({"build", "e2e"}),
     ".github/workflows/release.yml": PACKAGING,
     # Release milestone: runs from main on its own; the target file is its input.
     ".github/workflows/release-milestone.yml": NONE,

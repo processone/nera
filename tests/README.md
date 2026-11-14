@@ -34,6 +34,19 @@ The legacy shell script `./tests/run_tests.sh` is still available but `nera test
 is the recommended runner — it runs tests in parallel, has colored output, and
 produces a failure summary.
 
+Each native test executable and its object files live in a fresh temporary
+directory retained until execution finishes, then removed on success, failure or
+timeout. On Unix, Nera creates it with mode 0700, regardless of the umask, under
+a temporary root whose ownership and ancestry prevent replacement by other
+users. A sticky shared `/tmp` is supported. If a custom temporary root is unsafe,
+Nera instead creates the disposable directory directly under a protected `HOME`.
+If neither location is protected, the test fails before compilation. Existing
+PID-based paths are never reused, changed or removed. Tests still execute with
+the project working directory so relative fixtures continue to work.
+
+Run `python3 scripts/test-test-storage.py` after rebuilding to check this contract
+at the real native linker boundary on Unix.
+
 ## Focused runtime contracts
 
 The [runtime contract index](../docs/RUNTIME_CONTRACTS.md) names the semantic

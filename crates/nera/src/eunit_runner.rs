@@ -129,7 +129,7 @@ pub(crate) fn run(
         opts.verbose,
         Some(root),
     )?;
-    let temp = tempfile::tempdir()?;
+    let temp = crate::test_storage::new()?;
     let source = temp.path().join("nera_eunit_driver.erl");
     std::fs::write(&source, driver(&modules, opts.verbose))?;
     let binary = temp

@@ -113,6 +113,19 @@ The [current baseline](docs/PROJECT_STATUS.md) records known failures; do not
 infer a green workspace from passing one crate. Preserve explicit expected
 output/completion checks when adding runtime regressions.
 
+When changing native test storage, also run the Unix linker-boundary regression:
+
+```bash
+python3 scripts/test-test-storage.py
+```
+
+It runs the real compiler and native linker under `umask 000`, plants the former
+PID-based paths, checks owner-only fresh executable directories and cleanup,
+and exercises private-home fallback and refusal of replaceable ancestors.
+The EUnit storage cases use a local framework stand-in, not external OTP sources.
+The fixtures use only disposable directories and an isolated `HOME`; native
+multi-account access checks and Windows ACL validation remain separate coverage.
+
 When changing embedded runtime extraction, also run the standalone cache
 regression with two compilers built with different native runtime archives.
 Build each runtime before its compiler and retain both matching artifacts:
