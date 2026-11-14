@@ -636,16 +636,17 @@ impl Scheduler {
 // EXIT / DOWN signal propagation
 // ---------------------------------------------------------------------------
 
-/// Free a dead process's registered name, then propagate EXIT signals to
+/// Free a dead process's registered name and ETS tables, then propagate EXIT signals to
 /// linked processes and DOWN signals to monitoring processes. Called from the
 /// exit points in `worker_loop` AFTER dropping the dying process's MutexGuard
 /// but BEFORE removing it from the process table (so its heap stays alive for
 /// deep-copy).
 ///
-/// The name is freed first, as on BEAM: a process woken by the 'EXIT' or
-/// 'DOWN' on another worker, such as a supervisor restarting a named child,
-/// must find the name free. A process killed by the link cascade below frees
-/// its own name the same way before its signals go out.
+/// The name and tables are freed first, as on BEAM: a process woken by the
+/// 'EXIT' or 'DOWN' on another worker, such as a supervisor restarting a child,
+/// must be able to reuse its registered name and named tables. A process killed
+/// by the link cascade below releases its own resources the same way before
+/// its signals go out.
 ///
 /// Deadlock safety: the dying process's lock is NOT held. Each linked/monitoring
 /// process is locked individually, and the lock is dropped before any recursive
@@ -675,6 +676,7 @@ fn propagate_exit_signals(
     };
 
     unregister_dead_process(dead_pid, registered_names);
+    crate::ets::delete_tables_owned_by(dead_pid);
 
     let is_kill = exit_reason.as_atom_id() == Some(ATOM_KILL);
     let is_normal = exit_reason.as_atom_id() == Some(ATOM_NORMAL);
@@ -798,7 +800,6 @@ fn propagate_exit_signals(
             #[cfg(mio_supported)]
             reactor.cancel_for_pid(their_pid);
             crate::socket::remove_all_for_pid(their_pid);
-            crate::ets::delete_tables_owned_by(their_pid);
             alive_count.fetch_sub(1, Ordering::AcqRel);
             process_table.remove(&their_pid);
         }
@@ -922,7 +923,6 @@ fn cleanup_dead_process(
     #[cfg(mio_supported)]
     reactor.cancel_for_pid(pid);
     crate::socket::remove_all_for_pid(pid);
-    crate::ets::delete_tables_owned_by(pid);
     alive_count.fetch_sub(1, Ordering::AcqRel);
     process_table.remove(&pid);
 }
@@ -1636,7 +1636,6 @@ fn worker_loop(
                     #[cfg(mio_supported)]
                     reactor.cancel_for_pid(pid);
                     crate::socket::remove_all_for_pid(pid);
-                    crate::ets::delete_tables_owned_by(pid);
                     alive_count.fetch_sub(1, Ordering::AcqRel);
                     process_table.remove(&pid);
                 } else {
@@ -2064,6 +2063,105 @@ mod tests {
 
         assert!(freed_before_down, "both names are free before the owner gets the 'DOWN'");
         assert_eq!(owner.inbox.len(), 1, "the owner then gets the linked process's 'DOWN'");
+    }
+
+    // A supervisor may recreate a named table as soon as EXIT/DOWN arrives.
+    // Hold the observer's lock so propagation cannot deliver its first DOWN.
+    // Both direct exit and a linked-exit cascade must already have deleted
+    // their named and unnamed tables, without touching another owner's table.
+    #[test]
+    fn exit_deletes_ets_before_any_signal() {
+        let mut outcomes = Vec::new();
+        for cascade in [false, true] {
+            let scheduler = Scheduler::new(1);
+            // Dedicated PIDs avoid the process-global ETS fixtures in other tests.
+            let dead_pid = ProcessId::new(9_400_000 + u64::from(cascade) * 10);
+            let linked_pid = ProcessId::new(dead_pid.get() + 1);
+            scheduler.spawn_process(Process::new(dead_pid));
+            scheduler.process_table.get(&dead_pid).unwrap().lock_for_runtime().transition(ProcessState::Exited);
+            let observer_pid = scheduler.spawn_process(Process::new(ProcessId::new(dead_pid.get() + 2)));
+            let observer = scheduler.process_table.get(&observer_pid).unwrap().clone();
+            let monitored_pid = if cascade { linked_pid } else { dead_pid };
+            let monitor = 1_u64;
+            observer.lock_for_runtime().add_outgoing_monitor(monitor, monitored_pid);
+            let monitors = [(monitor, observer_pid)].into_iter().collect();
+            let (links, monitors) = if cascade {
+                scheduler.spawn_process(Process::new(linked_pid));
+                let linked = scheduler.process_table.get(&linked_pid).unwrap().clone();
+                let mut proc = linked.lock_for_runtime();
+                proc.add_link(dead_pid);
+                proc.otp.monitors_incoming = monitors;
+                ([linked_pid].into_iter().collect(), HashMap::new())
+            } else {
+                (HashSet::new(), monitors)
+            };
+            let atoms = crate::atom_table::global_atom_table();
+            let named = [("named_table".to_string(), ErlTerm::nil())];
+            let mut owned_tables = Vec::new();
+            for pid in [dead_pid, monitored_pid].into_iter().collect::<HashSet<_>>() {
+                let name = atoms.intern(&format!("exit_order_ets_{}", pid.get()));
+                owned_tables.push(crate::ets::ets_new_handle(name, &named, pid).unwrap());
+                owned_tables.push(crate::ets::ets_new_handle(name, &[], pid).unwrap());
+            }
+            let survivor_name = atoms.intern(&format!("exit_order_survivor_{}", dead_pid.get()));
+            let survivor = crate::ets::ets_new_handle(survivor_name, &named, observer_pid).unwrap();
+            #[cfg(mio_supported)]
+            let (reactor, join) = crate::reactor::spawn_reactor();
+
+            let guard = observer.lock_for_runtime();
+            let mut heap = crate::heap::ProcessHeap::new();
+            let undefined = ErlTerm::atom(crate::atom_table::ATOM_UNDEFINED);
+            let removed_before_down = thread::scope(|scope| {
+                let exiting = scope.spawn(|| {
+                    cleanup_dead_process(
+                        dead_pid,
+                        ErlTerm::atom(crate::atom_table::ATOM_BADARG),
+                        links,
+                        monitors,
+                        &scheduler.process_table,
+                        &scheduler.injector,
+                        &scheduler.runnable_count,
+                        &scheduler.alive_count,
+                        &scheduler.any_crash,
+                        &scheduler.initial_pid,
+                        &scheduler.registered_names,
+                        &scheduler.timer_wheel,
+                        &scheduler.io_pool,
+                        #[cfg(mio_supported)]
+                        &reactor,
+                    );
+                });
+                let deadline = Instant::now() + Duration::from_secs(5);
+                let removed = loop {
+                    if owned_tables.iter().all(|&table| {
+                        crate::ets::ets_info(table, Some("owner"), &mut heap) == undefined
+                    }) {
+                        break true;
+                    }
+                    if Instant::now() >= deadline { break false; }
+                    thread::yield_now();
+                };
+                let undelivered = observer.inbox.is_empty();
+                drop(guard);
+                exiting.join().unwrap();
+                removed && undelivered
+            });
+            #[cfg(mio_supported)]
+            { reactor.shutdown(); join.join().unwrap(); }
+
+            assert_eq!(observer.inbox.len(), 1, "the observer then gets DOWN");
+            assert_eq!(crate::ets::ets_info(survivor, Some("owner"), &mut heap), ErlTerm::pid(observer_pid));
+            assert!(crate::ets::ets_delete_table(survivor));
+            // Recreate each name for the observer, not the exited owner.
+            for table in owned_tables.into_iter().filter(|table| table.is_atom()) {
+                let name = table.as_atom_id().unwrap();
+                assert_eq!(crate::ets::ets_new_handle(name, &named, observer_pid), Some(table));
+                assert!(crate::ets::ets_delete_table(table));
+            }
+            outcomes.push((cascade, removed_before_down));
+        }
+        assert!(outcomes.iter().all(|(_, removed)| *removed),
+            "direct and cascading exits delete ETS before DOWN: {outcomes:?}");
     }
 
     // supervisor_shutdown sometimes found a stopped child still alive: the
