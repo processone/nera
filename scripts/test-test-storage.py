@@ -65,7 +65,9 @@ def main():
     real_cc = shutil.which("cc")
     assert real_cc, "native C linker required"
     with tempfile.TemporaryDirectory(prefix="nera test storage ", dir=args.temp_parent) as directory:
-        root = Path(directory)
+        # macOS exposes temp roots through aliases such as /var -> /private/var.
+        # Compare canonical fixture paths with the canonical linker observations.
+        root = Path(directory).resolve()
         root.chmod(0o700)
         tools = root / "tools"
         tools.mkdir()
