@@ -19,9 +19,12 @@ All notable milestones for the nera project are documented in this file.
   now checks its inbox after publishing the wait. A message or exit signal sent
   while the process was still running no longer remains stranded and hangs
   program termination.
-- Runtime regressions exercise both deliveries through the worker loop and
-  retain an empty-inbox control: an initial process with links still waits
-  when no signal arrives.
+- EXIT fragments carry their signal classification in the same inbox push.
+  A worker that wakes itself before the sender's wake attempt now handles a
+  fatal exit as an exit, rather than completing normally.
+- Runtime regressions exercise both deliveries through the worker loop,
+  including a sender paused after its push, and both inbox drain paths. An
+  empty-inbox control retains the initial process's wait and links.
 
 ## Oversized binary copies raise Erlang errors
 

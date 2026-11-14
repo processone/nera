@@ -724,8 +724,7 @@ fn propagate_exit_signals(
             };
             drop(proc);
 
-            entry.inbox.push(fragment);
-            entry.has_exit_signals.store(true, Ordering::Release);
+            entry.inbox.push(MessageFragment::ExitSignal(Box::new(fragment)));
             // Try waking the process. try_wake() handles receive-waiting,
             // try_wake_io() handles IO-waiting. Only one CAS can succeed.
             // The worker that runs the process cancels its receive timer;
@@ -2430,6 +2429,7 @@ mod tests {
     enum FinalSliceDelivery {
         Message,
         Exit,
+        ExitBeforeSenderWake,
         Empty,
     }
 
@@ -2480,23 +2480,22 @@ mod tests {
                 let fragment = match delivery {
                     FinalSliceDelivery::Message => Some(MessageFragment::Immediate(
                         ImmediateTerm::new(ErlTerm::atom(crate::atom_table::ATOM_OK)))),
-                    FinalSliceDelivery::Exit => Some(MessageFragment::SimpleTuple(vec![
+                    FinalSliceDelivery::Exit | FinalSliceDelivery::ExitBeforeSenderWake => Some(
+                        MessageFragment::ExitSignal(Box::new(MessageFragment::SimpleTuple(vec![
                         FragmentElem::Immediate(ImmediateTerm::new(ErlTerm::atom(
                             crate::atom_table::ATOM_EXIT_SIGNAL))),
                         FragmentElem::Immediate(ImmediateTerm::new(ErlTerm::pid(linked_pid))),
                         FragmentElem::Immediate(ImmediateTerm::new(ErlTerm::atom(
                             crate::atom_table::ATOM_BADARG))),
-                    ])),
+                    ])))),
                     FinalSliceDelivery::Empty => None,
                 };
                 if let Some(fragment) = fragment {
                     target.inbox.push(fragment);
-                    if matches!(delivery, FinalSliceDelivery::Exit) {
-                        target.has_exit_signals.store(true, Ordering::Release);
-                    }
                     // Record an unexpected successful sender wake without
                     // panicking across the native entry boundary.
-                    if target.try_wake() { observation.store(u32::MAX, Ordering::Release); }
+                    if !matches!(delivery, FinalSliceDelivery::ExitBeforeSenderWake)
+                        && target.try_wake() { observation.store(u32::MAX, Ordering::Release); }
                 }
             }));
         });
@@ -2536,7 +2535,7 @@ mod tests {
         assert_eq!(scheduler.runnable_count.load(Ordering::Acquire), 0);
         assert!(scheduler.shutdown.load(Ordering::Acquire));
         assert_eq!(scheduler.any_crash.load(Ordering::Acquire),
-            matches!(delivery, FinalSliceDelivery::Exit));
+            matches!(delivery, FinalSliceDelivery::Exit | FinalSliceDelivery::ExitBeforeSenderWake));
         if matches!(delivery, FinalSliceDelivery::Empty) {
             assert_eq!(initial.published_status(), ASTATUS_WAITING);
             assert_eq!(initial.lock_for_runtime().otp.links.len(), 1);
@@ -2555,6 +2554,13 @@ mod tests {
     #[test]
     fn initial_return_with_links_observes_final_slice_exit() {
         check_initial_return_with_links(FinalSliceDelivery::Exit);
+    }
+
+    #[test]
+    fn initial_return_with_links_observes_exit_before_sender_wake() {
+        // Pause the sender after inbox publication, before its wake attempt.
+        // Classification must already be visible to the receiver's self-wake.
+        check_initial_return_with_links(FinalSliceDelivery::ExitBeforeSenderWake);
     }
 
     #[test]
@@ -2719,14 +2725,13 @@ mod tests {
                         use crate::message::{FragmentElem, ImmediateTerm, MessageFragment};
                         // exit/2 can wake the target before another process's
                         // linked exit kills it; the queued kill is now stale.
-                        linked.inbox.push(MessageFragment::SimpleTuple(vec![
+                        linked.inbox.push(MessageFragment::ExitSignal(Box::new(MessageFragment::SimpleTuple(vec![
                             FragmentElem::Immediate(ImmediateTerm::new(ErlTerm::atom(
                                 crate::atom_table::ATOM_EXIT_SIGNAL))),
                             FragmentElem::Immediate(ImmediateTerm::new(ErlTerm::pid(dead_pid))),
                             FragmentElem::Immediate(ImmediateTerm::new(ErlTerm::atom(
                                 crate::atom_table::ATOM_KILL))),
-                        ]));
-                        linked.has_exit_signals.store(true, Ordering::Release);
+                        ]))));
                     }
                     assert!(if state == io { linked.try_wake_io() } else { linked.try_wake() });
                     scheduler.runnable_count.fetch_add(1, Ordering::AcqRel);

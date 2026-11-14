@@ -320,9 +320,9 @@ pub struct ProcessEntry {
     /// Atomic mirror of `ProcessStatus` for lock-free wake detection.
     /// Senders CAS this from `WAITING → READY` to wake a process.
     atomic_status: AtomicU32,
-    /// Set when an EXIT signal is pushed to the inbox. The worker checks
-    /// this before scanning the mailbox for EXIT tuples, avoiding O(N)
-    /// scans on every wake when no signals are pending.
+    /// Set by the worker when it drains a classified EXIT fragment. The
+    /// classification is queued with the payload, never published separately
+    /// by the sender. Avoids O(N) mailbox scans when no signals are pending.
     pub has_exit_signals: AtomicBool,
     /// The actual process state, protected by a Mutex.
     proc: Mutex<Process>,
@@ -580,8 +580,10 @@ fn drain_inbox_into(entry: &ProcessEntry, proc: &mut Process) {
                 }
             }
             other => {
+                let is_exit = matches!(&other, MessageFragment::ExitSignal(_));
                 let msg = other.copy_to_heap(&mut proc.heap);
                 proc.mailbox.send(msg);
+                if is_exit { entry.has_exit_signals.store(true, Ordering::Relaxed); }
             }
         }
         return;
@@ -610,8 +612,10 @@ fn drain_inbox_into(entry: &ProcessEntry, proc: &mut Process) {
                 }
             }
             other => {
+                let is_exit = matches!(&other, MessageFragment::ExitSignal(_));
                 let msg = other.copy_to_heap(&mut proc.heap);
                 proc.mailbox.send(msg);
+                if is_exit { entry.has_exit_signals.store(true, Ordering::Relaxed); }
             }
         }
     }
@@ -3592,6 +3596,39 @@ mod tests {
     // ---------------------------------------------------------------
     // ASTATUS_IO_WAIT and try_wake / try_wake_io separation
     // ---------------------------------------------------------------
+
+    // EXIT publication must be indivisible even if its sender stops before
+    // waking the target. Exercise both the single and batched drain paths.
+    #[test]
+    fn inbox_drain_keeps_exit_classification_with_its_payload() {
+        use crate::message::{FragmentElem, ImmediateTerm};
+        for ordinary_count in [0, 1, 2] {
+            let entry = ProcessEntry::new(Process::new(ProcessId::new(1)));
+            let ordinary: Vec<_> = (0..ordinary_count).map(ErlTerm::small_int).collect();
+            for &msg in &ordinary {
+                entry.inbox.push(MessageFragment::Immediate(ImmediateTerm::new(msg)));
+            }
+            entry.inbox.push(MessageFragment::ExitSignal(Box::new(
+                MessageFragment::SimpleTuple(vec![
+                    FragmentElem::Immediate(ImmediateTerm::new(ErlTerm::atom(
+                        crate::atom_table::ATOM_EXIT_SIGNAL))),
+                    FragmentElem::Immediate(ImmediateTerm::new(ErlTerm::pid(ProcessId::new(2)))),
+                    FragmentElem::Immediate(ImmediateTerm::new(ErlTerm::atom(
+                        crate::atom_table::ATOM_BADARG))),
+                ]))));
+            // No sender-side flag store or wake has occurred.
+            assert!(!entry.has_exit_signals.load(Ordering::Relaxed));
+            let mut proc = entry.lock_for_runtime();
+            proc.drain_inbox();
+            assert!(entry.has_exit_signals.swap(false, Ordering::Acquire));
+            // SAFETY: the guard exclusively owns every copied mailbox term;
+            // no collection or mutation intervenes before signal processing.
+            assert_eq!(unsafe { process_exit_signals(&mut proc) },
+                Some(ErlTerm::atom(crate::atom_table::ATOM_BADARG)));
+            assert_eq!(proc.mailbox.messages().collect::<Vec<_>>(), ordinary);
+            assert!(entry.inbox.is_empty());
+        }
+    }
 
     #[test]
     fn guard_drains_and_publishes_only_its_own_entry() {

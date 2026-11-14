@@ -1893,8 +1893,7 @@ pub unsafe extern "C" fn nera_rt_exit_2(ctx: *mut ProcessContext, pid_term: u64,
                     heap.alloc_tuple(&[exit_atom, from_pid, ErlTerm(reason)])
                 });
                 let fragment = crate::message::MessageFragment::from_term(exit_msg);
-                entry.inbox.push(fragment);
-                entry.has_exit_signals.store(true, std::sync::atomic::Ordering::Release);
+                entry.inbox.push(crate::message::MessageFragment::ExitSignal(Box::new(fragment)));
                 // Try waking the process. try_wake() handles receive-waiting
                 // (ASTATUS_WAITING), try_wake_io() handles IO-waiting
                 // (ASTATUS_IO_WAIT). Only one CAS can succeed.
