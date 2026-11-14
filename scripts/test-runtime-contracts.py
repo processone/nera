@@ -82,10 +82,10 @@ def run_contract(source, compiler, runtime, erl, work, timeout):
     builds = [
         ("native", [compiler, "build", source, wrapper, "-e", "runtime_contract_entry:main", "-o", binary]),
         ("beam", [erl, "-noshell", "-eval",
-                  'lists:foreach(fun(P) -> R=compile:file(P,[{outdir,' + json.dumps(str(work)) +
+                  'lists:foreach(fun(P) -> R=compile:file(P,[{outdir,' + json.dumps(str(work), ensure_ascii=False) +
                   '},return_errors,return_warnings]), io:format("~p~n",[R]), '
                   'case R of {ok,_,_} -> ok; _ -> halt(1) end end, [' +
-                  ','.join(json.dumps(str(p)) for p in (source, wrapper)) + ']), halt(0).']),
+                  ','.join(json.dumps(str(p), ensure_ascii=False) for p in (source, wrapper)) + ']), halt(0).']),
     ]
     ready = {}
     for engine, command in builds:
@@ -161,7 +161,7 @@ def main():
             if report[name]["failure"]:
                 raise ValueError(f"cannot record {name}")
         with tempfile.TemporaryDirectory(prefix="nera runtime contracts ", dir=args.temp_parent) as temporary:
-            work = Path(temporary)
+            work = Path(temporary).resolve()
             tools = work / "tools"
             tools.mkdir()
             isolated_compiler = tools / compiler.name

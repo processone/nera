@@ -36,7 +36,7 @@ def main():
     }
     outcomes = {}
     with tempfile.TemporaryDirectory(prefix="nera contract rejection ", dir=args.temp_parent) as temporary:
-        root = Path(temporary)
+        root = Path(temporary).resolve()
         tools = root / "tools"
         tools.mkdir()
         isolated_compiler = tools / compiler.name
