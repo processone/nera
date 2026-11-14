@@ -1153,6 +1153,11 @@ impl EtsRegistry {
                     pt.remove(&owner_pid);
                 }
             }
+            // Destruction can free many rows and mappings. Keep the removal
+            // and index changes atomic, but never free data under registry locks.
+            drop(pt);
+            drop(tables);
+            drop(table);
             true
         } else {
             false
