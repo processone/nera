@@ -41,6 +41,17 @@ All notable milestones for the nera project are documented in this file.
   including a sender paused after its push, and both inbox drain paths. An
   empty-inbox control retains the initial process's wait and links.
 
+## Deep term operations use heap-allocated work stacks
+
+- `<` and `>` comparisons, `term_to_binary/1`, `iolist_to_binary/1` and
+  `erlang:phash2/1` handle iolists nested 200,000 levels deep in head
+  position without overflowing the native stack. A shared native/BEAM
+  regression checks ordering, complete encoded bytes and flattened output.
+- `erlang:phash2/1,2` now use OTP's portable data-term hashing instead of
+  Nera's FNV-style hash, including byte-list packing, binary blocks and
+  order-independent map pairs. Previously stored Nera hash values may change;
+  fun hashes still lack BEAM's function metadata.
+
 ## Oversized binary copies raise Erlang errors
 
 - `binary:copy/2` checks result-size multiplication and the binary header's

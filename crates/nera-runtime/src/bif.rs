@@ -281,146 +281,6 @@ pub unsafe fn bif_byte_size(_heap: &mut ProcessHeap, args: &[ErlTerm]) -> Result
 // Hashing
 // ---------------------------------------------------------------------------
 
-/// FNV-1a-style hash mixing.
-#[inline]
-fn hash_mix(hash: u64, value: u64) -> u64 {
-    (hash ^ value).wrapping_mul(16777619)
-}
-
-/// Compute a deterministic hash of an Erlang term.
-///
-/// Integers equal to floats must produce the same hash (e.g. 1 and 1.0).
-/// # Safety
-/// Source graphs obey the enclosing BIF live, immutable, unmoved input contract.
-unsafe fn hash_erlang_term(term: ErlTerm) -> u64 {
-    // Small integer
-    if let Some(n) = term.as_small_int() {
-        return hash_mix(0xcbf29ce484222325, n as u64);
-    }
-
-    // Atom
-    if let Some(id) = term.as_atom_id() {
-        return hash_mix(0xcbf29ce484222325 ^ 0xa1, id as u64);
-    }
-
-    // Pid
-    if term.is_pid() {
-        return hash_mix(0xcbf29ce484222325 ^ 0xb1, term.0);
-    }
-
-    // Nil
-    if term.is_nil() {
-        return 0xcbf29ce484222325 ^ 0xc1;
-    }
-
-    // Cons cell — iterate to avoid stack overflow
-    if term.is_cons() {
-        let mut hash = 0xcbf29ce484222325_u64 ^ 0xd1;
-        let mut current = term;
-        while current.is_cons() {
-            if let Some(ptr) = current.as_cons_ptr() {
-                unsafe {
-                    hash = hash_mix(hash, hash_erlang_term((*ptr).head));
-                    current = (*ptr).tail;
-                }
-            } else {
-                break;
-            }
-        }
-        // Hash the tail (nil or improper)
-        if !current.is_nil() {
-            hash = hash_mix(hash, hash_erlang_term(current));
-        }
-        return hash;
-    }
-
-    // Boxed types
-    if term.is_boxed() {
-        if let Some(ptr) = term.as_boxed_ptr() {
-            unsafe {
-                let header = BoxedHeader(*ptr);
-                match header.subtype() {
-                    BOXED_FLOAT => {
-                        let bits = *ptr.add(1);
-                        let val = f64::from_bits(bits);
-                        // If float is a whole number, hash it as integer for consistency
-                        if val.fract() == 0.0 && val.is_finite() {
-                            return hash_mix(0xcbf29ce484222325, val as i64 as u64);
-                        }
-                        return hash_mix(0xcbf29ce484222325 ^ 0xe1, bits);
-                    }
-                    BOXED_TUPLE => {
-                        let arity = header.arity() as usize;
-                        let mut hash = hash_mix(0xcbf29ce484222325 ^ 0xf1, arity as u64);
-                        for i in 1..=arity {
-                            hash = hash_mix(hash, hash_erlang_term(ErlTerm(*ptr.add(i))));
-                        }
-                        return hash;
-                    }
-                    BOXED_BINARY | BOXED_REFC_BINARY => {
-                        let size = header.arity() as usize;
-                        let byte_len = size.div_ceil(8);
-                        let data_ptr = if header.subtype() == BOXED_BINARY {
-                            (ptr.add(1)) as *const u8
-                        } else {
-                            // Read the stable backing object to get the data pointer.
-                            // The raw word is a *const BinaryData, not a direct data pointer.
-                            let raw_arc_ptr = *ptr.add(REFC_BINARY_PTR_WORD_INDEX) as *const BinaryData;
-                            let offset = *ptr.add(REFC_BINARY_OFFSET_WORD_INDEX) as usize;
-                            let vec_ref = &*raw_arc_ptr;
-                            vec_ref.as_ptr().add(offset)
-                        };
-                        let mut hash = 0xcbf29ce484222325_u64 ^ 0xa2;
-                        for i in 0..byte_len {
-                            hash = hash_mix(hash, *data_ptr.add(i) as u64);
-                        }
-                        return hash;
-                    }
-                    BOXED_MAP => {
-                        let num_pairs = header.arity() as usize;
-                        // Order-independent: XOR individual pair hashes
-                        let mut hash = 0_u64;
-                        for i in 0..num_pairs {
-                            let key = ErlTerm(*ptr.add(1 + i * 2));
-                            let val = ErlTerm(*ptr.add(2 + i * 2));
-                            let pair_hash = hash_mix(
-                                hash_erlang_term(key),
-                                hash_erlang_term(val),
-                            );
-                            hash ^= pair_hash;
-                        }
-                        return hash_mix(0xcbf29ce484222325 ^ 0xb2, hash);
-                    }
-                    BOXED_BIGINT => {
-                        let limb_count = header.arity() as usize;
-                        let mut hash = 0xcbf29ce484222325_u64 ^ 0xc2;
-                        // Hash sign word
-                        hash = hash_mix(hash, *ptr.add(1));
-                        // Hash limbs
-                        for i in 0..limb_count {
-                            hash = hash_mix(hash, *ptr.add(2 + i));
-                        }
-                        return hash;
-                    }
-                    BOXED_REFERENCE => {
-                        return hash_mix(0xcbf29ce484222325 ^ 0xd2, *ptr.add(1));
-                    }
-                    BOXED_CLOSURE => {
-                        return hash_mix(0xcbf29ce484222325 ^ 0xe2, *ptr.add(1));
-                    }
-                    _ => {
-                        // Unknown boxed type — hash raw bits
-                        return hash_mix(0xcbf29ce484222325 ^ 0xff, term.0);
-                    }
-                }
-            }
-        }
-    }
-
-    // Fallback
-    hash_mix(0xcbf29ce484222325, term.0)
-}
-
 /// `erlang:phash2/1` -- portable hash of an Erlang term.
 ///
 /// Returns an integer in the range 0..(2^27 - 1).
@@ -432,7 +292,7 @@ pub unsafe fn bif_phash2(_heap: &mut ProcessHeap, args: &[ErlTerm]) -> Result<Er
     if args.len() != 1 {
         return Err(ErlTerm::atom(ATOM_BADARG));
     }
-    let hash = hash_erlang_term(args[0]);
+    let hash = crate::phash2::hash(args[0]);
     let result = (hash % (1 << 27)) as i64;
     Ok(ErlTerm::small_int(result))
 }
@@ -452,7 +312,7 @@ pub unsafe fn bif_phash2_range(_heap: &mut ProcessHeap, args: &[ErlTerm]) -> Res
         Some(r) if r > 0 => r as u64,
         _ => return Err(ErlTerm::atom(ATOM_BADARG)),
     };
-    let hash = hash_erlang_term(args[0]);
+    let hash = u64::from(crate::phash2::hash(args[0]));
     let result = (hash % range) as i64;
     Ok(ErlTerm::small_int(result))
 }
@@ -1647,6 +1507,15 @@ const NEW_PID_EXT: u8 = 88;
 /// # Safety
 /// Source graphs obey the enclosing BIF live, immutable, unmoved input contract.
 unsafe fn etf_encode(term: ErlTerm, buf: &mut Vec<u8>) {
+    let mut pending = vec![term];
+    while let Some(term) = pending.pop() {
+        etf_encode_next(term, buf, &mut pending);
+    }
+}
+
+// Schedule children in reverse wire order without borrowing the process heap
+// mutably: these raw terms cannot move while the work stack is being drained.
+unsafe fn etf_encode_next(term: ErlTerm, buf: &mut Vec<u8>, pending: &mut Vec<ErlTerm>) {
     // Small integer
     if let Some(val) = term.as_small_int() {
         if (0..=255).contains(&val) {
@@ -1739,11 +1608,9 @@ unsafe fn etf_encode(term: ErlTerm, buf: &mut Vec<u8>) {
 
         buf.push(LIST_EXT);
         buf.extend_from_slice(&(elements.len() as u32).to_be_bytes());
-        for e in &elements {
-            etf_encode(*e, buf);
-        }
-        // Tail (nil for proper list, or the improper tail)
-        etf_encode(cursor, buf);
+        // Tail follows every element, including for improper lists.
+        pending.push(cursor);
+        pending.extend(elements.into_iter().rev());
         return;
     }
 
@@ -1766,8 +1633,8 @@ unsafe fn etf_encode(term: ErlTerm, buf: &mut Vec<u8>) {
                         buf.push(LARGE_TUPLE_EXT);
                         buf.extend_from_slice(&(arity as u32).to_be_bytes());
                     }
-                    for i in 1..=arity {
-                        etf_encode(ErlTerm(*ptr.add(i)), buf);
+                    for i in (1..=arity).rev() {
+                        pending.push(ErlTerm(*ptr.add(i)));
                     }
                 }
                 BOXED_BINARY | BOXED_REFC_BINARY => {
@@ -1781,11 +1648,11 @@ unsafe fn etf_encode(term: ErlTerm, buf: &mut Vec<u8>) {
                     let npairs = header.arity() as usize;
                     buf.push(MAP_EXT);
                     buf.extend_from_slice(&(npairs as u32).to_be_bytes());
-                    for i in crate::ffi::compare::map_iteration_order(ptr, npairs) {
+                    for i in crate::ffi::compare::map_iteration_order(ptr, npairs).into_iter().rev() {
                         let key = ErlTerm(*ptr.add(1 + i * 2));
                         let val = ErlTerm(*ptr.add(2 + i * 2));
-                        etf_encode(key, buf);
-                        etf_encode(val, buf);
+                        pending.push(val);
+                        pending.push(key);
                     }
                 }
                 BOXED_BIGINT => {
@@ -1814,7 +1681,7 @@ unsafe fn etf_encode(term: ErlTerm, buf: &mut Vec<u8>) {
                     buf.extend_from_slice(b"ref");
                     // id as integer
                     let id = *ptr.add(1);
-                    etf_encode(ErlTerm::small_int(id as i64), buf);
+                    pending.push(ErlTerm::small_int(id as i64));
                 }
                 _ => {
                     // Unsupported boxed type — encode as atom 'undefined'

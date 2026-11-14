@@ -176,10 +176,65 @@ pub(crate) unsafe fn map_iteration_order(ptr: *const u64, npairs: usize) -> Vec<
     order
 }
 
+enum CompareWork {
+    Terms(ErlTerm, ErlTerm, bool),
+    TupleFields { a: ErlTerm, b: ErlTerm, next: usize, exact: bool },
+    MapFields(Box<MapComparison>),
+}
+
+struct MapComparison {
+    a: Vec<(ErlTerm, ErlTerm)>,
+    b: Vec<(ErlTerm, ErlTerm)>,
+    next: usize,
+    exact: bool,
+}
+
 /// Map keys require exact ordering throughout their graph, including map values
 /// nested inside a key. Ordinary map values retain the caller's comparison mode.
 /// The term lifetime contract is the same as compare_terms's.
 unsafe fn compare_terms_mode(a: ErlTerm, b: ErlTerm, exact: bool) -> i64 {
+    let mut pending = Vec::new();
+    let mut current = CompareWork::Terms(a, b, exact);
+    loop {
+        let (a, b, exact) = match current {
+            CompareWork::Terms(a, b, exact) => (a, b, exact),
+            CompareWork::TupleFields { a, b, next, exact } => {
+                let pa = a.as_boxed_ptr().unwrap();
+                let pb = b.as_boxed_ptr().unwrap();
+                if next < BoxedHeader(*pa).arity() as usize {
+                    pending.push(CompareWork::TupleFields { a, b, next: next + 1, exact });
+                }
+                (ErlTerm(*pa.add(next)), ErlTerm(*pb.add(next)), exact)
+            }
+            CompareWork::MapFields(mut fields) => {
+                let n = fields.a.len();
+                let index = fields.next % n;
+                let keys = fields.next < n;
+                let (a, b, exact) = if keys {
+                    (fields.a[index].0, fields.b[index].0, true)
+                } else {
+                    (fields.a[index].1, fields.b[index].1, fields.exact)
+                };
+                fields.next += 1;
+                if fields.next < 2 * n {
+                    pending.push(CompareWork::MapFields(fields));
+                }
+                (a, b, exact)
+            }
+        };
+        let result = compare_terms_step(a, b, exact, &mut pending);
+        if result != 0 { return result; }
+        let Some(next) = pending.pop() else { return 0; };
+        current = next;
+    }
+}
+
+// Equal structural prefixes save one indexed continuation per container,
+// not every remaining field. Wide tuples still stop at the first mismatch.
+unsafe fn compare_terms_step(
+    a: ErlTerm, b: ErlTerm, exact: bool,
+    pending: &mut Vec<CompareWork>,
+) -> i64 {
     use crate::term::*;
 
     // Fast path: identical raw values
@@ -210,12 +265,12 @@ unsafe fn compare_terms_mode(a: ErlTerm, b: ErlTerm, exact: bool) -> i64 {
     if b_num { return 1; }   // non-number > number
 
     // Same-type structural comparison
-    // Cons cells: compare heads, then tails recursively
+    // Cons cells: compare heads before tails
     if let (Some(pa), Some(pb)) = (a.as_cons_ptr(), b.as_cons_ptr()) {
         unsafe {
-            let r = compare_terms_mode((*pa).head, (*pb).head, exact);
-            if r != 0 { return r; }
-            return compare_terms_mode((*pa).tail, (*pb).tail, exact);
+            pending.push(CompareWork::Terms((*pa).tail, (*pb).tail, exact));
+            pending.push(CompareWork::Terms((*pa).head, (*pb).head, exact));
+            return 0;
         }
     }
 
@@ -229,9 +284,11 @@ unsafe fn compare_terms_mode(a: ErlTerm, b: ErlTerm, exact: bool) -> i64 {
                     let aa = ha.arity();
                     let ab = hb.arity();
                     if aa != ab { return if aa < ab { -1 } else { 1 }; }
-                    for i in 1..=aa as usize {
-                        let r = compare_terms_mode(ErlTerm(*pa.add(i)), ErlTerm(*pb.add(i)), exact);
-                        if r != 0 { return r; }
+                    if aa > 0 {
+                        if aa > 1 {
+                            pending.push(CompareWork::TupleFields { a, b, next: 2, exact });
+                        }
+                        pending.push(CompareWork::Terms(ErlTerm(*pa.add(1)), ErlTerm(*pb.add(1)), exact));
                     }
                     return 0;
                 }
@@ -263,13 +320,10 @@ unsafe fn compare_terms_mode(a: ErlTerm, b: ErlTerm, exact: bool) -> i64 {
                         r if r > 0 => std::cmp::Ordering::Greater,
                         _ => std::cmp::Ordering::Equal,
                     });
-                    for i in 0..na {
-                        let r = compare_terms_mode(ka[i].0, kb[i].0, true);
-                        if r != 0 { return r; }
-                    }
-                    for i in 0..na {
-                        let r = compare_terms_mode(ka[i].1, kb[i].1, exact);
-                        if r != 0 { return r; }
+                    if na > 0 {
+                        pending.push(CompareWork::MapFields(Box::new(MapComparison {
+                            a: ka, b: kb, next: 0, exact,
+                        })));
                     }
                     return 0;
                 }
