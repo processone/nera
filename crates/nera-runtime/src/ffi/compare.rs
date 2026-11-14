@@ -178,7 +178,7 @@ pub(crate) unsafe fn map_iteration_order(ptr: *const u64, npairs: usize) -> Vec<
 
 enum CompareWork {
     Terms(ErlTerm, ErlTerm, bool),
-    TupleFields { a: ErlTerm, b: ErlTerm, next: usize, exact: bool },
+    BoxedFields { a: ErlTerm, b: ErlTerm, next: usize, end: usize, exact: bool },
     MapFields(Box<MapComparison>),
 }
 
@@ -192,17 +192,17 @@ struct MapComparison {
 /// Map keys require exact ordering throughout their graph, including map values
 /// nested inside a key. Ordinary map values retain the caller's comparison mode.
 /// The term lifetime contract is the same as compare_terms's.
-unsafe fn compare_terms_mode(a: ErlTerm, b: ErlTerm, exact: bool) -> i64 {
+pub(crate) unsafe fn compare_terms_mode(a: ErlTerm, b: ErlTerm, exact: bool) -> i64 {
     let mut pending = Vec::new();
     let mut current = CompareWork::Terms(a, b, exact);
     loop {
         let (a, b, exact) = match current {
             CompareWork::Terms(a, b, exact) => (a, b, exact),
-            CompareWork::TupleFields { a, b, next, exact } => {
+            CompareWork::BoxedFields { a, b, next, end, exact } => {
                 let pa = a.as_boxed_ptr().unwrap();
                 let pb = b.as_boxed_ptr().unwrap();
-                if next < BoxedHeader(*pa).arity() as usize {
-                    pending.push(CompareWork::TupleFields { a, b, next: next + 1, exact });
+                if next + 1 < end {
+                    pending.push(CompareWork::BoxedFields { a, b, next: next + 1, end, exact });
                 }
                 (ErlTerm(*pa.add(next)), ErlTerm(*pb.add(next)), exact)
             }
@@ -286,9 +286,28 @@ unsafe fn compare_terms_step(
                     if aa != ab { return if aa < ab { -1 } else { 1 }; }
                     if aa > 0 {
                         if aa > 1 {
-                            pending.push(CompareWork::TupleFields { a, b, next: 2, exact });
+                            pending.push(CompareWork::BoxedFields { a, b, next: 2, end: aa as usize + 1, exact });
                         }
                         pending.push(CompareWork::Terms(ErlTerm(*pa.add(1)), ErlTerm(*pb.add(1)), exact));
+                    }
+                    return 0;
+                }
+                // A wrapper identifies a fun expression; allocations and copies
+                // of that expression differ only in their captured terms. Remote
+                // refs have a null wrapper and capture module/function atoms.
+                if ha.subtype() == BOXED_CLOSURE && hb.subtype() == BOXED_CLOSURE {
+                    for (left, right) in [
+                        (*pa.add(1), *pb.add(1)), // raw code pointers, not terms
+                        (*pa.add(2), *pb.add(2)), // user arities
+                        (ha.arity(), hb.arity()), // environment sizes
+                    ] {
+                        let order = left.cmp(&right);
+                        if !order.is_eq() { return order as i64; }
+                    }
+                    if ha.arity() > 0 {
+                        pending.push(CompareWork::BoxedFields {
+                            a, b, next: 3, end: 3 + ha.arity() as usize, exact,
+                        });
                     }
                     return 0;
                 }
@@ -403,7 +422,7 @@ unsafe fn compare_terms_step(
     let rb = term_order_rank(b);
     if ra != rb { return if ra < rb { -1 } else { 1 }; }
 
-    // Same type, non-structural: compare raw tagged values (pids, funs).
+    // Same type, non-structural: compare raw tagged values (pids).
     // Atoms were ordered by name above.
     if a.0 < b.0 { -1 } else { 1 }
 }
@@ -531,6 +550,20 @@ unsafe fn exact_equal_slow(a: ErlTerm, b: ErlTerm) -> bool {
                     if a == b { continue; }
                     if a.is_immediate() && b.is_immediate() { return false; }
                     pending.push((a, b));
+                }
+                continue;
+            }
+            if ah.subtype() == BOXED_CLOSURE && bh.subtype() == BOXED_CLOSURE {
+                if ah.arity() != bh.arity()
+                    || *a_ptr.add(1) != *b_ptr.add(1)
+                    || *a_ptr.add(2) != *b_ptr.add(2)
+                {
+                    return false;
+                }
+                // Preserve exact numeric identity throughout captured graphs,
+                // rather than falling back to ordinary numeric comparison.
+                for i in 0..ah.arity() as usize {
+                    pending.push((ErlTerm(*a_ptr.add(3 + i)), ErlTerm(*b_ptr.add(3 + i))));
                 }
                 continue;
             }

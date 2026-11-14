@@ -23,7 +23,7 @@ use std::sync::{Arc, Mutex, OnceLock, RwLock};
 
 use crate::atom_table::ATOM_UNDEFINED;
 use crate::ets_pool::{EtsAllocation, EtsRegionPool};
-use crate::ffi::compare::compare_terms;
+use crate::ffi::compare::{compare_terms, compare_terms_mode};
 use crate::copy_stack::{copy_graph, SlotCopier, SlotStack, WorkStack};
 use crate::heap::{is_plain_immediate, ProcessHeap};
 use crate::term::{BoxedHeader, ErlTerm, BOXED_CLOSURE, BOXED_TUPLE};
@@ -216,8 +216,10 @@ impl TermKey {
                 return;
             }
         };
-        // Atoms, small ints, pids, nil — just use the raw u64
+        // Tag nested immediates too, so their raw bytes cannot be confused
+        // with the container tags used for captured graphs.
         if term.is_atom() || term.is_small_int() || term.is_pid() || term.is_nil() {
+            out.push(b'V');
             out.extend_from_slice(&term.0.to_le_bytes());
             return;
         }
@@ -260,6 +262,51 @@ impl TermKey {
                     out.extend_from_slice(&(arity as u64).to_le_bytes());
                     for i in (0..arity).rev() {
                         pending.push(KeyPart::Term(ErlTerm(unsafe { *ptr.add(1 + i) })));
+                    }
+                    return;
+                }
+                if header.subtype() == BOXED_CLOSURE {
+                    out.push(b'C');
+                    out.extend_from_slice(&header.arity().to_le_bytes());
+                    // Code pointer and user arity are raw words. Only the
+                    // environment is a graph of terms, shared with equality.
+                    out.extend_from_slice(&(*ptr.add(1)).to_le_bytes());
+                    out.extend_from_slice(&(*ptr.add(2)).to_le_bytes());
+                    for i in (0..header.arity() as usize).rev() {
+                        pending.push(KeyPart::Term(ErlTerm(*ptr.add(3 + i))));
+                    }
+                    return;
+                }
+                // Captures can contain separately allocated numbers and maps.
+                // Canonicalize their values, not their allocation addresses.
+                if header.subtype() == crate::term::BOXED_FLOAT {
+                    out.push(b'F');
+                    out.extend_from_slice(&(*ptr.add(1)).to_le_bytes());
+                    return;
+                }
+                if header.subtype() == crate::term::BOXED_BIGINT {
+                    out.push(b'I');
+                    out.extend_from_slice(&header.arity().to_le_bytes());
+                    for i in 1..=1 + header.arity() as usize {
+                        out.extend_from_slice(&(*ptr.add(i)).to_le_bytes());
+                    }
+                    return;
+                }
+                if header.subtype() == crate::term::BOXED_MAP {
+                    let count = header.arity() as usize;
+                    out.push(b'M');
+                    out.extend_from_slice(&header.arity().to_le_bytes());
+                    let mut order: Vec<usize> = (0..count).collect();
+                    order.sort_by(|&a, &b| {
+                        compare_terms_mode(
+                            ErlTerm(*ptr.add(1 + a * 2)),
+                            ErlTerm(*ptr.add(1 + b * 2)),
+                            true,
+                        ).cmp(&0)
+                    });
+                    for i in order.into_iter().rev() {
+                        pending.push(KeyPart::Term(ErlTerm(*ptr.add(2 + i * 2))));
+                        pending.push(KeyPart::Term(ErlTerm(*ptr.add(1 + i * 2))));
                     }
                     return;
                 }
