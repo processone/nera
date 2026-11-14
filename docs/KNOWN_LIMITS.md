@@ -93,13 +93,17 @@ These are real differences from the BEAM that we have reproduced.
 - Terms nested thousands of levels deep (an iolist built by prepending, for
   example) survive garbage collection, can be sent to other processes,
   captured in spawned funs, and stored in and read back from ETS and
-  `persistent_term`, but other operations on them still recurse on the
-  native stack and crash. Measured on macOS arm64 with a list nested in head
-  position: comparing it with `<` or `==`, or using it as an `ordered_set`
-  key, from about 8,000 levels, `term_to_binary/1` from about 11,000,
-  `erlang:phash2/1` from about 27,000 and `iolist_to_binary/1` from about
-  45,000. `=:=` and `iolist_size/1` work at 200,000 levels. The BEAM handles
-  all of these.
+  `persistent_term`. Comparing head-nested iolists with `<` or `>`, encoding
+  them with `term_to_binary/1`, flattening them with `iolist_to_binary/1`
+  and hashing them with `erlang:phash2/1` work at 200,000 levels, with
+  BEAM-equivalent results. `==`, `=:=` and `iolist_size/1` also work at that
+  depth. The ordering fix also applies to head-nested `ordered_set` keys.
+  This is not a guarantee for every graph shape: sorting map keys still
+  invokes nested comparisons, and deeply nested ETF decoding remains recursive.
+- `erlang:phash2/1,2` use OTP's portable hash for data terms, replacing the
+  earlier Nera-specific hash. Hashes previously stored by Nera may change.
+  Native funs lack BEAM's module/index metadata, so their hashes are not
+  BEAM-compatible. Process and reference identities are local to each runtime.
 - Comprehension filters that are guard expressions, such as
   `[X || X <- L, map_size(X) > 0]`, are treated as plain expressions, so a
   filter that should be skipped can raise.

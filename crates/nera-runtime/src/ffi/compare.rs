@@ -180,6 +180,23 @@ pub(crate) unsafe fn map_iteration_order(ptr: *const u64, npairs: usize) -> Vec<
 /// nested inside a key. Ordinary map values retain the caller's comparison mode.
 /// The term lifetime contract is the same as compare_terms's.
 unsafe fn compare_terms_mode(a: ErlTerm, b: ErlTerm, exact: bool) -> i64 {
+    let mut pending = Vec::new();
+    let mut current = (a, b, exact);
+    loop {
+        let (a, b, exact) = current;
+        let result = compare_terms_step(a, b, exact, &mut pending);
+        if result != 0 { return result; }
+        let Some(next) = pending.pop() else { return 0; };
+        current = next;
+    }
+}
+
+// Equal structural prefixes schedule their remaining comparisons in reverse
+// order. Nesting consumes heap storage, not native call frames.
+unsafe fn compare_terms_step(
+    a: ErlTerm, b: ErlTerm, exact: bool,
+    pending: &mut Vec<(ErlTerm, ErlTerm, bool)>,
+) -> i64 {
     use crate::term::*;
 
     // Fast path: identical raw values
@@ -210,12 +227,12 @@ unsafe fn compare_terms_mode(a: ErlTerm, b: ErlTerm, exact: bool) -> i64 {
     if b_num { return 1; }   // non-number > number
 
     // Same-type structural comparison
-    // Cons cells: compare heads, then tails recursively
+    // Cons cells: compare heads before tails
     if let (Some(pa), Some(pb)) = (a.as_cons_ptr(), b.as_cons_ptr()) {
         unsafe {
-            let r = compare_terms_mode((*pa).head, (*pb).head, exact);
-            if r != 0 { return r; }
-            return compare_terms_mode((*pa).tail, (*pb).tail, exact);
+            pending.push(((*pa).tail, (*pb).tail, exact));
+            pending.push(((*pa).head, (*pb).head, exact));
+            return 0;
         }
     }
 
@@ -229,9 +246,8 @@ unsafe fn compare_terms_mode(a: ErlTerm, b: ErlTerm, exact: bool) -> i64 {
                     let aa = ha.arity();
                     let ab = hb.arity();
                     if aa != ab { return if aa < ab { -1 } else { 1 }; }
-                    for i in 1..=aa as usize {
-                        let r = compare_terms_mode(ErlTerm(*pa.add(i)), ErlTerm(*pb.add(i)), exact);
-                        if r != 0 { return r; }
+                    for i in (1..=aa as usize).rev() {
+                        pending.push((ErlTerm(*pa.add(i)), ErlTerm(*pb.add(i)), exact));
                     }
                     return 0;
                 }
@@ -263,13 +279,11 @@ unsafe fn compare_terms_mode(a: ErlTerm, b: ErlTerm, exact: bool) -> i64 {
                         r if r > 0 => std::cmp::Ordering::Greater,
                         _ => std::cmp::Ordering::Equal,
                     });
-                    for i in 0..na {
-                        let r = compare_terms_mode(ka[i].0, kb[i].0, true);
-                        if r != 0 { return r; }
+                    for i in (0..na).rev() {
+                        pending.push((ka[i].1, kb[i].1, exact));
                     }
-                    for i in 0..na {
-                        let r = compare_terms_mode(ka[i].1, kb[i].1, exact);
-                        if r != 0 { return r; }
+                    for i in (0..na).rev() {
+                        pending.push((ka[i].0, kb[i].0, true));
                     }
                     return 0;
                 }

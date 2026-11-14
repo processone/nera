@@ -352,7 +352,7 @@ pub(super) unsafe fn iodata_to_bytes(term: ErlTerm) -> Option<Vec<u8>> {
     flatten_iolist(term, &mut buf).then_some(buf)
 }
 
-/// Recursively flatten an Erlang iolist to bytes.
+/// Flatten an Erlang iolist to bytes in depth-first order.
 ///
 /// An iolist is either:
 /// - a binary
@@ -364,54 +364,39 @@ pub(super) unsafe fn iodata_to_bytes(term: ErlTerm) -> Option<Vec<u8>> {
 /// All input terms and reachable objects must remain live and unmoved by GC
 /// for this call. Binary backing bytes must not be concurrently mutated.
 pub(super) unsafe fn flatten_iolist(term: ErlTerm, buf: &mut Vec<u8>) -> bool {
-    if term.is_nil() {
+    if let Some(value) = term.as_small_int() {
+        let Ok(byte) = u8::try_from(value) else { return false; };
+        buf.push(byte);
         return true;
     }
-    if term.is_binary() {
-        if let Some((ptr, len)) = unsafe { binary_data(term) } {
-            let bytes = unsafe { std::slice::from_raw_parts(ptr, len) };
-            buf.extend_from_slice(bytes);
-            return true;
-        }
-        return false;
-    }
-    if let Some(val) = term.as_small_int() {
-        if (0..=255).contains(&val) {
-            buf.push(val as u8);
-            return true;
-        }
-        return false;
-    }
-    if term.is_cons() {
-        let mut cursor = term;
-        while cursor.is_cons() {
-            if let Some(ptr) = cursor.as_cons_ptr() {
-                unsafe {
-                    let head = (*ptr).head;
-                    // Keep flat byte lists on a direct loop, without one
-                    // recursive call per byte. Only nested data recurses.
-                    if let Some(value) = head.as_small_int() {
-                        let Ok(byte) = u8::try_from(value) else { return false; };
-                        buf.push(byte);
-                    } else if !flatten_iolist(head, buf) {
-                        return false;
-                    }
-                    cursor = (*ptr).tail;
-                }
+    let mut pending = vec![term];
+    while let Some(mut cursor) = pending.pop() {
+        // Keep flat byte lists on a direct loop; save only the tails of
+        // nested heads, preserving depth-first output and tail validation.
+        while let Some(ptr) = cursor.as_cons_ptr() {
+            let head = (*ptr).head;
+            cursor = (*ptr).tail;
+            if let Some(value) = head.as_small_int() {
+                let Ok(byte) = u8::try_from(value) else { return false; };
+                buf.push(byte);
             } else {
-                return false;
+                if !cursor.is_nil() { pending.push(cursor); }
+                cursor = head;
+                break;
             }
         }
-        // Improper list tail: must be nil or binary
-        if cursor.is_nil() {
-            return true;
+        if cursor.is_cons() {
+            pending.push(cursor);
+        } else if cursor.is_nil() {
+            continue;
+        } else if cursor.is_binary() {
+            let Some((ptr, len)) = binary_data(cursor) else { return false; };
+            buf.extend_from_slice(std::slice::from_raw_parts(ptr, len));
+        } else {
+            return false;
         }
-        if cursor.is_binary() {
-            return flatten_iolist(cursor, buf);
-        }
-        return false;
     }
-    false
+    true
 }
 
 /// Map an `io::Error` to a well-known POSIX atom ID.
