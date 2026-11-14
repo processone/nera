@@ -13,6 +13,19 @@ All notable milestones for the nera project are documented in this file.
   covering message and timeout wakes, tail position, deeper nesting and
   successive inner receives.
 
+## Initial process handles signals queued during its final slice
+
+- When the initial entry function returns with links still held, the scheduler
+  now checks its inbox after publishing the wait. A message or exit signal sent
+  while the process was still running no longer remains stranded and hangs
+  program termination.
+- EXIT fragments carry their signal classification in the same inbox push.
+  A worker that wakes itself before the sender's wake attempt now handles a
+  fatal exit as an exit, rather than completing normally.
+- Runtime regressions exercise both deliveries through the worker loop,
+  including a sender paused after its push, and both inbox drain paths. An
+  empty-inbox control retains the initial process's wait and links.
+
 ## Oversized binary copies raise Erlang errors
 
 - `binary:copy/2` checks result-size multiplication and the binary header's
