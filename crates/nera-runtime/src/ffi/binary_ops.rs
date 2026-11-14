@@ -13,7 +13,9 @@ use crate::term::*;
 use super::helpers::*;
 
 mod bit_window;
+mod copy;
 mod float_segment;
+pub use copy::nera_rt_binary_copy_2;
 use float_segment::{encode_half, decode_half};
 use bit_window::{BitReader, BitWriter};
 
@@ -1902,32 +1904,6 @@ pub unsafe extern "C" fn nera_rt_binary_copy_1(
         None => return raise_badarg(ctx),
     };
     with_ctx_heap(ctx, |heap| heap.alloc_binary_auto(bytes).0)
-}
-
-/// binary:copy/2 — return a binary consisting of Subject repeated N times.
-/// copy(<<>>, _) → <<>>, copy(_, 0) → <<>>.
-#[no_mangle]
-pub unsafe extern "C" fn nera_rt_binary_copy_2(
-    ctx: *mut ProcessContext,
-    subject_term: u64,
-    n_term: u64,
-) -> u64 {
-    let bytes = match unsafe { binary_data(ErlTerm(subject_term)) } {
-        Some((ptr, len)) => unsafe { std::slice::from_raw_parts(ptr, len) },
-        None => return raise_badarg(ctx),
-    };
-    let n = match ErlTerm(n_term).as_small_int() {
-        Some(n) if n >= 0 => n as usize,
-        _ => return raise_badarg(ctx),
-    };
-    if n == 0 || bytes.is_empty() {
-        return with_ctx_heap(ctx, |heap| heap.alloc_binary_auto(&[]).0);
-    }
-    let mut result = Vec::with_capacity(bytes.len() * n);
-    for _ in 0..n {
-        result.extend_from_slice(bytes);
-    }
-    with_ctx_heap(ctx, |heap| heap.alloc_binary_auto(&result).0)
 }
 
 // =====================================================================
