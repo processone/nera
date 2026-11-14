@@ -203,7 +203,7 @@ pub(crate) unsafe fn hash(term: ErlTerm) -> u32 {
                     let full = (bits / 8) as u32 as usize;
                     let tail = bits % 8;
                     let initial = hc(13).wrapping_add(hash);
-                    hash = if bits == 0 {
+                    hash = if full == 0 && tail == 0 {
                         initial
                     } else {
                         block_hash(&bytes[..full], initial)
