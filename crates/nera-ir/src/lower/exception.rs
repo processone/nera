@@ -186,7 +186,11 @@ impl IrBuilder {
             *scope = before_bindings;
         }
         self.leave_branch(&branch);
-        let _after_result = self.lower_body(after_exprs, false)?;
+        let previous_context = self.evaluation_context;
+        self.evaluation_context = EvaluationContext::Cleanup;
+        let after_result = self.lower_body(after_exprs, false);
+        self.evaluation_context = previous_context;
+        let _after_result = after_result?;
         // An exception the after body left pending replaces the held one.
         let after_failed = self.fresh_var();
         self.emit(Instruction::CheckException(after_failed));

@@ -7,6 +7,7 @@ use std::collections::HashSet;
 /// Collect VarIds used (read) by an instruction. Self-contained version for nera-ir crate.
 pub(super) fn collect_instruction_uses(inst: &Instruction, uses: &mut HashSet<VarId>) {
     match inst {
+        Instruction::Arithmetic(site) => uses.extend(site.operation.operands()),
         Instruction::Const(_, _) => {}
         Instruction::BinOp(_, _, a, b) => {
             uses.insert(*a);

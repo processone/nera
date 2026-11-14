@@ -55,6 +55,8 @@ impl fmt::Display for BasicBlock {
 impl fmt::Display for Instruction {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
+            Instruction::Arithmetic(site) => write!(f, "site{} {:?} = {:?} [{:?}, failure {:?}]",
+                site.id.0, site.result, site.operation, site.context, site.failure),
             Instruction::Const(v, lit) => write!(f, "v{} = const {}", v.0, lit),
             Instruction::BinOp(v, op, a, b) => {
                 write!(f, "v{} = {:?}(v{}, v{})", v.0, op, a.0, b.0)

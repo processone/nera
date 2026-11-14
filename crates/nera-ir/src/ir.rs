@@ -27,7 +27,8 @@ pub struct IrFunction {
     pub arity: u32,
     pub mangled_name: String,
     pub blocks: Vec<BasicBlock>,
-    /// Results of potentially raising operations lexically inside a try body.
+    /// Legacy protected results for calls and unmigrated operations in try bodies.
+    /// Arithmetic sites carry their own failure destinations instead.
     pub protected_values: Vec<VarId>,
     pub entry_block: BlockId,
     pub params: Vec<VarId>,
@@ -41,6 +42,76 @@ pub struct BlockId(pub u32);
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct VarId(pub u32);
 
+/// Function-local instruction identity, independent of mutable result registers.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct OperationId(pub u32);
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum EvaluationContext {
+    Body,
+    Try,
+    Guard,
+    Cleanup,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum FailureDestination {
+    Propagate,
+    Block(BlockId),
+}
+
+/// The bounded arithmetic pilot's single raising policy. Every variant checks
+/// runtime failure before any following instruction can execute.
+#[derive(Debug, Clone, Copy)]
+pub enum ArithmeticOp {
+    Add(VarId, VarId),
+    Subtract(VarId, VarId),
+    Multiply(VarId, VarId),
+    Divide(VarId, VarId),
+    Negate(VarId),
+    BitNot(VarId),
+    Not(VarId),
+}
+
+impl ArithmeticOp {
+    pub fn operands(self) -> Vec<VarId> {
+        match self {
+            Self::Add(a, b) | Self::Subtract(a, b) | Self::Multiply(a, b)
+            | Self::Divide(a, b) => vec![a, b],
+            Self::Negate(a) | Self::BitNot(a) | Self::Not(a) => vec![a],
+        }
+    }
+
+    pub fn from_binary(op: BinOp, a: VarId, b: VarId) -> Option<Self> {
+        Some(match op {
+            BinOp::Add => Self::Add(a, b),
+            BinOp::Sub => Self::Subtract(a, b),
+            BinOp::Mul => Self::Multiply(a, b),
+            BinOp::Div => Self::Divide(a, b),
+            _ => return None,
+        })
+    }
+
+    pub fn from_unary(op: UnaryOp, a: VarId) -> Option<Self> {
+        Some(match op {
+            UnaryOp::Neg => Self::Negate(a),
+            UnaryOp::Bnot => Self::BitNot(a),
+            UnaryOp::Not => Self::Not(a),
+            _ => return None,
+        })
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct ArithmeticSite {
+    pub id: OperationId,
+    /// None supports an operation whose result is deliberately discarded.
+    pub result: Option<VarId>,
+    pub operation: ArithmeticOp,
+    pub context: EvaluationContext,
+    pub failure: FailureDestination,
+}
+
 #[derive(Debug, Clone)]
 pub struct BasicBlock {
     pub id: BlockId,
@@ -50,8 +121,27 @@ pub struct BasicBlock {
     pub terminator: Terminator,
 }
 
+impl BasicBlock {
+    /// Normal CFG edges plus the explicit instruction-level failure edges.
+    pub fn successors(&self) -> Vec<BlockId> {
+        let mut successors = self.terminator.successors();
+        for inst in &self.instructions {
+            if let Instruction::Arithmetic(ArithmeticSite {
+                failure: FailureDestination::Block(target), ..
+            }) = inst {
+                if !successors.contains(target) {
+                    successors.push(*target);
+                }
+            }
+        }
+        successors
+    }
+}
+
 #[derive(Debug, Clone)]
 pub enum Instruction {
+    /// On failure, transfer immediately without defining the result.
+    Arithmetic(ArithmeticSite),
     /// result = literal value
     Const(VarId, Literal),
 

@@ -871,22 +871,22 @@ fn compile_single_pattern_impl(
                             } else {
                                 let off_const = builder.emit_const(Literal::Integer(off));
                                 let rem = builder.fresh_var();
-                                builder.emit(Instruction::BinOp(
+                                builder.emit_binop(
                                     rem,
                                     nera_syntax::ast::BinOp::Sub,
                                     total_bits,
                                     off_const,
-                                ));
+                                );
                                 rem
                             }
                         } else {
                             let rem = builder.fresh_var();
-                            builder.emit(Instruction::BinOp(
+                            builder.emit_binop(
                                 rem,
                                 nera_syntax::ast::BinOp::Sub,
                                 total_bits,
                                 bit_offset_var,
-                            ));
+                            );
                             rem
                         };
                         // An unsized tail must contain a whole number of units.
@@ -954,11 +954,11 @@ fn compile_single_pattern_impl(
                         // just like integer extraction. Include a reused cursor's
                         // intra-byte prefix in both the offset and window end.
                         let extraction_offset = builder.fresh_var();
-                        builder.emit(Instruction::BinOp(extraction_offset,
-                            ast::BinOp::Add, bit_offset_var, initial_bit_offset));
+                        builder.emit_binop(extraction_offset,
+                            ast::BinOp::Add, bit_offset_var, initial_bit_offset);
                         let extraction_end = builder.fresh_var();
-                        builder.emit(Instruction::BinOp(extraction_end,
-                            ast::BinOp::Add, total_bits, initial_bit_offset));
+                        builder.emit_binop(extraction_end,
+                            ast::BinOp::Add, total_bits, initial_bit_offset);
 
                         match seg.type_spec.typ {
                             BinSegmentKind::Utf8 => {
@@ -1018,12 +1018,12 @@ fn compile_single_pattern_impl(
 
                         // Advance bit offset by actual bits consumed (variable)
                         let new_offset = builder.fresh_var();
-                        builder.emit(Instruction::BinOp(
+                        builder.emit_binop(
                             new_offset,
                             nera_syntax::ast::BinOp::Add,
                             bit_offset_var,
                             bits_consumed,
-                        ));
+                        );
                         bit_offset_var = new_offset;
                         known_bit_offset = None; // Variable-width
                         fixed_fields_reserved = false;
@@ -1076,20 +1076,20 @@ fn compile_single_pattern_impl(
                         // Runtime bounds check for dynamic-sized segments
                         if known_total_bits.is_none() || (known_bit_offset.is_none() && !fixed_fields_reserved) {
                             let remaining = builder.fresh_var();
-                            builder.emit(Instruction::BinOp(
+                            builder.emit_binop(
                                 remaining,
                                 nera_syntax::ast::BinOp::Sub,
                                 total_bits,
                                 bit_offset_var,
-                            ));
+                            );
                             // A single later guard is cheaper to keep local.
                             // Reserve a tail only when it replaces multiple guards.
                             let reserve_tail = fixed_tail_fields[segment_index + 1] > 1;
                             let remaining = if reserve_tail {
                                 let tail = builder.emit_const(Literal::Integer(fixed_tail[segment_index + 1]));
                                 let available = builder.fresh_var();
-                                builder.emit(Instruction::BinOp(available,
-                                    nera_syntax::ast::BinOp::Sub, remaining, tail));
+                                builder.emit_binop(available,
+                                    nera_syntax::ast::BinOp::Sub, remaining, tail);
                                 available
                             } else { remaining };
                             let enough = builder.fresh_var();
@@ -1149,8 +1149,8 @@ fn compile_single_pattern_impl(
                                 // The raw base starts at the containing byte; logical
                                 // offsets and remaining sizes exclude the prefix bits.
                                 let extraction_offset = builder.fresh_var();
-                                builder.emit(Instruction::BinOp(extraction_offset,
-                                    nera_syntax::ast::BinOp::Add, bit_offset_var, initial_bit_offset));
+                                builder.emit_binop(extraction_offset,
+                                    nera_syntax::ast::BinOp::Add, bit_offset_var, initial_bit_offset);
                                 builder.emit(Instruction::BsGetIntegerInline(
                                     extracted,
                                     mc_base_ptr,
@@ -1190,12 +1190,12 @@ fn compile_single_pattern_impl(
                             known_bit_offset = Some(new_off);
                         } else {
                             let new_offset = builder.fresh_var();
-                            builder.emit(Instruction::BinOp(
+                            builder.emit_binop(
                                 new_offset,
                                 nera_syntax::ast::BinOp::Add,
                                 bit_offset_var,
                                 seg_bit_count,
-                            ));
+                            );
                             bit_offset_var = new_offset;
                             known_bit_offset = None;
                         }

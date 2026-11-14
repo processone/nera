@@ -6,6 +6,7 @@ use crate::ir::{BinFlags, CallTarget, Instruction, Terminator, VarId};
 pub(super) fn instruction_operands(inst: &Instruction) -> (Vec<VarId>, Vec<VarId>) {
     use Instruction::*;
     match inst {
+        Arithmetic(site) => (site.result.into_iter().collect(), site.operation.operands()),
         Const(dst, _)
         | GetSelf(dst)
         | GetExceptionClass(dst)
@@ -101,7 +102,8 @@ pub(super) fn binary_flags(inst: &Instruction) -> Option<BinFlags> {
         | BinaryPutUtf32(_, _, _, _, flags)
         | BsGetUtf16(_, _, _, _, _, flags)
         | BsGetUtf32(_, _, _, _, _, flags) => Some(*flags),
-        Const(..)
+        Arithmetic(..)
+        | Const(..)
         | BinOp(..)
         | UnaryOp(..)
         | MakeTuple(..)

@@ -32,7 +32,11 @@ interactions alongside tuple/send fusion and match-context removal.
 Each pass mutates one completed `IrFunction` in place. Folding and dead-code
 elimination additionally receive the module's true/false atom IDs. Passes do not
 allocate registers or blocks, change function signatures, or resolve calls.
-Only dead-code elimination changes the CFG; the other passes change instructions.
+Dead-code elimination changes normal CFG edges. Successful arithmetic folding
+replaces the entire operation site with a constant, removing its now-impossible
+failure edge; failed folds retain the site, context and destination unchanged.
+Dead-code elimination and back-edge analysis follow both normal and arithmetic
+failure edges through `BasicBlock::successors()`.
 Each invocation builds its own local maps and sets. There are no cached analyses
 or invalidation protocol.
 

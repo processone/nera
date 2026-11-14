@@ -44,6 +44,26 @@ test() ->
         try error(first) after receive never -> no after id(-1) -> ok end end end),
     [] = drain(),
 
+    %% Each migrated operator in cleanup replaces the held exception,
+    %% runs that cleanup once, and cannot reach its next side effect.
+    lists:foreach(fun({Reason, Cleanup}) ->
+        {error, Reason} = outcome(Cleanup),
+        [cleanup_entered] = drain()
+    end, [{badarith, fun() -> try error(first) after
+              self() ! cleanup_entered, _ = 1 + id(a), self() ! unreachable end end},
+          {badarith, fun() -> try error(first) after
+              self() ! cleanup_entered, _ = id(a) - 1, self() ! unreachable end end},
+          {badarith, fun() -> try error(first) after
+              self() ! cleanup_entered, _ = id(a) * 2, self() ! unreachable end end},
+          {badarith, fun() -> try error(first) after
+              self() ! cleanup_entered, _ = 1 / id(0), self() ! unreachable end end},
+          {badarith, fun() -> try error(first) after
+              self() ! cleanup_entered, _ = -id(a), self() ! unreachable end end},
+          {badarith, fun() -> try error(first) after
+              self() ! cleanup_entered, _ = bnot id(a), self() ! unreachable end end},
+          {badarg, fun() -> try error(first) after
+              self() ! cleanup_entered, _ = not id(a), self() ! unreachable end end}]),
+
     %% The stacktrace passes through unchanged.
     true = same_stacktrace(),
     [] = drain(),

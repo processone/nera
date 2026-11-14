@@ -142,12 +142,12 @@ impl IrBuilder {
                                 // Rest segment: compute remaining bits, register match context
                                 if let Some(name) = fresh_name(self, seg) {
                                     let remaining_bits = self.fresh_var();
-                                    self.emit(Instruction::BinOp(
+                                    self.emit_binop(
                                         remaining_bits,
                                         nera_syntax::ast::BinOp::Sub,
                                         bin_total_bits,
                                         bit_offset_var,
-                                    ));
+                                    );
                                     let rest_var = self.fresh_var();
                                     self.bind_var(name, rest_var);
                                     self.match_contexts.insert(rest_var, MatchContextInfo {
@@ -173,11 +173,11 @@ impl IrBuilder {
                                 // UTF raw readers share integer extraction's
                                 // containing-byte base for reused cursors.
                                 let extraction_offset = self.fresh_var();
-                                self.emit(Instruction::BinOp(extraction_offset,
-                                    ast::BinOp::Add, bit_offset_var, initial_bit_offset));
+                                self.emit_binop(extraction_offset,
+                                    ast::BinOp::Add, bit_offset_var, initial_bit_offset);
                                 let extraction_end = self.fresh_var();
-                                self.emit(Instruction::BinOp(extraction_end,
-                                    ast::BinOp::Add, bin_total_bits, initial_bit_offset));
+                                self.emit_binop(extraction_end,
+                                    ast::BinOp::Add, bin_total_bits, initial_bit_offset);
                                 match seg.type_spec.typ {
                                     ast::BinSegmentKind::Utf8 => {
                                         self.emit(Instruction::BsGetUtf8(
@@ -202,12 +202,12 @@ impl IrBuilder {
                                 }
                                 // Advance bit offset by actual bits consumed
                                 let new_offset = self.fresh_var();
-                                self.emit(Instruction::BinOp(
+                                self.emit_binop(
                                     new_offset,
                                     nera_syntax::ast::BinOp::Add,
                                     bit_offset_var,
                                     bits_consumed,
-                                ));
+                                );
                                 bit_offset_var = new_offset;
                             }
                             _ => {
@@ -231,12 +231,12 @@ impl IrBuilder {
                                             } else {
                                                 let unit_var = self.emit_const(Literal::Integer(unit));
                                                 let product = self.fresh_var();
-                                                self.emit(Instruction::BinOp(
+                                                self.emit_binop(
                                                     product,
                                                     nera_syntax::ast::BinOp::Mul,
                                                     size_var,
                                                     unit_var,
-                                                ));
+                                                );
                                                 product
                                             }
                                         }
@@ -278,8 +278,8 @@ impl IrBuilder {
                                 } else {
                                     // BsGetIntegerInline now takes bit_offset and bit_count
                                     let extraction_offset = self.fresh_var();
-                                    self.emit(Instruction::BinOp(extraction_offset,
-                                        nera_syntax::ast::BinOp::Add, bit_offset_var, initial_bit_offset));
+                                    self.emit_binop(extraction_offset,
+                                        nera_syntax::ast::BinOp::Add, bit_offset_var, initial_bit_offset);
                                     self.emit(Instruction::BsGetIntegerInline(
                                         extracted, mc_base_ptr, extraction_offset, seg_total_bits, flags,
                                     ));
@@ -300,12 +300,12 @@ impl IrBuilder {
 
                                 // Advance bit offset
                                 let new_offset = self.fresh_var();
-                                self.emit(Instruction::BinOp(
+                                self.emit_binop(
                                     new_offset,
                                     nera_syntax::ast::BinOp::Add,
                                     bit_offset_var,
                                     seg_total_bits,
-                                ));
+                                );
                                 bit_offset_var = new_offset;
                             }
                         }

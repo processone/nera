@@ -109,6 +109,8 @@ pub struct IrBuilder {
     /// the top of this stack instead of returning from the function.
     pub(super) try_exception_targets: Vec<BlockId>,
     pub(super) protected_values: Vec<VarId>,
+    pub(super) next_operation: u32,
+    pub(super) evaluation_context: EvaluationContext,
 
     /// Counter for generating unique list comprehension helper names.
     pub(super) lc_counter: u32,
@@ -177,6 +179,8 @@ pub(super) struct BuilderState {
     pub(super) scopes: Vec<HashMap<AtomId, VarId>>,
     pub(super) try_exception_targets: Vec<BlockId>,
     pub(super) protected_values: Vec<VarId>,
+    pub(super) next_operation: u32,
+    pub(super) evaluation_context: EvaluationContext,
     // VarIds are local to each function, including deferred binary bindings.
     pub(super) match_contexts: HashMap<VarId, MatchContextInfo>,
     pattern_inputs: Option<HashMap<AtomId, VarId>>,
@@ -197,12 +201,16 @@ impl IrBuilder {
             scopes: std::mem::take(&mut self.scopes),
             try_exception_targets: std::mem::take(&mut self.try_exception_targets),
             protected_values: std::mem::take(&mut self.protected_values),
+            next_operation: self.next_operation,
+            evaluation_context: self.evaluation_context,
             match_contexts: std::mem::take(&mut self.match_contexts),
             pattern_inputs: self.pattern_inputs.take(),
         };
         // Reset for the nested function
         self.current_blocks = Vec::new();
         self.protected_values.clear();
+        self.next_operation = 0;
+        self.evaluation_context = EvaluationContext::Body;
         self.next_var = 0;
         self.next_block = 0;
         self.scopes = vec![HashMap::new()];
@@ -221,6 +229,8 @@ impl IrBuilder {
         self.scopes = state.scopes;
         self.try_exception_targets = state.try_exception_targets;
         self.protected_values = state.protected_values;
+        self.next_operation = state.next_operation;
+        self.evaluation_context = state.evaluation_context;
         self.match_contexts = state.match_contexts;
         self.pattern_inputs = state.pattern_inputs;
     }
@@ -289,6 +299,8 @@ impl IrBuilder {
             maps_atom_id,
             try_exception_targets: Vec::new(),
             protected_values: Vec::new(),
+            next_operation: 0,
+            evaluation_context: EvaluationContext::Body,
             lc_counter: 0,
             lambda_counter: 0,
             next_atom_id,
@@ -410,6 +422,8 @@ impl IrBuilder {
         // Reset state for new function
         self.current_blocks = Vec::new();
         self.protected_values.clear();
+        self.next_operation = 0;
+        self.evaluation_context = EvaluationContext::Body;
         self.next_block = 0;
         self.next_var = 0;
         self.scopes = vec![HashMap::new()];
@@ -583,6 +597,36 @@ impl IrBuilder {
                 terminator,
             });
         }
+    }
+
+    pub fn emit_binop(&mut self, result: VarId, op: ast::BinOp, lhs: VarId, rhs: VarId) {
+        if let Some(operation) = ArithmeticOp::from_binary(op, lhs, rhs) {
+            self.emit_arithmetic(result, operation);
+        } else {
+            self.emit(Instruction::BinOp(result, op, lhs, rhs));
+        }
+    }
+
+    pub fn emit_unaryop(&mut self, result: VarId, op: ast::UnaryOp, operand: VarId) {
+        if let Some(operation) = ArithmeticOp::from_unary(op, operand) {
+            self.emit_arithmetic(result, operation);
+        } else {
+            self.emit(Instruction::UnaryOp(result, op, operand));
+        }
+    }
+
+    fn emit_arithmetic(&mut self, result: VarId, operation: ArithmeticOp) {
+        let failure = self.try_exception_targets.last().copied()
+            .map_or(FailureDestination::Propagate, FailureDestination::Block);
+        let context = match (self.evaluation_context, failure) {
+            (EvaluationContext::Body, FailureDestination::Block(_)) => EvaluationContext::Try,
+            (context, _) => context,
+        };
+        let id = OperationId(self.next_operation);
+        self.next_operation += 1;
+        self.current_instructions.push(Instruction::Arithmetic(ArithmeticSite {
+            id, result: Some(result), operation, context, failure,
+        }));
     }
 
     pub fn emit(&mut self, inst: Instruction) {

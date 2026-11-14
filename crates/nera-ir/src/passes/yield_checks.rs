@@ -32,7 +32,7 @@ pub fn insert_backedge_yield_checks(func: &mut IrFunction) {
         on_stack.insert(block_id);
 
         if let Some(&idx) = block_index.get(&block_id) {
-            let succs = blocks[idx].terminator.successors();
+            let succs = blocks[idx].successors();
             for succ in succs {
                 if on_stack.contains(&succ) {
                     // Back-edge: block_id → succ (succ is an ancestor)
