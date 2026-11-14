@@ -72,6 +72,8 @@ platform and scope.
   `function_clause`, and map-form child specs are refused with
   `{start_spec, {invalid_child_spec, Spec}}`. `start_child/2`,
   `terminate_child/2` and `which_children/1` are missing.
+- **`proc_lib`:** `start_link/3,5` reports a child dying before `init_ack`,
+  but `start_link/5` still ignores its timeout and spawn-option arguments.
 - **`application`:** `get_env/1` is missing.
 - **ETS:** `ets:match/2` and `ets:select/2` are missing. `ets:new/2` without
   `named_table` returns an integer where BEAM returns a reference.

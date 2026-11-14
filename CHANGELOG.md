@@ -30,6 +30,20 @@ All notable milestones for the nera project are documented in this file.
   neither location is safe. Existing paths are never repaired or removed.
 - Relative test fixtures still resolve from the project working directory.
 
+## proc_lib start_link reports crashes before acknowledgement
+
+- `proc_lib:start_link/3,5` now monitors the child from its creation. If the
+  child dies before `init_ack`, a caller trapping exits receives
+  `{error, Reason}` instead of waiting forever; a non-trapping linked caller
+  exits with that reason, as on BEAM.
+- Error reasons keep their stacktrace, and uncaught throws use
+  `{{nocatch, Value}, Stacktrace}`. Startup consumes its own exit/monitor
+  messages without removing unrelated messages or the link after a successful
+  acknowledgement.
+- The `proc_lib_init_crash` fixture checks both arities, error/exit/throw,
+  normal termination before acknowledgement and both `init_ack` forms
+  natively and on BEAM. Finite timeouts and spawn options remain unsupported.
+
 ## Stacktraces list the raising function first
 
 - Captured exception stacktraces now list the raising function before its

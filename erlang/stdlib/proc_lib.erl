@@ -87,14 +87,42 @@ init_ack(Parent, Return) ->
     Parent ! {init_ack, self(), Return},
     ok.
 
-%% start_link/3 — synchronous start (like gen_server start_link but lower-level).
-%% Calls Mod:init(Args), waits for init_ack.
+%% start_link/3 — apply Mod:Fun(Args), then wait for init_ack or child exit.
 start_link(Mod, Fun, Args) ->
-    Pid = spawn_link(Mod, Fun, Args),
+    start_link(Mod, Fun, Args, infinity, []).
+
+%% start_link/5 — timeout and spawn options are not yet supported.
+start_link(Mod, Fun, Args, _Timeout, _Opts) ->
+    Parent = self(),
+    %% Monitor from creation: the child can die before the caller runs again.
+    {Pid, MRef} = erlang:spawn_opt(fun() ->
+        start_init(Parent, Mod, Fun, Args)
+    end, [link, monitor]),
     receive
-        {init_ack, Pid, Return} -> Return
+        {init_ack, Pid, Return} ->
+            erlang:demonitor(MRef),
+            receive {'DOWN', MRef, process, Pid, _} -> ok after 0 -> ok end,
+            Return;
+        {'DOWN', MRef, process, Pid, Reason} ->
+            %% The link's EXIT precedes DOWN. Consume only this child's exit,
+            %% as OTP does, leaving unrelated messages untouched.
+            erlang:unlink(Pid),
+            receive {'EXIT', Pid, _} -> ok after 0 -> ok end,
+            {error, Reason}
     end.
 
-%% start_link/5 — start_link with name registration.
-start_link(Mod, Fun, Args, _Timeout, _Opts) ->
-    start_link(Mod, Fun, Args).
+start_init(Parent, Mod, Fun, Args) ->
+    put('$ancestors', [Parent]),
+    put('$initial_call', {Mod, Fun, length(Args)}),
+    try apply(Mod, Fun, Args)
+    catch
+        Class:Reason:Stacktrace ->
+            error_logger:error_msg("Error in process ~p (~p:~p/~p): ~p:~p~n",
+                                   [self(), Mod, Fun, length(Args), Class, Reason]),
+            %% Preserve OTP's exit envelope, not just the caught reason.
+            case Class of
+                error -> erlang:exit({Reason, Stacktrace});
+                throw -> erlang:exit({{nocatch, Reason}, Stacktrace});
+                exit -> erlang:exit(Reason)
+            end
+    end.
