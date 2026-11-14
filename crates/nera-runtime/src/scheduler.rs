@@ -1594,12 +1594,15 @@ fn worker_loop(
                     // from a linked process or when the runtime shuts down.
                     let is_initial = proc.id == initial_pid.load(Ordering::Relaxed);
                     if is_initial && !proc.otp.links.is_empty() {
-                        proc.transition(ProcessState::Waiting(WaitReason::Receive {
-                            timeout_deadline_ms: None,
-                        }));
-                        runnable_count.fetch_sub(1, Ordering::AcqRel);
-                        drop(proc);
-                        // Do not re-inject — the process sleeps until an EXIT
+                        // A signal can arrive during the final Running slice
+                        // and fail its wake. Publish the wait before checking
+                        // the inbox, just as for an explicit receive.
+                        if publish_wait(proc, &proc_entry, ProcessState::Waiting(
+                            WaitReason::Receive { timeout_deadline_ms: None }),
+                            &timer_wheel, &runnable_count) {
+                            local.push(proc_entry);
+                        }
+                        // Otherwise the process sleeps until an EXIT
                         // signal or message wakes it, at which point it will
                         // exit normally (no more code to run).
                         continue;
@@ -2421,6 +2424,142 @@ mod tests {
                 &scheduler.injector, &scheduler.runnable_count);
         }
         expired.len()
+    }
+
+    #[derive(Clone, Copy, Debug)]
+    enum FinalSliceDelivery {
+        Message,
+        Exit,
+        Empty,
+    }
+
+    // The initial entry returns while it still owns a link. Deliver in its
+    // actual Running slice, after the worker's inbox drain, so the sender's
+    // wake fails. The worker must publish its wait and recover that wake.
+    fn check_initial_return_with_links(delivery: FinalSliceDelivery) {
+        use crate::message::{FragmentElem, ImmediateTerm, MessageFragment};
+        use std::cell::RefCell;
+
+        thread_local! {
+            static FINAL_SLICE_SEND: RefCell<Option<Box<dyn FnOnce()>>> = const { RefCell::new(None) };
+        }
+        unsafe extern "C" fn returning_entry(
+            _ctx: *mut crate::process::ProcessContext, _args: *const u64, _nargs: u32,
+        ) {
+            FINAL_SLICE_SEND.with(|send| {
+                if let Some(send) = send.borrow_mut().take() { send(); }
+            });
+        }
+
+        let scheduler = Scheduler::new(1);
+        let initial_pid = scheduler.next_pid();
+        let linked_pid = scheduler.next_pid();
+        let mut initial = Process::with_entry(initial_pid, returning_entry, vec![]);
+        initial.add_link(linked_pid);
+        scheduler.spawn_process(initial);
+        let Steal::Success(initial) = scheduler.injector.steal() else {
+            panic!("initial process must be queued");
+        };
+        let mut linked = Process::new(linked_pid);
+        linked.add_link(initial_pid);
+        scheduler.spawn_process(linked);
+        let Steal::Success(linked) = scheduler.injector.steal() else {
+            panic!("linked process must be queued");
+        };
+        assert!(!publish_wait(linked.lock_for_runtime(), &linked,
+            ProcessState::Waiting(WaitReason::Receive { timeout_deadline_ms: None }),
+            &scheduler.timer_wheel, &scheduler.runnable_count));
+        scheduler.injector.push(initial.clone());
+
+        let observed = Arc::new(AtomicU32::new(0));
+        let observation = observed.clone();
+        let target = initial.clone();
+        FINAL_SLICE_SEND.with(|send| {
+            *send.borrow_mut() = Some(Box::new(move || {
+                observation.store(target.published_status() as u32, Ordering::Release);
+                let fragment = match delivery {
+                    FinalSliceDelivery::Message => Some(MessageFragment::Immediate(
+                        ImmediateTerm::new(ErlTerm::atom(crate::atom_table::ATOM_OK)))),
+                    FinalSliceDelivery::Exit => Some(MessageFragment::SimpleTuple(vec![
+                        FragmentElem::Immediate(ImmediateTerm::new(ErlTerm::atom(
+                            crate::atom_table::ATOM_EXIT_SIGNAL))),
+                        FragmentElem::Immediate(ImmediateTerm::new(ErlTerm::pid(linked_pid))),
+                        FragmentElem::Immediate(ImmediateTerm::new(ErlTerm::atom(
+                            crate::atom_table::ATOM_BADARG))),
+                    ])),
+                    FinalSliceDelivery::Empty => None,
+                };
+                if let Some(fragment) = fragment {
+                    target.inbox.push(fragment);
+                    if matches!(delivery, FinalSliceDelivery::Exit) {
+                        target.has_exit_signals.store(true, Ordering::Release);
+                    }
+                    // Record an unexpected successful sender wake without
+                    // panicking across the native entry boundary.
+                    if target.try_wake() { observation.store(u32::MAX, Ordering::Release); }
+                }
+            }));
+        });
+        let worker = Worker::new_fifo();
+        let stealers = Arc::new(vec![worker.stealer()]);
+        // Controlled parks bound the old hang without sleeps or retries.
+        let parks = std::cell::Cell::new(0);
+        let forced_stop = std::cell::Cell::new(false);
+        #[cfg(mio_supported)]
+        let (reactor, join) = crate::reactor::spawn_reactor();
+        worker_loop(0, worker, scheduler.injector.clone(), stealers,
+            scheduler.process_table.clone(), scheduler.shutdown.clone(),
+            scheduler.runnable_count.clone(), scheduler.alive_count.clone(),
+            scheduler.any_crash.clone(), scheduler.initial_pid.clone(), 1,
+            scheduler.registered_names.clone(), scheduler.timer_wheel.clone(),
+            scheduler.io_pool.clone(), scheduler.worker_stats[0].clone(),
+            scheduler.worker_inboxes[0].clone(), Arc::new(vec![]),
+            |_| {
+                parks.set(parks.get() + 1);
+                if parks.get() > 16 {
+                    forced_stop.set(true);
+                    scheduler.shutdown.store(true, Ordering::SeqCst);
+                }
+            },
+            #[cfg(mio_supported)]
+            reactor.clone());
+        #[cfg(mio_supported)]
+        { reactor.shutdown(); join.join().unwrap(); }
+        FINAL_SLICE_SEND.with(|send| assert!(send.borrow().is_none()));
+        eprintln!("initial return: delivery={delivery:?} state_at_send={} inbox_empty={} \
+            runnable={} forced_stop={}", observed.load(Ordering::Acquire),
+            initial.inbox.is_empty(), scheduler.runnable_count.load(Ordering::Acquire),
+            forced_stop.get());
+        assert_eq!(observed.load(Ordering::Acquire), ASTATUS_RUNNING as u32);
+        assert!(!forced_stop.get(), "the final-slice delivery must not strand the worker");
+        assert!(initial.inbox.is_empty());
+        assert_eq!(scheduler.runnable_count.load(Ordering::Acquire), 0);
+        assert!(scheduler.shutdown.load(Ordering::Acquire));
+        assert_eq!(scheduler.any_crash.load(Ordering::Acquire),
+            matches!(delivery, FinalSliceDelivery::Exit));
+        if matches!(delivery, FinalSliceDelivery::Empty) {
+            assert_eq!(initial.published_status(), ASTATUS_WAITING);
+            assert_eq!(initial.lock_for_runtime().otp.links.len(), 1);
+        } else {
+            assert_eq!(initial.published_status(), ASTATUS_EXITED);
+            assert!(scheduler.get_process(initial_pid).is_none());
+        }
+        assert!(processes_are_blocked(&scheduler.process_table));
+    }
+
+    #[test]
+    fn initial_return_with_links_observes_final_slice_message() {
+        check_initial_return_with_links(FinalSliceDelivery::Message);
+    }
+
+    #[test]
+    fn initial_return_with_links_observes_final_slice_exit() {
+        check_initial_return_with_links(FinalSliceDelivery::Exit);
+    }
+
+    #[test]
+    fn initial_return_with_links_without_delivery_stays_waiting() {
+        check_initial_return_with_links(FinalSliceDelivery::Empty);
     }
 
     #[test]
