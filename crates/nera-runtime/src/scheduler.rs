@@ -2476,7 +2476,7 @@ mod tests {
         let target = initial.clone();
         FINAL_SLICE_SEND.with(|send| {
             *send.borrow_mut() = Some(Box::new(move || {
-                observation.store(target.published_status() as u32, Ordering::Release);
+                observation.store(target.published_status(), Ordering::Release);
                 let fragment = match delivery {
                     FinalSliceDelivery::Message => Some(MessageFragment::Immediate(
                         ImmediateTerm::new(ErlTerm::atom(crate::atom_table::ATOM_OK)))),
@@ -2529,7 +2529,7 @@ mod tests {
             runnable={} forced_stop={}", observed.load(Ordering::Acquire),
             initial.inbox.is_empty(), scheduler.runnable_count.load(Ordering::Acquire),
             forced_stop.get());
-        assert_eq!(observed.load(Ordering::Acquire), ASTATUS_RUNNING as u32);
+        assert_eq!(observed.load(Ordering::Acquire), ASTATUS_RUNNING);
         assert!(!forced_stop.get(), "the final-slice delivery must not strand the worker");
         assert!(initial.inbox.is_empty());
         assert_eq!(scheduler.runnable_count.load(Ordering::Acquire), 0);
