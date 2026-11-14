@@ -2,6 +2,21 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Stored bitstrings keep their bytes and exact bit length
+
+- ETS and `persistent_term` now own copies of non-byte-aligned bitstrings,
+  just as they already do for whole-byte binaries. Small inline values and
+  large reference-counted values remain equal after the storing process exits
+  or collects garbage, as on BEAM.
+- Copying reads preserve the final partial byte's logical bit length and remain
+  valid after the table is deleted or the persistent term is erased.
+- Bitstring keys and bag duplicate checks compare significant bits and exact
+  length, not descriptor addresses or unused trailing bits, so copies remain
+  interchangeable as keys, including inside lists and tuples.
+- The `ets_stored_bitstring` and `ets_bitstring_keys` regressions exercise
+  writer lifetimes, copying reads, boxed updates and copied-key operations
+  unchanged natively and on BEAM.
+
 ## Receives nested in after bodies resume at their own wait
 
 - A `receive` directly inside another receive's `after` body now waits for
