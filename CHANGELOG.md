@@ -49,10 +49,26 @@ All notable milestones for the nera project are documented in this file.
 - Direct compile-error regressions cover `/bitstring-unit:8`, a zero `/bits`
   unit and an out-of-range `/bitstring` pattern unit.
 
+## ETS tables survive owner exit through their configured heir
+
+- `ets:new/2` honours `{heir, Pid, GiftData}`: a live heir inherits the
+  table and its contents before the old owner's `EXIT` or `DOWN` signals,
+  and receives `{'ETS-TRANSFER', Table, OldOwner, GiftData}`.
+- Gift data owns its storage across the creator's garbage collection and
+  exit. `ets:info/1,2` includes the configured heir, or `none`.
+- Tables without an heir, with a dead heir, or with the exiting owner itself
+  as heir are deleted. Explicit table deletion does not notify the heir.
+- The legacy `{heir, Pid}` option transfers without a notification;
+  `{heir, none}` disables inheritance. Later heir options take precedence.
+- `ets_heir` checks named and unnamed tables of all four types, four exit
+  paths, gift lifetime, manual ownership transfer and concurrent heir exit,
+  unchanged natively and on BEAM. Changing heirs with `ets:setopts/2`
+  remains unsupported.
+
 ## Process exits release ETS tables before exit signals
 
-- A dead process's ETS tables are deleted before linked processes receive
-  `EXIT` or monitoring processes receive `DOWN`, as on BEAM. This also covers
+- A dead process's ETS tables without a live heir are deleted before linked
+  processes receive `EXIT` or monitoring processes receive `DOWN`, as on BEAM. This also covers
   processes killed by a linked process's exit.
 - A child restarted by its supervisor can immediately create the same named
   table without racing the previous owner's cleanup.

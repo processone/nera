@@ -642,10 +642,11 @@ impl Scheduler {
 /// but BEFORE removing it from the process table (so its heap stays alive for
 /// deep-copy).
 ///
-/// The name and tables are freed first, as on BEAM: a process woken by the
+/// The name and tables are released first, as on BEAM: a process woken by the
 /// 'EXIT' or 'DOWN' on another worker, such as a supervisor restarting a child,
-/// must be able to reuse its registered name and named tables. A process killed
-/// by the link cascade below releases its own resources the same way before
+/// must be able to reuse its registered name and named tables without live
+/// heirs. Heir transfers and notifications also precede exit signals. A process
+/// killed by the link cascade below releases its resources the same way before
 /// its signals go out.
 ///
 /// Deadlock safety: the dying process's lock is NOT held. Each linked/monitoring
@@ -676,7 +677,42 @@ fn propagate_exit_signals(
     };
 
     unregister_dead_process(dead_pid, registered_names);
-    crate::ets::delete_tables_owned_by(dead_pid);
+    crate::ets::cleanup_tables_owned_by(dead_pid, |id, table, heir| {
+        let Some(entry) = process_table.get(&heir.pid).map(|entry| entry.clone()) else {
+            return false;
+        };
+        // Serialize the live check, ownership/index update and notification
+        // against the heir's own exit. Never acquire this lock under ETS locks:
+        // a running process can call ETS while holding its process lock.
+        let proc = entry.lock_for_runtime();
+        if proc.status() == ProcessStatus::Exited {
+            return false;
+        }
+        let handle = if table.named { ErlTerm::atom(table.name) } else { ErlTerm::small_int(id as i64) };
+        let notification = heir.notification(handle, dead_pid);
+        if !crate::ets::ets_give_away(ErlTerm::small_int(id as i64), dead_pid, heir.pid) {
+            return false;
+        }
+        if let Some(notification) = notification {
+            entry.inbox.push(notification);
+            drop(proc);
+            // As for an ordinary message, the receiving worker cancels its
+            // receive timer. An I/O wait is not interrupted by ordinary mail.
+            if entry.try_wake() {
+                runnable_count.fetch_add(1, Ordering::AcqRel);
+                injector.push(entry);
+                if let Some(sched) = global_scheduler() {
+                    for thread in sched.worker_threads.iter() {
+                        if let Some(thread) = thread.get() {
+                            thread.unpark();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        true
+    });
 
     let is_kill = exit_reason.as_atom_id() == Some(ATOM_KILL);
     let is_normal = exit_reason.as_atom_id() == Some(ATOM_NORMAL);
@@ -885,7 +921,7 @@ fn unregister_dead_process(
 
 /// Shared cleanup for all process-death paths. Frees the registered name and
 /// propagates EXIT/DOWN signals, cancels timers and I/O, cleans up sockets,
-/// deletes owned ETS tables, and removes the process from the process table.
+/// transfers or deletes owned ETS tables, and removes the process from the process table.
 #[expect(clippy::too_many_arguments, reason = "Explicit scheduler and GC state avoids changing runtime ownership and locking boundaries")]
 fn cleanup_dead_process(
     pid: ProcessId,
@@ -2164,6 +2200,71 @@ mod tests {
         }
         assert!(outcomes.iter().all(|(_, removed)| *removed),
             "direct and cascading exits delete ETS before DOWN: {outcomes:?}");
+    }
+
+    #[test]
+    fn exit_transfers_ets_before_down_and_wakes_live_heir() {
+        for heir_exited in [false, true] {
+            let scheduler = Scheduler::new(1);
+            let dead_pid = ProcessId::new(9_500_000 + u64::from(heir_exited) * 10);
+            let heir_pid = ProcessId::new(dead_pid.get() + 1);
+            scheduler.spawn_process(Process::new(dead_pid));
+            scheduler.spawn_process(Process::new(heir_pid));
+            let owner = scheduler.process_table.get(&dead_pid).unwrap().clone();
+            let heir = scheduler.process_table.get(&heir_pid).unwrap().clone();
+            owner.lock_for_runtime().transition(ProcessState::Exited);
+            {
+                let mut proc = heir.lock_for_runtime();
+                proc.add_outgoing_monitor(1, dead_pid);
+                proc.transition(if heir_exited { ProcessState::Exited } else {
+                    ProcessState::Waiting(crate::process::WaitReason::Receive { timeout_deadline_ms: None })
+                });
+            }
+            scheduler.runnable_count.store(0, Ordering::SeqCst);
+            let name = crate::atom_table::global_atom_table().intern(&format!("unit_exit_heir_{}", dead_pid.get()));
+            // SAFETY: the small-integer gift has no heap storage.
+            let config = unsafe { crate::ets::EtsHeir::new(heir_pid, Some(ErlTerm::small_int(42))) };
+            let table = crate::ets::ets_new_handle_with_heir(name,
+                &[("named_table".into(), ErlTerm::nil())], dead_pid, Some(config)).unwrap();
+            #[cfg(mio_supported)]
+            let (reactor, join) = crate::reactor::spawn_reactor();
+            cleanup_dead_process(
+                dead_pid, ErlTerm::atom(crate::atom_table::ATOM_NORMAL), HashSet::new(),
+                [(1, heir_pid)].into_iter().collect(), &scheduler.process_table,
+                &scheduler.injector, &scheduler.runnable_count, &scheduler.alive_count,
+                &scheduler.any_crash, &scheduler.initial_pid, &scheduler.registered_names,
+                &scheduler.timer_wheel, &scheduler.io_pool,
+                #[cfg(mio_supported)]
+                &reactor,
+            );
+            #[cfg(mio_supported)]
+            { reactor.shutdown(); join.join().unwrap(); }
+            let mut heap = crate::heap::ProcessHeap::new();
+            if heir_exited {
+                assert_eq!(crate::ets::ets_info(table, Some("owner"), &mut heap), ErlTerm::atom(crate::atom_table::ATOM_UNDEFINED));
+                assert!(heir.inbox.is_empty());
+                assert_eq!(scheduler.runnable_count.load(Ordering::SeqCst), 0);
+            } else {
+                assert_eq!(crate::ets::ets_info(table, Some("owner"), &mut heap), ErlTerm::pid(heir_pid));
+                assert_eq!(scheduler.runnable_count.load(Ordering::SeqCst), 1, "wake only once for transfer and DOWN");
+                assert_eq!(heir.published_status(), crate::process::ASTATUS_READY);
+                let first = heir.inbox.pop().unwrap().copy_to_heap(&mut heap);
+                let expected = heap.alloc_tuple(&[
+                    ErlTerm::atom(crate::atom_table::global_atom_table().intern("ETS-TRANSFER")),
+                    table, ErlTerm::pid(dead_pid), ErlTerm::small_int(42),
+                ]);
+                // SAFETY: heap owns both graphs throughout comparison.
+                assert_eq!(unsafe { crate::ffi::compare::compare_terms(first, expected) }, 0);
+                let down = heir.inbox.pop().unwrap().copy_to_heap(&mut heap);
+                let ptr = down.as_boxed_ptr().unwrap();
+                // SAFETY: down is the scheduler's owned DOWN tuple in heap.
+                assert_eq!(unsafe { ErlTerm(*ptr.add(1)) }, ErlTerm::atom(crate::atom_table::ATOM_DOWN));
+                assert!(heir.inbox.is_empty());
+                // Its configured heir is itself: the inherited table is freed.
+                crate::ets::cleanup_tables_owned_by(heir_pid, |_, _, _| panic!("self heir"));
+                assert_eq!(crate::ets::ets_info(table, Some("owner"), &mut heap), ErlTerm::atom(crate::atom_table::ATOM_UNDEFINED));
+            }
+        }
     }
 
     // supervisor_shutdown sometimes found a stopped child still alive: the

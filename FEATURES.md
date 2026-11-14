@@ -518,7 +518,7 @@ process dictionary under `rand_seed`.
 
 | Function             | Status | Notes                               |
 |----------------------|--------|-------------------------------------|
-| new/2                | ✅      | `set`, `ordered_set`, `bag`, `duplicate_bag`, `named_table`, `{keypos, N}`; returns the name for a `named_table`, otherwise an integer table identifier (BEAM returns a reference) |
+| new/2                | ✅      | `set`, `ordered_set`, `bag`, `duplicate_bag`, `named_table`, `{keypos, N}`, `{heir, Pid, GiftData}`, `{heir, none}`; returns the name for a `named_table`, otherwise an integer table identifier (BEAM returns a reference) |
 | insert/2             | ✅      | Single or list of tuples            |
 | lookup/2             | ✅      | Returns list of matching tuples     |
 | delete/1             | ✅      | Delete table                        |
@@ -527,7 +527,7 @@ process dictionary under `rand_seed`.
 | match_object/2       | ✅      | Simple pattern matching             |
 | select_delete/2      | ✅      | Match spec for conditional delete   |
 | tab2list/1           | ✅      |                                     |
-| info/1,2             | ✅      | `size`, `name`, `type`, `keypos`    |
+| info/1,2             | ✅      | `size`, `name`, `type`, `keypos`, `owner`, `heir`; `memory` in info/2 |
 | update_counter/3     | ✅      | Atomic counter increment (set/ordered_set only) |
 | update_element/3     | ✅      | Update tuple element by position (set/ordered_set only) |
 | give_away/3          | ✅      | Transfer table ownership            |
@@ -541,6 +541,12 @@ process dictionary under `rand_seed`.
 | ordered_set          | ✅      | BTreeMap with Erlang term ordering  |
 | bag                  | ✅      | Multiple values per key, no exact duplicates |
 | duplicate_bag        | ✅      | Multiple values per key, duplicates allowed  |
+
+A live configured ETS heir inherits ownership and contents before the old
+owner's exit signals, receiving `{'ETS-TRANSFER', Table, OldOwner, GiftData}`.
+The legacy `{heir, Pid}` option transfers without a notification. Dead or
+self heirs do not preserve a table on owner exit. `ets:setopts/2` is not
+implemented.
 
 ### timer module
 
