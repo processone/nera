@@ -589,15 +589,18 @@ impl<'src> Formatter<'src> {
             }
             Expr::UnaryOp(op, operand, _) => {
                 let op_str = match op {
+                    UnaryOp::Pos => "+",
                     UnaryOp::Neg => "-",
                     UnaryOp::Not => "not ",
                     UnaryOp::Bnot => "bnot ",
                 };
                 let operand_doc = self.format_expr(operand);
-                // Preserve weaker-binding operands and avoid turning nested
-                // negation into the `--` token after parentheses are discarded.
+                // Preserve weaker-binding operands and avoid turning repeated
+                // signs into the `++` or `--` token after grouping is discarded.
                 let needs_grouping = matches!(operand.as_ref(),
                     Expr::BinOp(..) | Expr::Match(..) | Expr::Send(..) | Expr::Catch(..))
+                    || (*op == UnaryOp::Pos && matches!(operand.as_ref(),
+                        Expr::UnaryOp(UnaryOp::Pos, ..)))
                     || (*op == UnaryOp::Neg && match operand.as_ref() {
                         Expr::UnaryOp(UnaryOp::Neg, ..) => true,
                         Expr::Integer(value, _) => *value < 0,
@@ -1500,7 +1503,11 @@ impl<'src> Formatter<'src> {
 
     fn format_bin_segment_expr(&mut self, seg: &BinSegment<Expr>) -> Doc {
         let value_doc = self.format_expr(&seg.value);
-        let mut parts = if needs_parens_in_bin_segment(&seg.value) {
+        // Numeric unary plus may retain several signs in its source spelling
+        // (for example +-0.0); only one bare sign is valid in a binary value.
+        let mut parts = if needs_parens_in_bin_segment(&seg.value)
+            || self.span_text(seg.value.span()).starts_with('+')
+        {
             vec![text("("), value_doc, text(")")]
         } else {
             vec![value_doc]
@@ -1561,9 +1568,9 @@ impl<'src> Formatter<'src> {
     }
 
     fn bin_size_needs_parens(&self, size: &Expr) -> bool {
-        // The parser folds negative numbers into literals, but their leading
-        // minus still needs grouping in a size, including spellings like -0.
-        needs_parens_in_bin_segment(size) || self.span_text(size.span()).starts_with('-')
+        // The parser folds signed numbers into literals, but their leading
+        // sign still needs grouping in a size, including spellings like -0.
+        needs_parens_in_bin_segment(size) || self.span_text(size.span()).starts_with(['-', '+'])
     }
 
     fn format_bin_type_spec(&mut self, spec: &BinSegmentType) -> String {

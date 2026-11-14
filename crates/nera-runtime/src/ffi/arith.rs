@@ -223,6 +223,20 @@ pub unsafe extern "C" fn nera_rt_int_rem(ctx: *mut ProcessContext, a: u64, b: u6
     raise_badarith(ctx)
 }
 
+/// Unary plus preserves the original number, including bigint and float storage.
+///
+/// # Safety
+/// The context must be live and exclusively accessible. Boxed input storage
+/// must remain live and unmoved for this call.
+#[no_mangle]
+pub unsafe extern "C" fn nera_rt_unary_plus(ctx: *mut ProcessContext, value: u64) -> u64 {
+    if is_numeric(ErlTerm(value)) {
+        value
+    } else {
+        raise_badarith(ctx)
+    }
+}
+
 /// Unary negation. Works on ints and floats.
 #[no_mangle]
 pub unsafe extern "C" fn nera_rt_negate(ctx: *mut ProcessContext, a: u64) -> u64 {

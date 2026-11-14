@@ -261,6 +261,9 @@ impl FuncTranslator {
                 let needs_exception_check = true;
 
                 let val = match op {
+                    nera_syntax::ast::UnaryOp::Pos => {
+                        self.emit_ffi_call(module, builder, "nera_rt_unary_plus", ctx_var, &[operand_val])?
+                    }
                     nera_syntax::ast::UnaryOp::Neg => {
                         self.emit_ffi_call(module, builder, "nera_rt_negate", ctx_var, &[operand_val])?
                     }
@@ -306,7 +309,7 @@ impl FuncTranslator {
                     builder.def_var(*var, val);
                 }
 
-                // Check for exception after negate FFI call
+                // Check for exception after the unary operation
                 // (skip if inside a try block — CheckException handles it)
                 if needs_exception_check && !is_try_protected {
                     self.emit_ffi_exception_check(module, builder, ctx_var)?;

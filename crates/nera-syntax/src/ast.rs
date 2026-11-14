@@ -616,6 +616,7 @@ pub enum BinOp {
 /// Unary operators.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum UnaryOp {
+    Pos,
     Neg,
     Not,
     Bnot,
