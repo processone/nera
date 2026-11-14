@@ -179,6 +179,9 @@ def main():
         eunit_tests = project / "eunit_tests"
         eunit_tests.mkdir()
         shutil.copyfile(tests / "alpha.erl", eunit_tests / "alpha.erl")
+        # --src also discovers a neighbouring tests/ by convention. Remove the
+        # legacy fixtures so alpha is not supplied twice to the native linker.
+        shutil.rmtree(tests)
         (project / "nera.toml").write_text(
             '[project]\nname = "storage"\n[test]\nframework = "eunit"\n'
             'modules = ["alpha"]\nsrc = ["eunit_tests"]\n'
