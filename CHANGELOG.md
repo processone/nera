@@ -2,6 +2,17 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Receives nested in after bodies resume at their own wait
+
+- A `receive` directly inside another receive's `after` body now waits for
+  its own timeout and receives messages sent while it waits, as on BEAM.
+- Values evaluated earlier in the `after` body survive suspension. Previously
+  the enclosing receive could resume inside the inner receive before those
+  values or the inner timeout had been initialized.
+- The `receive_nested_after` regression runs unchanged natively and on BEAM,
+  covering message and timeout wakes, tail position, deeper nesting and
+  successive inner receives.
+
 ## Oversized binary copies raise Erlang errors
 
 - `binary:copy/2` checks result-size multiplication and the binary header's
