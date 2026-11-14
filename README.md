@@ -1,5 +1,7 @@
 # nera — Erlang-to-Native Compiler
 
+The goal is **Erlang that ships like Go**.
+
 nera compiles Erlang source files to standalone native binaries — no BEAM VM
 required.
 
