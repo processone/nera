@@ -5173,6 +5173,27 @@ fn binary_segment_checks_walk_guards_sizes_keys_and_record_defaults() {
 }
 
 #[test]
+fn suppressing_float_width_warning_keeps_binary_segment_errors() {
+    // The float-width warning must be independently suppressible: opting out
+    // must not hide the UTF size error in the same function.
+    let src = r#"
+-module(test).
+-export([f/1]).
+%% @nera:nowarn(bad_float_bit_size)
+f(X) -> {<<X:24/float>>, <<X:8/utf8>>}.
+    "#;
+    let (module, names, source) = parse_with_source(src);
+    let diagnostics = analyze_module_with_source(&module, &names, None, Some(&source));
+    let remaining: Vec<_> = diagnostics.iter()
+        .map(|d| (d.severity, d.code.as_deref(), d.message.as_str())).collect();
+    assert_eq!(remaining, vec![(
+        nera_syntax::error::Severity::Error,
+        Some("invalid_binary_segment"),
+        "size not allowed for utf8 segments",
+    )]);
+}
+
+#[test]
 fn float_segment_size_is_scaled_by_unit() {
     // OTP 29 accepts supported and unsupported size/unit products at compile
     // time. The native regression owns their runtime results.
@@ -5196,7 +5217,7 @@ fn float_segment_size_is_scaled_by_unit() {
             assert!(!diagnostics.iter().any(|d| d.severity == Severity::Error),
                 "{body}: {diagnostics:?}");
             let segment_diagnostics: Vec<_> = diagnostics.iter()
-                .filter(|d| d.code.as_deref() == Some("invalid_binary_segment"))
+                .filter(|d| d.code.as_deref() == Some("bad_float_bit_size"))
                 .map(|d| (d.severity, d.message.as_str())).collect();
             let expected = if unsupported {
                 vec![(Severity::Warning, "bad float bit size")]

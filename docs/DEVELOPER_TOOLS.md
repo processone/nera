@@ -65,6 +65,7 @@ that editors can match on.
 | Code | Message | Severity |
 |------|---------|----------|
 | `invalid_binary_segment` | `invalid binary segment: {details}` | Error |
+| `bad_float_bit_size` | `bad float bit size` | Warning |
 | `conflicting_binary_specifiers` | `conflict in {type/sign/endianness/unit} specification for bit field: '{new}' and '{previous}'` | Error |
 
 ### Maps

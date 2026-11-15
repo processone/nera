@@ -498,7 +498,7 @@ fn validate_segment(
                     if !matches!(bits, Some(16 | 32 | 64)) {
                         diagnostics.push(
                             Diagnostic::warning_at("bad float bit size", span)
-                                .with_code("invalid_binary_segment"),
+                                .with_code("bad_float_bit_size"),
                         );
                     }
                 }
