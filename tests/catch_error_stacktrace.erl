@@ -4,7 +4,8 @@
 -export([test/0]).
 
 test() ->
-    lists:foreach(fun check_error/1, [error, badmatch, badarith, resumed_error]),
+    lists:foreach(fun check_error/1, [error, badmatch, badarith]),
+    ok = check_resumed_error(),
     ok = check_saved_stack(),
     %% The other catch results do not acquire an error stack wrapper.
     {outer, {middle, ok}} = caught(ok),
@@ -27,8 +28,48 @@ check_error(Mode) ->
     %% Catching callers and runner frames can differ beyond that prefix.
     Prefix = lists:sublist(module_frames(TryStack), 3),
     Prefix = lists:sublist(module_frames(CatchStack), 3),
-    ok = check_frames(CatchStack),
-    io:format("~p: ~p~n", [Mode, [{M, F, A} || {M, F, A, _} <- Prefix]]).
+    Label = case Mode of
+        {resumed_error, _} ->
+            %% Native try/catch currently loses callers across suspension.
+            %% Catch must preserve the same available frames, not fabricate them.
+            [{?MODULE, inner, 1, Info} | _] = Prefix,
+            true = is_list(Info),
+            resumed_error;
+        _ -> ok = check_frames(CatchStack), Mode
+    end,
+    io:format("~p: ~p~n", [Label, [{M, F, A} || {M, F, A, _} <- Prefix]]).
+
+check_resumed_error() ->
+    Parent = self(),
+    {Pid, Ref} = spawn_monitor(fun() ->
+        check_error({resumed_error, Parent}),
+        Parent ! {resumed_done, self()}
+    end),
+    %% Both captured/1 and caught/1 must suspend before their error is released.
+    release_waiter(Pid),
+    release_waiter(Pid),
+    receive {resumed_done, Pid} -> ok after 5000 -> error(missing_resumed_result) end,
+    receive {'DOWN', Ref, process, Pid, normal} -> ok
+    after 5000 -> error(missing_resumed_exit)
+    end.
+
+release_waiter(Pid) ->
+    receive
+        {stack_waiting, Pid} -> ok;
+        {'DOWN', _, process, Pid, Reason} -> error({stack_waiter_failed, Reason})
+    after 5000 -> error(missing_stack_waiter)
+    end,
+    await_suspension(Pid),
+    Pid ! stack_go,
+    ok.
+
+%% Observe waiting rather than assume a timeout caused a real suspension.
+await_suspension(Pid) ->
+    case process_info(Pid, status) of
+        {status, waiting} -> ok;
+        undefined -> error(stack_waiter_exited);
+        _ -> await_suspension(Pid)
+    end.
 
 check_frames(Stack) ->
     [{?MODULE, inner, 1, InnerInfo}, {?MODULE, middle, 1, MiddleInfo},
@@ -67,7 +108,9 @@ middle(Mode) -> {middle, inner(Mode)}.
 inner(error) -> erlang:error(boom);
 inner(badmatch) -> 1 = id(2), ok;
 inner(badarith) -> 1 div id(0);
-inner(resumed_error) -> receive after 0 -> erlang:error(boom) end;
+inner({resumed_error, Parent}) ->
+    Parent ! {stack_waiting, self()},
+    receive stack_go -> erlang:error(boom) end;
 inner(throw) -> throw(thrown);
 inner(exit) -> exit(stopped);
 inner(ok) -> ok.
