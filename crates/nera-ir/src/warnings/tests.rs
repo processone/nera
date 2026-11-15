@@ -2116,6 +2116,53 @@ fn short_circuit_consumers_check_conditional_left_names() {
 }
 
 #[test]
+fn short_circuit_pattern_consumers_include_maybe_and_catch_headers() {
+    // OTP treats these headers as consumers of an existing conditional name,
+    // not as fresh bindings. The same rule holds in a chained operand.
+    for operator in ["andalso", "orelse"] {
+        for consumer in [
+            "maybe Y ?= false end",
+            "try error(reason) catch Y:_ -> ok end",
+            "try error(reason) catch _:Y -> ok end",
+            "try error(reason) catch _:_:Y -> ok end",
+        ] {
+            for body in [
+                format!("_ = Flag {operator} (Y = true), {consumer}"),
+                format!("(Flag {operator} (Y = true)) orelse ({consumer})"),
+            ] {
+                let source = format!("-module(test). -export([f/1]). f(Flag) -> {body}.");
+                let (module, names) = parse_module(&source);
+                let diagnostics = analyze_module(&module, &names, None);
+                assert!(
+                    diagnostics
+                        .iter()
+                        .any(|d| d.code.as_deref() == Some("unsafe_variable")
+                            && d.message == format!("variable 'Y' unsafe in '{operator}'")),
+                    "{source}\n{diagnostics:?}"
+                );
+            }
+        }
+        for consumer in [
+            "F = fun(Y) -> maybe Y ?= false end end, F(false)",
+            "[maybe Y ?= false end || Y <- [false]]",
+        ] {
+            let source = format!(
+                "-module(test). -export([f/1]).
+                f(Flag) -> _ = Flag {operator} (Y = true), {consumer}."
+            );
+            let (module, names) = parse_module(&source);
+            let diagnostics = analyze_module(&module, &names, None);
+            assert!(
+                !diagnostics
+                    .iter()
+                    .any(|d| d.severity == nera_syntax::error::Severity::Error),
+                "{source}\n{diagnostics:?}"
+            );
+        }
+    }
+}
+
+#[test]
 fn short_circuit_safe_bindings_remain_usable() {
     // OTP accepts prebound names, definite left-operand bindings, local RHS
     // reads, and later fun/generator bindings that shadow the unsafe name.
