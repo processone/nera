@@ -246,9 +246,10 @@ pub unsafe extern "C" fn nera_rt_lists_reverse_2(ctx: *mut ProcessContext, list:
 }
 
 /// lists:member/2 — test for membership using exact (=:=) equality.
-/// Returns `true` if Elem is in List, `false` otherwise.
+/// Returns `true` at the first match, `false` at the end of a proper list;
+/// raises `badarg` if a non-list or improper tail is reached before a match.
 #[no_mangle]
-pub unsafe extern "C" fn nera_rt_lists_member(_ctx: *mut ProcessContext, elem: u64, list: u64) -> u64 {
+pub unsafe extern "C" fn nera_rt_lists_member(ctx: *mut ProcessContext, elem: u64, list: u64) -> u64 {
     use crate::atom_table::{ATOM_TRUE, ATOM_FALSE};
     let elem_term = ErlTerm(elem);
     let mut cursor = ErlTerm(list);
@@ -261,7 +262,7 @@ pub unsafe extern "C" fn nera_rt_lists_member(_ctx: *mut ProcessContext, elem: u
             cursor = cell.tail;
         }
     }
-    ErlTerm::atom(ATOM_FALSE).0
+    if cursor.is_nil() { ErlTerm::atom(ATOM_FALSE).0 } else { raise_badarg(ctx) }
 }
 
 /// Largest position `lists:keyfind/3` and its siblings accept. OTP raises
@@ -493,7 +494,7 @@ mod member_tests {
         let mut expected = Vec::new();
         for (query, candidate, same) in cases {
             let list = heap.alloc_list_from_slice(&[candidate]);
-            // SAFETY: member does not use ctx; all terms stay live and no GC runs.
+            // SAFETY: these proper lists need no error context; terms stay live and no GC runs.
             actual.push(unsafe { nera_rt_lists_member(std::ptr::null_mut(), query.0, list.0) });
             expected.push(super::super::compare::bool_to_term(same));
         }
@@ -516,7 +517,7 @@ mod member_tests {
         let allocated = tikv_jemalloc_ctl::thread::allocatedp::read().unwrap();
         let before = allocated.get();
         for _ in 0..16 {
-            // SAFETY: all graphs are live, immutable and uncollected; ctx is unused.
+            // SAFETY: graphs are live, immutable and uncollected; proper lists need no error context.
             unsafe {
                 assert_eq!(nera_rt_lists_member(std::ptr::null_mut(), get.0, list.0),
                     super::super::compare::bool_to_term(true));
