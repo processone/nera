@@ -1507,14 +1507,39 @@ fn comprehension_filter_bindings_reach_scope_sensitive_diagnostics() {
 
 #[test]
 fn comprehension_filters_do_not_export_local_or_partial_bindings() {
+    // Names local to the comprehension or a generator source stay unbound
+    // outside that scope; partial filter bindings instead have an unsafe origin.
     for expr in [
         "[N || X <- [1], begin N = X, true end, _ <- [ok]], N",
-        "[N || X <- [1], case X of 1 -> N = 1, true; _ -> true end, _ <- [ok]]",
-        "[N || X <- [1], X > 0 andalso begin N = 1, true end, _ <- [ok]]",
         "[N || _ <- begin N = 1, [ok] end]",
     ] {
         assert_unbound_pattern_input(
-            &format!("-module(test). -export([f/0]). f() -> {expr}."), "N",
+            &format!("-module(test). -export([f/0]). f() -> {expr}."),
+            "N",
+        );
+    }
+    // erlc identifies these as unsafe, not merely unbound. Do not pin the
+    // total error count: unbound analysis may also identify the later read.
+    for (expr, construct) in [
+        (
+            "[N || X <- [1], case X of 1 -> N = 1, true; _ -> true end, _ <- [ok]]",
+            "case",
+        ),
+        (
+            "[N || X <- [1], X > 0 andalso begin N = 1, true end, _ <- [ok]]",
+            "andalso",
+        ),
+    ] {
+        let source = format!("-module(test). -export([f/0]). f() -> {expr}.");
+        let (module, names) = parse_module(&source);
+        let diagnostics = analyze_module(&module, &names, None);
+        assert!(
+            diagnostics.iter().any(|d| {
+                d.severity == nera_syntax::error::Severity::Error
+                    && d.code.as_deref() == Some("unsafe_variable")
+                    && d.message == format!("variable 'N' unsafe in '{construct}'")
+            }),
+            "{source}\n{diagnostics:?}"
         );
     }
 }
