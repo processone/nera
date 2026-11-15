@@ -7,6 +7,12 @@
 test() ->
     check(requested, [258],
         [V || X <- [16], begin N = X, true end, <<V:N>> <= <<1, 2>>]),
+    check(binary_outer_list_body, [1, 2, 258],
+        [V || <<X>> <= id(<<8, 16>>), begin N = X, true end,
+            <<V:N>> <= id(<<1, 2>>)]),
+    check(binary_outer_binary_body, <<1, 2, 1, 2>>,
+        << <<V:N>> || <<X>> <= id(<<8, 16>>), begin N = X, true end,
+            <<V:N>> <= id(<<1, 2>>) >>),
     check(list_source, [11, 12, 21, 22],
         [V || X <- id([10, 20]), begin Values = [X + 1, X + 2], true end,
             V <- Values]),
