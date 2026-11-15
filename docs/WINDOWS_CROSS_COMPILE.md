@@ -223,9 +223,9 @@ nera test.erl -o test \
     --linker "zig cc -target x86_64-windows-gnu"
 ```
 
-#### 5.3 README and --help updates
+#### 5.3 Usage guide and --help updates
 
-- Add Windows cross-compilation examples to the README.
+- Add Windows cross-compilation examples to the [usage guide](USAGE.md#debugging-and-cross-compilation).
 - Document `--target` and `--linker` in `--help` output.
 - Add a troubleshooting section for common cross-compile failures.
 
