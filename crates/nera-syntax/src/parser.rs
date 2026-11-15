@@ -2672,13 +2672,19 @@ impl<'src> Parser<'src> {
                 }
                 "unit" => {
                     self.expect(&Token::Colon)?;
+                    // Every big integer is out of range; keep its full value
+                    // in OTP's diagnostic instead of narrowing it to a unit.
+                    if let Some((Token::BigInteger(value), span)) = self.peek_token() {
+                        return Err(ParseError::InvalidBinaryUnit {
+                            value: value.clone(),
+                            span: *span,
+                        });
+                    }
                     let n = self.expect_integer()?;
                     if !(1..=256).contains(&n) {
-                        return Err(ParseError::UnexpectedToken {
-                            expected: "binary segment unit in 1..=256".into(),
-                            found: n.to_string(),
+                        return Err(ParseError::InvalidBinaryUnit {
+                            value: n.to_string(),
                             span: self.prev_span(),
-                            hint: None,
                         });
                     }
                     spec.unit = Some(n as u32);
@@ -4685,6 +4691,25 @@ Example "name" \_test, 1.0.
                 assert_eq!(segments[1].type_spec.typ, BinSegmentKind::Binary);
             }
             other => panic!("expected Binary pattern, got {:?}", other),
+        }
+    }
+
+    #[test]
+    fn bitstring_unit_edges_report_otp_errors() {
+        // OTP 29 rejects these units before merging the bitstring's unit:1.
+        for typ in ["bitstring", "bits"] {
+            for unit in ["0", "257", "4294967297", "9223372036854775808", "18446744073709551616"] {
+                for spec in [format!("{typ}-unit:{unit}"), format!("unit:{unit}-{typ}")] {
+                    for body in [format!("f(X) -> <<X/{spec}>>."), format!("f(<<X/{spec}>>) -> X.")] {
+                        let source = format!("-module(test). {body}");
+                        let errors = parse_err(&source);
+                        assert_eq!(errors.len(), 1, "{source}: {errors:?}");
+                        assert_eq!(errors[0].to_string(), format!("bit type {{unit,{unit}}} undefined"), "{source}");
+                        let span = errors[0].span().expect("unit error has a source span");
+                        assert_eq!(&source[span.start..span.end], unit, "{source}");
+                    }
+                }
+            }
         }
     }
 
