@@ -2,6 +2,16 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Nested case bindings remain safe outer inputs
+
+- A variable bound on every path through nested cases remains available after
+  the outer case, including as a map key, binary size or fun capture.
+- Mixing a nested case with a directly binding branch no longer produces a
+  false unsafe-variable error. Later partial matches compare against the
+  already-bound variable instead of treating it as a new binding.
+- `nested_case_exports` runs unchanged natively and on BEAM; diagnostic
+  regressions retain rejection of missing inner/outer paths and fun-local names.
+
 ## Comprehensions keep filters before the first generator
 
 - List and binary comprehensions evaluate leading filters once, in order,

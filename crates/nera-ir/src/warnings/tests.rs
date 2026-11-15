@@ -1647,6 +1647,81 @@ fn safe_var_in_all_case_branches() {
 }
 
 #[test]
+fn nested_case_exports_are_safe_outer_inputs() {
+    // Every path in the native/BEAM fixture binds the later key or size.
+    // The diagnostic pass used to miss nested bindings in a mixed branch.
+    let source = include_str!("../../../../tests/nested_case_exports.erl");
+    let (module, names) = parse_module(source);
+    let diagnostics = analyze_module(&module, &names, None);
+    assert!(
+        !diagnostics
+            .iter()
+            .any(|d| d.severity == nera_syntax::error::Severity::Error),
+        "{diagnostics:?}"
+    );
+}
+
+#[test]
+fn nested_case_partial_bindings_remain_errors() {
+    // Missing an inner or outer path must not turn a key/size into a safe
+    // input. erlc rejects these programs, including fun-local bindings.
+    for (name, value, input) in [
+        ("K", "route", "fun(#{K := V}) -> V end"),
+        ("N", "8", "[V || <<V:N>> <- []]"),
+    ] {
+        for binding in [
+            format!("case Outer of left -> case Inner of small -> {name} = {value}; large -> ok end; right -> {name} = {value} end"),
+            format!("case Outer of left -> case Inner of small -> {name} = {value}; large -> {name} = {value} end; right -> ok end"),
+            format!("case Outer of left -> F = fun() -> {name} = {value} end, F(); right -> {name} = {value} end"),
+        ] {
+            let source = format!("-module(test). -export([f/2]).
+                f(Outer, Inner) -> {binding}, {input}.");
+            let (module, names) = parse_module(&source);
+            let diagnostics = analyze_module(&module, &names, None);
+            assert!(
+                diagnostics.iter().any(|d| {
+                    d.severity == nera_syntax::error::Severity::Error
+                        && d.message.contains(&format!("'{name}'"))
+                }),
+                "{source}\n{diagnostics:?}"
+            );
+        }
+    }
+}
+
+#[test]
+fn nested_case_conditional_bindings_remain_errors() {
+    // Recursive collection must not count a skipped operand or a caught
+    // exception as a definite binding. erlc rejects all three controls.
+    for expression in [
+        "false andalso (K = route)",
+        "true orelse (K = route)",
+        "catch (K = route)",
+    ] {
+        let source = format!(
+            "-module(test). -export([f/2]). f(Outer, Inner) ->
+                case Outer of
+                    left -> case Inner of
+                        small -> K = route;
+                        large -> {expression}
+                    end;
+                    right -> K = route
+                end,
+                K."
+        );
+        let (module, names) = parse_module(&source);
+        let diagnostics = analyze_module(&module, &names, None);
+        assert!(
+            diagnostics.iter().any(|d| {
+                d.severity == nera_syntax::error::Severity::Error
+                    && d.message.contains("'K'")
+            }),
+            "{source}\n{diagnostics:?}"
+        );
+    }
+}
+
+#[test]
 fn generator_pattern_refs_use_earlier_bindings() {
     // NERA-77 I-2: a later generator key/size reads a fresh earlier-generator
     // binding, not a same-named unsafe binding from the enclosing case.

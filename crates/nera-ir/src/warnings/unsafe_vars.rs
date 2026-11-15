@@ -23,6 +23,7 @@ use nera_syntax::error::Diagnostic;
 use nera_syntax::span::Span;
 
 use super::ast_walkers::{collect_enclosing_refs, collect_pattern_bindings};
+use super::unbound_vars::collect_exported_bindings;
 
 /// Check a function for unsafe variable references.
 pub(super) fn check_unsafe_variables_fn(
@@ -96,6 +97,9 @@ fn check_unsafe_in_body(
 
         // Recurse into sub-expressions to find nested unsafe patterns.
         check_unsafe_in_subexprs(expr, &scope, atom_names, diagnostics);
+        // Definite exports are already bound when a later branch matches
+        // the same name; those matches cannot make it unsafe again.
+        collect_exported_bindings(expr, &mut scope);
     }
 }
 
@@ -230,12 +234,10 @@ fn find_unsafe_vars(
         .collect()
 }
 
-/// Collect variables bound by match expressions in a body (top-level only).
+/// Collect definite bindings, including the common exports of nested branches.
 fn collect_body_bindings(body: &[ast::Expr], binds: &mut HashSet<AtomId>) {
     for expr in body {
-        if let ast::Expr::Match(pat, _, _) = expr {
-            collect_pattern_bindings(pat, binds);
-        }
+        collect_exported_bindings(expr, binds);
     }
 }
 

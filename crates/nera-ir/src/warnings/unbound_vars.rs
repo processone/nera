@@ -104,6 +104,19 @@ fn collect_bindings(expr: &ast::Expr, scope: &mut HashSet<AtomId>, paths: Paths)
                 collect_bindings(e, scope, paths);
             }
         }
+        ast::Expr::BinOp(ast::BinOp::Andalso | ast::BinOp::Orelse, lhs, rhs, _) => {
+            collect_bindings(lhs, scope, paths);
+            // The right operand may not run, even on successful completion.
+            if paths == Paths::Any {
+                collect_bindings(rhs, scope, paths);
+            }
+        }
+        ast::Expr::Catch(expr, _) => {
+            // An exception may skip its bindings and still return a value.
+            if paths == Paths::Any {
+                collect_bindings(expr, scope, paths);
+            }
+        }
         ast::Expr::Cons(h, t, _)
         | ast::Expr::Send(h, t, _)
         | ast::Expr::BinOp(_, h, t, _) => {
@@ -112,7 +125,6 @@ fn collect_bindings(expr: &ast::Expr, scope: &mut HashSet<AtomId>, paths: Paths)
         }
         ast::Expr::UnaryOp(_, e, _)
         | ast::Expr::Throw(e, _)
-        | ast::Expr::Catch(e, _)
         | ast::Expr::RecordAccess { base: e, .. } => {
             collect_bindings(e, scope, paths);
         }
