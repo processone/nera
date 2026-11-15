@@ -16,13 +16,16 @@ test() ->
         Code = receive_pattern(Code),
         {[Code], <<Code:16>>, Code, Code} = local_sequences(Code),
         {Code, Code, Code} = pattern_rhs(Code),
-        {Code, Code} = maybe_pattern_rhs(Code)
+        {Code, Code} = maybe_pattern_rhs(Code),
+        {ok, Code} = comparison_after_case(Route, {ok, Code}),
+        {ok, Code} = comparison_capture(Code, {ok, Code})
     end, [{primary, 200}, {fallback, 503}]),
     504 = receive_timeout(),
     {ok, 204} = local_fun(primary),
     ok = unused(primary),
     ignored = shadowed(primary),
     [503] = generator_shadow(),
+    {ok, 200} = local_comparison({ok, 200}),
     io:format("branch_export_warnings_ok~n"),
     ok.
 
@@ -125,6 +128,21 @@ maybe_pattern_rhs(Status) ->
         <<Body:Width>> ?= begin Width = 16, <<Status:16>> end,
         {Value, Body}
     end.
+
+%% A conditional value pattern reads an existing name solely for equality.
+local_comparison(Input) ->
+    maybe begin Code = 200 end, {ok, Code} ?= Input end.
+
+comparison_after_case(Route, Input) ->
+    case Route of
+        primary -> Code = 200;
+        fallback -> Code = 503
+    end,
+    maybe {ok, Code} ?= Input end.
+
+comparison_capture(Code, Input) ->
+    Read = fun() -> maybe {ok, Code} ?= Input end end,
+    Read().
 
 generator_shadow() ->
     [UnusedFilter || Input <- [200], begin UnusedFilter = Input, true end,

@@ -459,9 +459,9 @@ fn collect_refs(expr: &ast::Expr, refs: &mut HashSet<AtomId>, scoping: RefScopin
                 match item {
                     ast::MaybeExpr::Expr(e) => collect_refs(e, refs, scoping),
                     ast::MaybeExpr::CondMatch(pat, e, _) => {
-                        if scoping == RefScoping::Lexical {
-                            collect_pattern_bindings(pat, refs);
-                        }
+                        // As with an ordinary match, an already-bound value
+                        // name is read for equality, not rebound.
+                        collect_pattern_bindings(pat, refs);
                         collect_pattern_refs(pat, refs);
                         collect_refs(e, refs, scoping);
                     }

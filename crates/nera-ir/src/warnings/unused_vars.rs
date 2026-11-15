@@ -338,6 +338,7 @@ fn check_unused_in_expr(
         }
         ast::Expr::Match(pat, e, _) => {
             let mut pattern_uses = used_after.clone();
+            collect_pattern_bindings(pat, &mut pattern_uses);
             collect_pattern_expr_refs(pat, &mut pattern_uses);
             check_unused_in_expr(e, atom_names, warnings, outer_scope, &pattern_uses);
         }
@@ -438,6 +439,8 @@ fn check_unused_in_expr(
                 |item, refs| match item {
                     ast::MaybeExpr::Expr(e) => collect_enclosing_refs(e, refs),
                     ast::MaybeExpr::CondMatch(pat, e, _) => {
+                        // Already-bound value names are comparison inputs too.
+                        collect_pattern_bindings(pat, refs);
                         collect_pattern_expr_refs(pat, refs);
                         collect_enclosing_refs(e, refs);
                     }
@@ -449,6 +452,7 @@ fn check_unused_in_expr(
                     }
                     ast::MaybeExpr::CondMatch(pat, e, _) => {
                         let mut pattern_uses = later_refs.clone();
+                        collect_pattern_bindings(pat, &mut pattern_uses);
                         collect_pattern_expr_refs(pat, &mut pattern_uses);
                         check_unused_in_expr(e, atom_names, warnings, &maybe_scope, &pattern_uses);
                         collect_exported_bindings(e, &mut maybe_scope);
