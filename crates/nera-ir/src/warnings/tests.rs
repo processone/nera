@@ -1980,6 +1980,86 @@ fn short_circuit_nested_scopes_keep_definite_inputs() {
 }
 
 #[test]
+fn short_circuit_case_scrutinee_exports_remain_safe() {
+    for wrapper in ["EXPR", "_ = EXPR", "{EXPR}", "id(EXPR)", "Y = EXPR"] {
+        let body = wrapper.replace(
+            "EXPR",
+            "case (Y = true) of true -> Y = true; false -> ok end",
+        );
+        let source = format!("-module(test). -export([f/0]). f() -> {body}, Y. id(V) -> V.");
+        let (module, names) = parse_module(&source);
+        let diagnostics = analyze_module(&module, &names, None);
+        assert!(
+            !diagnostics
+                .iter()
+                .any(|d| d.severity == nera_syntax::error::Severity::Error),
+            "{source}\n{diagnostics:?}"
+        );
+    }
+}
+
+#[test]
+fn short_circuit_local_sequences_check_conditional_names() {
+    for operator in ["andalso", "orelse"] {
+        for body in [
+            "maybe _ = EXPR, Y = false end",
+            "maybe _ = EXPR, Y ?= false end",
+            "maybe _ ?= EXPR, Y = false end",
+            "[ok || begin _ = EXPR, true end, begin Y = false, true end]",
+            "[Y || begin _ = EXPR, true end]",
+            "[ok || begin _ = EXPR, true end, _ <- Y]",
+            "<< <<0>> || begin _ = EXPR, true end, begin Y = false, true end >>",
+            "<< <<Y>> || begin _ = EXPR, true end >>",
+        ] {
+            let body = body.replace("EXPR", &format!("Flag {operator} (Y = true)"));
+            let source = format!("-module(test). -export([f/1]). f(Flag) -> {body}.");
+            let (module, names) = parse_module(&source);
+            let diagnostics = analyze_module(&module, &names, None);
+            assert!(
+                diagnostics
+                    .iter()
+                    .any(|d| d.code.as_deref() == Some("unsafe_variable")
+                        && d.message == format!("variable 'Y' unsafe in '{operator}'")),
+                "{source}\n{diagnostics:?}"
+            );
+        }
+        for body in [
+            "[Y || begin _ = EXPR, true end, Y <- [true]]",
+            "<< <<Y>> || begin _ = EXPR, true end, <<Y>> <= <<1>> >>",
+            "[ok || _ <- begin _ = EXPR, [ok] end, begin Y = false, true end]",
+            "[Y || _ <- [ok], begin Y = true, Y end, begin _ = EXPR, Y end]",
+        ] {
+            let body = body.replace("EXPR", &format!("Flag {operator} (Y = true)"));
+            let source = format!("-module(test). -export([f/1]). f(Flag) -> {body}.");
+            let (module, names) = parse_module(&source);
+            let diagnostics = analyze_module(&module, &names, None);
+            assert!(
+                !diagnostics
+                    .iter()
+                    .any(|d| d.severity == nera_syntax::error::Severity::Error),
+                "{source}\n{diagnostics:?}"
+            );
+        }
+    }
+}
+
+#[test]
+fn short_circuit_unsafe_entrypoints_are_visited() {
+    for operator in ["andalso", "orelse"] {
+        for source in [
+            format!("-module(test). -export([f/1]). f(Flag) -> (fun() -> Y = Flag {operator} (Y = true) end)()."),
+            format!("-module(test). -export([f/1]). f(Flag) -> receive after begin Y = Flag {operator} (Y = true), 0 end -> ok end."),
+            format!("-module(test). -record(state, {{field = fun() -> Y = true {operator} (Y = true) end}})."),
+        ] {
+            let (module, names) = parse_module(&source);
+            let diagnostics = analyze_module(&module, &names, None);
+            assert!(diagnostics.iter().any(|d| d.code.as_deref() == Some("unsafe_variable")
+                && d.message == format!("variable 'Y' unsafe in '{operator}'")), "{source}\n{diagnostics:?}");
+        }
+    }
+}
+
+#[test]
 fn short_circuit_safe_bindings_remain_usable() {
     // OTP accepts prebound names, definite left-operand bindings, local RHS
     // reads, and later fun/generator bindings that shadow the unsafe name.

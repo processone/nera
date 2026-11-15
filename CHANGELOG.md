@@ -65,6 +65,9 @@ All notable milestones for the nera project are documented in this file.
   matching `erlc` rather than reporting only an unbound-variable error.
 - Prebound names, bindings from the left operand and names used only within
   the right operand remain valid. Fun and comprehension bindings stay local.
+- Enclosing match patterns and later `maybe` items or comprehension filters
+  cannot reuse conditional names as fresh bindings. The same checks apply in
+  expression callees, receive timeouts and record-default expressions.
 - Analyzer and compile-error regressions cover both short-circuit operators.
 
 ## Unsupported float segment widths compile as on OTP 29

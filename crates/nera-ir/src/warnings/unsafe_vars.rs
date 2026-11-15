@@ -24,7 +24,8 @@ use nera_syntax::error::Diagnostic;
 use nera_syntax::span::Span;
 
 use super::ast_walkers::{
-    collect_enclosing_refs, collect_guard_refs, collect_pattern_bindings, collect_pattern_refs,
+    collect_comprehension_refs, collect_enclosing_refs, collect_guard_refs, collect_pattern_bindings,
+    collect_pattern_refs,
 };
 use super::unbound_vars::{collect_exported_bindings, collect_possible_bindings};
 
@@ -40,6 +41,21 @@ pub(super) fn check_unsafe_variables_fn(
             collect_pattern_bindings(pat, &mut scope);
         }
         check_unsafe_in_body(&clause.body, &scope, atom_names, diagnostics);
+    }
+}
+
+/// Record defaults have their own scope, including defaults never constructed.
+pub(super) fn check_unsafe_variables_records(
+    module: &ast::Module,
+    atom_names: &HashMap<AtomId, String>,
+    diagnostics: &mut Vec<Diagnostic>,
+) {
+    for record in &module.records {
+        for field in &record.fields {
+            if let Some(default) = &field.default {
+                check_unsafe_in_subexprs(default, &HashSet::new(), atom_names, diagnostics);
+            }
+        }
     }
 }
 
@@ -244,18 +260,22 @@ fn collect_unsafe_from_expr(
             unsafe_vars
         }
 
-        ast::Expr::Case(_scrutinee, clauses, span) => {
+        ast::Expr::Case(scrutinee, clauses, span) => {
+            let mut input_scope = scope.clone();
+            collect_exported_bindings(scrutinee, &mut input_scope);
             let branch_bindings: Vec<HashSet<AtomId>> = clauses
                 .iter()
                 .map(|clause| {
                     let mut binds = HashSet::new();
                     collect_pattern_bindings(&clause.pattern, &mut binds);
                     collect_body_bindings(&clause.body, &mut binds);
-                    // Only include variables not already in scope.
-                    binds.difference(scope).copied().collect()
+                    // The scrutinee completes before any branch runs.
+                    binds.difference(&input_scope).copied().collect()
                 })
                 .collect();
-            find_unsafe_vars(&branch_bindings, "case", *span)
+            let mut unsafe_vars = collect_unsafe_from_expr(scrutinee, scope);
+            unsafe_vars.extend(find_unsafe_vars(&branch_bindings, "case", *span));
+            unsafe_vars
         }
 
         ast::Expr::If(clauses, span) => {
@@ -425,6 +445,7 @@ fn check_unsafe_in_subexprs(
                 check_unsafe_in_body(&clause.body, &clause_scope, atom_names, diagnostics);
             }
             if let Some(after) = after {
+                check_unsafe_in_subexprs(&after.timeout, scope, atom_names, diagnostics);
                 check_unsafe_in_body(&after.body, scope, atom_names, diagnostics);
             }
         }
@@ -473,17 +494,23 @@ fn check_unsafe_in_subexprs(
         ast::Expr::ListComp(body_expr, qualifiers, _)
         | ast::Expr::BinComp(body_expr, qualifiers, _) => {
             let mut lc_scope = scope.clone();
-            let mut before_generator = true;
-            for q in qualifiers {
+            for (i, q) in qualifiers.iter().enumerate() {
                 match q {
                     ast::LcQualifier::Generator(pat, source_expr, _)
                     | ast::LcQualifier::BinGenerator(pat, source_expr, _) => {
                         check_unsafe_in_subexprs(source_expr, &lc_scope, atom_names, diagnostics);
                         collect_pattern_bindings(pat, &mut lc_scope);
-                        before_generator = false;
                     }
                     ast::LcQualifier::Filter(filter_expr, _) => {
                         check_unsafe_in_subexprs(filter_expr, &lc_scope, atom_names, diagnostics);
+                        let mut refs = HashSet::new();
+                        collect_comprehension_refs(body_expr, &qualifiers[i + 1..], &mut refs);
+                        report_unsafe_refs(
+                            &collect_unsafe_from_expr(filter_expr, &lc_scope),
+                            &refs,
+                            atom_names,
+                            diagnostics,
+                        );
                         collect_exported_bindings(filter_expr, &mut lc_scope);
                     }
                 }
@@ -493,7 +520,27 @@ fn check_unsafe_in_subexprs(
 
         ast::Expr::Maybe { body, else_clauses, .. } => {
             let mut maybe_scope = scope.clone();
-            for item in body {
+            for (i, item) in body.iter().enumerate() {
+                let expr = match item {
+                    ast::MaybeExpr::Expr(expr) | ast::MaybeExpr::CondMatch(_, expr, _) => expr,
+                };
+                let mut refs = HashSet::new();
+                for later in &body[i + 1..] {
+                    match later {
+                        ast::MaybeExpr::Expr(expr) => collect_enclosing_refs(expr, &mut refs),
+                        ast::MaybeExpr::CondMatch(pat, expr, _) => {
+                            collect_pattern_bindings(pat, &mut refs);
+                            collect_pattern_refs(pat, &mut refs);
+                            collect_enclosing_refs(expr, &mut refs);
+                        }
+                    }
+                }
+                report_unsafe_refs(
+                    &collect_unsafe_from_expr(expr, &maybe_scope),
+                    &refs,
+                    atom_names,
+                    diagnostics,
+                );
                 match item {
                     ast::MaybeExpr::Expr(e) => {
                         check_unsafe_in_subexprs(e, &maybe_scope, atom_names, diagnostics);
@@ -558,9 +605,15 @@ fn check_unsafe_in_subexprs(
             check_unsafe_in_subexprs(e, scope, atom_names, diagnostics);
         }
         ast::Expr::Call(target, args, _) => {
-            if let ast::CallTarget::Remote(module_expr, fun_expr) = target {
-                check_unsafe_in_subexprs(module_expr, scope, atom_names, diagnostics);
-                check_unsafe_in_subexprs(fun_expr, scope, atom_names, diagnostics);
+            match target {
+                ast::CallTarget::Remote(module_expr, fun_expr) => {
+                    check_unsafe_in_subexprs(module_expr, scope, atom_names, diagnostics);
+                    check_unsafe_in_subexprs(fun_expr, scope, atom_names, diagnostics);
+                }
+                ast::CallTarget::Expr(callee) => {
+                    check_unsafe_in_subexprs(callee, scope, atom_names, diagnostics);
+                }
+                _ => {}
             }
             for arg in args {
                 check_unsafe_in_subexprs(arg, scope, atom_names, diagnostics);
