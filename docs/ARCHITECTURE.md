@@ -378,7 +378,7 @@ The IR lowering emits a scan loop: fail_block calls `receive_next`, updates the 
 
 ### Process Features
 
-- **spawn/1,3**: `spawn_closure` extracts fn_ptr and env from the closure, deep-copies env to new process heap
+- **spawn/1,3**: `spawn_closure` deep-copies the complete fun to the child heap, then invokes the checked closure dispatcher there to handle external funs and validate invocation arity
 - **Links**: Bidirectional, with `trap_exit` flag for converting exit signals to messages
 - **Monitors**: Unidirectional, delivering `{'DOWN', Ref, process, Pid, Reason}` on exit
 - **Registered processes**: `registered_names: Arc<RwLock<HashMap<u32, ProcessId>>>` — `register/2`, `whereis/1`, `unregister/1`, send-by-name via atom resolution
