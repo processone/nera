@@ -1457,6 +1457,32 @@ fn pattern_inputs_keep_exported_bindings() {
 }
 
 #[test]
+fn comprehension_filter_bindings_are_available_to_later_qualifiers() {
+    let (module, names) = parse_module(include_str!(
+        "../../../../tests/comprehension_filter_bindings.erl"
+    ));
+    let diagnostics = analyze_module(&module, &names, None);
+    assert!(
+        !diagnostics.iter().any(|d| d.severity == nera_syntax::error::Severity::Error),
+        "filter bindings must be valid later inputs: {diagnostics:?}"
+    );
+}
+
+#[test]
+fn comprehension_filters_do_not_export_local_or_partial_bindings() {
+    for expr in [
+        "[N || X <- [1], begin N = X, true end, _ <- [ok]], N",
+        "[N || X <- [1], case X of 1 -> N = 1, true; _ -> true end, _ <- [ok]]",
+        "[N || X <- [1], X > 0 andalso begin N = 1, true end, _ <- [ok]]",
+        "[N || _ <- begin N = 1, [ok] end]",
+    ] {
+        assert_unbound_pattern_input(
+            &format!("-module(test). -export([f/0]). f() -> {expr}."), "N",
+        );
+    }
+}
+
+#[test]
 fn unbound_in_guard() {
     let src = r#"
         -module(test).

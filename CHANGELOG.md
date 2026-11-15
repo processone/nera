@@ -44,6 +44,16 @@ All notable milestones for the nera project are documented in this file.
   mixed maps, arithmetic, nested generators, compound guards, record defaults,
   evaluation order, captures and ordinary exceptions.
 
+## Comprehension filters retain bindings across generators
+
+- Names bound in a list or binary comprehension filter remain available to
+  later generator sources, map keys, binary sizes, filters and templates.
+- Generated helpers pass the bound values forward without repeating filters;
+  later generator shadowing still preserves the values needed to resume outer
+  iterations.
+- `comprehension_filter_bindings` runs unchanged natively and on BEAM, including
+  mixed generators, closures, deferred bitstring tails and evaluation traces.
+
 ## Unsupported float segment widths compile as on OTP 29
 
 - Literal float segment widths outside the supported encodings no longer reject
