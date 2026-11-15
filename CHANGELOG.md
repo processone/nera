@@ -2,6 +2,15 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Regression coverage for case exports inside maybe bodies
+
+- A diagnostic regression protects names bound in every `case` branch and read
+  later in the same `maybe` body from false unbound-variable errors.
+- `maybe_case_exports` checks both branch results in plain bodies and before or
+  after conditional matches, including match failures and explicit completion,
+  using the same fixture natively and on BEAM. The existing compiler behavior
+  is unchanged.
+
 ## Pattern inputs are checked before their own bindings
 
 - Function heads, `case`, `receive`, `try ... of`, catch and `maybe ... else`
