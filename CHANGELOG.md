@@ -9,6 +9,10 @@ All notable milestones for the nera project are documented in this file.
 - Mixing a nested case with a directly binding branch no longer produces a
   false unsafe-variable error. Later partial matches compare against the
   already-bound variable instead of treating it as a new binding.
+- Exported-variable warnings now recognize nested case exports and do not
+  report later matches of the same bound name as fresh exports.
+- Bindings inside `catch` or the right operand of `andalso`/`orelse` do not
+  become safe outer inputs; reading them afterward remains a compile error.
 - `nested_case_exports` runs unchanged natively and on BEAM; diagnostic
   regressions retain rejection of missing inner/outer paths and fun-local names.
 

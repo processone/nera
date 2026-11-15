@@ -84,9 +84,9 @@ enum Paths {
 
 /// Collect pattern bindings from `Expr::Match` subexpressions that leak into
 /// the enclosing function-clause scope. Branches export only their common
-/// bindings; funs, comprehensions, try and maybe keep their local bindings.
-/// The unused and unreachable checks use it to learn which names a later
-/// pattern compares against.
+/// bindings; funs, comprehensions, try, maybe, catch operands and skipped
+/// short-circuit operands do not supply definite bindings. The variable
+/// diagnostics and unreachable check share this view of later pattern inputs.
 pub(super) fn collect_exported_bindings(expr: &ast::Expr, scope: &mut HashSet<AtomId>) {
     collect_bindings(expr, scope, Paths::Every);
 }

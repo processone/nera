@@ -1662,6 +1662,44 @@ fn nested_case_exports_are_safe_outer_inputs() {
 }
 
 #[test]
+fn nested_case_exports_warn_at_the_original_case() {
+    // Approved warning correction: nested exports warn at the original
+    // outer case, not again when later branches match the bound name.
+    for right in [
+        "K = fallback",
+        "case Inner of small -> K = route; large -> K = other end",
+    ] {
+        let source = format!(
+            "-module(test). -export([f/2]). f(Outer, Inner) ->
+                case Outer of
+                    left -> case Inner of
+                        small -> K = route;
+                        large -> K = other
+                    end;
+                    right -> {right}
+                end,
+                case Inner of
+                    small -> K = id(K);
+                    large -> K = id(K)
+                end,
+                K.
+                id(Value) -> Value."
+        );
+        let (module, names) = parse_module(&source);
+        let ast::Expr::Case(_, _, original_case) = &module.functions[0].clauses[0].body[0]
+        else {
+            panic!("fixture must start with its exporting case");
+        };
+        let diagnostics = analyze_module(&module, &names, None);
+        let warning_spans: Vec<_> = exported_var_warnings(&diagnostics)
+            .iter()
+            .map(|warning| warning.span)
+            .collect();
+        assert_eq!(warning_spans, vec![Some(*original_case)], "{diagnostics:?}");
+    }
+}
+
+#[test]
 fn nested_case_partial_bindings_remain_errors() {
     // Missing an inner or outer path must not turn a key/size into a safe
     // input. erlc rejects these programs, including fun-local bindings.
@@ -1717,6 +1755,10 @@ fn nested_case_conditional_bindings_remain_errors() {
                     && d.message.contains("'K'")
             }),
             "{source}\n{diagnostics:?}"
+        );
+        assert!(
+            exported_var_warnings(&diagnostics).is_empty(),
+            "conditional bindings must not warn as definite exports: {diagnostics:?}"
         );
     }
 }
