@@ -1,7 +1,6 @@
 //! Validates binary segment type specifiers.
 //!
 //! Detects invalid combinations that OTP's compiler rejects at compile time:
-//! - Float size must be 16, 32, or 64 bits
 //! - UTF types cannot have explicit size
 //! - Explicit fields must not conflict; irrelevant flags are accepted as in OTP
 //! - Unit does not apply to UTF types
@@ -485,29 +484,13 @@ fn validate_segment(
         return;
     }
     match type_spec.typ {
-        BinSegmentKind::Integer | BinSegmentKind::Binary | BinSegmentKind::Bitstring => {
+        BinSegmentKind::Integer
+        | BinSegmentKind::Float
+        | BinSegmentKind::Binary
+        | BinSegmentKind::Bitstring => {
             // OTP accepts signedness and endianness even when ignored.
-        }
-        BinSegmentKind::Float => {
-            // A literal size must give 16, 32 or 64 bits once scaled by the
-            // unit, as in OTP's bit_size_check: `<<X:1/float-unit:64>>` is valid.
-            if let Some(size_expr) = size {
-                if let ast::Expr::Integer(n, _) = size_expr.as_ref() {
-                    let bits = n.checked_mul(i64::from(type_spec.unit.unwrap_or(1)));
-                    if !matches!(bits, Some(16 | 32 | 64)) {
-                        diagnostics.push(
-                            Diagnostic::error_at(
-                                format!(
-                                    "invalid size {} for float segment (must be 16, 32, or 64)",
-                                    bits.map_or_else(|| n.to_string(), |bits| bits.to_string())
-                                ),
-                                span,
-                            )
-                            .with_code("invalid_binary_segment"),
-                        );
-                    }
-                }
-            }
+            // Unsupported float widths are not compile errors: construction
+            // validates them at runtime, while impossible patterns fall through.
         }
         BinSegmentKind::Utf8 | BinSegmentKind::Utf16 | BinSegmentKind::Utf32 => {
             let kind_name = match type_spec.typ {

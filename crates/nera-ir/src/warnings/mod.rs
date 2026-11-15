@@ -7,7 +7,7 @@
 //! - Unused functions (defined but neither exported nor called locally)
 //! - Illegal guard expressions (non-guard-safe calls or constructs in when clauses)
 //! - Duplicate function definitions (same name/arity defined more than once)
-//! - Invalid binary segment type specifiers (e.g., float with wrong size, signedness on binary)
+//! - Invalid binary segment type specifiers (e.g., conflicting types, explicit size on UTF)
 //! - Illegal map construction (`:=` in `#{}` instead of `=>`)
 //! - Module name vs filename mismatch
 //! - Missing behaviour callbacks (gen_server, gen_statem, supervisor, application, gen_event)

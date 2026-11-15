@@ -2,6 +2,17 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Unsupported float segment widths compile as on OTP 29
+
+- Literal float segment widths outside the supported encodings no longer reject
+  the entire module, including widths scaled by a unit.
+- Construction retains runtime `badarg` failures, while impossible patterns
+  fall through or raise `badmatch` in a body match. Valid 16-, 32- and 64-bit
+  encodings remain unchanged.
+- `binary_float_unsupported_width` runs unchanged natively and on OTP 29,
+  covering evaluation order, guards, handlers, heads, funs, receive and
+  list/binary comprehensions.
+
 ## Nested case bindings remain safe outer inputs
 
 - A variable bound on every path through nested cases remains available after
