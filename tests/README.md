@@ -405,7 +405,7 @@ These are automatically skipped by the runner and show up as SKIP in output.
 | `scheduler_yield.erl`       | Preemptive yield in tight loops    | ~4         |
 | `spawn_link_basic.erl`      | spawn_link/1,3                     | ~6         |
 | `spawn_monitor_basic.erl`   | spawn_monitor/1,3                  | ~6         |
-| `spawn_bif.erl` | MFA spawn/3, spawn_link/3 and spawn_monitor/3 of erlang BIFs: normal returns, child badarg and exit reasons, child-local state, suspension, nested apply, copied argument lifetime and caller validation; same fixture on native and BEAM | Table-driven |
+| `spawn_bif.erl` | MFA spawn/3, spawn_link/3 and spawn_monitor/3 of erlang BIFs: normal returns, child badarg and exit reasons, child-local state, suspension, nested apply, copied argument lifetime, caller validation and previously omitted BIF dispatch (including raise/3 exit reasons); same fixture on native and BEAM | Table-driven |
 | `link_basic.erl`            | Process links and EXIT signals     | ~8         |
 | `link_normal.erl`           | Normal exit through links          | ~4         |
 | `unlink_basic.erl`          | Process unlink                     | ~4         |

@@ -14,8 +14,11 @@ All notable milestones for the nera project are documented in this file.
 - Literal auto-imported `spawn_link/3` calls retain the linking BIF rather
   than lowering to the unlinked spawn instruction. Qualified and computed
   `spawn/3` calls use the actual runtime symbol; dynamic calls also dispatch it.
+- The shared dynamic dispatcher also includes the remaining registered erlang
+  BIF signatures, including `raise/3`, so spawned BIFs do not become `undef`.
 - `spawn_bif` runs natively and on BEAM, covering all three spawn forms,
-  child-local state, suspension, nested apply and argument lifetime.
+  child-local state, suspension, nested apply, argument lifetime and the
+  previously omitted BIF signatures, including explicit `raise/3` exit reasons.
 
 ## Dynamic bitstring BIFs match direct calls
 

@@ -31,6 +31,21 @@ test() ->
             ok = controlled(Kind)
         end, [spawn_link, spawn_monitor]),
 
+        %% These previously omitted erlang BIF signatures must also be
+        %% reachable through the child's shared apply dispatcher.
+        wanted = reason(spawn_monitor, raise, [exit, wanted, []]),
+        lists:foreach(fun({Function, Args}) ->
+            normal = reason(spawn_monitor, Function, Args)
+        end, [{is_bitstring, [<<5:3>>]},
+              {term_to_binary, [{payload, [1, 2, 3]}]},
+              {binary_to_term, [term_to_binary({payload, [1, 2, 3]})]},
+              {bit_size, [<<5:3>>]},
+              {spawn, [fun() -> ok end]},
+              {monotonic_time, []},
+              {monotonic_time, [millisecond]},
+              {process_info, [self()]},
+              {process_info, [self(), status]}]),
+
         %% Unlinked spawn also returns a PID for direct BIF success/failure.
         true = is_pid(spawn(erlang, list_to_binary, [[1, 2, 3]])),
         true = is_pid(spawn(erlang, list_to_binary, [[1 | 2]])),
