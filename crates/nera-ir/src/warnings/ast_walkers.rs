@@ -385,10 +385,12 @@ fn collect_refs(expr: &ast::Expr, refs: &mut HashSet<AtomId>, scoping: RefScopin
                 }
             }
             for clause in catch_clauses {
+                // Like reason patterns, a class name can compare an outer
+                // binding. Include it for closure capture and unused checks.
+                if let ast::CatchClass::Variable(name, _) = clause.class {
+                    refs.insert(name);
+                }
                 if scoping == RefScoping::Lexical {
-                    if let ast::CatchClass::Variable(name, _) = clause.class {
-                        refs.insert(name);
-                    }
                     if let Some(stacktrace) = &clause.stacktrace {
                         collect_pattern_bindings(stacktrace, refs);
                         collect_pattern_refs(stacktrace, refs);

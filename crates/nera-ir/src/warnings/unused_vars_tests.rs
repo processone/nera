@@ -1,8 +1,29 @@
-//! Regression for false unused-variable warnings on map keys and binary sizes.
+//! Regressions for false unused-variable warnings on pattern reads.
 
 use nera_syntax::error::Severity;
 use nera_syntax::parser::Parser;
 use nera_syntax::span::Span;
+
+#[test]
+fn bound_catch_class_is_used_inside_fun() {
+    // Intent: an outer name read only as a catch class inside a fun is used.
+    // This fixture owns the requested runtime behavior natively and on BEAM;
+    // this test owns its unused-variable diagnostics.
+    let source = include_str!("../../../../tests/fun_catch_class.erl");
+    let mut parser = Parser::new(source);
+    let parsed = parser.parse_module();
+    assert!(parsed.errors.is_empty(), "{:?}", parsed.errors);
+    let diagnostics = crate::warnings::analyze_module(&parsed.module, &parser.atom_names(), None);
+    assert!(
+        diagnostics.iter().all(|d| d.severity != Severity::Error),
+        "unexpected errors: {diagnostics:#?}"
+    );
+    let unused: Vec<_> = diagnostics
+        .iter()
+        .filter(|d| d.code.as_deref() == Some("unused_variable"))
+        .collect();
+    assert!(unused.is_empty(), "unexpected unused variables: {unused:#?}");
+}
 
 #[test]
 fn pattern_expression_reads_preserve_unused_value_warnings() {
