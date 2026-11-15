@@ -2,6 +2,17 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Closures compare by code and captured values
+
+- Closures created from the same fun expression with equal captured values
+  compare equal under `==` and `=:=`, as on BEAM, even after copying or garbage
+  collection. Different fun expressions and different captures remain distinct.
+- Equal closures can be used interchangeably as process dictionary, map and ETS
+  keys. Captured integers and floats retain numeric equality under `==` but
+  exact identity under `=:=` and in exact-key stores.
+- The `fun_equality` regression runs unchanged natively and on BEAM, including
+  compound and nested captures and all four ETS table types.
+
 ## Formatter preserves negated negative literals
 
 - Formatting `-(-0)` and negated negative big integers retains the grouping

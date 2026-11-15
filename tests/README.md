@@ -322,6 +322,7 @@ These are automatically skipped by the runner and show up as SKIP in output.
 |---------------------------|----------------------------------------|------------|
 | `fun_simple.erl`          | Basic anonymous fun usage              | ~6         |
 | `fun_closure.erl`         | Closure capture and invocation         | ~8         |
+| `fun_equality.erl` | Same-expression closure equality, numeric/exact captures, distinct code, nested/named funs, dictionary/map/ETS keys, GC and message copies; same fixture on native and BEAM | Table-driven |
 | `fun_errors.erl`          | Fun error handling                     | ~6         |
 | `fun_foldl.erl`           | Higher-order foldl                     | ~4         |
 | `fun_higher_order.erl`    | map/filter with funs                   | ~8         |

@@ -107,8 +107,6 @@ These are real differences from the BEAM that we have reproduced.
 - Comprehension filters that are guard expressions, such as
   `[X || X <- L, map_size(X) > 0]`, are treated as plain expressions, so a
   filter that should be skipped can raise.
-- Funs created from remote references can compare unequal when the BEAM says
-  equal (`fun erlang:abs/1 =:= fun abs/1`).
 - Printing differs in some cases: a binary of printable bytes prints as
   `<<98>>`, not `<<"b">>`.
 - `spawn_monitor(erlang, list_to_binary, Args)` with bad arguments fails in the
