@@ -726,7 +726,9 @@ fn propagate_exit_signals(
             };
             drop(proc);
 
-            entry.inbox.push(MessageFragment::ExitSignal(Box::new(fragment)));
+            // Trapping has already converted this link signal into a message.
+            // Do not reinterpret it if trap_exit changes before delivery.
+            entry.inbox.push(fragment);
             // Try waking the process. try_wake() handles receive-waiting,
             // try_wake_io() handles IO-waiting. Only one CAS can succeed.
             // The worker that runs the process cancels its receive timer;
@@ -2579,13 +2581,16 @@ mod tests {
                     FinalSliceDelivery::Message => Some(MessageFragment::Immediate(
                         ImmediateTerm::new(ErlTerm::atom(crate::atom_table::ATOM_OK)))),
                     FinalSliceDelivery::Exit | FinalSliceDelivery::ExitBeforeSenderWake => Some(
-                        MessageFragment::ExitSignal(Box::new(MessageFragment::SimpleTuple(vec![
-                        FragmentElem::Immediate(ImmediateTerm::new(ErlTerm::atom(
-                            crate::atom_table::ATOM_EXIT_SIGNAL))),
-                        FragmentElem::Immediate(ImmediateTerm::new(ErlTerm::pid(linked_pid))),
-                        FragmentElem::Immediate(ImmediateTerm::new(ErlTerm::atom(
-                            crate::atom_table::ATOM_BADARG))),
-                    ])))),
+                        MessageFragment::ExitSignal {
+                            message: Box::new(MessageFragment::SimpleTuple(vec![
+                                FragmentElem::Immediate(ImmediateTerm::new(ErlTerm::atom(
+                                    crate::atom_table::ATOM_EXIT_SIGNAL))),
+                                FragmentElem::Immediate(ImmediateTerm::new(ErlTerm::pid(linked_pid))),
+                                FragmentElem::Immediate(ImmediateTerm::new(ErlTerm::atom(
+                                    crate::atom_table::ATOM_BADARG))),
+                            ])),
+                            normal_self_exit: false,
+                        }),
                     FinalSliceDelivery::Empty => None,
                 };
                 if let Some(fragment) = fragment {
@@ -2823,13 +2828,16 @@ mod tests {
                         use crate::message::{FragmentElem, ImmediateTerm, MessageFragment};
                         // exit/2 can wake the target before another process's
                         // linked exit kills it; the queued kill is now stale.
-                        linked.inbox.push(MessageFragment::ExitSignal(Box::new(MessageFragment::SimpleTuple(vec![
-                            FragmentElem::Immediate(ImmediateTerm::new(ErlTerm::atom(
-                                crate::atom_table::ATOM_EXIT_SIGNAL))),
-                            FragmentElem::Immediate(ImmediateTerm::new(ErlTerm::pid(dead_pid))),
-                            FragmentElem::Immediate(ImmediateTerm::new(ErlTerm::atom(
-                                crate::atom_table::ATOM_KILL))),
-                        ]))));
+                        linked.inbox.push(MessageFragment::ExitSignal {
+                            message: Box::new(MessageFragment::SimpleTuple(vec![
+                                FragmentElem::Immediate(ImmediateTerm::new(ErlTerm::atom(
+                                    crate::atom_table::ATOM_EXIT_SIGNAL))),
+                                FragmentElem::Immediate(ImmediateTerm::new(ErlTerm::pid(dead_pid))),
+                                FragmentElem::Immediate(ImmediateTerm::new(ErlTerm::atom(
+                                    crate::atom_table::ATOM_KILL))),
+                            ])),
+                            normal_self_exit: false,
+                        });
                     }
                     assert!(if state == io { linked.try_wake_io() } else { linked.try_wake() });
                     scheduler.runnable_count.fetch_add(1, Ordering::AcqRel);

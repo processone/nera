@@ -389,6 +389,7 @@ These are automatically skipped by the runner and show up as SKIP in output.
 | `process_dict_exact_keys.erl` | put/get/erase exact numeric and compound keys, signed zeros, equal reconstructed keys, missing lookup/removal, replacement/erase returns, dictionary contents and direct/qualified/dynamic/fun calls; also run on BEAM | Table-driven |
 | `process_dict_get_keys.erl` | get_keys/1 exact value filtering, auto-import/qualified/dynamic/fun calls, dictionary preservation, arbitrary keys, updates/erase and Ranch child-state lookup; also run on BEAM | Table-driven |
 | `process_flag_basic.erl`    | process_flag(trap_exit, true)      | ~4         |
+| `exit_self.erl` | Fatal `exit(self(), Reason)` stops before later effects, catch handlers or after bodies: kill with either trap setting, untrapped normal and other term reasons, direct/apply/computed/fun/tail calls and receive resumption; trapped non-kill messages, a pending self-normal signal across disabling trapping, external normal and ordinary/already-trapped EXIT tuple provenance controls; same fixture on BEAM | Table-driven |
 | `process_info.erl`          | process_info/1,2                   | ~6         |
 | `reference.erl`             | make_ref, is_reference             | ~6         |
 | `scheduler_yield.erl`       | Preemptive yield in tight loops    | ~4         |

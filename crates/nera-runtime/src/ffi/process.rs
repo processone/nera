@@ -1874,7 +1874,7 @@ pub unsafe extern "C" fn nera_rt_is_process_alive(ctx: *mut ProcessContext, term
     })
 }
 
-/// erlang:exit/2 — send an exit signal to another process.
+/// erlang:exit/2 — send an exit signal, yielding immediately for a fatal self-signal.
 #[no_mangle]
 pub unsafe extern "C" fn nera_rt_exit_2(ctx: *mut ProcessContext, pid_term: u64, reason: u64) -> u64 {
     let target_pid = match ErlTerm(pid_term).as_pid_id() {
@@ -1892,8 +1892,22 @@ pub unsafe extern "C" fn nera_rt_exit_2(ctx: *mut ProcessContext, pid_term: u64,
                     let from_pid = ErlTerm::pid(self_pid);
                     heap.alloc_tuple(&[exit_atom, from_pid, ErlTerm(reason)])
                 });
+                let self_signal = !ctx.is_null() && target_pid == self_pid;
+                let trap_exit = self_signal && unsafe { (*(*ctx).otp_ptr).trap_exit };
+                let reason_atom = ErlTerm(reason).as_atom_id();
+                let fatal_self = self_signal
+                    && (!trap_exit || reason_atom == Some(crate::atom_table::ATOM_KILL));
                 let fragment = crate::message::MessageFragment::from_term(exit_msg);
-                entry.inbox.push(crate::message::MessageFragment::ExitSignal(Box::new(fragment)));
+                entry.inbox.push(crate::message::MessageFragment::ExitSignal {
+                    message: Box::new(fragment),
+                    normal_self_exit: fatal_self && reason_atom == Some(crate::atom_table::ATOM_NORMAL),
+                });
+                if fatal_self {
+                    // Return to the scheduler before the next expression.
+                    // It consumes the queued signal before resuming any
+                    // caller, so neither catch nor after can intercept it.
+                    unsafe { (*ctx).status = crate::process::STATUS_YIELD; }
+                }
                 // Try waking the process. try_wake() handles receive-waiting
                 // (ASTATUS_WAITING), try_wake_io() handles IO-waiting
                 // (ASTATUS_IO_WAIT). Only one CAS can succeed.

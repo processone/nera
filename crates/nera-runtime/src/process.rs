@@ -579,11 +579,14 @@ fn drain_inbox_into(entry: &ProcessEntry, proc: &mut Process) {
                     handle_active_read_on_worker(proc, stream_handle, &in_flight);
                 }
             }
+            MessageFragment::ExitSignal { message, normal_self_exit } => {
+                let msg = message.copy_to_heap(&mut proc.heap);
+                proc.mailbox.send_exit_signal(msg, normal_self_exit);
+                entry.has_exit_signals.store(true, Ordering::Release);
+            }
             other => {
-                let is_exit = matches!(&other, MessageFragment::ExitSignal(_));
                 let msg = other.copy_to_heap(&mut proc.heap);
                 proc.mailbox.send(msg);
-                if is_exit { entry.has_exit_signals.store(true, Ordering::Relaxed); }
             }
         }
         return;
@@ -611,11 +614,14 @@ fn drain_inbox_into(entry: &ProcessEntry, proc: &mut Process) {
                     handle_active_read_on_worker(proc, stream_handle, &in_flight);
                 }
             }
+            MessageFragment::ExitSignal { message, normal_self_exit } => {
+                let msg = message.copy_to_heap(&mut proc.heap);
+                proc.mailbox.send_exit_signal(msg, normal_self_exit);
+                entry.has_exit_signals.store(true, Ordering::Release);
+            }
             other => {
-                let is_exit = matches!(&other, MessageFragment::ExitSignal(_));
                 let msg = other.copy_to_heap(&mut proc.heap);
                 proc.mailbox.send(msg);
-                if is_exit { entry.has_exit_signals.store(true, Ordering::Relaxed); }
             }
         }
     }
@@ -2137,13 +2143,14 @@ impl Process {
 // Exit signal processing
 // ---------------------------------------------------------------------------
 
-/// Scan the process mailbox for `{'EXIT', FromPid, Reason}` tuples and
-/// process them according to BEAM semantics:
+/// Process pending exit/2 signals in mailbox order, never ordinary or already
+/// trapped `{'EXIT', FromPid, Reason}` messages, according to BEAM semantics:
 ///
 /// - `kill` reason: always kill (untrappable) — returns `Some(ATOM_KILLED)`
-/// - `trap_exit=true` + non-kill: leave in mailbox as regular message
-/// - `trap_exit=false` + `normal`: silently remove (BEAM ignores normal exits)
-/// - `trap_exit=false` + non-normal, non-kill: kill — returns `Some(reason)`
+/// - untrapped self-normal at send time: always exit with `normal`
+/// - `trap_exit=true` + other non-kill: leave in mailbox as regular message
+/// - `trap_exit=false` + other `normal`: silently remove
+/// - `trap_exit=false` + any other reason: kill
 ///
 /// Returns `Some(exit_reason)` if the process should die.
 ///
@@ -2178,6 +2185,11 @@ pub(crate) unsafe fn process_exit_signals(proc: &mut Process) -> Option<ErlTerm>
     let buffer = proc.mailbox.buf;
     for offset in 0..slots {
         let physical = (head.wrapping_add(offset) & mask) as usize;
+        // Provenance belongs to the mailbox slot, not the tuple's contents.
+        // Once a signal is trapped it remains an ordinary message on later scans.
+        let Some(normal_self_exit) = proc.mailbox.exit_signals.remove(&physical) else {
+            continue;
+        };
         // SAFETY: each original occupied slot was initialized. This loop only
         // tombstones/removes slots: no resize or append invalidates the buffer.
         let msg = ErlTerm(unsafe { *buffer.add(physical) });
@@ -2218,12 +2230,20 @@ pub(crate) unsafe fn process_exit_signals(proc: &mut Process) -> Option<ErlTerm>
             return Some(ErlTerm::atom(ATOM_KILLED));
         }
 
+        if normal_self_exit && reason_atom == Some(ATOM_NORMAL) {
+            // This call was already fatal when sent. Conversely, a normal
+            // self-signal sent while trapping must not become a suicide
+            // request merely because trapping is disabled before this scan.
+            // SAFETY: this live slot belongs to the unchanged scan buffer.
+            unsafe { proc.mailbox.remove_scanned_slot(physical); }
+            return Some(reason);
+        }
+
         if proc.otp.trap_exit {
             // trap_exit=true: keep in mailbox as a regular message
             continue;
         }
 
-        // trap_exit=false
         if reason_atom == Some(ATOM_NORMAL) {
             // SAFETY: this live slot was just read from the stable scan buffer;
             // no intervening operation changes storage or removes this slot.
@@ -2233,7 +2253,7 @@ pub(crate) unsafe fn process_exit_signals(proc: &mut Process) -> Option<ErlTerm>
             continue;
         }
 
-        // Non-normal, non-kill: kill the process with this reason
+        // Non-normal, non-kill signal: exit with this reason
         // SAFETY: this live slot belongs to the unchanged scan buffer.
         unsafe {
             proc.mailbox.remove_scanned_slot(physical);
@@ -2269,6 +2289,9 @@ pub struct Mailbox {
     scan_pos: u32,
     /// Number of tombstoned (removed) slots within `[head, head+len)`.
     tombstone_count: u32,
+    /// Pending signal slots and their captured normal-self suicide requests.
+    /// Empty before compiled receive code runs; GC preserves slot positions.
+    exit_signals: HashMap<usize, bool>,
 }
 
 // Field offsets for codegen inlining.
@@ -2313,6 +2336,7 @@ impl Mailbox {
             len: 0,
             scan_pos: 0,
             tombstone_count: 0,
+            exit_signals: HashMap::new(),
         }
     }
 
@@ -2356,6 +2380,7 @@ impl Mailbox {
         assert!(!new_buf.is_null(), "allocation failed");
 
         let mut write = 0u32;
+        let mut exit_signals = HashMap::new();
         if self.len > 0 && !self.buf.is_null() {
             for i in 0..self.len {
                 let src_idx = self.physical_index(i);
@@ -2365,6 +2390,9 @@ impl Mailbox {
                 }
                 unsafe {
                     *new_buf.add(write as usize) = val;
+                }
+                if let Some(&normal_self_exit) = self.exit_signals.get(&src_idx) {
+                    exit_signals.insert(write as usize, normal_self_exit);
                 }
                 write += 1;
             }
@@ -2381,6 +2409,7 @@ impl Mailbox {
         }
 
         self.buf = new_buf;
+        self.exit_signals = exit_signals;
         self.capacity = new_cap;
         self.head = 0;
         self.len = kept;
@@ -2420,6 +2449,12 @@ impl Mailbox {
             *self.buf.add(idx) = msg.0;
         }
         self.len += 1;
+    }
+
+    /// Append an exit/2 signal with provenance that ordinary sends cannot forge.
+    fn send_exit_signal(&mut self, msg: ErlTerm, normal_self_exit: bool) {
+        self.send(msg);
+        self.exit_signals.insert(self.physical_index(self.len - 1), normal_self_exit);
     }
 
     /// Number of live messages currently in the mailbox.
@@ -2472,6 +2507,7 @@ impl Mailbox {
         let msg = ErlTerm(unsafe { *self.buf.add(phys) });
         assert!(!msg.is_tombstone(), "remove_at: double-remove of tombstone");
 
+        self.exit_signals.remove(&phys);
         // Write tombstone sentinel.
         unsafe {
             *self.buf.add(phys) = crate::term::TOMBSTONE_VALUE;
@@ -2493,6 +2529,7 @@ impl Mailbox {
         debug_assert!(physical < self.capacity as usize);
         // SAFETY: caller establishes initialized, live storage within capacity.
         debug_assert!(!ErlTerm(unsafe { *self.buf.add(physical) }).is_tombstone());
+        self.exit_signals.remove(&physical);
         // SAFETY: caller establishes the writable slot; &mut self is exclusive.
         unsafe { *self.buf.add(physical) = crate::term::TOMBSTONE_VALUE; }
         self.tombstone_count += 1;
@@ -2535,12 +2572,16 @@ impl Mailbox {
         debug_assert_eq!(self.scan_pos, 0, "compact: must not run during active scan");
         let alive = self.len - self.tombstone_count;
         let mut write_pos: u32 = 0;
+        let mut exit_signals = HashMap::new();
         for read_pos in 0..self.len {
             let phys_r = self.physical_index(read_pos);
             let val = unsafe { *self.buf.add(phys_r) };
             if val != crate::term::TOMBSTONE_VALUE {
+                let phys_w = self.physical_index(write_pos);
+                if let Some(&normal_self_exit) = self.exit_signals.get(&phys_r) {
+                    exit_signals.insert(phys_w, normal_self_exit);
+                }
                 if write_pos != read_pos {
-                    let phys_w = self.physical_index(write_pos);
                     unsafe {
                         *self.buf.add(phys_w) = val;
                     }
@@ -2549,6 +2590,7 @@ impl Mailbox {
             }
         }
         debug_assert_eq!(write_pos, alive);
+        self.exit_signals = exit_signals;
         self.len = alive;
         self.tombstone_count = 0;
     }
@@ -2879,7 +2921,7 @@ mod tests {
                 ErlTerm::pid(crate::process::ProcessId::new(2)),
                 ErlTerm::atom(reason),
             ]);
-            proc.mailbox.send(signal);
+            proc.mailbox.send_exit_signal(signal, false);
         }
         // Fill the ring so the pre-fix stale-length read cannot read uninitialized
         // slots; it still incorrectly skips the kill after removing the head.
@@ -2908,7 +2950,7 @@ mod tests {
         let signal =
             proc.heap
                 .alloc_tuple(&[ErlTerm::atom(ATOM_EXIT_SIGNAL), ErlTerm::pid(crate::process::ProcessId::new(2)), reason]);
-        proc.mailbox.send(signal);
+        proc.mailbox.send_exit_signal(signal, false);
         // SAFETY: all roots are immediate or initialized on this process heap,
         // held exclusively; the mailbox roots are updated by the collector.
         unsafe { proc.collect_garbage_full() };
@@ -2982,11 +3024,11 @@ mod tests {
             for _ in 0..14 {
                 proc.mailbox.remove_at(0);
             }
-            proc.mailbox.send(normal);
+            proc.mailbox.send_exit_signal(normal, false);
             proc.mailbox.send(ErlTerm::small_int(99));
-            proc.mailbox.send(normal);
-            proc.mailbox.send(normal);
-            proc.mailbox.send(kill);
+            proc.mailbox.send_exit_signal(normal, false);
+            proc.mailbox.send_exit_signal(normal, false);
+            proc.mailbox.send_exit_signal(kill, false);
             proc.mailbox.remove_at(3); // a tombstone between EXIT signals
             proc.mailbox.remove_at(0);
             proc.mailbox.remove_at(0); // head wraps during the next signal removal
@@ -3005,12 +3047,94 @@ mod tests {
             ErlTerm::atom(ATOM_NORMAL),
         ]);
         for _ in 0..3 {
-            proc.mailbox.send(normal);
+            proc.mailbox.send_exit_signal(normal, false);
         }
         // SAFETY: every queued tuple is initialized on this live, unmoving heap.
         assert_eq!(unsafe { process_exit_signals(&mut proc) }, None);
         assert!(proc.mailbox.is_empty());
     }
+    #[test]
+    fn exit_signal_provenance_survives_mailbox_growth_and_compaction() {
+        use crate::atom_table::{ATOM_EXIT_SIGNAL, ATOM_NORMAL};
+        let mut proc = Process::new(ProcessId::new(1));
+        let ordinary = proc.heap.alloc_tuple(&[
+            ErlTerm::atom(ATOM_EXIT_SIGNAL), ErlTerm::pid(proc.id), ErlTerm::atom(ATOM_NORMAL),
+        ]);
+        let signal = proc.heap.alloc_tuple(&[
+            ErlTerm::atom(ATOM_EXIT_SIGNAL), ErlTerm::pid(proc.id), ErlTerm::atom(ATOM_NORMAL),
+        ]);
+        // Start with a wrapped ring so growing moves the signal's physical slot.
+        for i in 0..16 { proc.mailbox.send(ErlTerm::small_int(i)); }
+        for _ in 0..14 { proc.mailbox.remove_at(0); }
+        proc.mailbox.send(ordinary);
+        for i in 0..10 { proc.mailbox.send(ErlTerm::small_int(i)); }
+        proc.mailbox.send_exit_signal(signal, true);
+        for i in 0..64 { proc.mailbox.send(ErlTerm::small_int(i)); }
+        // Remove the leading padding and leave tombstones before and after the
+        // signal. Compaction must move its provenance with its message.
+        proc.mailbox.remove_at(0);
+        proc.mailbox.remove_at(0);
+        for i in 1..11 { proc.mailbox.remove_at(i); }
+        for i in 12..60 { proc.mailbox.remove_at(i); }
+        proc.mailbox.reset_scan();
+        // SAFETY: all terms are owned by this live, exclusively accessed heap.
+        assert_eq!(unsafe { process_exit_signals(&mut proc) }, Some(ErlTerm::atom(ATOM_NORMAL)));
+        assert_eq!(proc.mailbox.messages().next(), Some(ordinary));
+    }
+
+    #[test]
+    fn exit_normal_self_request_is_per_signal() {
+        use crate::atom_table::{ATOM_BADARG, ATOM_EXIT_SIGNAL, ATOM_NORMAL};
+        let mut proc = Process::new(ProcessId::new(1));
+        let normal = proc.heap.alloc_tuple(&[
+            ErlTerm::atom(ATOM_EXIT_SIGNAL), ErlTerm::pid(proc.id), ErlTerm::atom(ATOM_NORMAL),
+        ]);
+        let other = proc.heap.alloc_tuple(&[
+            ErlTerm::atom(ATOM_EXIT_SIGNAL), ErlTerm::pid(ProcessId::new(2)), ErlTerm::atom(ATOM_BADARG),
+        ]);
+        // The first self-normal was sent while trapping; a later suicide
+        // request must not retroactively make that earlier signal fatal.
+        proc.mailbox.send_exit_signal(normal, false);
+        proc.mailbox.send_exit_signal(other, false);
+        proc.mailbox.send_exit_signal(normal, true);
+        // SAFETY: every signal is initialized on this live, exclusively owned heap.
+        assert_eq!(unsafe { process_exit_signals(&mut proc) }, Some(ErlTerm::atom(ATOM_BADARG)));
+        assert_eq!(proc.mailbox.messages().collect::<Vec<_>>(), vec![normal]);
+    }
+
+    #[test]
+    fn exit_message_provenance_survives_single_and_batch_inbox_drain() {
+        use crate::atom_table::{ATOM_EXIT_SIGNAL, ATOM_KILL, ATOM_KILLED, ATOM_NORMAL, ATOM_TRUE};
+        for single_first in [false, true] {
+            let entry = ProcessEntry::new(Process::new(ProcessId::new(1)));
+            let mut proc = entry.lock_for_runtime();
+            let self_pid = ErlTerm::pid(proc.id);
+            let ordinary = proc.heap.alloc_tuple(&[
+                ErlTerm::atom(ATOM_EXIT_SIGNAL), self_pid, ErlTerm::atom(ATOM_NORMAL),
+            ]);
+            let signal = proc.heap.alloc_tuple(&[
+                ErlTerm::atom(ATOM_EXIT_SIGNAL), self_pid, ErlTerm::atom(ATOM_KILL),
+            ]);
+            // SAFETY: both source graphs remain live and unmoving on this heap.
+            entry.inbox.push(unsafe { MessageFragment::from_term(ordinary) });
+            if single_first { proc.drain_inbox(); }
+            entry.inbox.push(MessageFragment::ExitSignal {
+                // SAFETY: this graph is still live on the locked source heap.
+                message: Box::new(unsafe { MessageFragment::from_term(signal) }),
+                normal_self_exit: false,
+            });
+            proc.drain_inbox();
+            // SAFETY: draining transferred both graphs into this locked process.
+            assert_eq!(unsafe { process_exit_signals(&mut proc) }, Some(ErlTerm::atom(ATOM_KILLED)));
+            let kept = proc.mailbox.messages().next().unwrap();
+            // SAFETY: the original and delivered tuple are still owned and live.
+            assert_eq!(unsafe {
+                crate::ffi::compare::nera_rt_exact_eq(std::ptr::null_mut(), kept.0, ordinary.0)
+            }, ErlTerm::atom(ATOM_TRUE).0);
+            assert_eq!(proc.mailbox.len(), 1);
+        }
+    }
+
     #[test]
     fn mailbox_rejects_overflowing_growth_without_mutation() {
         for active_scan in [false, true] {
@@ -3608,14 +3732,16 @@ mod tests {
             for &msg in &ordinary {
                 entry.inbox.push(MessageFragment::Immediate(ImmediateTerm::new(msg)));
             }
-            entry.inbox.push(MessageFragment::ExitSignal(Box::new(
-                MessageFragment::SimpleTuple(vec![
+            entry.inbox.push(MessageFragment::ExitSignal {
+                message: Box::new(MessageFragment::SimpleTuple(vec![
                     FragmentElem::Immediate(ImmediateTerm::new(ErlTerm::atom(
                         crate::atom_table::ATOM_EXIT_SIGNAL))),
                     FragmentElem::Immediate(ImmediateTerm::new(ErlTerm::pid(ProcessId::new(2)))),
                     FragmentElem::Immediate(ImmediateTerm::new(ErlTerm::atom(
                         crate::atom_table::ATOM_BADARG))),
-                ]))));
+                ])),
+                normal_self_exit: false,
+            });
             // No sender-side flag store or wake has occurred.
             assert!(!entry.has_exit_signals.load(Ordering::Relaxed));
             let mut proc = entry.lock_for_runtime();
