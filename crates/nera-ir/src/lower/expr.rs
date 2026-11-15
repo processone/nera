@@ -1316,7 +1316,7 @@ impl IrBuilder {
     /// Lower a single guard test expression, wrapping it in a try-catch so
     /// that any runtime exception (e.g. hd([]) raising badarg) is caught and
     /// the guard evaluates to `false` instead of crashing.
-    fn lower_guard_expr(&mut self, expr: &ast::Expr) -> VarId {
+    pub(super) fn lower_guard_expr(&mut self, expr: &ast::Expr) -> VarId {
         // Check if the expression might call a failable BIF.
         // Simple literals, variables, and comparisons can't fail at runtime,
         // so we skip the try-catch overhead for those.

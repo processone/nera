@@ -138,7 +138,7 @@ impl IrBuilder {
             let ast::LcQualifier::Filter(filter, _) = qualifier else {
                 unreachable!("leading qualifiers are filters");
             };
-            let condition = self.lower_expr(filter, false)?;
+            let condition = self.lower_comprehension_filter(filter)?;
             let next_block = self.fresh_block_with_id();
             self.set_terminator(Terminator::Branch(condition, next_block, skip_block));
             self.close_current_block();
@@ -178,6 +178,17 @@ impl IrBuilder {
         self.close_current_block();
         self.start_block(join_block);
         Ok(result)
+    }
+
+    /// Guard-expression filters fail rather than raise, just like `when`
+    /// tests. Classify the whole expression before lowering: an ordinary call
+    /// anywhere inside it must keep its exceptions, even if it calls a BIF.
+    fn lower_comprehension_filter(&mut self, filter: &ast::Expr) -> Result<VarId, LowerError> {
+        if crate::warnings::is_guard_expr(filter, &self.atom_names, &self.resolution, &self.record_defs) {
+            Ok(self.lower_guard_expr(filter))
+        } else {
+            self.lower_expr(filter, false)
+        }
     }
 
     /// Split LC qualifiers into generator groups. Leading filters have already
@@ -491,7 +502,7 @@ impl IrBuilder {
             // A branch takes its first target only when its condition is the
             // atom `true`.
             for (index, filter_expr) in filters.iter().enumerate() {
-                let filter_var = self.lower_expr(filter_expr, false)?;
+                let filter_var = self.lower_comprehension_filter(filter_expr)?;
                 let next_block = if index + 1 == filters.len() {
                     produce_block
                 } else {
