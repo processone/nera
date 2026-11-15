@@ -14,6 +14,17 @@ All notable milestones for the nera project are documented in this file.
   covering evaluation order, guards, handlers, heads, funs, receive and
   list/binary comprehensions.
 
+## Catch expressions preserve error stacktraces
+
+- `catch Expr` now returns `{'EXIT', {Reason, Stacktrace}}` for errors with
+  the captured stacktrace from `try ... catch Class:Reason:Stacktrace`,
+  instead of always returning an empty list.
+- Re-raising with `erlang:raise/3` preserves the supplied trace, including
+  an explicitly empty one. Normal values, throws and exits are unchanged.
+- The `catch_error_stacktrace` regression runs unchanged natively and on BEAM,
+  checking shared raising/caller frames and metadata, resumed errors, nested
+  catches and real full, shortened and empty re-raised traces.
+
 ## Nested case bindings remain safe outer inputs
 
 - A variable bound on every path through nested cases remains available after
