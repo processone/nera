@@ -2,6 +2,21 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## MFA spawn runs erlang BIFs in the child
+
+- `spawn/3`, `spawn_link/3` and `spawn_monitor/3` now dispatch erlang BIFs
+  inside the new process instead of rejecting them in the caller.
+- Valid `list_to_binary/1` and `list_to_bitstring/1` calls exit normally;
+  invalid inputs produce the BIF's own error reason in the child, including
+  the `{badarg, Stacktrace}` received through monitors and trapped links.
+- BIF arguments belong to the child's heap. Compiled entries retain their
+  existing lookup path, and malformed outer argument lists raise caller `badarg`.
+- Literal auto-imported `spawn_link/3` calls retain the linking BIF rather
+  than lowering to the unlinked spawn instruction. Qualified and computed
+  `spawn/3` calls use the actual runtime symbol; dynamic calls also dispatch it.
+- `spawn_bif` runs natively and on BEAM, covering all three spawn forms,
+  child-local state, suspension, nested apply and argument lifetime.
+
 ## Dynamic bitstring BIFs match direct calls
 
 - `bit_size/1` and `is_bitstring/1` now work through `apply/2,3`, variable

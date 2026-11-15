@@ -423,8 +423,95 @@ pub unsafe extern "C" fn nera_rt_send_tuple(
     })
 }
 
+// Keep the compiled-entry fast path. erlang BIFs have no ErlFn in the
+// function table, so they need an entry that dispatches inside the child.
+enum SpawnMfaEntry {
+    Compiled(crate::process::ErlFn, Vec<ErlTerm>),
+    Bif { module: ErlTerm, function: ErlTerm, args: ErlTerm },
+}
+
+impl SpawnMfaEntry {
+    // The spawning caller must keep every source argument live until copied.
+    unsafe fn into_process(self, pid: crate::process::ProcessId) -> Process {
+        match self {
+            Self::Compiled(func, args) => Process::with_entry(pid, func, args),
+            Self::Bif { module, function, args } => {
+                let mut process = Process::new(pid);
+                // The caller can collect or exit before the child dispatches.
+                let args = unsafe { deep_copy_term(args, &mut process.heap) };
+                process.initial_fn = Some(spawn_bif_entry);
+                process.initial_args = vec![module, function, args];
+                process
+            }
+        }
+    }
+}
+
+// Args must be a live term owned by the spawning caller.
+unsafe fn spawn_mfa_entry(mod_id: u32, fun_id: u32, args: ErlTerm) -> Option<SpawnMfaEntry> {
+    let mut arg_terms = Vec::new();
+    let mut current = args;
+    while let Some(ptr) = current.as_cons_ptr() {
+        unsafe {
+            arg_terms.push((*ptr).head);
+            current = (*ptr).tail;
+        }
+    }
+    if !current.is_nil() {
+        return None;
+    }
+    let arity = arg_terms.len() as u32;
+    if let Some(func) = global_function_table().lookup(mod_id, fun_id, arity) {
+        Some(SpawnMfaEntry::Compiled(func, arg_terms))
+    } else if global_atom_table().resolve(mod_id).as_deref() == Some("erlang") {
+        Some(SpawnMfaEntry::Bif {
+            module: ErlTerm::atom(mod_id),
+            function: ErlTerm::atom(fun_id),
+            args,
+        })
+    } else {
+        None
+    }
+}
+
+unsafe extern "C" fn spawn_bif_entry(ctx: *mut ProcessContext, args: *const u64, arity: u32) {
+    debug_assert_eq!(arity, 3);
+    let result = unsafe { super::apply::nera_rt_apply(ctx, *args, *args.add(1), *args.add(2)) };
+    // Raising BIFs leave their own reason in result; suspension also owns
+    // the context until its continuation resumes. Do not replace either.
+    if unsafe { (*ctx).status } == crate::process::STATUS_OK {
+        unsafe { (*ctx).result = result; }
+    }
+}
+
+#[cfg(test)]
+mod spawn_bif_tests {
+    use super::*;
+    use crate::process::{ProcessId, STATUS_EXCEPTION};
+
+    #[test]
+    fn entry_preserves_the_bifs_error_result() {
+        // The spawn regression's improper iolist must keep badarg in the
+        // context, not the nil returned by the FFI call after raising.
+        let atoms = global_atom_table();
+        let mut caller_heap = ProcessHeap::new();
+        let input = caller_heap.alloc_cons(ErlTerm::small_int(1), ErlTerm::small_int(2));
+        let args = caller_heap.alloc_cons(input, ErlTerm::nil());
+        let entry = unsafe {
+            spawn_mfa_entry(atoms.intern("erlang"), atoms.intern("list_to_binary"), args)
+        }.expect("erlang BIFs need a child entry");
+        let mut child = unsafe { entry.into_process(ProcessId::new(1)) };
+        child.context.heap_ptr = &mut child.heap;
+        let raw_args: Vec<u64> = child.initial_args.iter().map(|t| t.to_raw()).collect();
+        unsafe { spawn_bif_entry(&mut child.context, raw_args.as_ptr(), raw_args.len() as u32); }
+        assert_eq!(child.context.status, STATUS_EXCEPTION);
+        assert_eq!(child.context.exception_class, 1);
+        assert_eq!(ErlTerm(child.context.result), ErlTerm::atom(atoms.intern("badarg")));
+    }
+}
+
 /// Spawn a new process running the given module:function/arity.
-/// The function is looked up in the global function table.
+/// Compiled functions use the global table; erlang BIFs dispatch in the child.
 /// Returns the new process's PID as a tagged PID term.
 #[no_mangle]
 pub unsafe extern "C" fn nera_rt_spawn(
@@ -442,30 +529,9 @@ pub unsafe extern "C" fn nera_rt_spawn(
         None => return raise_badarg(ctx),
     };
 
-    // Count args from the Erlang list to determine arity
-    let mut arity = 0u32;
-    let mut current = ErlTerm(args);
-    while current.is_cons() {
-        arity += 1;
-        if let Some(ptr) = current.as_cons_ptr() {
-            current = unsafe { (*ptr).tail };
-        } else {
-            break;
-        }
-    }
-
-    // Look up the function
-    let func = match global_function_table().lookup(mod_id, fun_id, arity) {
-        Some(f) => f,
-        None => {
-            eprintln!(
-                "spawn: function not found: {}:{}/{}",
-                global_atom_table().resolve(mod_id).unwrap_or_else(|| "?".to_string()),
-                global_atom_table().resolve(fun_id).unwrap_or_else(|| "?".to_string()),
-                arity
-            );
-            return raise_badarg(ctx);
-        }
+    let entry = match spawn_mfa_entry(mod_id, fun_id, ErlTerm(args)) {
+        Some(entry) => entry,
+        None => return raise_badarg(ctx),
     };
 
     with_sched_from_ctx(ctx, #[inline(always)] |scheduler| {
@@ -474,24 +540,10 @@ pub unsafe extern "C" fn nera_rt_spawn(
             None => return raise_badarg(ctx),
         };
 
-        // Collect args from the list
-        let mut arg_terms = Vec::new();
-        let mut current = ErlTerm(args);
-        while current.is_cons() {
-            if let Some(ptr) = current.as_cons_ptr() {
-                unsafe {
-                    arg_terms.push(ErlTerm((*ptr).head.0));
-                    current = (*ptr).tail;
-                }
-            } else {
-                break;
-            }
-        }
-
         let Some(pid) = sched.try_next_pid() else {
             return super::helpers::raise_error(ctx, ErlTerm::atom(crate::atom_table::ATOM_SYSTEM_LIMIT).to_raw());
         };
-        let process = Process::with_entry(pid, func, arg_terms);
+        let process = entry.into_process(pid);
         let arc = std::sync::Arc::new(crate::process::ProcessEntry::new(process));
         // Newly spawned processes inherit the caller's group leader.
         if !ctx.is_null() {
@@ -1575,30 +1627,9 @@ pub unsafe extern "C" fn nera_rt_spawn_link(
         None => return raise_badarg(ctx),
     };
 
-    // Count args from the Erlang list to determine arity
-    let mut arity = 0u32;
-    let mut current = ErlTerm(args);
-    while current.is_cons() {
-        arity += 1;
-        if let Some(ptr) = current.as_cons_ptr() {
-            current = unsafe { (*ptr).tail };
-        } else {
-            break;
-        }
-    }
-
-    // Look up the function
-    let func = match global_function_table().lookup(mod_id, fun_id, arity) {
-        Some(f) => f,
-        None => {
-            eprintln!(
-                "spawn_link: function not found: {}:{}/{}",
-                global_atom_table().resolve(mod_id).unwrap_or_else(|| "?".to_string()),
-                global_atom_table().resolve(fun_id).unwrap_or_else(|| "?".to_string()),
-                arity
-            );
-            return raise_badarg(ctx);
-        }
+    let entry = match spawn_mfa_entry(mod_id, fun_id, ErlTerm(args)) {
+        Some(entry) => entry,
+        None => return raise_badarg(ctx),
     };
 
     with_sched_from_ctx(ctx, #[inline(always)] |scheduler| {
@@ -1609,24 +1640,10 @@ pub unsafe extern "C" fn nera_rt_spawn_link(
 
         let self_pid = unsafe { (*ctx).pid };
 
-        // Collect args from the list
-        let mut arg_terms = Vec::new();
-        let mut current = ErlTerm(args);
-        while current.is_cons() {
-            if let Some(ptr) = current.as_cons_ptr() {
-                unsafe {
-                    arg_terms.push(ErlTerm((*ptr).head.0));
-                    current = (*ptr).tail;
-                }
-            } else {
-                break;
-            }
-        }
-
         let Some(pid) = sched.try_next_pid() else {
             return super::helpers::raise_error(ctx, ErlTerm::atom(crate::atom_table::ATOM_SYSTEM_LIMIT).to_raw());
         };
-        let mut process = Process::with_entry(pid, func, arg_terms);
+        let mut process = entry.into_process(pid);
 
         // Establish bidirectional link BEFORE injecting
         process.otp.links.insert(self_pid);
@@ -1757,30 +1774,9 @@ pub unsafe extern "C" fn nera_rt_spawn_monitor(
         None => return raise_badarg(ctx),
     };
 
-    // Count args from the Erlang list to determine arity
-    let mut arity = 0u32;
-    let mut current = ErlTerm(args);
-    while current.is_cons() {
-        arity += 1;
-        if let Some(ptr) = current.as_cons_ptr() {
-            current = unsafe { (*ptr).tail };
-        } else {
-            break;
-        }
-    }
-
-    // Look up the function
-    let func = match global_function_table().lookup(mod_id, fun_id, arity) {
-        Some(f) => f,
-        None => {
-            eprintln!(
-                "spawn_monitor: function not found: {}:{}/{}",
-                global_atom_table().resolve(mod_id).unwrap_or_else(|| "?".to_string()),
-                global_atom_table().resolve(fun_id).unwrap_or_else(|| "?".to_string()),
-                arity
-            );
-            return raise_badarg(ctx);
-        }
+    let entry = match spawn_mfa_entry(mod_id, fun_id, ErlTerm(args)) {
+        Some(entry) => entry,
+        None => return raise_badarg(ctx),
     };
 
     with_sched_from_ctx(ctx, #[inline(always)] |scheduler| {
@@ -1791,24 +1787,10 @@ pub unsafe extern "C" fn nera_rt_spawn_monitor(
 
         let self_pid = unsafe { (*ctx).pid };
 
-        // Collect args from the list
-        let mut arg_terms = Vec::new();
-        let mut current = ErlTerm(args);
-        while current.is_cons() {
-            if let Some(ptr) = current.as_cons_ptr() {
-                unsafe {
-                    arg_terms.push(ErlTerm((*ptr).head.0));
-                    current = (*ptr).tail;
-                }
-            } else {
-                break;
-            }
-        }
-
         let Some(pid) = sched.try_next_pid() else {
             return super::helpers::raise_error(ctx, ErlTerm::atom(crate::atom_table::ATOM_SYSTEM_LIMIT).to_raw());
         };
-        let mut process = Process::with_entry(pid, func, arg_terms);
+        let mut process = entry.into_process(pid);
 
         // Create monitor ref
         let mon_ref_id = NEXT_REF_ID.fetch_add(1, Ordering::Relaxed);

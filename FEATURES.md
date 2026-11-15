@@ -196,11 +196,11 @@ Maintainers with OTP 29.0.4 installed can verify the catalogue with
 | tuple_to_list/1     | ✅      |
 | self/0              | ✅      |
 | spawn/1             | ✅      | Closures              |
-| spawn/3             | ✅      | Module:Function/Arity |
+| spawn/3             | ✅      | Compiled MFA and erlang BIFs; BIF errors occur in the child |
 | spawn_link/1        | ✅      | Closures              |
-| spawn_link/3        | ✅      | Module:Function/Arity |
+| spawn_link/3        | ✅      | Compiled MFA and erlang BIFs; atomic link |
 | spawn_monitor/1     | ✅      | Closures              |
-| spawn_monitor/3     | ✅      | Module:Function/Arity |
+| spawn_monitor/3     | ✅      | Compiled MFA and erlang BIFs; atomic monitor |
 | make_ref/0          | ✅      |                       |
 | register/2          | ✅      |                       |
 | whereis/1           | ✅      |                       |

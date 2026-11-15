@@ -288,6 +288,7 @@ pub(super) unsafe fn apply_impl(
         (Some("erlang"), Some("hibernate"), 3) => Some(nera_rt_hibernate(ctx, arg_terms[0], arg_terms[1], arg_terms[2])),
         (Some("erlang"), Some("spawn_opt"), 2) => Some(nera_rt_spawn_opt_closure(ctx, arg_terms[0], arg_terms[1])),
         (Some("erlang"), Some("spawn_opt"), 4) => Some(nera_rt_spawn_opt(ctx, arg_terms[0], arg_terms[1], arg_terms[2], arg_terms[3])),
+        (Some("erlang"), Some("spawn"), 3) => Some(nera_rt_spawn(ctx, arg_terms[0], arg_terms[1], arg_terms[2])),
         (Some("erlang"), Some("spawn_link"), 1) => Some(nera_rt_spawn_link_closure(ctx, arg_terms[0])),
         (Some("erlang"), Some("spawn_link"), 3) => Some(nera_rt_spawn_link(ctx, arg_terms[0], arg_terms[1], arg_terms[2])),
         (Some("erlang"), Some("spawn_monitor"), 1) => Some(nera_rt_spawn_monitor_closure(ctx, arg_terms[0])),

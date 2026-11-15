@@ -106,8 +106,6 @@ These are real differences from the BEAM that we have reproduced.
   BEAM-compatible. Process and reference identities are local to each runtime.
 - Printing differs in some cases: a binary of printable bytes prints as
   `<<98>>`, not `<<"b">>`.
-- `spawn_monitor(erlang, list_to_binary, Args)` with bad arguments fails in the
-  caller instead of in the spawned process.
 
 ## Reliability and performance
 
