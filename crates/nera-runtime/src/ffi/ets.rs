@@ -18,6 +18,7 @@ pub unsafe extern "C" fn nera_rt_ets_new(ctx: *mut ProcessContext, name_term: u6
 
     // Parse options list
     let mut opts = Vec::new();
+    let mut heir = None;
     let mut cursor = ErlTerm(opts_term);
     while cursor.is_cons() {
         if let Some(ptr) = cursor.as_cons_ptr() {
@@ -26,20 +27,49 @@ pub unsafe extern "C" fn nera_rt_ets_new(ctx: *mut ProcessContext, name_term: u6
                 // Check for atoms like 'set', 'public', 'named_table', etc.
                 if let Some(atom_id) = elem.as_atom_id() {
                     if let Some(name) = global_atom_table().resolve(atom_id) {
+                        if name == "heir" {
+                            return raise_badarg(ctx);
+                        }
                         opts.push((name, ErlTerm::nil()));
                     }
                 }
-                // Check for tuples like {keypos, N}
-                if elem.is_boxed() {
-                    if let Some(tptr) = elem.as_boxed_ptr() {
-                        let header = crate::term::BoxedHeader(*tptr);
-                        if header.subtype() == crate::term::BOXED_TUPLE && header.arity() == 2 {
-                            let key = ErlTerm(*tptr.add(1));
-                            let val = ErlTerm(*tptr.add(2));
-                            if let Some(atom_id) = key.as_atom_id() {
-                                if let Some(name) = global_atom_table().resolve(atom_id) {
-                                    opts.push((name, val));
-                                }
+                // Heir options have two or three elements; retain an owned
+                // copy of gift data, never a pointer into the creator's heap.
+                if elem.is_tuple() {
+                    let tptr = elem.as_boxed_ptr().unwrap();
+                    let arity = crate::term::BoxedHeader(*tptr).arity();
+                    if arity > 0 {
+                        let key = ErlTerm(*tptr.add(1));
+                        let name = key.as_atom_id().and_then(|id| global_atom_table().resolve(id));
+                        if name.as_deref() == Some("heir") {
+                            if arity != 2 && arity != 3 {
+                                return raise_badarg(ctx);
+                            }
+                            let value = ErlTerm(*tptr.add(2));
+                            if arity == 2 && value.as_atom_id().and_then(|id| global_atom_table().resolve(id)).as_deref() == Some("none") {
+                                heir = None;
+                            } else {
+                                let Some(pid) = value.as_pid_id() else {
+                                    return raise_badarg(ctx);
+                                };
+                                // Do not lock another process while this caller
+                                // holds its own lock. Exit cleanup rechecks under
+                                // the heir's lock before committing a transfer.
+                                let alive = with_sched_from_ctx(ctx, |sched| {
+                                    sched.is_some_and(|sched| sched.process_table.get(&pid).is_some_and(|entry| {
+                                        entry.published_status() != crate::process::ASTATUS_EXITED
+                                    }))
+                                });
+                                heir = if alive {
+                                    let gift = (arity == 3).then(|| ErlTerm(*tptr.add(3)));
+                                    Some(crate::ets::EtsHeir::new(pid, gift))
+                                } else {
+                                    None
+                                };
+                            }
+                        } else if arity == 2 {
+                            if let Some(name) = name {
+                                opts.push((name, ErlTerm(*tptr.add(2))));
                             }
                         }
                     }
@@ -52,7 +82,7 @@ pub unsafe extern "C" fn nera_rt_ets_new(ctx: *mut ProcessContext, name_term: u6
     }
 
     let owner_pid = unsafe { (*ctx).pid };
-    match crate::ets::ets_new_handle(name_atom, &opts, owner_pid) {
+    match crate::ets::ets_new_handle_with_heir(name_atom, &opts, owner_pid, heir) {
         Some(handle) => handle.0,
         None => raise_badarg(ctx),  // duplicate named table
     }

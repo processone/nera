@@ -71,6 +71,8 @@ pub struct EtsTable {
     pub named: bool,
     /// Owning process PID.  Atomic for lock-free reads in `ets:info`.
     owner: AtomicProcessId,
+    /// Immutable heir configuration; gift storage is independent of the creator.
+    heir: Option<Arc<EtsHeir>>,
     /// Key-value store dispatched by table type.
     storage: EtsStorage,
     /// mmap-backed region pool for word buffer allocation.
@@ -81,6 +83,46 @@ impl EtsTable {
     /// Observe the owner without exposing the raw atomic's invariant.
     #[inline]
     pub fn owner(&self) -> ProcessId { self.owner.load(Ordering::Relaxed) }
+}
+
+/// An heir and its optional notification data. The legacy `{heir, Pid}`
+/// option transfers ownership without sending a notification.
+pub(crate) struct EtsHeir {
+    pub(crate) pid: ProcessId,
+    // FragmentHeap is Send, not Sync. The mutex keeps its owned graph private
+    // while another worker copies a notification after a manual give_away.
+    gift: Option<Mutex<HeirGift>>,
+}
+
+struct HeirGift {
+    _heap: crate::heap::FragmentHeap,
+    root: ErlTerm,
+}
+
+impl EtsHeir {
+    /// # Safety
+    /// The complete gift graph must remain valid, immutable and unmoved during this copy.
+    pub(crate) unsafe fn new(pid: ProcessId, gift: Option<ErlTerm>) -> Self {
+        let gift = gift.map(|root| {
+            let mut heap = crate::heap::FragmentHeap::new_with_capacity(64);
+            // SAFETY: the caller keeps the creator's graph live for this copy.
+            let root = unsafe { heap.copy_raw_term(root) };
+            Mutex::new(HeirGift { _heap: heap, root })
+        });
+        Self { pid, gift }
+    }
+
+    pub(crate) fn notification(&self, table: ErlTerm, from: ProcessId) -> Option<crate::message::MessageFragment> {
+        assert!(table.is_atom() || table.is_small_int(), "ETS transfer handle must be immediate");
+        let gift = self.gift.as_ref()?.lock().unwrap();
+        let mut heap = crate::heap::FragmentHeap::new_with_capacity(64);
+        // SAFETY: gift owns the immutable graph and stays locked until copied.
+        let copied = unsafe { heap.copy_raw_term(gift.root) };
+        let tag = ErlTerm::atom(crate::atom_table::global_atom_table().intern("ETS-TRANSFER"));
+        let root = heap.alloc_tuple(&[tag, table, ErlTerm::pid(from), copied]);
+        // SAFETY: all children are immediate or owned by this fragment heap.
+        Some(unsafe { crate::message::MessageFragment::from_owned_heap(heap, root) })
+    }
 }
 
 /// A compact word buffer for storing ETS terms, backed by an mmap'd
@@ -1035,10 +1077,9 @@ impl EtsRegistry {
     /// Create a table.  `None` if `named` and a named table already has
     /// this name (badarg in BEAM).
     ///
-    /// Lock order: `tables` may be held while taking `name_to_id`
-    /// (`delete_tables_owned_by`), never the other way round, so no path
-    /// holds `name_to_id` while it takes `tables`.
-    fn create_table(&self, name: u32, named: bool, table_type: TableType, keypos: usize, owner_pid: ProcessId) -> Option<TableId> {
+    /// Registry mutations hold `tables` before `name_to_id` or `pid_to_tables`.
+    /// No registry lock may be held while acquiring a process lock.
+    fn create_table(&self, name: u32, named: bool, table_type: TableType, keypos: usize, owner_pid: ProcessId, heir: Option<EtsHeir>) -> Option<TableId> {
         let id = self.next_id.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
         let storage = match table_type {
             TableType::Set => EtsStorage::Set(RwLock::new(HashMap::new())),
@@ -1052,9 +1093,11 @@ impl EtsRegistry {
             keypos,
             named,
             owner: AtomicProcessId::new(owner_pid),
+            heir: heir.map(Arc::new),
             storage,
             pool: Mutex::new(EtsRegionPool::new()),
         });
+        let mut tables = self.tables.write().unwrap();
         if named {
             // Check and claim the name under one lock, so that only one of
             // two processes creating the same named table succeeds.
@@ -1064,7 +1107,7 @@ impl EtsRegistry {
             }
             name_map.insert(name, id);
         }
-        self.tables.write().unwrap().insert(id, table);
+        tables.insert(id, table);
         self.pid_to_tables.write().unwrap()
             .entry(owner_pid)
             .or_default()
@@ -1086,14 +1129,18 @@ impl EtsRegistry {
         let Some(table_id) = self.resolve_id(id_or_name) else {
             return false;
         };
+        self.delete_table_if_owned(table_id, None)
+    }
 
-        // Remove from tables map (drops the Arc<EtsTable> and all its data)
-        let removed = {
-            let mut tables = self.tables.write().unwrap();
-            tables.remove(&table_id)
-        };
-
-        if let Some(table) = removed {
+    fn delete_table_if_owned(&self, table_id: TableId, expected_owner: Option<ProcessId>) -> bool {
+        let mut tables = self.tables.write().unwrap();
+        if let Some(owner) = expected_owner {
+            if tables.get(&table_id).is_none_or(|table| table.owner() != owner) {
+                return false;
+            }
+        }
+        // Keep ownership and both indexes consistent with concurrent transfers.
+        if let Some(table) = tables.remove(&table_id) {
             if table.named {
                 self.name_to_id.write().unwrap().remove(&table.name);
             }
@@ -1106,30 +1153,35 @@ impl EtsRegistry {
                     pt.remove(&owner_pid);
                 }
             }
+            // Destruction can free many rows and mappings. Keep the removal
+            // and index changes atomic, but never free data under registry locks.
+            drop(pt);
+            drop(tables);
+            drop(table);
             true
         } else {
             false
         }
     }
 
-    /// Delete all tables owned by the given process.  Called on process death.
-    fn delete_tables_owned_by(&self, pid: ProcessId) {
-        let table_ids: HashSet<TableId> = {
-            let mut pt = self.pid_to_tables.write().unwrap();
-            match pt.remove(&pid) {
-                Some(ids) => ids,
-                None => return,
-            }
+    /// Snapshot without retaining registry locks across a live-heir check.
+    fn cleanup_tables_owned_by(&self, pid: ProcessId, mut transfer: impl FnMut(TableId, &EtsTable, &EtsHeir) -> bool) {
+        let owned: Vec<_> = {
+            let tables = self.tables.read().unwrap();
+            let owners = self.pid_to_tables.read().unwrap();
+            owners.get(&pid).into_iter().flatten()
+                .filter_map(|id| tables.get(id).map(|table| (*id, Arc::clone(table))))
+                .collect()
         };
-
-        let mut tables_map = self.tables.write().unwrap();
-        let mut name_map = self.name_to_id.write().unwrap();
-        for table_id in table_ids {
-            if let Some(table) = tables_map.remove(&table_id) {
-                if table.named {
-                    name_map.remove(&table.name);
+        for (id, table) in owned {
+            if let Some(heir) = &table.heir {
+                if heir.pid != pid && transfer(id, &table, heir) {
+                    continue;
                 }
             }
+            // A concurrent manual transfer or deletion must not delete a new
+            // owner's table, nor remove a replacement table's name.
+            self.delete_table_if_owned(id, Some(pid));
         }
     }
 
@@ -1138,9 +1190,13 @@ impl EtsRegistry {
         let Some(table_id) = self.resolve_id(id_or_name) else {
             return false;
         };
-        let Some(table) = self.tables.read().unwrap().get(&table_id).cloned() else {
+        // Keep deletion out, and serialize ownership changes through the
+        // owner-index lock before checking the current owner.
+        let tables = self.tables.read().unwrap();
+        let Some(table) = tables.get(&table_id) else {
             return false;
         };
+        let mut pt = self.pid_to_tables.write().unwrap();
 
         // Verify caller is current owner
         if table.owner.load(Ordering::Relaxed) != current_owner {
@@ -1151,7 +1207,6 @@ impl EtsRegistry {
         table.owner.store(new_owner, Ordering::Relaxed);
 
         // Update pid_to_tables
-        let mut pt = self.pid_to_tables.write().unwrap();
         if let Some(set) = pt.get_mut(&current_owner) {
             set.remove(&table_id);
             if set.is_empty() {
@@ -1182,18 +1237,22 @@ fn registry() -> &'static EtsRegistry {
 /// on success, `None` if a named table with the same name already exists
 /// (badarg in BEAM).
 pub fn ets_new(name: u32, opts: &[(String, ErlTerm)], owner_pid: ProcessId) -> Option<TableId> {
-    new_table(name, opts, owner_pid).map(|(id, _)| id)
+    new_table(name, opts, owner_pid, None).map(|(id, _)| id)
 }
 
 /// Create a new ETS table and return what `ets:new/2` returns in Erlang:
 /// the name for a `named_table`, as BEAM does, otherwise the table ID.
 /// `None` if a named table with the same name already exists.
 pub fn ets_new_handle(name: u32, opts: &[(String, ErlTerm)], owner_pid: ProcessId) -> Option<ErlTerm> {
-    let (id, named) = new_table(name, opts, owner_pid)?;
+    ets_new_handle_with_heir(name, opts, owner_pid, None)
+}
+
+pub(crate) fn ets_new_handle_with_heir(name: u32, opts: &[(String, ErlTerm)], owner_pid: ProcessId, heir: Option<EtsHeir>) -> Option<ErlTerm> {
+    let (id, named) = new_table(name, opts, owner_pid, heir)?;
     Some(if named { ErlTerm::atom(name) } else { ErlTerm::small_int(id as i64) })
 }
 
-fn new_table(name: u32, opts: &[(String, ErlTerm)], owner_pid: ProcessId) -> Option<(TableId, bool)> {
+fn new_table(name: u32, opts: &[(String, ErlTerm)], owner_pid: ProcessId, heir: Option<EtsHeir>) -> Option<(TableId, bool)> {
     let mut keypos: usize = 1;
     let mut table_type = TableType::Set;
     let mut is_named = false;
@@ -1215,14 +1274,21 @@ fn new_table(name: u32, opts: &[(String, ErlTerm)], owner_pid: ProcessId) -> Opt
     }
 
     // BEAM raises badarg if a named table with this name already exists.
-    let id = registry().create_table(name, is_named, table_type, keypos, owner_pid)?;
+    let id = registry().create_table(name, is_named, table_type, keypos, owner_pid, heir)?;
     Some((id, is_named))
 }
 
-/// Delete all ETS tables owned by the given process.
-/// Called from the scheduler when a process exits.
+/// Unconditionally delete an owner's tables, for explicit test cleanup.
+/// Scheduler exit cleanup uses `cleanup_tables_owned_by` to honour heirs.
 pub fn delete_tables_owned_by(pid: ProcessId) {
-    registry().delete_tables_owned_by(pid);
+    registry().cleanup_tables_owned_by(pid, |_, _, _| false);
+}
+
+/// Release an exiting owner's tables, transferring to live heirs when possible.
+/// The callback acquires the heir's process lock before changing ownership;
+/// it must enqueue any notification before releasing that lock.
+pub(crate) fn cleanup_tables_owned_by(pid: ProcessId, transfer: impl FnMut(TableId, &EtsTable, &EtsHeir) -> bool) {
+    registry().cleanup_tables_owned_by(pid, transfer);
 }
 
 /// Transfer ownership of a table to a new process.
@@ -2125,6 +2191,12 @@ pub fn ets_info(table_ref: ErlTerm, item: Option<&str>, heap: &mut ProcessHeap) 
         Some("keypos") => {
             ErlTerm::small_int(table.keypos as i64)
         }
+        Some("heir") => {
+            table.heir.as_ref().map_or_else(
+                || ErlTerm::atom(crate::atom_table::global_atom_table().intern("none")),
+                |heir| ErlTerm::pid(heir.pid),
+            )
+        }
         Some("owner") => {
             let pid = table.owner.load(Ordering::Relaxed);
             ErlTerm::pid(pid)
@@ -2145,6 +2217,8 @@ pub fn ets_info(table_ref: ErlTerm, item: Option<&str>, heap: &mut ProcessHeap) 
                 (atom_table.intern("type"), ErlTerm::atom(atom_table.intern(type_atom_name))),
                 (atom_table.intern("keypos"), ErlTerm::small_int(table.keypos as i64)),
                 (atom_table.intern("owner"), ErlTerm::pid(owner_pid)),
+                (atom_table.intern("heir"), table.heir.as_ref().map_or_else(
+                    || ErlTerm::atom(atom_table.intern("none")), |heir| ErlTerm::pid(heir.pid))),
             ];
 
             let mut tuples = Vec::with_capacity(pairs.len());
@@ -2394,6 +2468,104 @@ mod tests {
     use super::*;
     use crate::atom_table::global_atom_table;
     use crate::heap::MapPairs;
+
+    #[test]
+    fn heir_gift_and_inherited_index_survive_creator_heap() {
+        let registry = EtsRegistry::new();
+        let owner = ProcessId::new(101);
+        let heir_pid = ProcessId::new(102);
+        let name = global_atom_table().intern("unit_heir_table");
+        let heir = {
+            let mut heap = ProcessHeap::new();
+            let list = heap.alloc_list_from_slice(&[ErlTerm::small_int(41), ErlTerm::small_int(42)]);
+            let gift = heap.alloc_tuple(&[list]);
+            // SAFETY: heap keeps every child of gift live throughout this copy.
+            unsafe { EtsHeir::new(heir_pid, Some(gift)) }
+        };
+        let id = registry.create_table(name, true, TableType::Set, 1, owner, Some(heir)).unwrap();
+        let mut notifications = Vec::new();
+        registry.cleanup_tables_owned_by(owner, |id, table, heir| {
+            assert_eq!(table.owner(), owner);
+            assert!(registry.give_away(ErlTerm::small_int(id as i64), owner, heir.pid));
+            notifications.push(heir.notification(ErlTerm::atom(table.name), owner).unwrap());
+            true
+        });
+        let table = registry.get_table(ErlTerm::atom(name)).unwrap();
+        assert_eq!(table.owner(), heir_pid);
+        assert!(!registry.pid_to_tables.read().unwrap().contains_key(&owner));
+        assert!(registry.pid_to_tables.read().unwrap()[&heir_pid].contains(&id));
+        // The heir points to itself now: its own exit deletes rather than
+        // retaining a table forever or issuing another transfer notification.
+        registry.cleanup_tables_owned_by(heir_pid, |_, _, _| panic!("self heir"));
+        assert!(registry.get_table(ErlTerm::atom(name)).is_none());
+        drop(table);
+        let mut target = ProcessHeap::new();
+        let actual = notifications.pop().unwrap().copy_to_heap(&mut target);
+        let expected_list = target.alloc_list_from_slice(&[ErlTerm::small_int(41), ErlTerm::small_int(42)]);
+        let expected_gift = target.alloc_tuple(&[expected_list]);
+        let expected = target.alloc_tuple(&[
+            ErlTerm::atom(global_atom_table().intern("ETS-TRANSFER")),
+            ErlTerm::atom(name), ErlTerm::pid(owner), expected_gift,
+        ]);
+        // SAFETY: both complete graphs are owned by target for this comparison.
+        assert_eq!(unsafe { compare_terms(actual, expected) }, 0);
+    }
+
+    #[test]
+    fn concurrent_ownership_transfers_have_one_winner() {
+        let registry = EtsRegistry::new();
+        let name = global_atom_table().intern("unit_competing_heir_transfers");
+        let owner = ProcessId::new(301);
+        let heirs = [ProcessId::new(302), ProcessId::new(303)];
+        for _ in 0..100 {
+            let id = registry.create_table(name, true, TableType::Set, 1, owner, None).unwrap();
+            let handle = ErlTerm::small_int(id as i64);
+            let barrier = std::sync::Barrier::new(3);
+            let results = std::thread::scope(|scope| {
+                let transfers: Vec<_> = heirs.iter().map(|&heir| {
+                    let registry = &registry;
+                    let barrier = &barrier;
+                    scope.spawn(move || {
+                        barrier.wait();
+                        registry.give_away(handle, owner, heir)
+                    })
+                }).collect();
+                barrier.wait();
+                transfers.into_iter().map(|thread| thread.join().unwrap()).collect::<Vec<_>>()
+            });
+            assert_eq!(results.iter().filter(|&&won| won).count(), 1);
+            let winner = heirs[usize::from(results[1])];
+            assert_eq!(registry.get_table(handle).unwrap().owner(), winner);
+            assert_eq!(registry.pid_to_tables.read().unwrap().len(), 1);
+            assert!(registry.pid_to_tables.read().unwrap()[&winner].contains(&id));
+            assert!(registry.delete_table(handle));
+            assert!(registry.pid_to_tables.read().unwrap().is_empty());
+        }
+    }
+
+    #[test]
+    fn heir_cleanup_does_not_delete_a_concurrently_transferred_table() {
+        let registry = EtsRegistry::new();
+        let owner = ProcessId::new(201);
+        let heir_pid = ProcessId::new(202);
+        let other = ProcessId::new(203);
+        let name = global_atom_table().intern("unit_changed_heir_owner");
+        // SAFETY: there is no heap graph in this legacy configuration.
+        let heir = unsafe { EtsHeir::new(heir_pid, None) };
+        let id = registry.create_table(name, true, TableType::Set, 1, owner, Some(heir)).unwrap();
+        let handle = ErlTerm::small_int(id as i64);
+        registry.cleanup_tables_owned_by(owner, |_, _, heir| {
+            assert!(heir.notification(handle, owner).is_none());
+            // Another operation wins after the exit cleanup snapshot.
+            assert!(registry.give_away(handle, owner, other));
+            false
+        });
+        assert_eq!(registry.get_table(handle).unwrap().owner(), other);
+        registry.cleanup_tables_owned_by(other, |_, _, _| false);
+        assert!(registry.get_table(handle).is_none());
+        assert!(registry.name_to_id.read().unwrap().is_empty());
+        assert!(registry.pid_to_tables.read().unwrap().is_empty());
+    }
 
     /// Helper: create a unique ETS table for each test to avoid cross-test
     /// interference (the global registry is shared within a test binary).
