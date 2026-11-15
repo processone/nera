@@ -43,6 +43,16 @@ impl IrBuilder {
         qualifiers: &[ast::LcQualifier],
         finalize_as_binary: bool,
     ) -> Result<VarId, LowerError> {
+        let leading_filters = qualifiers.iter()
+            .take_while(|q| matches!(q, ast::LcQualifier::Filter(..))).count();
+        if leading_filters > 0 {
+            return self.in_local_scope(|builder| {
+                builder.lower_leading_comprehension_filters(
+                    body_expr, qualifiers, leading_filters, finalize_as_binary,
+                )
+            });
+        }
+
         // ── 1. Split qualifiers into generator groups ──
         let (groups, bin_flags) = Self::split_lc_qualifiers(qualifiers)?;
         let n = groups.len();
@@ -111,7 +121,67 @@ impl IrBuilder {
         Ok(call_result)
     }
 
-    /// Split LC qualifiers into generator groups.
+    /// Leading filters run once, before the first source, in the comprehension's
+    /// local scope. Keep their bindings available to later filters, sources and
+    /// captures, but not to code after the comprehension.
+    fn lower_leading_comprehension_filters(
+        &mut self,
+        body_expr: &ast::Expr,
+        qualifiers: &[ast::LcQualifier],
+        leading_filters: usize,
+        finalize_as_binary: bool,
+    ) -> Result<VarId, LowerError> {
+        let skip_block = self.fresh_block_with_id();
+        let join_block = self.fresh_block_with_id();
+        let result = self.fresh_var();
+        for qualifier in &qualifiers[..leading_filters] {
+            let ast::LcQualifier::Filter(filter, _) = qualifier else {
+                unreachable!("leading qualifiers are filters");
+            };
+            let condition = self.lower_expr(filter, false)?;
+            let next_block = self.fresh_block_with_id();
+            self.set_terminator(Terminator::Branch(condition, next_block, skip_block));
+            self.close_current_block();
+            self.start_block(next_block);
+        }
+
+        let value = if leading_filters < qualifiers.len() {
+            self.lower_comprehension(body_expr, &qualifiers[leading_filters..], finalize_as_binary)?
+        } else {
+            let element = self.lower_comprehension_body(body_expr, finalize_as_binary)?;
+            if finalize_as_binary {
+                element
+            } else {
+                let nil = self.emit_const(Literal::Nil);
+                let list = self.fresh_var();
+                self.emit(Instruction::MakeCons(list, element, nil));
+                list
+            }
+        };
+        self.emit(Instruction::Move(result, value));
+        self.set_terminator(Terminator::Jump(join_block, vec![]));
+        self.close_current_block();
+
+        self.start_block(skip_block);
+        let empty = self.emit_const(Literal::Nil);
+        let empty = if finalize_as_binary {
+            let bits = self.fresh_var();
+            self.emit(Instruction::Call(
+                bits, CallTarget::Bif("list_to_bitstring".to_string()), vec![empty],
+            ));
+            bits
+        } else {
+            empty
+        };
+        self.emit(Instruction::Move(result, empty));
+        self.set_terminator(Terminator::Jump(join_block, vec![]));
+        self.close_current_block();
+        self.start_block(join_block);
+        Ok(result)
+    }
+
+    /// Split LC qualifiers into generator groups. Leading filters have already
+    /// been lowered, so the first qualifier here is a generator.
     /// Each group: (pattern, source_expr, [filter_exprs]).
     /// Keep binary patterns intact: their sizes and segment boundaries define
     /// how much source each iteration consumes.
@@ -223,7 +293,7 @@ impl IrBuilder {
         let badarg = self.emit_const(Literal::Atom(badarg));
         let raised = self.fresh_var();
         self.emit(Instruction::RaiseException(raised, ExceptionClass::Error, badarg));
-        self.set_terminator(Terminator::Return(raised));
+        self.set_raise_terminator(raised);
         self.close_current_block();
         self.start_block(append_block);
         Ok(elem)

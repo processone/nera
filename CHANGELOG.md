@@ -2,6 +2,16 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Comprehensions keep filters before the first generator
+
+- List and binary comprehensions evaluate leading filters once, in order,
+  before evaluating a generator source. A false filter skips later filters,
+  sources and the body, as on BEAM.
+- Filter-only comprehensions produce the body once when the filters pass,
+  or an empty list or bitstring when they do not.
+- The `comprehension_leading_filter` regression runs unchanged natively and
+  on BEAM, checking results, evaluation order, captures and exceptions.
+
 ## Fatal self-exit signals stop execution immediately
 
 - `exit(self(), Reason)` now stops before the next expression when the signal
