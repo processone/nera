@@ -109,6 +109,13 @@ pub(crate) fn collect_exported_bindings(expr: &ast::Expr, scope: &mut HashSet<At
     collect_bindings(expr, scope, Paths::Every);
 }
 
+/// Collect bindings even from paths that may be skipped. This is not a scope
+/// of safe inputs: unsafe-variable analysis uses it to find conditional names.
+/// Funs and comprehensions still keep their bindings local.
+pub(super) fn collect_possible_bindings(expr: &ast::Expr, bindings: &mut HashSet<AtomId>) {
+    collect_bindings(expr, bindings, Paths::Any);
+}
+
 /// Collect the names `expr` binds on the given paths. Funs and comprehensions
 /// keep their bindings local on every path.
 fn collect_bindings(expr: &ast::Expr, scope: &mut HashSet<AtomId>, paths: Paths) {
