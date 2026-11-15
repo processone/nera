@@ -1647,6 +1647,123 @@ fn safe_var_in_all_case_branches() {
 }
 
 #[test]
+fn nested_case_exports_are_safe_outer_inputs() {
+    // Every path in the native/BEAM fixture binds the later key or size.
+    // The diagnostic pass used to miss nested bindings in a mixed branch.
+    let source = include_str!("../../../../tests/nested_case_exports.erl");
+    let (module, names) = parse_module(source);
+    let diagnostics = analyze_module(&module, &names, None);
+    assert!(
+        !diagnostics
+            .iter()
+            .any(|d| d.severity == nera_syntax::error::Severity::Error),
+        "{diagnostics:?}"
+    );
+}
+
+#[test]
+fn nested_case_exports_warn_at_the_original_case() {
+    // Approved warning correction: nested exports warn at the original
+    // outer case, not again when later branches match the bound name.
+    for right in [
+        "K = fallback",
+        "case Inner of small -> K = route; large -> K = other end",
+    ] {
+        let source = format!(
+            "-module(test). -export([f/2]). f(Outer, Inner) ->
+                case Outer of
+                    left -> case Inner of
+                        small -> K = route;
+                        large -> K = other
+                    end;
+                    right -> {right}
+                end,
+                case Inner of
+                    small -> K = id(K);
+                    large -> K = id(K)
+                end,
+                K.
+                id(Value) -> Value."
+        );
+        let (module, names) = parse_module(&source);
+        let ast::Expr::Case(_, _, original_case) = &module.functions[0].clauses[0].body[0]
+        else {
+            panic!("fixture must start with its exporting case");
+        };
+        let diagnostics = analyze_module(&module, &names, None);
+        let warning_spans: Vec<_> = exported_var_warnings(&diagnostics)
+            .iter()
+            .map(|warning| warning.span)
+            .collect();
+        assert_eq!(warning_spans, vec![Some(*original_case)], "{diagnostics:?}");
+    }
+}
+
+#[test]
+fn nested_case_partial_bindings_remain_errors() {
+    // Missing an inner or outer path must not turn a key/size into a safe
+    // input. erlc rejects these programs, including fun-local bindings.
+    for (name, value, input) in [
+        ("K", "route", "fun(#{K := V}) -> V end"),
+        ("N", "8", "[V || <<V:N>> <- []]"),
+    ] {
+        for binding in [
+            format!("case Outer of left -> case Inner of small -> {name} = {value}; large -> ok end; right -> {name} = {value} end"),
+            format!("case Outer of left -> case Inner of small -> {name} = {value}; large -> {name} = {value} end; right -> ok end"),
+            format!("case Outer of left -> F = fun() -> {name} = {value} end, F(); right -> {name} = {value} end"),
+        ] {
+            let source = format!("-module(test). -export([f/2]).
+                f(Outer, Inner) -> {binding}, {input}.");
+            let (module, names) = parse_module(&source);
+            let diagnostics = analyze_module(&module, &names, None);
+            assert!(
+                diagnostics.iter().any(|d| {
+                    d.severity == nera_syntax::error::Severity::Error
+                        && d.message.contains(&format!("'{name}'"))
+                }),
+                "{source}\n{diagnostics:?}"
+            );
+        }
+    }
+}
+
+#[test]
+fn nested_case_conditional_bindings_remain_errors() {
+    // Recursive collection must not count a skipped operand or a caught
+    // exception as a definite binding. erlc rejects all three controls.
+    for expression in [
+        "false andalso (K = route)",
+        "true orelse (K = route)",
+        "catch (K = route)",
+    ] {
+        let source = format!(
+            "-module(test). -export([f/2]). f(Outer, Inner) ->
+                case Outer of
+                    left -> case Inner of
+                        small -> K = route;
+                        large -> {expression}
+                    end;
+                    right -> K = route
+                end,
+                K."
+        );
+        let (module, names) = parse_module(&source);
+        let diagnostics = analyze_module(&module, &names, None);
+        assert!(
+            diagnostics.iter().any(|d| {
+                d.severity == nera_syntax::error::Severity::Error
+                    && d.message.contains("'K'")
+            }),
+            "{source}\n{diagnostics:?}"
+        );
+        assert!(
+            exported_var_warnings(&diagnostics).is_empty(),
+            "conditional bindings must not warn as definite exports: {diagnostics:?}"
+        );
+    }
+}
+
+#[test]
 fn generator_pattern_refs_use_earlier_bindings() {
     // NERA-77 I-2: a later generator key/size reads a fresh earlier-generator
     // binding, not a same-named unsafe binding from the enclosing case.
