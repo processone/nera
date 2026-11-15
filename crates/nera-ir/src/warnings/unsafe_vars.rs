@@ -593,6 +593,14 @@ fn check_unsafe_in_subexprs(
         }
         ast::Expr::BinOp(ast::BinOp::Andalso | ast::BinOp::Orelse, lhs, rhs, _) => {
             check_unsafe_in_subexprs(lhs, scope, atom_names, diagnostics);
+            let mut refs = HashSet::new();
+            collect_enclosing_refs(rhs, &mut refs);
+            report_unsafe_refs(
+                &collect_unsafe_from_expr(lhs, scope),
+                &refs,
+                atom_names,
+                diagnostics,
+            );
             let mut input_scope = scope.clone();
             collect_exported_bindings(lhs, &mut input_scope);
             check_unsafe_in_subexprs(rhs, &input_scope, atom_names, diagnostics);

@@ -2060,6 +2060,62 @@ fn short_circuit_unsafe_entrypoints_are_visited() {
 }
 
 #[test]
+fn short_circuit_consumers_check_conditional_left_names() {
+    // Unlike strict operators, a short-circuit right operand consumes names
+    // from its left operand. OTP rejects these reads and match assertions.
+    for first in ["andalso", "orelse"] {
+        for consumer in ["andalso", "orelse"] {
+            for rhs in ["Y = false", "(fun() -> Y end)()", "begin Y = false, Y end"] {
+                let source = format!(
+                    "-module(test). -export([f/1]).
+                    f(Flag) -> (Flag {first} (Y = true)) {consumer} ({rhs})."
+                );
+                let (module, names) = parse_module(&source);
+                let diagnostics = analyze_module(&module, &names, None);
+                assert!(
+                    diagnostics
+                        .iter()
+                        .any(|d| d.code.as_deref() == Some("unsafe_variable")
+                            && d.message == format!("variable 'Y' unsafe in '{first}'")),
+                    "{source}\n{diagnostics:?}"
+                );
+            }
+            for rhs in [
+                "begin F = fun(Y) -> Y end, F(false) end",
+                "[Y || Y <- [false]]",
+            ] {
+                let source = format!(
+                    "-module(test). -export([f/1]).
+                    f(Flag) -> (Flag {first} (Y = true)) {consumer} ({rhs})."
+                );
+                let (module, names) = parse_module(&source);
+                let diagnostics = analyze_module(&module, &names, None);
+                assert!(
+                    !diagnostics
+                        .iter()
+                        .any(|d| d.severity == nera_syntax::error::Severity::Error),
+                    "{source}\n{diagnostics:?}"
+                );
+            }
+        }
+        for consumer in ["and", "or", "=="] {
+            let source = format!(
+                "-module(test). -export([f/1]).
+                f(Flag) -> (Flag {first} (Y = true)) {consumer} (Y = false)."
+            );
+            let (module, names) = parse_module(&source);
+            let diagnostics = analyze_module(&module, &names, None);
+            assert!(
+                !diagnostics
+                    .iter()
+                    .any(|d| d.severity == nera_syntax::error::Severity::Error),
+                "{source}\n{diagnostics:?}"
+            );
+        }
+    }
+}
+
+#[test]
 fn short_circuit_safe_bindings_remain_usable() {
     // OTP accepts prebound names, definite left-operand bindings, local RHS
     // reads, and later fun/generator bindings that shadow the unsafe name.
