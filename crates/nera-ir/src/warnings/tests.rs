@@ -1761,6 +1761,21 @@ fn safe_var_in_all_case_branches() {
 }
 
 #[test]
+fn maybe_case_exports_are_bound_in_later_body_expressions() {
+    // The native/BEAM fixture reads each case's shared binding later in the
+    // same maybe body. Collecting only direct matches falsely left R unbound.
+    let source = include_str!("../../../../tests/maybe_case_exports.erl");
+    let (module, names) = parse_module(source);
+    let diagnostics = analyze_module(&module, &names, None);
+    assert!(
+        !diagnostics
+            .iter()
+            .any(|d| d.severity == nera_syntax::error::Severity::Error),
+        "{diagnostics:?}"
+    );
+}
+
+#[test]
 fn nested_case_exports_are_safe_outer_inputs() {
     // Every path in the native/BEAM fixture binds the later key or size.
     // The diagnostic pass used to miss nested bindings in a mixed branch.
