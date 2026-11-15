@@ -465,10 +465,11 @@ impl IrBuilder {
             //   try Expr catch
             //     throw:V -> V;
             //     exit:V  -> {'EXIT', V};
-            //     error:V -> {'EXIT', {V, []}}
+            //     error:V:Stack -> {'EXIT', {V, Stack}}
             //   end
             ast::Expr::Catch(operand, span) => {
                 let val_id = self.atom_id_for("__catch_val__");
+                let stack_id = self.atom_id_for("__catch_stack__");
                 let exit_id = self.atom_id_for("EXIT");
                 let s = *span;
                 let val_pat = || ast::Pattern::Variable(val_id, s);
@@ -498,11 +499,11 @@ impl IrBuilder {
                     ast::CatchClause {
                         class: ast::CatchClass::Error,
                         pattern: val_pat(),
-                        stacktrace: None,
+                        stacktrace: Some(ast::Pattern::Variable(stack_id, s)),
                         guard: None,
                         body: vec![ast::Expr::Tuple(vec![
                             exit_atom(),
-                            ast::Expr::Tuple(vec![val_var(), ast::Expr::Nil(s)], s),
+                            ast::Expr::Tuple(vec![val_var(), ast::Expr::Variable(stack_id, s)], s),
                         ], s)],
                         span: s,
                     },
