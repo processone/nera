@@ -390,7 +390,7 @@ fn validate_guard_expr(
         }
         ast::Expr::RecordIndex { .. } => {}
 
-        // Record create/update — legal in guards (record operations become tuple ops).
+        // Record creation is guard-safe when its evaluated fields are.
         ast::Expr::RecordCreate { record_name, fields, .. } => {
             for f in fields {
                 validate_guard_expr(&f.value, atom_names, policy, diagnostics, records);
@@ -407,7 +407,15 @@ fn validate_guard_expr(
                 }
             }
         }
-        ast::Expr::RecordUpdate { base, fields, .. } => {
+        ast::Expr::RecordUpdate { base, fields, span, .. } => {
+            // OTP classifies comprehension filters before record expansion:
+            // updates are ordinary expressions, even with guard-safe fields.
+            // `Some(records)` selects filter classification; keep the existing
+            // handling of explicit `when` guards unchanged.
+            if records.is_some() {
+                emit_illegal_guard_expr(*span, diagnostics);
+                return;
+            }
             validate_guard_expr(base, atom_names, policy, diagnostics, records);
             for f in fields {
                 validate_guard_expr(&f.value, atom_names, policy, diagnostics, records);

@@ -9,6 +9,7 @@
 -record(options, {enabled = true}).
 -record(guard_default, {enabled = erlang:map_size(not_a_map) > 0}).
 -record(ordinary_default, {enabled = default_enabled()}).
+-record(update_default, {enabled = (#options{})#options{enabled = erlang:map_size(not_a_map) > 0}}).
 
 test() ->
     A = #{a => 1},
@@ -59,6 +60,7 @@ test() ->
     [[Tail], []] = [[Tail || map_size(X) > 0] || X <- id([#{a => 1}, bad])],
     3 = bit_size(Tail),
     ordinary_errors(Maps, BadMap),
+    record_update_errors(BadMap),
     io:format("comprehension_guard_filter_ok~n"),
     ok.
 
@@ -98,6 +100,28 @@ ordinary_errors(Maps, BadMap) ->
         missed_handler
     catch error:Reason -> Reason end,
     undefined = get(after_filter),
+    ok.
+
+%% OTP classifies record updates as ordinary expressions before expanding
+%% records. Their errors propagate in every filter position, including an
+%% update nested inside a guard-safe call, tuple or record default.
+record_update_errors(BadMap) ->
+    R = #options{},
+    Cases = [
+        fun() -> [ok || (R#options{enabled = map_size(BadMap) > 0}) =:= R] end,
+        fun() -> [X || (R#options{enabled = map_size(BadMap) > 0}) =:= R, X <- [ok]] end,
+        fun() -> [ok || X <- [BadMap], (R#options{enabled = map_size(X) > 0}) =:= R] end,
+        fun() -> << <<1>> || (R#options{enabled = map_size(BadMap) > 0}) =:= R >> end,
+        fun() -> << <<X>> || (R#options{enabled = map_size(BadMap) > 0}) =:= R, X <- [1] >> end,
+        fun() -> << <<1>> || X <- [BadMap], (R#options{enabled = map_size(X) > 0}) =:= R >> end,
+        fun() -> [X || <<X>> <= <<1>>, (R#options{enabled = map_size(BadMap) > 0}) =:= R] end,
+        fun() -> << <<X>> || <<X>> <= <<1>>, (R#options{enabled = map_size(BadMap) > 0}) =:= R >> end,
+        fun() -> [ok || is_tuple({R#options{enabled = map_size(BadMap) > 0}})] end,
+        fun() -> [ok || #update_default{} =:= {update_default, R}] end
+    ],
+    lists:foreach(fun(F) -> {error, {badmap, not_a_map}} = result(F) end, Cases),
+    [ok] = [ok || (R#options{enabled = false}) =/= R],
+    <<1>> = << <<1>> || (R#options{enabled = false}) =/= R >>,
     ok.
 
 result(Fun) -> try Fun() catch Class:Reason -> {Class, Reason} end.

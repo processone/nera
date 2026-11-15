@@ -104,9 +104,6 @@ These are real differences from the BEAM that we have reproduced.
   earlier Nera-specific hash. Hashes previously stored by Nera may change.
   Native funs lack BEAM's module/index metadata, so their hashes are not
   BEAM-compatible. Process and reference identities are local to each runtime.
-- Comprehension filters that are guard expressions, such as
-  `[X || X <- L, map_size(X) > 0]`, are treated as plain expressions, so a
-  filter that should be skipped can raise.
 - Printing differs in some cases: a binary of printable bytes prints as
   `<<98>>`, not `<<"b">>`.
 - `spawn_monitor(erlang, list_to_binary, Args)` with bad arguments fails in the
