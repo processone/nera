@@ -436,10 +436,14 @@ fn check_unbound_in_expr(
                 }
                 // Class variable binding (e.g. `Class:Reason:Stacktrace`).
                 if let ast::CatchClass::Variable(class_name, span) = &clause.class {
-                    if context == Context::RecordDefault && !scope.contains(class_name) {
-                        variable_error(*class_name, *span, context, atom_names, diagnostics);
+                    // The parser also uses this variant for the class wildcard,
+                    // which introduces no binding, just like reason/stack `_`.
+                    if atom_names.get(class_name).is_some_and(|name| name != "_") {
+                        if context == Context::RecordDefault && !scope.contains(class_name) {
+                            variable_error(*class_name, *span, context, atom_names, diagnostics);
+                        }
+                        clause_scope.insert(*class_name);
                     }
-                    clause_scope.insert(*class_name);
                 }
                 collect_pattern_bindings(&clause.pattern, &mut clause_scope);
                 if let Some(ref stk) = clause.stacktrace {

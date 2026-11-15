@@ -1326,6 +1326,7 @@ fn record_defaults_reject_outer_variables() {
         ("receive X -> X after 0 -> ok end", "X"),
         ("try 1 of X -> X after ok end", "X"),
         ("try 1 catch C:R:S -> {C, R, S} end", "C"),
+        ("try 1 catch _Class:_ -> ok end", "_Class"),
         ("maybe X ?= 1, X end", "X"),
         ("[begin Y = X, Y end || X <- [1]]", "Y"),
         ("{#{key => X}, <<X>>}", "X"),
@@ -1360,6 +1361,8 @@ fn record_defaults_keep_local_variables() {
         "<< <<X>> || <<X>> <= <<1>> >>",
         "[X || X <- begin Y = [1], Y end]",
         "begin _ = 1, ok end",
+        "try 1 catch _:_ -> ok end",
+        "try 1 catch _:_:_ -> ok end",
         "{1, [ok], #{key => <<1>>}}",
     ] {
         let source = format!(
