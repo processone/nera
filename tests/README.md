@@ -533,6 +533,13 @@ committed catalogue with the pinned OTP abstract code.
 | `pattern_clause_maybe_match_unbound.erl` | Reject a same-pattern map key in a maybe-body match | (compile error) |
 | `pattern_clause_condmatch_unbound.erl` | Reject a same-pattern map key in a conditional match | (compile error) |
 
+`crates/nera/tests/record_default_variables.rs` runs both `nera check` and
+`nera build` on unused record defaults containing a binding or a bare variable.
+It requires a semantic error even with `--no-warnings` and verifies that build
+never emits an object. The warning-analysis tests own the expression and local
+scope cases; `branch_export_reads.erl` retains native coverage for legal fun-local
+bindings in record defaults.
+
 ### "Programming Erlang" Adapted Tests
 
 Tests adapted from Joe Armstrong's *Programming Erlang* (1st and 2nd editions),
