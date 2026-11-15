@@ -299,6 +299,7 @@ These are automatically skipped by the runner and show up as SKIP in output.
 | `match_pinned_var.erl`          | Bound var equality, badmatch on differ | ~8         |
 | `map_bound_value_vars.erl`      | Bound vars as map pattern values: repeated, heads, case, `=`, `?=`, receive; later keys/sizes in `=`/`?=`; bound binary tails as values and keys, and read in one branch; fun/generator shadowing | 75+ |
 | `pattern_input_scope.erl` | Outer/earlier-generator map keys and binary sizes in fun/list/binary-comprehension patterns; shadowing, nested captures, captured guards, mismatch skipping, binary tails and earlier segments of the same binary (native/BEAM) | 45 |
+| `pattern_clause_inputs.erl` | Prior map keys and sequential binary sizes in function/case/receive/try-of/catch/maybe-else heads and `=`/`?=` matches; completed scrutinee, try-body, RHS and earlier maybe bindings; same fixture on native/BEAM | Completion |
 | `generator_size_rebind.erl` | Earlier-generator sizes with later rebinding, exact dynamic/UTF binary ends, filters, later generators and shared pattern callers (native/BEAM) | 34 |
 | `map_binary_keys.erl`           | Map ops with binary/tuple/float keys, semantic equality | ~35 |
 | `map_update.erl`                | Map update syntax `M#{k => v, k := v}` | ~12        |
@@ -517,6 +518,16 @@ committed catalogue with the pinned OTP abstract code.
 | `pattern_input_list_unbound.erl` | Reject a list-generator key supplied only by its own pattern | (compile error) |
 | `pattern_input_binary_unbound.erl` | Reject a binary-generator size supplied only by a later segment | (compile error) |
 | `pattern_input_record_unbound.erl` | Reject a same-head map key in an unused record-default fun | (compile error) |
+| `pattern_clause_head_key_unbound.erl` | Reject a map key supplied only by a sibling function argument | (compile error) |
+| `pattern_clause_head_size_unbound.erl` | Reject a binary size supplied only by a sibling function argument | (compile error) |
+| `pattern_clause_case_unbound.erl` | Reject a same-head map key in a case clause | (compile error) |
+| `pattern_clause_receive_unbound.erl` | Reject a same-head map key in a receive clause | (compile error) |
+| `pattern_clause_of_unbound.erl` | Reject a same-head map key in a try-of clause | (compile error) |
+| `pattern_clause_catch_unbound.erl` | Reject a map key supplied only by the catch class | (compile error) |
+| `pattern_clause_else_unbound.erl` | Reject a same-head map key in a maybe-else clause | (compile error) |
+| `pattern_clause_match_unbound.erl` | Reject a same-pattern map key in a body match | (compile error) |
+| `pattern_clause_maybe_match_unbound.erl` | Reject a same-pattern map key in a maybe-body match | (compile error) |
+| `pattern_clause_condmatch_unbound.erl` | Reject a same-pattern map key in a conditional match | (compile error) |
 
 ### "Programming Erlang" Adapted Tests
 

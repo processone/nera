@@ -1141,6 +1141,120 @@ fn fun_pattern_inputs_reject_same_head_bindings() {
 }
 
 #[test]
+fn function_pattern_inputs_reject_same_head_bindings() {
+    // Clause inputs are reads before any argument in this head binds a name.
+    for (head, name) in [
+        ("K, #{K := V}", "K"),
+        ("#{K := V}, K", "K"),
+        ("#{key := K, K := V}", "K"),
+        ("{K, #{{route, K} := V}}", "K"),
+        ("K = #{K := V}", "K"),
+        ("#r{key = K, value = #{K := V}}", "K"),
+        ("N, <<V:N>>", "N"),
+        ("<<N>>, <<V:N>>", "N"),
+        ("<<V:N, N>>", "N"),
+        ("<<V:V>>", "V"),
+    ] {
+        let source = format!("-module(test). -record(r, {{key, value}}). f({head}) -> V.");
+        assert_unbound_pattern_input(&source, name);
+    }
+}
+
+#[test]
+fn clause_and_match_pattern_inputs_reject_same_head_bindings() {
+    // The requested extension applies at every ordinary clause/match site,
+    // including nested key expressions and sizes outside a single binary.
+    for (pattern, name) in [
+        ("{K, #{K := V}}", "K"),
+        ("#{key := K, K := V}", "K"),
+        ("[K, #{{route, K} := V}]", "K"),
+        ("K = #{K := V}", "K"),
+        ("#r{key = K, value = #{K := V}}", "K"),
+        ("{N, <<V:(N + 1)>>}", "N"),
+        ("{<<N>>, <<V:N>>}", "N"),
+        ("<<V:N, N>>", "N"),
+        ("<<V:V>>", "V"),
+    ] {
+        for expr in [
+            format!("case Input of {pattern} -> V end"),
+            format!("receive {pattern} -> V end"),
+            format!("try Input of {pattern} -> V catch _:_ -> no end"),
+            format!("try Input() catch _:{pattern} -> V end"),
+            format!("maybe ok ?= Input else {pattern} -> V end"),
+            format!("{pattern} = Input, V"),
+            format!("maybe {pattern} = Input, V end"),
+            format!("maybe {pattern} ?= Input, V end"),
+        ] {
+            let source = format!("-module(test). -record(r, {{key, value}}). f(Input) -> {expr}.");
+            assert_unbound_pattern_input(&source, name);
+        }
+    }
+    // The class and stacktrace are siblings of the reason pattern, not
+    // inputs to it. A try/maybe body likewise cannot supply handler inputs.
+    for expr in [
+        "try Input() catch K:#{K := V} -> V end",
+        "try Input() catch _:#{K := V}:K -> V end",
+        "try K = route, Input() catch _:#{K := V} -> V end",
+        "maybe K = route, ok ?= Input else #{K := V} -> V end",
+    ] {
+        let source = format!("-module(test). f(Input) -> {expr}.");
+        assert_unbound_pattern_input(&source, "K");
+    }
+}
+
+#[test]
+fn clause_and_match_pattern_inputs_keep_prior_bindings() {
+    // erlc accepts enclosing inputs, completed scrutinee/RHS/try bindings,
+    // and earlier segments of the same binary, but not sibling patterns.
+    for expr in [
+        "case Input of {K, #{K := V}} -> V end",
+        "receive {K, #{K := V}} -> V end",
+        "try Input of {K, #{K := V}} -> V catch _:_ -> no end",
+        "try Input() catch _:{K, #{K := V}} -> V end",
+        "maybe ok ?= Input else {K, #{K := V}} -> V end",
+        "{K, #{K := V}} = Input, V",
+        "maybe {K, #{K := V}} = Input, V end",
+        "maybe {K, #{K := V}} ?= Input, V end",
+        "case Input of <<N, V:N>> -> V end",
+        "receive <<N, V:N>> -> V end",
+        "try Input of <<N, V:N>> -> V catch _:_ -> no end",
+        "try Input() catch _:<<N, V:N>> -> V end",
+        "maybe ok ?= Input else <<N, V:N>> -> V end",
+        "<<N, V:N>> = Input, V",
+        "maybe <<N, V:N>> ?= Input, V end",
+    ] {
+        let source = format!("-module(test). f(K, Input) -> {expr}.");
+        let (module, names) = parse_module(&source);
+        let diagnostics = analyze_module(&module, &names, None);
+        assert!(
+            !diagnostics
+                .iter()
+                .any(|d| d.severity == nera_syntax::error::Severity::Error),
+            "{source}\n{diagnostics:?}"
+        );
+    }
+    for source in [
+        "-module(test). f(<<N, V:N>>) -> V.",
+        "-module(test). f(Input) -> case begin K = route, Input end of #{K := V} -> V end.",
+        "-module(test). f(Input) -> try K = route, Input of #{K := V} -> V catch _:_ -> no end.",
+        "-module(test). f(Input) -> #{K := V} = begin K = route, Input end, V.",
+        "-module(test). f(Input) -> #{K := V} = (M = begin K = route, Input end), {M, V}.",
+        "-module(test). f(Input) -> maybe #{K := V} = begin K = route, Input end, V end.",
+        "-module(test). f(Input) -> maybe #{K := V} ?= begin K = route, Input end, V end.",
+        "-module(test). f(Input) -> maybe begin K = route end, #{K := V} ?= Input, V end.",
+    ] {
+        let (module, names) = parse_module(source);
+        let diagnostics = analyze_module(&module, &names, None);
+        assert!(
+            !diagnostics
+                .iter()
+                .any(|d| d.severity == nera_syntax::error::Severity::Error),
+            "{source}\n{diagnostics:?}"
+        );
+    }
+}
+
+#[test]
 fn generator_pattern_inputs_reject_same_head_bindings() {
     // NERA-80: both comprehension forms and both generator variants share
     // the input-before-bindings rule, including nested keys and sizes.
