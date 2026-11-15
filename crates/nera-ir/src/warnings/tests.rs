@@ -1922,6 +1922,64 @@ fn short_circuit_unsafe_reads_include_captures_and_named_underscores() {
 }
 
 #[test]
+fn short_circuit_pattern_consumers_are_unsafe_without_a_later_read() {
+    // OTP rejects the enclosing consumer itself, even when no later body
+    // expression reads the name. The pattern must not rebind an unsafe name.
+    for operator in ["andalso", "orelse"] {
+        for consumer in [
+            "Y = EXPR",
+            "{Y} = {EXPR}",
+            "case EXPR of Y -> ok end",
+            "try EXPR of Y -> ok catch _:_ -> ok end",
+            "maybe Y ?= EXPR end",
+        ] {
+            let body = consumer.replace("EXPR", &format!("Flag {operator} (Y = true)"));
+            let source = format!("-module(test). -export([f/1]). f(Flag) -> {body}.");
+            let (module, names) = parse_module(&source);
+            let diagnostics = analyze_module(&module, &names, None);
+            assert!(
+                diagnostics.iter().any(|d| {
+                    d.code.as_deref() == Some("unsafe_variable")
+                        && d.severity == nera_syntax::error::Severity::Error
+                        && d.message == format!("variable 'Y' unsafe in '{operator}'")
+                }),
+                "{source}\n{diagnostics:?}"
+            );
+        }
+    }
+}
+
+#[test]
+fn short_circuit_nested_scopes_keep_definite_inputs() {
+    // Review regression: each Y is already bound at the nested operator.
+    // OTP accepts these programs; matching Y cannot introduce an unsafe name.
+    for operator in ["andalso", "orelse"] {
+        for context in [
+            "case (Y = true) of true -> INNER end",
+            "try Y = true of true -> INNER catch _:_ -> ok end",
+            "(Y = true) andalso begin INNER end",
+            "[Y || begin Y = true, Y end, begin INNER end]",
+            "maybe Y = true, INNER end",
+            "maybe begin Y = true end, INNER end",
+            "maybe true ?= begin Y = true end, INNER end",
+            "F = fun Y() -> INNER end, F",
+            "try error(reason) catch Y:_ -> INNER end",
+        ] {
+            let body = context.replace("INNER", &format!("_ = Flag {operator} (Y = true), Y"));
+            let source = format!("-module(test). -export([f/1]). f(Flag) -> {body}.");
+            let (module, names) = parse_module(&source);
+            let diagnostics = analyze_module(&module, &names, None);
+            assert!(
+                !diagnostics
+                    .iter()
+                    .any(|d| d.severity == nera_syntax::error::Severity::Error),
+                "{source}\n{diagnostics:?}"
+            );
+        }
+    }
+}
+
+#[test]
 fn short_circuit_safe_bindings_remain_usable() {
     // OTP accepts prebound names, definite left-operand bindings, local RHS
     // reads, and later fun/generator bindings that shadow the unsafe name.

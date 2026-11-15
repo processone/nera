@@ -541,6 +541,12 @@ fn check_unbound_in_expr(
                 check_unbound_in_expr(e, scope, context, atom_names, diagnostics);
             }
         }
+        ast::Expr::BinOp(ast::BinOp::Andalso | ast::BinOp::Orelse, lhs, rhs, _) => {
+            check_unbound_in_expr(lhs, scope, atom_names, diagnostics);
+            let mut input_scope = scope.clone();
+            collect_exported_bindings(lhs, &mut input_scope);
+            check_unbound_in_expr(rhs, &input_scope, atom_names, diagnostics);
+        }
         ast::Expr::Cons(h, t, _) | ast::Expr::Send(h, t, _) | ast::Expr::BinOp(_, h, t, _) => {
             check_unbound_in_expr(h, scope, context, atom_names, diagnostics);
             check_unbound_in_expr(t, scope, context, atom_names, diagnostics);
