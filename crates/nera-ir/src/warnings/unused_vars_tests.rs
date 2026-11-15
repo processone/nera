@@ -44,6 +44,7 @@ fn branch_exports_read_afterward_are_used() {
         .map(|d| (d.message.clone(), d.span.expect("binding span").start))
         .collect();
     let mut expected: Vec<_> = [
+        ("UnusedFilter", "UnusedFilter = Input"),
         ("LocalCode", "LocalCode = 200"),
         ("LocalCode", "LocalCode = 503"),
         ("UnusedPrimary", "UnusedPrimary = 200"),

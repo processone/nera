@@ -51,6 +51,8 @@ All notable milestones for the nera project are documented in this file.
 - The unused-variable pass checks direct matches consistently in branch bodies
   and keeps warnings for genuinely unread or fun-local bindings. A later fun
   that shadows a name does not count as reading the exported value.
+- Later reads inside comprehensions and `maybe`, and key/size reads in match
+  patterns, reach the bindings they consume without leaking across local scopes.
 - Warning regressions cover the existing `nested_case_exports` fixture and
   `branch_export_warnings`, shared by native and BEAM execution.
 

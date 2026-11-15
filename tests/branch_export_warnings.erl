@@ -13,12 +13,16 @@ test() ->
         Code = scrutinee(Route),
         Code = try_input(Route),
         Code = receive_body(Route),
-        Code = receive_pattern(Code)
+        Code = receive_pattern(Code),
+        {[Code], <<Code:16>>, Code, Code} = local_sequences(Code),
+        {Code, Code, Code} = pattern_rhs(Code),
+        {Code, Code} = maybe_pattern_rhs(Code)
     end, [{primary, 200}, {fallback, 503}]),
     504 = receive_timeout(),
     {ok, 204} = local_fun(primary),
     ok = unused(primary),
     ignored = shadowed(primary),
+    [503] = generator_shadow(),
     io:format("branch_export_warnings_ok~n"),
     ok.
 
@@ -100,6 +104,31 @@ receive_timeout() ->
     after 0 -> Code = 504
     end,
     Code.
+
+%% Local sequence continuations do not escape comprehensions or maybe.
+local_sequences(Status) ->
+    Codes = [Code || Input <- [Status], begin Code = Input, true end],
+    Binary = << <<Code:16>> || Input <- [Status], begin Code = Input, true end >>,
+    Plain = maybe begin PlainCode = Status end, PlainCode end,
+    Conditional = maybe true ?= begin ConditionalCode = Status, true end, ConditionalCode end,
+    {Codes, Binary, Plain, Conditional}.
+
+%% Pattern keys/sizes consume bindings from ordinary and chained RHS values.
+pattern_rhs(Status) ->
+    #{Key := Value} = (Map = begin Key = route, #{route => Status} end),
+    <<Body:Width>> = begin Width = 16, <<Status:16>> end,
+    {Value, Body, maps:get(route, Map)}.
+
+maybe_pattern_rhs(Status) ->
+    maybe
+        #{Key := Value} ?= begin Key = route, #{route => Status} end,
+        <<Body:Width>> ?= begin Width = 16, <<Status:16>> end,
+        {Value, Body}
+    end.
+
+generator_shadow() ->
+    [UnusedFilter || Input <- [200], begin UnusedFilter = Input, true end,
+                     UnusedFilter <- [503]].
 
 %% Reading an outer Code must not mark a fun-local Code as used.
 local_fun(Route) ->

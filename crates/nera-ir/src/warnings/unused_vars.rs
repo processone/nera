@@ -8,6 +8,7 @@ use nera_syntax::error::Diagnostic;
 use super::ast_walkers::{
     collect_enclosing_refs, collect_expr_refs, collect_guard_refs, collect_pattern_bindings,
     collect_pattern_bindings_with_spans, collect_pattern_expr_refs, collect_pattern_local_refs,
+    collect_pattern_refs,
 };
 use super::unbound_vars::collect_exported_bindings;
 
@@ -139,17 +140,18 @@ fn check_unused_in_body(
     scope: &mut HashSet<AtomId>,
     used_after: &HashSet<AtomId>,
 ) {
-    for (i, expr) in body.iter().enumerate() {
-        let mut later_refs = used_after.clone();
-        for later in &body[i + 1..] {
-            collect_enclosing_refs(later, &mut later_refs);
-        }
-        if matches!(expr, ast::Expr::Match(..)) {
-            warn_unused_match_bindings(expr, &later_refs, scope, atom_names, warnings);
-        }
-        check_unused_in_expr(expr, atom_names, warnings, scope, &later_refs);
-        collect_exported_bindings(expr, scope);
-    }
+    with_continuation_uses(
+        body,
+        used_after,
+        collect_enclosing_refs,
+        |expr, later_refs| {
+            if matches!(expr, ast::Expr::Match(..)) {
+                warn_unused_match_bindings(expr, later_refs, scope, atom_names, warnings);
+            }
+            check_unused_in_expr(expr, atom_names, warnings, scope, later_refs);
+            collect_exported_bindings(expr, scope);
+        },
+    );
 }
 
 /// Recursively walk an expression tree looking for nested clause constructs
@@ -161,12 +163,25 @@ fn check_unused_in_expr(
     outer_scope: &HashSet<AtomId>,
     used_after: &HashSet<AtomId>,
 ) {
-    // Only exported bindings can be used by the continuation. In particular,
-    // an outer read must not mark a same-named fun-local binding as used.
+    // Filter only at branch boundaries, not at every node of a literal tree.
+    // Scope-local constructs cannot consume reads from outside their scope.
     let mut exported_uses = HashSet::new();
-    collect_exported_bindings(expr, &mut exported_uses);
-    exported_uses.retain(|id| used_after.contains(id));
-    let used_after = &exported_uses;
+    let used_after = match expr {
+        ast::Expr::Case(..) | ast::Expr::If(..) | ast::Expr::Receive(..)
+            if !used_after.is_empty() =>
+        {
+            collect_exported_bindings(expr, &mut exported_uses);
+            exported_uses.retain(|id| used_after.contains(id));
+            &exported_uses
+        }
+        ast::Expr::Fun(..)
+        | ast::Expr::ListComp(..)
+        | ast::Expr::BinComp(..)
+        | ast::Expr::Try { .. }
+        | ast::Expr::Maybe { .. }
+        | ast::Expr::Catch(..) => &exported_uses,
+        _ => used_after,
+    };
 
     match expr {
         ast::Expr::Case(scrutinee, clauses, _) => {
@@ -321,8 +336,10 @@ fn check_unused_in_expr(
             check_unused_in_expr(h, atom_names, warnings, outer_scope, used_after);
             check_unused_in_expr(t, atom_names, warnings, outer_scope, used_after);
         }
-        ast::Expr::Match(_, e, _) => {
-            check_unused_in_expr(e, atom_names, warnings, outer_scope, used_after);
+        ast::Expr::Match(pat, e, _) => {
+            let mut pattern_uses = used_after.clone();
+            collect_pattern_expr_refs(pat, &mut pattern_uses);
+            check_unused_in_expr(e, atom_names, warnings, outer_scope, &pattern_uses);
         }
         ast::Expr::UnaryOp(_, e, _) | ast::Expr::Throw(e, _) | ast::Expr::Catch(e, _) => {
             check_unused_in_expr(e, atom_names, warnings, outer_scope, used_after);
@@ -359,16 +376,38 @@ fn check_unused_in_expr(
         }
         ast::Expr::ListComp(body, qualifiers, _) | ast::Expr::BinComp(body, qualifiers, _) => {
             // Generator patterns bind names for later qualifiers and the body.
-            let mut lc_scope = outer_scope.clone();
-            for q in qualifiers {
+            let mut later_refs = HashSet::new();
+            collect_enclosing_refs(body, &mut later_refs);
+            let mut continuations = Vec::with_capacity(qualifiers.len());
+            for q in qualifiers.iter().rev() {
                 match q {
                     ast::LcQualifier::Generator(pat, expr, _)
                     | ast::LcQualifier::BinGenerator(pat, expr, _) => {
-                        check_unused_in_expr(expr, atom_names, warnings, &lc_scope, used_after);
+                        // The generator head shadows earlier names, but its
+                        // source and pattern inputs still read those names.
+                        let mut fresh = HashSet::new();
+                        collect_pattern_bindings(pat, &mut fresh);
+                        later_refs.retain(|id| !fresh.contains(id));
+                        collect_pattern_refs(pat, &mut later_refs);
+                        continuations.push(later_refs.clone());
+                        collect_enclosing_refs(expr, &mut later_refs);
+                    }
+                    ast::LcQualifier::Filter(expr, _) => {
+                        continuations.push(later_refs.clone());
+                        collect_enclosing_refs(expr, &mut later_refs);
+                    }
+                }
+            }
+            let mut lc_scope = outer_scope.clone();
+            for (q, later_refs) in qualifiers.iter().zip(continuations.iter().rev()) {
+                match q {
+                    ast::LcQualifier::Generator(pat, expr, _)
+                    | ast::LcQualifier::BinGenerator(pat, expr, _) => {
+                        check_unused_in_expr(expr, atom_names, warnings, &lc_scope, later_refs);
                         collect_pattern_bindings(pat, &mut lc_scope);
                     }
                     ast::LcQualifier::Filter(expr, _) => {
-                        check_unused_in_expr(expr, atom_names, warnings, &lc_scope, used_after);
+                        check_unused_in_expr(expr, atom_names, warnings, &lc_scope, later_refs);
                         collect_exported_bindings(expr, &mut lc_scope);
                     }
                 }
@@ -393,19 +432,30 @@ fn check_unused_in_expr(
             body, else_clauses, ..
         } => {
             let mut maybe_scope = outer_scope.clone();
-            for item in body {
-                match item {
+            with_continuation_uses(
+                body,
+                used_after,
+                |item, refs| match item {
+                    ast::MaybeExpr::Expr(e) => collect_enclosing_refs(e, refs),
+                    ast::MaybeExpr::CondMatch(pat, e, _) => {
+                        collect_pattern_expr_refs(pat, refs);
+                        collect_enclosing_refs(e, refs);
+                    }
+                },
+                |item, later_refs| match item {
                     ast::MaybeExpr::Expr(e) => {
-                        check_unused_in_expr(e, atom_names, warnings, &maybe_scope, used_after);
+                        check_unused_in_expr(e, atom_names, warnings, &maybe_scope, later_refs);
                         collect_exported_bindings(e, &mut maybe_scope);
                     }
                     ast::MaybeExpr::CondMatch(pat, e, _) => {
-                        check_unused_in_expr(e, atom_names, warnings, &maybe_scope, used_after);
+                        let mut pattern_uses = later_refs.clone();
+                        collect_pattern_expr_refs(pat, &mut pattern_uses);
+                        check_unused_in_expr(e, atom_names, warnings, &maybe_scope, &pattern_uses);
                         collect_exported_bindings(e, &mut maybe_scope);
                         collect_pattern_bindings(pat, &mut maybe_scope);
                     }
-                }
-            }
+                },
+            );
             for clause in else_clauses {
                 check_clause_unused_vars(
                     std::slice::from_ref(&clause.pattern),
@@ -441,6 +491,39 @@ fn check_unused_in_expr(
                 }
             }
         }
+    }
+}
+
+/// Visit a sequence with its remaining reads. Count each item's reads once,
+/// then subtract them in order, without rescanning or copying whole suffixes.
+fn with_continuation_uses<T>(
+    items: &[T],
+    used_after: &HashSet<AtomId>,
+    collect: impl Fn(&T, &mut HashSet<AtomId>),
+    mut visit: impl FnMut(&T, &HashSet<AtomId>),
+) {
+    let reads: Vec<_> = items
+        .iter()
+        .map(|item| {
+            let mut refs = HashSet::new();
+            collect(item, &mut refs);
+            refs
+        })
+        .collect();
+    let mut counts = HashMap::<AtomId, usize>::new();
+    for id in used_after.iter().chain(reads.iter().flatten()) {
+        *counts.entry(*id).or_default() += 1;
+    }
+    let mut remaining = counts.keys().copied().collect::<HashSet<_>>();
+    for (item, refs) in items.iter().zip(reads) {
+        for id in refs {
+            let count = counts.get_mut(&id).expect("counted read");
+            *count -= 1;
+            if *count == 0 {
+                remaining.remove(&id);
+            }
+        }
+        visit(item, &remaining);
     }
 }
 
