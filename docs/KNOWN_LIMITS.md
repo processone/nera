@@ -118,7 +118,7 @@ These are real differences from the BEAM that we have reproduced.
   explained. They have passed since, but the cause is not proven.
 - No long-running soak test and no fuzzing campaign has been run. Fuzz targets
   and property tests exist; their existence is not evidence of a campaign.
-- Benchmark figures in the README are historical, from one Apple M4 Pro, and
+- Benchmark figures are historical, from one Apple M4 Pro, and
   have not been revalidated.
 - Binary size: a hello-world program links to a 47 MB executable.
 
