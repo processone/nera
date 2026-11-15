@@ -268,10 +268,12 @@ nera-<version>-<target>/
   lib/nera/erlang/stdlib/*.erl
 ```
 
-Keep this tree together when moving it. The compiler finds installed runtime
-and standard-library files relative to its executable. Filesystem standard-library
-sources take precedence over embedded sources; the embedded copies let the
-compiler work without a separate source tree.
+Move the whole tree, or copy only `bin/nera` for native builds. Avoid mixing
+Nera versions: runtime libraries found beside the executable, in `../lib/`,
+or through working-directory lookups take precedence over embedded copies.
+Standard-library sources found through installed, workspace or working-directory
+lookups also override embedded sources. Use a clean location and working
+directory to rely on the compiler's built-in copies.
 
 Extract and add `bin/` to `PATH` as in [Installation](#installation).
 Generated executables need no BEAM installation, but native output does not
