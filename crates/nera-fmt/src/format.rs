@@ -603,8 +603,11 @@ impl<'src> Formatter<'src> {
                         Expr::UnaryOp(UnaryOp::Pos, ..)))
                     || (*op == UnaryOp::Neg && match operand.as_ref() {
                         Expr::UnaryOp(UnaryOp::Neg, ..) => true,
-                        Expr::Integer(value, _) => *value < 0,
-                        Expr::Float(value, _) => value.is_sign_negative(),
+                        // Numeric literals retain their source spelling, including
+                        // the minus on integer -0 and arbitrary-size integers.
+                        Expr::Integer(_, span) | Expr::BigInteger(_, span) | Expr::Float(_, span) => {
+                            self.span_text(*span).starts_with('-')
+                        },
                         _ => false,
                     });
                 let operand_doc = if needs_grouping {
