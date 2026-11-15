@@ -16,6 +16,9 @@ All notable milestones for the nera project are documented in this file.
   `spawn/3` calls use the actual runtime symbol; dynamic calls also dispatch it.
 - The shared dynamic dispatcher also includes the remaining registered erlang
   BIF signatures, including `raise/3`, so spawned BIFs do not become `undef`.
+- All closure-spawn helpers run external funs through the ordinary fun dispatcher.
+  `spawn_link/1` and `spawn_monitor/1` reject nonzero-arity funs with caller `badarg`;
+  `spawn/1` and `spawn_opt/2` safely report child `badarity`, matching BEAM.
 - `spawn_bif` runs natively and on BEAM, covering all three spawn forms,
   child-local state, suspension, nested apply, argument lifetime and the
   previously omitted BIF signatures, including explicit `raise/3` exit reasons.

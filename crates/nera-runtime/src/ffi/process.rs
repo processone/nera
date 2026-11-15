@@ -560,33 +560,46 @@ pub unsafe extern "C" fn nera_rt_spawn(
     })
 }
 
-/// Spawn a new process running the given closure (fun/0).
-/// The closure's function pointer and captured environment variables are
-/// extracted and set as the new process's initial_fn/initial_args so the
-/// standard resume mechanism (receive...after, yield) works correctly.
+// The caller owns a live term. As on BEAM, link/monitor require fun/0;
+// spawn and spawn_opt defer wrong invocation arity to the child dispatcher.
+unsafe fn valid_spawn_closure(term: ErlTerm, require_zero_arity: bool) -> bool {
+    let Some(ptr) = term.as_boxed_ptr() else { return false; };
+    unsafe {
+        BoxedHeader(*ptr).subtype() == BOXED_CLOSURE
+            && (!require_zero_arity || *ptr.add(2) == 0)
+    }
+}
+
+unsafe fn init_spawn_closure(process: &mut Process, closure: ErlTerm) {
+    // Keep the fun itself on the child's heap. The ordinary closure-call path
+    // handles both compiled closures and external funs' null-pointer sentinel.
+    let closure = unsafe { deep_copy_term(closure, &mut process.heap) };
+    process.initial_fn = Some(spawn_fun_entry);
+    process.initial_args = vec![closure];
+}
+
+unsafe extern "C" fn spawn_fun_entry(ctx: *mut ProcessContext, args: *const u64, arity: u32) {
+    debug_assert_eq!(arity, 1);
+    let result = unsafe {
+        super::closure::nera_rt_call_closure(ctx, *args, std::ptr::null(), 0)
+    };
+    if unsafe { (*ctx).status } == crate::process::STATUS_OK {
+        unsafe { (*ctx).result = result; }
+    }
+}
+
+/// Spawn a new process applying the given fun to no arguments.
+/// The fun is copied to the child and called through the ordinary closure
+/// dispatcher, preserving external funs and the standard resume mechanism.
 #[no_mangle]
 pub unsafe extern "C" fn nera_rt_spawn_closure(
     ctx: *mut ProcessContext,
     closure_term: u64,
 ) -> u64 {
     let term = ErlTerm(closure_term);
-
-    if !term.is_boxed() {
+    if !valid_spawn_closure(term, false) {
         return raise_badarg(ctx);
     }
-
-    let boxed_ptr = match term.as_boxed_ptr() {
-        Some(p) => p,
-        None => return raise_badarg(ctx),
-    };
-    let header = unsafe { BoxedHeader(*boxed_ptr) };
-
-    if header.subtype() != BOXED_CLOSURE {
-        return raise_badarg(ctx);
-    }
-
-    let env_count = header.arity() as usize;
-    let fn_ptr = unsafe { *boxed_ptr.add(1) };
 
     with_sched_from_ctx(ctx, #[inline(always)] |scheduler| {
         let sched = match scheduler {
@@ -599,18 +612,7 @@ pub unsafe extern "C" fn nera_rt_spawn_closure(
         };
         let mut process = Process::new(pid);
 
-        // Deep-copy captured env vars to the new process's heap
-        let mut arg_terms = Vec::with_capacity(env_count);
-        for i in 0..env_count {
-            let env_val = ErlTerm(unsafe { *boxed_ptr.add(3 + i) });
-            let copied = deep_copy_term(env_val, &mut process.heap);
-            arg_terms.push(copied);
-        }
-
-        // Set up the process entry: the closure's wrapper function with env vars as args
-        let func: crate::process::ErlFn = unsafe { std::mem::transmute(fn_ptr) };
-        process.initial_fn = Some(func);
-        process.initial_args = arg_terms;
+        init_spawn_closure(&mut process, term);
 
         let arc = std::sync::Arc::new(crate::process::ProcessEntry::new(process));
         // Newly spawned processes inherit the caller's group leader.
@@ -1546,23 +1548,9 @@ pub unsafe extern "C" fn nera_rt_spawn_link_closure(
     closure_term: u64,
 ) -> u64 {
     let term = ErlTerm(closure_term);
-
-    if !term.is_boxed() {
+    if !valid_spawn_closure(term, true) {
         return raise_badarg(ctx);
     }
-
-    let boxed_ptr = match term.as_boxed_ptr() {
-        Some(p) => p,
-        None => return raise_badarg(ctx),
-    };
-    let header = unsafe { BoxedHeader(*boxed_ptr) };
-
-    if header.subtype() != BOXED_CLOSURE {
-        return raise_badarg(ctx);
-    }
-
-    let env_count = header.arity() as usize;
-    let fn_ptr = unsafe { *boxed_ptr.add(1) };
 
     with_sched_from_ctx(ctx, #[inline(always)] |scheduler| {
         let sched = match scheduler {
@@ -1576,17 +1564,7 @@ pub unsafe extern "C" fn nera_rt_spawn_link_closure(
         };
         let mut process = Process::new(pid);
 
-        // Deep-copy captured env vars to the new process's heap
-        let mut arg_terms = Vec::with_capacity(env_count);
-        for i in 0..env_count {
-            let env_val = ErlTerm(unsafe { *boxed_ptr.add(3 + i) });
-            let copied = deep_copy_term(env_val, &mut process.heap);
-            arg_terms.push(copied);
-        }
-
-        let func: crate::process::ErlFn = unsafe { std::mem::transmute(fn_ptr) };
-        process.initial_fn = Some(func);
-        process.initial_args = arg_terms;
+        init_spawn_closure(&mut process, term);
 
         // Establish bidirectional link BEFORE injecting
         process.otp.links.insert(self_pid);
@@ -1673,26 +1651,12 @@ pub unsafe extern "C" fn nera_rt_spawn_monitor_closure(
     ctx: *mut ProcessContext,
     closure_term: u64,
 ) -> u64 {
-    use crate::term::{BoxedHeader, BOXED_CLOSURE, REFERENCE_ID_WORD_INDEX, REFERENCE_TOTAL_WORDS};
+    use crate::term::{BoxedHeader, REFERENCE_ID_WORD_INDEX, REFERENCE_TOTAL_WORDS};
 
     let term = ErlTerm(closure_term);
-
-    if !term.is_boxed() {
+    if !valid_spawn_closure(term, true) {
         return raise_badarg(ctx);
     }
-
-    let boxed_ptr = match term.as_boxed_ptr() {
-        Some(p) => p,
-        None => return raise_badarg(ctx),
-    };
-    let header = unsafe { BoxedHeader(*boxed_ptr) };
-
-    if header.subtype() != BOXED_CLOSURE {
-        return raise_badarg(ctx);
-    }
-
-    let env_count = header.arity() as usize;
-    let fn_ptr = unsafe { *boxed_ptr.add(1) };
 
     with_sched_from_ctx(ctx, #[inline(always)] |scheduler| {
         let sched = match scheduler {
@@ -1706,17 +1670,7 @@ pub unsafe extern "C" fn nera_rt_spawn_monitor_closure(
         };
         let mut process = Process::new(pid);
 
-        // Deep-copy captured env vars to the new process's heap
-        let mut arg_terms = Vec::with_capacity(env_count);
-        for i in 0..env_count {
-            let env_val = ErlTerm(unsafe { *boxed_ptr.add(3 + i) });
-            let copied = deep_copy_term(env_val, &mut process.heap);
-            arg_terms.push(copied);
-        }
-
-        let func: crate::process::ErlFn = unsafe { std::mem::transmute(fn_ptr) };
-        process.initial_fn = Some(func);
-        process.initial_args = arg_terms;
+        init_spawn_closure(&mut process, term);
 
         // Create monitor ref
         let mon_ref_id = NEXT_REF_ID.fetch_add(1, Ordering::Relaxed);
@@ -1972,23 +1926,9 @@ pub unsafe extern "C" fn nera_rt_spawn_opt_closure(
     opts_term: u64,
 ) -> u64 {
     let term = ErlTerm(closure_term);
-
-    if !term.is_boxed() {
+    if !valid_spawn_closure(term, false) {
         return raise_badarg(ctx);
     }
-
-    let boxed_ptr = match term.as_boxed_ptr() {
-        Some(p) => p,
-        None => return raise_badarg(ctx),
-    };
-    let header = unsafe { BoxedHeader(*boxed_ptr) };
-
-    if header.subtype() != BOXED_CLOSURE {
-        return raise_badarg(ctx);
-    }
-
-    let env_count = header.arity() as usize;
-    let fn_ptr = unsafe { *boxed_ptr.add(1) };
 
     with_sched_from_ctx(ctx, #[inline(always)] |scheduler| {
         let sched = match scheduler {
@@ -2012,17 +1952,7 @@ pub unsafe extern "C" fn nera_rt_spawn_opt_closure(
             Process::new(pid)
         };
 
-        // Deep-copy captured env vars to the new process's heap
-        let mut arg_terms = Vec::with_capacity(env_count);
-        for i in 0..env_count {
-            let env_val = ErlTerm(unsafe { *boxed_ptr.add(3 + i) });
-            let copied = deep_copy_term(env_val, &mut process.heap);
-            arg_terms.push(copied);
-        }
-
-        let func: crate::process::ErlFn = unsafe { std::mem::transmute(fn_ptr) };
-        process.initial_fn = Some(func);
-        process.initial_args = arg_terms;
+        init_spawn_closure(&mut process, term);
 
         // Apply heap options
         if let Some(n) = opts.fullsweep_after {

@@ -2,7 +2,7 @@
 %% MFA spawn must run erlang BIFs in the child, as on BEAM.
 %% In particular, invalid list_to_binary input must not raise in the caller.
 -module(spawn_bif).
--export([test/0, wait_and_fail/2]).
+-export([test/0, wait_and_fail/2, closure_entries/0, external_entry/0]).
 
 test() ->
     Old = process_flag(trap_exit, true),
@@ -30,6 +30,8 @@ test() ->
             normal = reason(Kind, garbage_collect, []),
             ok = controlled(Kind)
         end, [spawn_link, spawn_monitor]),
+
+        ok = closure_entries(),
 
         %% These previously omitted erlang BIF signatures must also be
         %% reachable through the child's shared apply dispatcher.
@@ -66,6 +68,49 @@ test() ->
     after
         process_flag(trap_exit, Old)
     end.
+
+%% MFA spawning makes the closure BIF execute in a monitored process. The
+%% nested child must call an external fun, never its null dispatch sentinel.
+closure_entries() ->
+    normal = reason(spawn_monitor, spawn, [fun erlang:self/0]),
+    true = register(spawn_bif_owner, self()),
+    try
+        lists:foreach(fun({Function, ExtraArgs}) ->
+            {Outer, Ref} = spawn_monitor(erlang, Function,
+                                        [fun ?MODULE:external_entry/0 | ExtraArgs]),
+            normal = down(Outer, Ref),
+            receive {external_child, Child} ->
+                true = is_pid(Child),
+                true = Child =/= self(),
+                true = Child =/= Outer
+            after 5000 -> error(missing_external_child) end,
+            lists:foreach(fun(BadFun) ->
+                %% BEAM's spawn and spawn_opt defer badarity to the nested
+                %% child; link/monitor reject nonzero arity in their caller.
+                case Function of
+                    spawn -> normal = reason(spawn_monitor, Function, [BadFun | ExtraArgs]);
+                    spawn_opt -> normal = reason(spawn_monitor, Function, [BadFun | ExtraArgs]);
+                    _ ->
+                        {badarg, Stack} = reason(spawn_monitor, Function, [BadFun | ExtraArgs]),
+                        true = is_list(Stack)
+                end
+            end, [fun(X) -> X end, fun erlang:abs/1])
+        end, [{spawn, []}, {spawn_link, []}, {spawn_monitor, []},
+              {spawn_opt, [[monitor]]}]),
+        lists:foreach(fun(BadFun) ->
+            {Pid, Ref} = spawn_opt(BadFun, [monitor]),
+            {{badarity, {ReportedFun, []}}, Stack} = down(Pid, Ref),
+            true = is_function(ReportedFun, 1),
+            true = is_list(Stack)
+        end, [fun(X) -> X end, fun erlang:abs/1]),
+        ok
+    after
+        unregister(spawn_bif_owner)
+    end.
+
+external_entry() ->
+    spawn_bif_owner ! {external_child, self()},
+    ok.
 
 reason(spawn_link, Function, Args) ->
     Pid = spawn_link(erlang, Function, Args),
