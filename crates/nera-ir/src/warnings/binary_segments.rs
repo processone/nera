@@ -5,6 +5,8 @@
 //! - Explicit fields must not conflict; irrelevant flags are accepted as in OTP
 //! - Unit does not apply to UTF types
 //! - A string literal in a pattern takes no size and only a UTF type
+//!
+//! Unsupported literal float widths warn, but do not prevent compilation.
 
 use nera_syntax::ast::{self, BinSegmentKind, BinSpecifier};
 use nera_syntax::span::Span;
@@ -484,13 +486,23 @@ fn validate_segment(
         return;
     }
     match type_spec.typ {
-        BinSegmentKind::Integer
-        | BinSegmentKind::Float
-        | BinSegmentKind::Binary
-        | BinSegmentKind::Bitstring => {
+        BinSegmentKind::Integer | BinSegmentKind::Binary | BinSegmentKind::Bitstring => {
             // OTP accepts signedness and endianness even when ignored.
-            // Unsupported float widths are not compile errors: construction
-            // validates them at runtime, while impossible patterns fall through.
+        }
+        BinSegmentKind::Float => {
+            // OTP warns without rejecting the module. Construction validates
+            // widths at runtime, while impossible patterns fall through.
+            if let Some(size_expr) = size {
+                if let ast::Expr::Integer(n, _) = size_expr.as_ref() {
+                    let bits = n.checked_mul(i64::from(type_spec.unit.unwrap_or(1)));
+                    if !matches!(bits, Some(16 | 32 | 64)) {
+                        diagnostics.push(
+                            Diagnostic::warning_at("bad float bit size", span)
+                                .with_code("invalid_binary_segment"),
+                        );
+                    }
+                }
+            }
         }
         BinSegmentKind::Utf8 | BinSegmentKind::Utf16 | BinSegmentKind::Utf32 => {
             let kind_name = match type_spec.typ {

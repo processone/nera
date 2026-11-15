@@ -5,7 +5,8 @@ All notable milestones for the nera project are documented in this file.
 ## Unsupported float segment widths compile as on OTP 29
 
 - Literal float segment widths outside the supported encodings no longer reject
-  the entire module, including widths scaled by a unit.
+  the entire module, including widths scaled by a unit. They emit OTP's
+  `bad float bit size` warning instead of a compile error.
 - Construction retains runtime `badarg` failures, while impossible patterns
   fall through or raise `badmatch` in a body match. Valid 16-, 32- and 64-bit
   encodings remain unchanged.

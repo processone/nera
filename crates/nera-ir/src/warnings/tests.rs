@@ -2590,6 +2590,7 @@ fn binary_segment_unsupported_float_size_is_not_a_compile_error() {
         "OTP compiles unsupported float widths for runtime validation: {:?}",
         msgs
     );
+    assert_eq!(msgs, vec!["bad float bit size"]);
 }
 
 #[test]
@@ -2694,6 +2695,7 @@ fn binary_segment_impossible_float_pattern_is_not_a_compile_error() {
         "OTP compiles impossible float patterns: {:?}",
         msgs
     );
+    assert_eq!(msgs, vec!["bad float bit size"]);
 }
 
 #[test]
@@ -5083,7 +5085,6 @@ fn comprehension_patterns_receive_binary_segment_checks() {
             ("<<X/binary>>", "binary fields without size are not allowed"),
             ("<<X/bits>>", "binary fields without size are not allowed"),
             ("<<_:8,X/binary>>", "binary fields without size are not allowed"),
-            ("<<X:8/float>>", ""),
             ("<<X:8/utf8>>", "size not allowed for utf8 segments"),
             ("<<X:8/utf16>>", "size not allowed for utf16 segments"),
             ("<<X:8/utf32>>", "size not allowed for utf32 segments"),
@@ -5092,23 +5093,16 @@ fn comprehension_patterns_receive_binary_segment_checks() {
             let source = format!("-module(p). f(B) -> {body}.");
             let (module, names) = parse_module(&source);
             let diagnostics = analyze_module(&module, &names, None);
-            let errors: Vec<_> = diagnostics.iter().filter(|d|
-                d.severity == nera_syntax::error::Severity::Error).collect();
-            if message.is_empty() {
-                assert!(errors.is_empty(), "{body}: {errors:?}");
-            } else {
-                assert!(errors.iter().any(|d|
-                    d.code.as_deref() == Some("invalid_binary_segment")
-                    && d.message.contains(message)), "{body}: {errors:?}");
-            }
+            assert!(diagnostics.iter().any(|d|
+                d.severity == nera_syntax::error::Severity::Error
+                && d.code.as_deref() == Some("invalid_binary_segment")
+                && d.message.contains(message)), "{body}: {diagnostics:?}");
         }
     }
-    for (pattern, invalid) in [("<<X/binary>>", false), ("<<X:8/float>>", false)] {
-        let (module, names) = parse_module(&format!("-module(p). f(L) -> [X || {pattern} <- L]."));
-        let diagnostics = analyze_module(&module, &names, None);
-        assert_eq!(diagnostics.iter().any(|d|
-            d.code.as_deref() == Some("invalid_binary_segment")), invalid);
-    }
+    let (module, names) = parse_module("-module(p). f(L) -> [X || <<X/binary>> <- L].");
+    let diagnostics = analyze_module(&module, &names, None);
+    assert!(!diagnostics.iter().any(|d|
+        d.code.as_deref() == Some("invalid_binary_segment")));
 }
 
 #[test]
@@ -5135,17 +5129,16 @@ fn binary_generator_lint_reports_each_unsized_field_once() {
 fn binary_segment_checks_walk_call_targets() {
     // NERA-100 F1: the walker skipped callee expressions, so a fun called in
     // place hid its segments from every check.
-    for (body, invalid) in [
-        ("(fun() -> [X || <<X/binary>> <= B] end)()", true),
-        ("(fun() -> << X || <<X/bits>> <= B >> end)()", true),
-        ("(fun() -> <<X:8/float>> = B end)()", false),
-        ("(fun() -> <<_:8/utf8>> = B end)()", true),
+    for body in [
+        "(fun() -> [X || <<X/binary>> <= B] end)()",
+        "(fun() -> << X || <<X/bits>> <= B >> end)()",
+        "(fun() -> <<_:8/utf8>> = B end)()",
     ] {
         let (module, names) = parse_module(&format!("-module(p). f(B) -> {body}."));
         let diagnostics = analyze_module(&module, &names, None);
-        assert_eq!(diagnostics.iter().any(|d|
+        assert!(diagnostics.iter().any(|d|
             d.severity == nera_syntax::error::Severity::Error
-            && d.code.as_deref() == Some("invalid_binary_segment")), invalid, "{body}: {diagnostics:?}");
+            && d.code.as_deref() == Some("invalid_binary_segment")), "{body}: {diagnostics:?}");
     }
 }
 
@@ -5183,15 +5176,12 @@ fn binary_segment_checks_walk_guards_sizes_keys_and_record_defaults() {
 fn float_segment_size_is_scaled_by_unit() {
     // OTP 29 accepts supported and unsupported size/unit products at compile
     // time. The native regression owns their runtime results.
-    let errors = |body: &str| -> Vec<String> {
-        let (module, names) = parse_module(&format!("-module(p). f(B) -> {body}."));
-        analyze_module(&module, &names, None).into_iter()
-            .filter(|d| d.code.as_deref() == Some("invalid_binary_segment"))
-            .map(|d| d.message).collect()
-    };
-    for segment in [
-        "X:1/float-unit:64", "X:2/float-unit:32", "X:4/float-unit:16", "X:8/float-unit:8",
-        "X:2/float-unit:64", "X:3/float-unit:8", "X:1/float",
+    use nera_syntax::error::Severity;
+    for (segment, unsupported) in [
+        ("X:1/float-unit:64", false), ("X:2/float-unit:32", false),
+        ("X:4/float-unit:16", false), ("X:8/float-unit:8", false),
+        ("X:2/float-unit:64", true), ("X:3/float-unit:8", true),
+        ("X:1/float", true), ("X:8/float", true),
     ] {
         for body in [
             format!("<<{segment}>>"),
@@ -5199,8 +5189,19 @@ fn float_segment_size_is_scaled_by_unit() {
             format!("[X || <<{segment}>> <= B]"),
             format!("<< <<X:64/float>> || <<{segment}>> <= B >>"),
             format!("[X || <<{segment}>> <- B]"),
+            format!("(fun() -> <<{segment}>> = B end)()"),
         ] {
-            assert_eq!(errors(&body), Vec::<String>::new(), "{body}");
+            let (module, names) = parse_module(&format!("-module(p). f(X, B) -> {body}."));
+            let diagnostics = analyze_module(&module, &names, None);
+            assert!(!diagnostics.iter().any(|d| d.severity == Severity::Error),
+                "{body}: {diagnostics:?}");
+            let segment_diagnostics: Vec<_> = diagnostics.iter()
+                .filter(|d| d.code.as_deref() == Some("invalid_binary_segment"))
+                .map(|d| (d.severity, d.message.as_str())).collect();
+            let expected = if unsupported {
+                vec![(Severity::Warning, "bad float bit size")]
+            } else { vec![] };
+            assert_eq!(segment_diagnostics, expected, "{body}");
         }
     }
 }
