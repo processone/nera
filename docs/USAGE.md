@@ -8,6 +8,12 @@ for production. Wrong results and hangs remain possible. Read the
 
 ## Installation
 
+The Nera compiler is a single executable with its host runtime and
+standard-library sources embedded. You can copy just `nera` to another location
+for native builds, without installing separate Nera libraries.
+Cross-compilation still needs a runtime built for the target, as described
+[below](#debugging-and-cross-compilation).
+
 You need a C linker (`cc` on `PATH`) even with a prebuilt compiler: Xcode
 Command Line Tools on macOS, or GCC/Clang on Linux. Nera is tested on macOS
 arm64 and Linux x86-64. The macOS x86-64 and Linux arm64 archives are cross-built
@@ -70,7 +76,6 @@ export PATH="$HOME/.local/bin:$PATH"
 ```
 
 It installs only `~/.local/bin/nera`, not a runtime or standard-library tree.
-The compiler embeds the runtime and standard-library sources.
 Use `--prefix /your/prefix` for a different destination or `--debug` for a
 debug build. Re-run the installer after rebuilding to update your installation.
 

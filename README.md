@@ -6,6 +6,10 @@ Nera compiles Erlang source into native executables that run without the BEAM
 virtual machine. It provides its own runtime for Erlang processes and message
 passing.
 
+The compiler itself is a single executable: it embeds the matching runtime and
+standard-library sources, so you can copy just `nera` for native builds.
+You still need a C linker.
+
 **Experimental.** Nera is not a drop-in replacement for Erlang/OTP and is not
 ready for production. The first release, `v0.1.0`, is experimental;
 Nera stays experimental until 1.0.
