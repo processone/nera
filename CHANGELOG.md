@@ -25,6 +25,15 @@ All notable milestones for the nera project are documented in this file.
   checking shared raising/caller frames and metadata, resumed errors, nested
   catches and real full, shortened and empty re-raised traces.
 
+## Membership rejects invalid list tails
+
+- `lists:member/2` now raises `badarg` for a non-list argument or an improper
+  tail reached before a match, as on OTP 29. A match before the invalid tail
+  still returns `true`; proper-list results and exact equality are unchanged.
+- The `lists_member_badarg` regression runs unchanged natively and on BEAM,
+  covering direct, apply, computed and remote-fun calls, varied invalid tails
+  and long lists.
+
 ## Nested case bindings remain safe outer inputs
 
 - A variable bound on every path through nested cases remains available after
