@@ -84,8 +84,54 @@ test() ->
         [Local || _ <- id([ok]), begin Local = id(local), true end, _ <- id([ok])]),
     Local = id(outside),
     check(outside_binding, outside, Local),
+    skipped_bindings(),
+    lists:foreach(fun conditional_rematches/1, [true, false]),
     traces(),
     io:format("comprehension_filter_bindings_ok~n"),
+    ok.
+
+skipped_bindings() ->
+    check(skipped_orelse_list, [ok, ok],
+        [Y || X <- id([true, false]), X orelse begin _N = id(1), true end,
+            Y <- id([ok])]),
+    check(skipped_orelse_binary, <<1, 1>>,
+        << Y || X <- id([true, false]), X orelse begin _N = id(1), true end,
+            Y <- id([<<1>>]) >>),
+    check(nested_short_circuit_list, [ok, ok],
+        [Y || X <- id([true, false]),
+            X orelse (id(false) orelse begin _N = id(1), true end), Y <- id([ok])]),
+    check(nested_short_circuit_binary, <<1, 1>>,
+        << Y || X <- id([true, false]),
+            X orelse (id(false) orelse begin _N = id(1), true end), Y <- id([<<1>>]) >>),
+    check(skipped_andalso_list, [ok],
+        [Y || X <- id([true, false]), X andalso begin _N = id(1), true end,
+            Y <- id([ok])]),
+    check(skipped_andalso_binary, <<1>>,
+        << Y || X <- id([true, false]), X andalso begin _N = id(1), true end,
+            Y <- id([<<1>>]) >>),
+    ok.
+
+conditional_rematches(Flag) ->
+    check({conditional_source, Flag}, [1],
+        [Y || X <- id([1]), begin N = X, true end,
+            Y <- begin case Flag of true -> N = 1; false -> ok end, [N] end]),
+    check({conditional_filter, Flag}, [1],
+        [Y || X <- id([1]), begin N = X, true end,
+            begin case Flag of true -> N = 1; false -> ok end, N =:= 1 end,
+            Y <- id([N])]),
+    check({conditional_template, Flag}, [1],
+        [begin case Flag of true -> N = 1; false -> ok end, N end
+            || X <- id([1]), begin N = X, true end, _ <- id([ok])]),
+    check({conditional_binary_source, Flag}, <<1>>,
+        << Y || X <- id([1]), begin N = X, true end,
+            Y <- begin case Flag of true -> N = 1; false -> ok end, [<<N>>] end >>),
+    check({conditional_binary_filter, Flag}, <<1>>,
+        << Y || X <- id([1]), begin N = X, true end,
+            begin case Flag of true -> N = 1; false -> ok end, N =:= 1 end,
+            Y <- id([<<N>>]) >>),
+    check({conditional_binary_template, Flag}, <<1>>,
+        << (begin case Flag of true -> N = 1; false -> ok end, <<N>> end)
+            || X <- id([1]), begin N = X, true end, _ <- id([ok]) >>),
     ok.
 
 traces() ->

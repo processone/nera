@@ -51,8 +51,12 @@ All notable milestones for the nera project are documented in this file.
 - Generated helpers pass the bound values forward without repeating filters;
   later generator shadowing still preserves the values needed to resume outer
   iterations.
+- Only definitely bound filter values cross helper boundaries; skipped
+  short-circuit operands do not supply values. Diagnostics recognize earlier
+  filter bindings in conditional rematches and shadowing.
 - `comprehension_filter_bindings` runs unchanged natively and on BEAM, including
-  mixed generators, closures, deferred bitstring tails and evaluation traces.
+  mixed generators, closures, deferred bitstring tails, short-circuit filters,
+  conditional rematches and evaluation traces.
 
 ## Unsupported float segment widths compile as on OTP 29
 

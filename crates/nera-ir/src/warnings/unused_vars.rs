@@ -314,6 +314,7 @@ fn check_unused_in_expr(
                     }
                     ast::LcQualifier::Filter(expr, _) => {
                         check_unused_in_expr(expr, atom_names, warnings, &lc_scope);
+                        collect_exported_bindings(expr, &mut lc_scope);
                     }
                 }
             }

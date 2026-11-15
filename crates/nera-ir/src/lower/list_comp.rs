@@ -550,11 +550,17 @@ impl IrBuilder {
                     self_args,
                 ));
             } else {
-                // Record only bindings the lowered filters actually export.
-                // Materialize deferred tails before passing them to a helper.
-                new_filter_names = self.collect_all_bindings().keys()
-                    .filter(|name| !before_filters.contains_key(name)).copied().collect();
+                // Lowering may retain names from skipped short-circuit
+                // operands. Only definite exports can cross helper boundaries.
+                let mut definite = HashSet::new();
+                for filter in filters {
+                    crate::warnings::collect_exported_bindings(filter, &mut definite);
+                }
+                new_filter_names = definite.into_iter()
+                    .filter(|name| !before_filters.contains_key(name)
+                        && self.lookup_var(*name).is_some()).collect();
                 new_filter_names.sort_by_key(|name| name.0);
+                // Materialize deferred tails before passing them to a helper.
                 let new_filter_values: Vec<VarId> = new_filter_names.iter().map(|name| {
                     let var = self.lookup_var(*name).expect("filter binding exists");
                     self.materialize_bound_variable(*name, var)

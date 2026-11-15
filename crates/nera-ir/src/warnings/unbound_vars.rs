@@ -105,7 +105,7 @@ enum Paths {
 /// bindings; funs, comprehensions, try, maybe, catch operands and skipped
 /// short-circuit operands do not supply definite bindings. The variable
 /// diagnostics and unreachable check share this view of later pattern inputs.
-pub(super) fn collect_exported_bindings(expr: &ast::Expr, scope: &mut HashSet<AtomId>) {
+pub(crate) fn collect_exported_bindings(expr: &ast::Expr, scope: &mut HashSet<AtomId>) {
     collect_bindings(expr, scope, Paths::Every);
 }
 
