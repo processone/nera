@@ -68,7 +68,11 @@ All notable milestones for the nera project are documented in this file.
 - Enclosing match patterns and later `maybe` items or comprehension filters
   cannot reuse conditional names as fresh bindings. The same checks apply in
   expression callees, receive timeouts and record-default expressions.
-- Analyzer and compile-error regressions cover both short-circuit operators.
+- Formatting preserves parentheses around match, send and catch operands of
+  binary operators, including flattened chains, so these programs retain their
+  syntax and grouping after formatting.
+- Analyzer, formatter and compile-error regressions cover both short-circuit
+  operators.
 
 ## Unsupported float segment widths compile as on OTP 29
 
