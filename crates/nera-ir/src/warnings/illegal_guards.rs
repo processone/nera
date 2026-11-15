@@ -297,10 +297,10 @@ fn validate_guard(
     diagnostics: &mut Vec<Diagnostic>,
 ) {
     match guard {
-        Guard::Test(expr) => validate_guard_expr(expr, atom_names, policy, diagnostics),
+        Guard::Test(expr) => validate_guard_expr(expr, atom_names, policy, diagnostics, None),
         Guard::Conjunction(exprs) => {
             for expr in exprs {
-                validate_guard_expr(expr, atom_names, policy, diagnostics);
+                validate_guard_expr(expr, atom_names, policy, diagnostics, None);
             }
         }
         Guard::Disjunction(guards) => {
@@ -311,12 +311,27 @@ fn validate_guard(
     }
 }
 
+/// Whether the entire filter is a guard expression under the module's call
+/// resolution policy. Reuse guard validation so BIFs, operators and nested
+/// expressions have one whitelist; ordinary calls keep ordinary exceptions.
+pub(crate) fn is_guard_expr(
+    expr: &ast::Expr,
+    atom_names: &HashMap<AtomId, String>,
+    policy: &crate::resolution::ResolutionPolicy,
+    records: &HashMap<AtomId, ast::RecordDef>,
+) -> bool {
+    let mut diagnostics = Vec::new();
+    validate_guard_expr(expr, atom_names, policy, &mut diagnostics, Some(records));
+    diagnostics.is_empty()
+}
+
 /// Validate a single expression in guard position.
 fn validate_guard_expr(
     expr: &ast::Expr,
     atom_names: &HashMap<AtomId, String>,
     policy: &crate::resolution::ResolutionPolicy,
     diagnostics: &mut Vec<Diagnostic>,
+    records: Option<&HashMap<AtomId, ast::RecordDef>>,
 ) {
     match expr {
         // Always legal in guards:
@@ -336,71 +351,90 @@ fn validate_guard_expr(
                     emit_illegal_guard_expr(*span, diagnostics);
                 }
                 _ => {
-                    validate_guard_expr(lhs, atom_names, policy, diagnostics);
-                    validate_guard_expr(rhs, atom_names, policy, diagnostics);
+                    validate_guard_expr(lhs, atom_names, policy, diagnostics, records);
+                    validate_guard_expr(rhs, atom_names, policy, diagnostics, records);
                 }
             }
         }
         ast::Expr::UnaryOp(_, operand, _) => {
-            validate_guard_expr(operand, atom_names, policy, diagnostics);
+            validate_guard_expr(operand, atom_names, policy, diagnostics, records);
         }
 
         // Tuple, cons, map construction — legal for comparison in guards.
         ast::Expr::Tuple(exprs, _) => {
             for e in exprs {
-                validate_guard_expr(e, atom_names, policy, diagnostics);
+                validate_guard_expr(e, atom_names, policy, diagnostics, records);
             }
         }
         ast::Expr::Cons(hd, tl, _) => {
-            validate_guard_expr(hd, atom_names, policy, diagnostics);
-            validate_guard_expr(tl, atom_names, policy, diagnostics);
+            validate_guard_expr(hd, atom_names, policy, diagnostics, records);
+            validate_guard_expr(tl, atom_names, policy, diagnostics, records);
         }
         ast::Expr::Map(fields, _) => {
             for f in fields {
-                validate_guard_expr(&f.key, atom_names, policy, diagnostics);
-                validate_guard_expr(&f.value, atom_names, policy, diagnostics);
+                validate_guard_expr(&f.key, atom_names, policy, diagnostics, records);
+                validate_guard_expr(&f.value, atom_names, policy, diagnostics, records);
             }
         }
         ast::Expr::MapUpdate(base, fields, _) => {
-            validate_guard_expr(base, atom_names, policy, diagnostics);
+            validate_guard_expr(base, atom_names, policy, diagnostics, records);
             for f in fields {
-                validate_guard_expr(&f.key, atom_names, policy, diagnostics);
-                validate_guard_expr(&f.value, atom_names, policy, diagnostics);
+                validate_guard_expr(&f.key, atom_names, policy, diagnostics, records);
+                validate_guard_expr(&f.value, atom_names, policy, diagnostics, records);
             }
         }
 
         // Record field access and index — legal in guards.
         ast::Expr::RecordAccess { base, .. } => {
-            validate_guard_expr(base, atom_names, policy, diagnostics);
+            validate_guard_expr(base, atom_names, policy, diagnostics, records);
         }
         ast::Expr::RecordIndex { .. } => {}
 
-        // Record create/update — legal in guards (record operations become tuple ops).
-        ast::Expr::RecordCreate { fields, .. } => {
+        // Record creation is guard-safe when its evaluated fields are.
+        ast::Expr::RecordCreate { record_name, fields, .. } => {
             for f in fields {
-                validate_guard_expr(&f.value, atom_names, policy, diagnostics);
+                validate_guard_expr(&f.value, atom_names, policy, diagnostics, records);
+            }
+            // Comprehension classification must include defaults that creating
+            // this record evaluates, not just the explicit field expressions.
+            if let Some(definition) = records.and_then(|defs| defs.get(record_name)) {
+                for field in &definition.fields {
+                    if !fields.iter().any(|f| f.field_name == field.name) {
+                        if let Some(default) = &field.default {
+                            validate_guard_expr(default, atom_names, policy, diagnostics, records);
+                        }
+                    }
+                }
             }
         }
-        ast::Expr::RecordUpdate { base, fields, .. } => {
-            validate_guard_expr(base, atom_names, policy, diagnostics);
+        ast::Expr::RecordUpdate { base, fields, span, .. } => {
+            // OTP classifies comprehension filters before record expansion:
+            // updates are ordinary expressions, even with guard-safe fields.
+            // `Some(records)` selects filter classification; keep the existing
+            // handling of explicit `when` guards unchanged.
+            if records.is_some() {
+                emit_illegal_guard_expr(*span, diagnostics);
+                return;
+            }
+            validate_guard_expr(base, atom_names, policy, diagnostics, records);
             for f in fields {
-                validate_guard_expr(&f.value, atom_names, policy, diagnostics);
+                validate_guard_expr(&f.value, atom_names, policy, diagnostics, records);
             }
         }
 
         // Binary construction — allowed since OTP 26.
         ast::Expr::Binary(segments, _) => {
             for seg in segments {
-                validate_guard_expr(&seg.value, atom_names, policy, diagnostics);
+                validate_guard_expr(&seg.value, atom_names, policy, diagnostics, records);
                 if let Some(size) = &seg.size {
-                    validate_guard_expr(size, atom_names, policy, diagnostics);
+                    validate_guard_expr(size, atom_names, policy, diagnostics, records);
                 }
             }
         }
 
         // Function calls — must be guard BIFs.
         ast::Expr::Call(target, args, span) => {
-            validate_guard_call(target, args, *span, atom_names, policy, diagnostics);
+            validate_guard_call(target, args, *span, atom_names, policy, diagnostics, records);
         }
 
         // Everything else is illegal in guards.
@@ -430,6 +464,7 @@ fn validate_guard_call(
     atom_names: &HashMap<AtomId, String>,
     policy: &crate::resolution::ResolutionPolicy,
     diagnostics: &mut Vec<Diagnostic>,
+    records: Option<&HashMap<AtomId, ast::RecordDef>>,
 ) {
     let arity = args.len() as u32;
 
@@ -455,7 +490,7 @@ fn validate_guard_call(
             if module.is_some_and(|module| is_guard_bif(module, name, arity)) {
                 // Valid guard BIF — validate arguments recursively.
                 for arg in args {
-                    validate_guard_expr(arg, atom_names, policy, diagnostics);
+                    validate_guard_expr(arg, atom_names, policy, diagnostics, records);
                 }
             } else {
                 // Local function call — illegal in guard.
@@ -487,7 +522,7 @@ fn validate_guard_call(
 
                 if is_guard_bif(mod_name, fun_name, arity) {
                     for arg in args {
-                        validate_guard_expr(arg, atom_names, policy, diagnostics);
+                        validate_guard_expr(arg, atom_names, policy, diagnostics, records);
                     }
                 } else {
                     diagnostics.push(

@@ -13,6 +13,18 @@ All notable milestones for the nera project are documented in this file.
 - Compiler-error fixtures cover each pattern site; `pattern_clause_inputs`
   checks valid prior inputs and sequential binary sizes natively and on BEAM.
 
+## Comprehension guard filters fail instead of raising
+
+- List and binary comprehension filters that are guard expressions now skip
+  an element when evaluation raises, as on BEAM. For example, `map_size(X) > 0`
+  skips non-maps instead of raising `badmap`.
+- The same rule applies to leading filters and filter-only comprehensions.
+  Ordinary filter expressions, generator sources and bodies keep their errors;
+  local overrides and imports use the module's call resolution policy.
+- `comprehension_guard_filter` runs unchanged natively and on BEAM, covering
+  mixed maps, arithmetic, nested generators, compound guards, record defaults,
+  evaluation order, captures and ordinary exceptions.
+
 ## Unsupported float segment widths compile as on OTP 29
 
 - Literal float segment widths outside the supported encodings no longer reject
