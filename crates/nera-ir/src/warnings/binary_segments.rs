@@ -1,11 +1,12 @@
 //! Validates binary segment type specifiers.
 //!
 //! Detects invalid combinations that OTP's compiler rejects at compile time:
-//! - Float size must be 16, 32, or 64 bits
 //! - UTF types cannot have explicit size
 //! - Explicit fields must not conflict; irrelevant flags are accepted as in OTP
 //! - Unit does not apply to UTF types
 //! - A string literal in a pattern takes no size and only a UTF type
+//!
+//! Unsupported literal float widths warn, but do not prevent compilation.
 
 use nera_syntax::ast::{self, BinSegmentKind, BinSpecifier};
 use nera_syntax::span::Span;
@@ -489,21 +490,15 @@ fn validate_segment(
             // OTP accepts signedness and endianness even when ignored.
         }
         BinSegmentKind::Float => {
-            // A literal size must give 16, 32 or 64 bits once scaled by the
-            // unit, as in OTP's bit_size_check: `<<X:1/float-unit:64>>` is valid.
+            // OTP warns without rejecting the module. Construction validates
+            // widths at runtime, while impossible patterns fall through.
             if let Some(size_expr) = size {
                 if let ast::Expr::Integer(n, _) = size_expr.as_ref() {
                     let bits = n.checked_mul(i64::from(type_spec.unit.unwrap_or(1)));
                     if !matches!(bits, Some(16 | 32 | 64)) {
                         diagnostics.push(
-                            Diagnostic::error_at(
-                                format!(
-                                    "invalid size {} for float segment (must be 16, 32, or 64)",
-                                    bits.map_or_else(|| n.to_string(), |bits| bits.to_string())
-                                ),
-                                span,
-                            )
-                            .with_code("invalid_binary_segment"),
+                            Diagnostic::warning_at("bad float bit size", span)
+                                .with_code("bad_float_bit_size"),
                         );
                     }
                 }

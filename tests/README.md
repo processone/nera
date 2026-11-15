@@ -222,6 +222,7 @@ These are automatically skipped by the runner and show up as SKIP in output.
 | `binary_split_patterns.erl`    | binary:split/2,3 with a list of patterns: one-element lists, Cowlib's server-sent events line and field splits, longest match at the same offset, non-overlapping global splits, trim_all, a 1,000-line stream and a view into it, apply and fun calls, badarg patterns; also run on BEAM | Table-driven |
 | `binary_longest_common_prefix.erl` | Complete proper-list/binary validation, shared/shifted prefixes and dynamic calls | 17 |
 | `binary_float.erl`             | Float binary segments (<<X:64/float>>)     | ~6         |
+| `binary_float_unsupported_width.erl` | Unsupported literal and unit-scaled float widths compile with warnings: runtime badarg, evaluation order, guard failure, impossible case/head/fun/body/receive patterns and list/binary generators; valid scaled encoding controls; same fixture on OTP 29 | Completion checked |
 | `binary_refc.erl`              | Reference-counted large binaries           | ~6         |
 | `binary_refc_advanced.erl`     | Advanced refc binary operations            | ~6         |
 | `multi_clause_binary_rest.erl` | Multi-clause binary prefix patterns        | ~15        |

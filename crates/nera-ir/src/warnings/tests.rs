@@ -2576,7 +2576,7 @@ fn binary_segment_valid_float_32() {
 }
 
 #[test]
-fn binary_segment_invalid_float_size() {
+fn binary_segment_unsupported_float_size_is_not_a_compile_error() {
     let src = r#"
         -module(test).
         -export([f/1]).
@@ -2586,10 +2586,11 @@ fn binary_segment_invalid_float_size() {
     let ws = analyze_module(&module, &names, None);
     let msgs = warning_messages(&ws);
     assert!(
-        msgs.iter().any(|m| m.contains("invalid size") && m.contains("float")),
-        "expected invalid float size error, got: {:?}",
+        !ws.iter().any(|d| d.severity == nera_syntax::error::Severity::Error),
+        "OTP compiles unsupported float widths for runtime validation: {:?}",
         msgs
     );
+    assert_eq!(msgs, vec!["bad float bit size"]);
 }
 
 #[test]
@@ -2680,7 +2681,7 @@ fn binary_segment_valid_integer_signed_little() {
 }
 
 #[test]
-fn binary_segment_pattern_invalid_float_size() {
+fn binary_segment_impossible_float_pattern_is_not_a_compile_error() {
     let src = r#"
         -module(test).
         -export([f/1]).
@@ -2690,10 +2691,11 @@ fn binary_segment_pattern_invalid_float_size() {
     let ws = analyze_module(&module, &names, None);
     let msgs = warning_messages(&ws);
     assert!(
-        msgs.iter().any(|m| m.contains("invalid size") && m.contains("float")),
-        "expected invalid float size error in pattern, got: {:?}",
+        !ws.iter().any(|d| d.severity == nera_syntax::error::Severity::Error),
+        "OTP compiles impossible float patterns: {:?}",
         msgs
     );
+    assert_eq!(msgs, vec!["bad float bit size"]);
 }
 
 #[test]
@@ -5083,7 +5085,6 @@ fn comprehension_patterns_receive_binary_segment_checks() {
             ("<<X/binary>>", "binary fields without size are not allowed"),
             ("<<X/bits>>", "binary fields without size are not allowed"),
             ("<<_:8,X/binary>>", "binary fields without size are not allowed"),
-            ("<<X:8/float>>", "invalid size 8 for float segment"),
             ("<<X:8/utf8>>", "size not allowed for utf8 segments"),
             ("<<X:8/utf16>>", "size not allowed for utf16 segments"),
             ("<<X:8/utf32>>", "size not allowed for utf32 segments"),
@@ -5098,12 +5099,10 @@ fn comprehension_patterns_receive_binary_segment_checks() {
                 && d.message.contains(message)), "{body}: {diagnostics:?}");
         }
     }
-    for (pattern, invalid) in [("<<X/binary>>", false), ("<<X:8/float>>", true)] {
-        let (module, names) = parse_module(&format!("-module(p). f(L) -> [X || {pattern} <- L]."));
-        let diagnostics = analyze_module(&module, &names, None);
-        assert_eq!(diagnostics.iter().any(|d|
-            d.code.as_deref() == Some("invalid_binary_segment")), invalid);
-    }
+    let (module, names) = parse_module("-module(p). f(L) -> [X || <<X/binary>> <- L].");
+    let diagnostics = analyze_module(&module, &names, None);
+    assert!(!diagnostics.iter().any(|d|
+        d.code.as_deref() == Some("invalid_binary_segment")));
 }
 
 #[test]
@@ -5133,7 +5132,6 @@ fn binary_segment_checks_walk_call_targets() {
     for body in [
         "(fun() -> [X || <<X/binary>> <= B] end)()",
         "(fun() -> << X || <<X/bits>> <= B >> end)()",
-        "(fun() -> <<X:8/float>> = B end)()",
         "(fun() -> <<_:8/utf8>> = B end)()",
     ] {
         let (module, names) = parse_module(&format!("-module(p). f(B) -> {body}."));
@@ -5175,30 +5173,56 @@ fn binary_segment_checks_walk_guards_sizes_keys_and_record_defaults() {
 }
 
 #[test]
+fn suppressing_float_width_warning_keeps_binary_segment_errors() {
+    // The float-width warning must be independently suppressible: opting out
+    // must not hide the UTF size error in the same function.
+    let src = r#"
+-module(test).
+-export([f/1]).
+%% @nera:nowarn(bad_float_bit_size)
+f(X) -> {<<X:24/float>>, <<X:8/utf8>>}.
+    "#;
+    let (module, names, source) = parse_with_source(src);
+    let diagnostics = analyze_module_with_source(&module, &names, None, Some(&source));
+    let remaining: Vec<_> = diagnostics.iter()
+        .map(|d| (d.severity, d.code.as_deref(), d.message.as_str())).collect();
+    assert_eq!(remaining, vec![(
+        nera_syntax::error::Severity::Error,
+        Some("invalid_binary_segment"),
+        "size not allowed for utf8 segments",
+    )]);
+}
+
+#[test]
 fn float_segment_size_is_scaled_by_unit() {
-    // NERA-103 F2: OTP's bit_size_check accepts a float field whose size
-    // times unit is 16, 32 or 64 bits, so `<<X:1/float-unit:64>>` is valid.
-    let errors = |body: &str| -> Vec<String> {
-        let (module, names) = parse_module(&format!("-module(p). f(B) -> {body}."));
-        analyze_module(&module, &names, None).into_iter()
-            .filter(|d| d.code.as_deref() == Some("invalid_binary_segment"))
-            .map(|d| d.message).collect()
-    };
-    for segment in ["X:1/float-unit:64", "X:2/float-unit:32", "X:4/float-unit:16", "X:8/float-unit:8"] {
+    // OTP 29 accepts supported and unsupported size/unit products at compile
+    // time. The native regression owns their runtime results.
+    use nera_syntax::error::Severity;
+    for (segment, unsupported) in [
+        ("X:1/float-unit:64", false), ("X:2/float-unit:32", false),
+        ("X:4/float-unit:16", false), ("X:8/float-unit:8", false),
+        ("X:2/float-unit:64", true), ("X:3/float-unit:8", true),
+        ("X:1/float", true), ("X:8/float", true),
+    ] {
         for body in [
             format!("<<{segment}>>"),
             format!("<<{segment}>> = B"),
             format!("[X || <<{segment}>> <= B]"),
             format!("<< <<X:64/float>> || <<{segment}>> <= B >>"),
             format!("[X || <<{segment}>> <- B]"),
+            format!("(fun() -> <<{segment}>> = B end)()"),
         ] {
-            assert_eq!(errors(&body), Vec::<String>::new(), "{body}");
+            let (module, names) = parse_module(&format!("-module(p). f(X, B) -> {body}."));
+            let diagnostics = analyze_module(&module, &names, None);
+            assert!(!diagnostics.iter().any(|d| d.severity == Severity::Error),
+                "{body}: {diagnostics:?}");
+            let segment_diagnostics: Vec<_> = diagnostics.iter()
+                .filter(|d| d.code.as_deref() == Some("bad_float_bit_size"))
+                .map(|d| (d.severity, d.message.as_str())).collect();
+            let expected = if unsupported {
+                vec![(Severity::Warning, "bad float bit size")]
+            } else { vec![] };
+            assert_eq!(segment_diagnostics, expected, "{body}");
         }
     }
-    assert_eq!(errors("<<X:2/float-unit:64>> = B"),
-        vec!["invalid size 128 for float segment (must be 16, 32, or 64)"]);
-    assert_eq!(errors("[X || <<X:3/float-unit:8>> <= B]"),
-        vec!["invalid size 24 for float segment (must be 16, 32, or 64)"]);
-    assert_eq!(errors("<<X:1/float>> = B"),
-        vec!["invalid size 1 for float segment (must be 16, 32, or 64)"]);
 }

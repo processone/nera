@@ -226,7 +226,7 @@ pub enum Instruction {
     /// result = binary_get_float(bin, bit_offset, bit_size, flags)
     /// Extracts a float value (IEEE 754) from the binary at the given BIT offset.
     /// Returns a boxed finite float, or nil on match failure.
-    /// bit_offset is in bits; bit_size must be 16, 32 or 64.
+    /// bit_offset is in bits; bit_size values other than 16, 32 or 64 return nil.
     BinaryGetFloat(VarId, VarId, VarId, VarId, BinFlags),
 
     /// result = binary_get_binary(bin, bit_offset, bit_count)
