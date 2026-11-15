@@ -2,6 +2,17 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Pattern inputs are checked before their own bindings
+
+- Function heads, `case`, `receive`, `try ... of`, catch and `maybe ... else`
+  clauses now reject map keys and binary sizes supplied only by the same
+  pattern, including sibling arguments and nested patterns, as `erlc` does.
+- Ordinary `=` and conditional `?=` matches apply the same check. Keys and
+  sizes bound before the match, including by its completed right-hand side,
+  remain available; earlier segments of the same binary still supply sizes.
+- Compiler-error fixtures cover each pattern site; `pattern_clause_inputs`
+  checks valid prior inputs and sequential binary sizes natively and on BEAM.
+
 ## Unsupported float segment widths compile as on OTP 29
 
 - Literal float segment widths outside the supported encodings no longer reject

@@ -20,6 +20,10 @@ pub(super) fn check_unbound_variables_fn(
 ) {
     for clause in &func.clauses {
         let mut scope = HashSet::new();
+        // No argument in this head supplies another argument's key/size.
+        for pat in &clause.patterns {
+            check_unbound_in_pattern_exprs(pat, &scope, atom_names, diagnostics);
+        }
         for pat in &clause.patterns {
             collect_pattern_bindings(pat, &mut scope);
         }
@@ -55,21 +59,10 @@ fn check_unbound_in_body(
     diagnostics: &mut Vec<Diagnostic>,
 ) {
     for expr in body {
-        if let ast::Expr::Match(pat, rhs, _) = expr {
-            // Check RHS first (evaluated before the binding takes effect).
-            check_unbound_in_expr(rhs, scope, atom_names, diagnostics);
-            // Pattern variables are bound for subsequent expressions.
-            collect_pattern_bindings(pat, scope);
-            // Also pull in bindings from nested Match expressions on the RHS
-            // — e.g. `A = B = Expr` where `B = Expr` is the inner Match.
-            collect_exported_bindings(rhs, scope);
-        } else {
-            check_unbound_in_expr(expr, scope, atom_names, diagnostics);
-            // Nested Match expressions embedded in sub-expressions
-            // (call args, tuple elements, etc.) also export bindings
-            // to the enclosing body scope.
-            collect_exported_bindings(expr, scope);
-        }
+        check_unbound_in_expr(expr, scope, atom_names, diagnostics);
+        // Matches, including those nested in sub-expressions, export their
+        // bindings only after their pattern inputs have been checked.
+        collect_exported_bindings(expr, scope);
     }
 }
 
@@ -353,6 +346,7 @@ fn check_unbound_in_expr(
             collect_exported_bindings(scrutinee, &mut input_scope);
             for clause in clauses {
                 let mut clause_scope = input_scope.clone();
+                check_unbound_in_pattern_exprs(&clause.pattern, &input_scope, atom_names, diagnostics);
                 collect_pattern_bindings(&clause.pattern, &mut clause_scope);
                 if let Some(ref guard) = clause.guard {
                     check_unbound_in_guard(guard, &clause_scope, atom_names, diagnostics);
@@ -373,6 +367,7 @@ fn check_unbound_in_expr(
         ast::Expr::Receive(clauses, after, _) => {
             for clause in clauses {
                 let mut clause_scope = scope.clone();
+                check_unbound_in_pattern_exprs(&clause.pattern, scope, atom_names, diagnostics);
                 collect_pattern_bindings(&clause.pattern, &mut clause_scope);
                 if let Some(ref guard) = clause.guard {
                     check_unbound_in_guard(guard, &clause_scope, atom_names, diagnostics);
@@ -398,6 +393,7 @@ fn check_unbound_in_expr(
             check_unbound_in_body(body, &mut try_scope, atom_names, diagnostics);
             for clause in of_clauses {
                 let mut clause_scope = try_scope.clone();
+                check_unbound_in_pattern_exprs(&clause.pattern, &try_scope, atom_names, diagnostics);
                 collect_pattern_bindings(&clause.pattern, &mut clause_scope);
                 if let Some(ref guard) = clause.guard {
                     check_unbound_in_guard(guard, &clause_scope, atom_names, diagnostics);
@@ -407,6 +403,12 @@ fn check_unbound_in_expr(
             // Catch clauses get outer scope (not try body bindings).
             for clause in catch_clauses {
                 let mut clause_scope = scope.clone();
+                // Class, reason and stacktrace bindings are all siblings;
+                // none supplies an input to another pattern in this head.
+                check_unbound_in_pattern_exprs(&clause.pattern, scope, atom_names, diagnostics);
+                if let Some(stk) = &clause.stacktrace {
+                    check_unbound_in_pattern_exprs(stk, scope, atom_names, diagnostics);
+                }
                 // Class variable binding (e.g. `Class:Reason:Stacktrace`).
                 if let ast::CatchClass::Variable(class_name, _) = &clause.class {
                     clause_scope.insert(*class_name);
@@ -459,21 +461,20 @@ fn check_unbound_in_expr(
             for item in body {
                 match item {
                     ast::MaybeExpr::Expr(e) => {
-                        if let ast::Expr::Match(pat, rhs, _) = e {
-                            check_unbound_in_expr(rhs, &maybe_scope, atom_names, diagnostics);
-                            collect_pattern_bindings(pat, &mut maybe_scope);
-                        } else {
-                            check_unbound_in_expr(e, &maybe_scope, atom_names, diagnostics);
-                        }
+                        check_unbound_in_expr(e, &maybe_scope, atom_names, diagnostics);
+                        collect_exported_bindings(e, &mut maybe_scope);
                     }
                     ast::MaybeExpr::CondMatch(pat, e, _) => {
                         check_unbound_in_expr(e, &maybe_scope, atom_names, diagnostics);
+                        collect_exported_bindings(e, &mut maybe_scope);
+                        check_unbound_in_pattern_exprs(pat, &maybe_scope, atom_names, diagnostics);
                         collect_pattern_bindings(pat, &mut maybe_scope);
                     }
                 }
             }
             for clause in else_clauses {
                 let mut clause_scope = scope.clone();
+                check_unbound_in_pattern_exprs(&clause.pattern, scope, atom_names, diagnostics);
                 collect_pattern_bindings(&clause.pattern, &mut clause_scope);
                 if let Some(ref guard) = clause.guard {
                     check_unbound_in_guard(guard, &clause_scope, atom_names, diagnostics);
@@ -482,12 +483,14 @@ fn check_unbound_in_expr(
             }
         }
 
-        // ── Match expression (non-body level) ──
+        // ── Match expression ──
         ast::Expr::Match(pat, rhs, _) => {
             check_unbound_in_expr(rhs, scope, atom_names, diagnostics);
-            // Check pattern variables that are already bound (used as equality checks)
-            // but don't emit unbound errors for pattern bindings themselves.
-            check_unbound_in_pattern_exprs(pat, scope, atom_names, diagnostics);
+            // The RHS completes before matching, so its definite bindings
+            // are inputs; bindings introduced by this pattern are not.
+            let mut input_scope = scope.clone();
+            collect_exported_bindings(rhs, &mut input_scope);
+            check_unbound_in_pattern_exprs(pat, &input_scope, atom_names, diagnostics);
         }
 
         // ── Recurse into sub-expressions ──
