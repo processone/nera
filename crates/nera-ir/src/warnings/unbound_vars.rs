@@ -12,6 +12,30 @@ use nera_syntax::error::Diagnostic;
 
 use super::ast_walkers::collect_pattern_bindings;
 
+/// Funs and generator sources introduce ordinary local scopes inside a default;
+/// bindings elsewhere still belong to the record definition, which forbids them.
+#[derive(Clone, Copy, PartialEq)]
+enum Context {
+    Expression,
+    RecordDefault,
+}
+
+fn variable_error(
+    id: AtomId,
+    span: nera_syntax::span::Span,
+    context: Context,
+    atom_names: &HashMap<AtomId, String>,
+    diagnostics: &mut Vec<Diagnostic>,
+) {
+    if let Some(name) = atom_names.get(&id) {
+        let message = match context {
+            Context::RecordDefault => format!("variable '{name}' in record definition"),
+            Context::Expression => format!("variable '{name}' is unbound"),
+        };
+        diagnostics.push(Diagnostic::error_at(message, span));
+    }
+}
+
 /// Check a function for unbound variable references.
 pub(super) fn check_unbound_variables_fn(
     func: &ast::Function,
@@ -22,15 +46,15 @@ pub(super) fn check_unbound_variables_fn(
         let mut scope = HashSet::new();
         // No argument in this head supplies another argument's key/size.
         for pat in &clause.patterns {
-            check_unbound_in_pattern_exprs(pat, &scope, atom_names, diagnostics);
+            check_unbound_in_pattern_exprs(pat, &scope, Context::Expression, atom_names, diagnostics);
         }
         for pat in &clause.patterns {
             collect_pattern_bindings(pat, &mut scope);
         }
         if let Some(ref guard) = clause.guard {
-            check_unbound_in_guard(guard, &scope, atom_names, diagnostics);
+            check_unbound_in_guard(guard, &scope, Context::Expression, atom_names, diagnostics);
         }
-        check_unbound_in_body(&clause.body, &mut scope, atom_names, diagnostics);
+        check_unbound_in_body(&clause.body, &mut scope, Context::Expression, atom_names, diagnostics);
     }
 }
 
@@ -44,7 +68,7 @@ pub(super) fn check_unbound_variables_records(
     for record in &module.records {
         for field in &record.fields {
             if let Some(default) = &field.default {
-                check_unbound_in_expr(default, &HashSet::new(), atom_names, diagnostics);
+                check_unbound_in_expr(default, &HashSet::new(), Context::RecordDefault, atom_names, diagnostics);
             }
         }
     }
@@ -55,11 +79,12 @@ pub(super) fn check_unbound_variables_records(
 fn check_unbound_in_body(
     body: &[ast::Expr],
     scope: &mut HashSet<AtomId>,
+    context: Context,
     atom_names: &HashMap<AtomId, String>,
     diagnostics: &mut Vec<Diagnostic>,
 ) {
     for expr in body {
-        check_unbound_in_expr(expr, scope, atom_names, diagnostics);
+        check_unbound_in_expr(expr, scope, context, atom_names, diagnostics);
         // Matches, including those nested in sub-expressions, export their
         // bindings only after their pattern inputs have been checked.
         collect_exported_bindings(expr, scope);
@@ -296,6 +321,7 @@ fn merge_branch_bindings(
 fn check_unbound_in_expr(
     expr: &ast::Expr,
     scope: &HashSet<AtomId>,
+    context: Context,
     atom_names: &HashMap<AtomId, String>,
     diagnostics: &mut Vec<Diagnostic>,
 ) {
@@ -303,12 +329,10 @@ fn check_unbound_in_expr(
         ast::Expr::Variable(id, span) => {
             if !scope.contains(id) {
                 if let Some(name) = atom_names.get(id).map(|s| s.as_str()) {
-                    // Skip underscore — bare `_` is never a real variable reference.
-                    if name != "_" {
-                        diagnostics.push(Diagnostic::error_at(
-                            format!("variable '{}' is unbound", name),
-                            *span,
-                        ));
+                    // Ordinary reference analysis skips `_`; a record default
+                    // must still reject it when used as an expression.
+                    if name != "_" || context == Context::RecordDefault {
+                        variable_error(*id, *span, context, atom_names, diagnostics);
                     }
                 }
             }
@@ -316,6 +340,7 @@ fn check_unbound_in_expr(
 
         // ── fun: new scope from parameters, captures outer scope ──
         ast::Expr::Fun(name, clauses, _) => {
+            let context = Context::Expression;
             for clause in clauses {
                 let mut fun_scope: HashSet<AtomId> = scope.clone();
                 // The named fun's own name is in scope throughout each
@@ -327,39 +352,39 @@ fn check_unbound_in_expr(
                 // this head (including sibling arguments). The named fun's
                 // own name is already available, as it is in guards/bodies.
                 for pat in &clause.patterns {
-                    check_unbound_in_pattern_exprs(pat, &fun_scope, atom_names, diagnostics);
+                    check_unbound_in_pattern_exprs(pat, &fun_scope, context, atom_names, diagnostics);
                 }
                 for pat in &clause.patterns {
                     collect_pattern_bindings(pat, &mut fun_scope);
                 }
                 if let Some(ref guard) = clause.guard {
-                    check_unbound_in_guard(guard, &fun_scope, atom_names, diagnostics);
+                    check_unbound_in_guard(guard, &fun_scope, context, atom_names, diagnostics);
                 }
-                check_unbound_in_body(&clause.body, &mut fun_scope, atom_names, diagnostics);
+                check_unbound_in_body(&clause.body, &mut fun_scope, context, atom_names, diagnostics);
             }
         }
 
         // ── case ──
         ast::Expr::Case(scrutinee, clauses, _) => {
-            check_unbound_in_expr(scrutinee, scope, atom_names, diagnostics);
+            check_unbound_in_expr(scrutinee, scope, context, atom_names, diagnostics);
             let mut input_scope = scope.clone();
             collect_exported_bindings(scrutinee, &mut input_scope);
             for clause in clauses {
                 let mut clause_scope = input_scope.clone();
-                check_unbound_in_pattern_exprs(&clause.pattern, &input_scope, atom_names, diagnostics);
+                check_unbound_in_pattern_exprs(&clause.pattern, &input_scope, context, atom_names, diagnostics);
                 collect_pattern_bindings(&clause.pattern, &mut clause_scope);
                 if let Some(ref guard) = clause.guard {
-                    check_unbound_in_guard(guard, &clause_scope, atom_names, diagnostics);
+                    check_unbound_in_guard(guard, &clause_scope, context, atom_names, diagnostics);
                 }
-                check_unbound_in_body(&clause.body, &mut clause_scope, atom_names, diagnostics);
+                check_unbound_in_body(&clause.body, &mut clause_scope, context, atom_names, diagnostics);
             }
         }
 
         // ── if: no patterns, guards evaluated in current scope ──
         ast::Expr::If(clauses, _) => {
             for clause in clauses {
-                check_unbound_in_guard(&clause.guard, scope, atom_names, diagnostics);
-                check_unbound_in_body(&clause.body, &mut scope.clone(), atom_names, diagnostics);
+                check_unbound_in_guard(&clause.guard, scope, context, atom_names, diagnostics);
+                check_unbound_in_body(&clause.body, &mut scope.clone(), context, atom_names, diagnostics);
             }
         }
 
@@ -367,16 +392,16 @@ fn check_unbound_in_expr(
         ast::Expr::Receive(clauses, after, _) => {
             for clause in clauses {
                 let mut clause_scope = scope.clone();
-                check_unbound_in_pattern_exprs(&clause.pattern, scope, atom_names, diagnostics);
+                check_unbound_in_pattern_exprs(&clause.pattern, scope, context, atom_names, diagnostics);
                 collect_pattern_bindings(&clause.pattern, &mut clause_scope);
                 if let Some(ref guard) = clause.guard {
-                    check_unbound_in_guard(guard, &clause_scope, atom_names, diagnostics);
+                    check_unbound_in_guard(guard, &clause_scope, context, atom_names, diagnostics);
                 }
-                check_unbound_in_body(&clause.body, &mut clause_scope, atom_names, diagnostics);
+                check_unbound_in_body(&clause.body, &mut clause_scope, context, atom_names, diagnostics);
             }
             if let Some(after) = after {
-                check_unbound_in_expr(&after.timeout, scope, atom_names, diagnostics);
-                check_unbound_in_body(&after.body, &mut scope.clone(), atom_names, diagnostics);
+                check_unbound_in_expr(&after.timeout, scope, context, atom_names, diagnostics);
+                check_unbound_in_body(&after.body, &mut scope.clone(), context, atom_names, diagnostics);
             }
         }
 
@@ -390,27 +415,30 @@ fn check_unbound_in_expr(
         } => {
             // Try body: bindings flow to of-clauses.
             let mut try_scope = scope.clone();
-            check_unbound_in_body(body, &mut try_scope, atom_names, diagnostics);
+            check_unbound_in_body(body, &mut try_scope, context, atom_names, diagnostics);
             for clause in of_clauses {
                 let mut clause_scope = try_scope.clone();
-                check_unbound_in_pattern_exprs(&clause.pattern, &try_scope, atom_names, diagnostics);
+                check_unbound_in_pattern_exprs(&clause.pattern, &try_scope, context, atom_names, diagnostics);
                 collect_pattern_bindings(&clause.pattern, &mut clause_scope);
                 if let Some(ref guard) = clause.guard {
-                    check_unbound_in_guard(guard, &clause_scope, atom_names, diagnostics);
+                    check_unbound_in_guard(guard, &clause_scope, context, atom_names, diagnostics);
                 }
-                check_unbound_in_body(&clause.body, &mut clause_scope, atom_names, diagnostics);
+                check_unbound_in_body(&clause.body, &mut clause_scope, context, atom_names, diagnostics);
             }
             // Catch clauses get outer scope (not try body bindings).
             for clause in catch_clauses {
                 let mut clause_scope = scope.clone();
                 // Class, reason and stacktrace bindings are all siblings;
                 // none supplies an input to another pattern in this head.
-                check_unbound_in_pattern_exprs(&clause.pattern, scope, atom_names, diagnostics);
+                check_unbound_in_pattern_exprs(&clause.pattern, scope, context, atom_names, diagnostics);
                 if let Some(stk) = &clause.stacktrace {
-                    check_unbound_in_pattern_exprs(stk, scope, atom_names, diagnostics);
+                    check_unbound_in_pattern_exprs(stk, scope, context, atom_names, diagnostics);
                 }
                 // Class variable binding (e.g. `Class:Reason:Stacktrace`).
-                if let ast::CatchClass::Variable(class_name, _) = &clause.class {
+                if let ast::CatchClass::Variable(class_name, span) = &clause.class {
+                    if context == Context::RecordDefault && !scope.contains(class_name) {
+                        variable_error(*class_name, *span, context, atom_names, diagnostics);
+                    }
                     clause_scope.insert(*class_name);
                 }
                 collect_pattern_bindings(&clause.pattern, &mut clause_scope);
@@ -418,13 +446,13 @@ fn check_unbound_in_expr(
                     collect_pattern_bindings(stk, &mut clause_scope);
                 }
                 if let Some(ref guard) = clause.guard {
-                    check_unbound_in_guard(guard, &clause_scope, atom_names, diagnostics);
+                    check_unbound_in_guard(guard, &clause_scope, context, atom_names, diagnostics);
                 }
-                check_unbound_in_body(&clause.body, &mut clause_scope, atom_names, diagnostics);
+                check_unbound_in_body(&clause.body, &mut clause_scope, context, atom_names, diagnostics);
             }
             // After block gets outer scope.
             if let Some(after) = after_body {
-                check_unbound_in_body(after, &mut scope.clone(), atom_names, diagnostics);
+                check_unbound_in_body(after, &mut scope.clone(), context, atom_names, diagnostics);
             }
         }
 
@@ -437,22 +465,24 @@ fn check_unbound_in_expr(
                 match q {
                     ast::LcQualifier::Generator(pat, source_expr, _)
                     | ast::LcQualifier::BinGenerator(pat, source_expr, _) => {
-                        check_unbound_in_expr(source_expr, &lc_scope, atom_names, diagnostics);
+                        // Like erlc, generator sources and patterns allow local
+                        // bindings; filters and the body keep the record context.
+                        check_unbound_in_expr(source_expr, &lc_scope, Context::Expression, atom_names, diagnostics);
                         // Inputs can come from outer/earlier generators, but
                         // not from the bindings this generator introduces.
-                        check_unbound_in_pattern_exprs(pat, &lc_scope, atom_names, diagnostics);
+                        check_unbound_in_pattern_exprs(pat, &lc_scope, Context::Expression, atom_names, diagnostics);
                         collect_pattern_bindings(pat, &mut lc_scope);
                         before_generator = false;
                     }
                     ast::LcQualifier::Filter(filter_expr, _) => {
-                        check_unbound_in_expr(filter_expr, &lc_scope, atom_names, diagnostics);
+                        check_unbound_in_expr(filter_expr, &lc_scope, context, atom_names, diagnostics);
                         if before_generator {
                             collect_exported_bindings(filter_expr, &mut lc_scope);
                         }
                     }
                 }
             }
-            check_unbound_in_expr(body_expr, &lc_scope, atom_names, diagnostics);
+            check_unbound_in_expr(body_expr, &lc_scope, context, atom_names, diagnostics);
         }
 
         // ── maybe ──
@@ -461,53 +491,53 @@ fn check_unbound_in_expr(
             for item in body {
                 match item {
                     ast::MaybeExpr::Expr(e) => {
-                        check_unbound_in_expr(e, &maybe_scope, atom_names, diagnostics);
+                        check_unbound_in_expr(e, &maybe_scope, context, atom_names, diagnostics);
                         collect_exported_bindings(e, &mut maybe_scope);
                     }
                     ast::MaybeExpr::CondMatch(pat, e, _) => {
-                        check_unbound_in_expr(e, &maybe_scope, atom_names, diagnostics);
+                        check_unbound_in_expr(e, &maybe_scope, context, atom_names, diagnostics);
                         collect_exported_bindings(e, &mut maybe_scope);
-                        check_unbound_in_pattern_exprs(pat, &maybe_scope, atom_names, diagnostics);
+                        check_unbound_in_pattern_exprs(pat, &maybe_scope, context, atom_names, diagnostics);
                         collect_pattern_bindings(pat, &mut maybe_scope);
                     }
                 }
             }
             for clause in else_clauses {
                 let mut clause_scope = scope.clone();
-                check_unbound_in_pattern_exprs(&clause.pattern, scope, atom_names, diagnostics);
+                check_unbound_in_pattern_exprs(&clause.pattern, scope, context, atom_names, diagnostics);
                 collect_pattern_bindings(&clause.pattern, &mut clause_scope);
                 if let Some(ref guard) = clause.guard {
-                    check_unbound_in_guard(guard, &clause_scope, atom_names, diagnostics);
+                    check_unbound_in_guard(guard, &clause_scope, context, atom_names, diagnostics);
                 }
-                check_unbound_in_body(&clause.body, &mut clause_scope, atom_names, diagnostics);
+                check_unbound_in_body(&clause.body, &mut clause_scope, context, atom_names, diagnostics);
             }
         }
 
         // ── Match expression ──
         ast::Expr::Match(pat, rhs, _) => {
-            check_unbound_in_expr(rhs, scope, atom_names, diagnostics);
+            check_unbound_in_expr(rhs, scope, context, atom_names, diagnostics);
             // The RHS completes before matching, so its definite bindings
             // are inputs; bindings introduced by this pattern are not.
             let mut input_scope = scope.clone();
             collect_exported_bindings(rhs, &mut input_scope);
-            check_unbound_in_pattern_exprs(pat, &input_scope, atom_names, diagnostics);
+            check_unbound_in_pattern_exprs(pat, &input_scope, context, atom_names, diagnostics);
         }
 
         // ── Recurse into sub-expressions ──
         ast::Expr::Block(exprs, _) => {
-            check_unbound_in_body(exprs, &mut scope.clone(), atom_names, diagnostics);
+            check_unbound_in_body(exprs, &mut scope.clone(), context, atom_names, diagnostics);
         }
         ast::Expr::Tuple(exprs, _) => {
             for e in exprs {
-                check_unbound_in_expr(e, scope, atom_names, diagnostics);
+                check_unbound_in_expr(e, scope, context, atom_names, diagnostics);
             }
         }
         ast::Expr::Cons(h, t, _) | ast::Expr::Send(h, t, _) | ast::Expr::BinOp(_, h, t, _) => {
-            check_unbound_in_expr(h, scope, atom_names, diagnostics);
-            check_unbound_in_expr(t, scope, atom_names, diagnostics);
+            check_unbound_in_expr(h, scope, context, atom_names, diagnostics);
+            check_unbound_in_expr(t, scope, context, atom_names, diagnostics);
         }
         ast::Expr::UnaryOp(_, e, _) | ast::Expr::Throw(e, _) | ast::Expr::Catch(e, _) => {
-            check_unbound_in_expr(e, scope, atom_names, diagnostics);
+            check_unbound_in_expr(e, scope, context, atom_names, diagnostics);
         }
         ast::Expr::Call(target, args, _) => {
             match target {
@@ -519,60 +549,57 @@ fn check_unbound_in_expr(
                 ast::CallTarget::Variable(id, span) => {
                     if !scope.contains(id) {
                         if let Some(name) = atom_names.get(id).map(|s| s.as_str()) {
-                            if name != "_" {
-                                diagnostics.push(Diagnostic::error_at(
-                                    format!("variable '{}' is unbound", name),
-                                    *span,
-                                ));
+                            if name != "_" || context == Context::RecordDefault {
+                                variable_error(*id, *span, context, atom_names, diagnostics);
                             }
                         }
                     }
                 }
                 ast::CallTarget::Remote(module_expr, fun_expr) => {
-                    check_unbound_in_expr(module_expr, scope, atom_names, diagnostics);
-                    check_unbound_in_expr(fun_expr, scope, atom_names, diagnostics);
+                    check_unbound_in_expr(module_expr, scope, context, atom_names, diagnostics);
+                    check_unbound_in_expr(fun_expr, scope, context, atom_names, diagnostics);
                 }
                 ast::CallTarget::Expr(callee) => {
-                    check_unbound_in_expr(callee, scope, atom_names, diagnostics);
+                    check_unbound_in_expr(callee, scope, context, atom_names, diagnostics);
                 }
             }
             for arg in args {
-                check_unbound_in_expr(arg, scope, atom_names, diagnostics);
+                check_unbound_in_expr(arg, scope, context, atom_names, diagnostics);
             }
         }
         ast::Expr::MapUpdate(base, fields, _) => {
-            check_unbound_in_expr(base, scope, atom_names, diagnostics);
+            check_unbound_in_expr(base, scope, context, atom_names, diagnostics);
             for f in fields {
-                check_unbound_in_expr(&f.key, scope, atom_names, diagnostics);
-                check_unbound_in_expr(&f.value, scope, atom_names, diagnostics);
+                check_unbound_in_expr(&f.key, scope, context, atom_names, diagnostics);
+                check_unbound_in_expr(&f.value, scope, context, atom_names, diagnostics);
             }
         }
         ast::Expr::RecordUpdate { base, fields, .. } => {
-            check_unbound_in_expr(base, scope, atom_names, diagnostics);
+            check_unbound_in_expr(base, scope, context, atom_names, diagnostics);
             for f in fields {
-                check_unbound_in_expr(&f.value, scope, atom_names, diagnostics);
+                check_unbound_in_expr(&f.value, scope, context, atom_names, diagnostics);
             }
         }
         ast::Expr::RecordCreate { fields, .. } => {
             for f in fields {
-                check_unbound_in_expr(&f.value, scope, atom_names, diagnostics);
+                check_unbound_in_expr(&f.value, scope, context, atom_names, diagnostics);
             }
         }
         ast::Expr::RecordAccess { base, .. } => {
-            check_unbound_in_expr(base, scope, atom_names, diagnostics);
+            check_unbound_in_expr(base, scope, context, atom_names, diagnostics);
         }
         ast::Expr::Binary(segments, _) => {
             for seg in segments {
-                check_unbound_in_expr(&seg.value, scope, atom_names, diagnostics);
+                check_unbound_in_expr(&seg.value, scope, context, atom_names, diagnostics);
                 if let Some(ref size) = seg.size {
-                    check_unbound_in_expr(size, scope, atom_names, diagnostics);
+                    check_unbound_in_expr(size, scope, context, atom_names, diagnostics);
                 }
             }
         }
         ast::Expr::Map(fields, _) => {
             for f in fields {
-                check_unbound_in_expr(&f.key, scope, atom_names, diagnostics);
-                check_unbound_in_expr(&f.value, scope, atom_names, diagnostics);
+                check_unbound_in_expr(&f.key, scope, context, atom_names, diagnostics);
+                check_unbound_in_expr(&f.value, scope, context, atom_names, diagnostics);
             }
         }
 
@@ -586,14 +613,14 @@ fn check_unbound_in_expr(
         | ast::Expr::FunRef(ast::FunRefTarget::Local(..) | ast::FunRefTarget::Remote(..), _)
         | ast::Expr::RecordIndex { .. } => {}
         ast::Expr::FunRef(ast::FunRefTarget::DynamicRemote(m, f, a), _) => {
-            check_unbound_in_expr(m, scope, atom_names, diagnostics);
-            check_unbound_in_expr(f, scope, atom_names, diagnostics);
-            check_unbound_in_expr(a, scope, atom_names, diagnostics);
+            check_unbound_in_expr(m, scope, context, atom_names, diagnostics);
+            check_unbound_in_expr(f, scope, context, atom_names, diagnostics);
+            check_unbound_in_expr(a, scope, context, atom_names, diagnostics);
         }
         ast::Expr::MacroCall { args, .. } => {
             if let Some(args) = args {
                 for arg in args {
-                    check_unbound_in_expr(arg, scope, atom_names, diagnostics);
+                    check_unbound_in_expr(arg, scope, context, atom_names, diagnostics);
                 }
             }
         }
@@ -604,29 +631,31 @@ fn check_unbound_in_expr(
 fn check_unbound_in_guard(
     guard: &ast::Guard,
     scope: &HashSet<AtomId>,
+    context: Context,
     atom_names: &HashMap<AtomId, String>,
     diagnostics: &mut Vec<Diagnostic>,
 ) {
     match guard {
-        ast::Guard::Test(e) => check_unbound_in_expr(e, scope, atom_names, diagnostics),
+        ast::Guard::Test(e) => check_unbound_in_expr(e, scope, context, atom_names, diagnostics),
         ast::Guard::Conjunction(exprs) => {
             for e in exprs {
-                check_unbound_in_expr(e, scope, atom_names, diagnostics);
+                check_unbound_in_expr(e, scope, context, atom_names, diagnostics);
             }
         }
         ast::Guard::Disjunction(guards) => {
             for g in guards {
-                check_unbound_in_guard(g, scope, atom_names, diagnostics);
+                check_unbound_in_guard(g, scope, context, atom_names, diagnostics);
             }
         }
     }
 }
 
 /// Check for unbound variables used in pattern sub-expressions (e.g. binary
-/// segment sizes). Pattern *bindings* themselves don't need to be checked.
+/// segment sizes). In a record default, new pattern bindings are errors too.
 fn check_unbound_in_pattern_exprs(
     pat: &ast::Pattern,
     scope: &HashSet<AtomId>,
+    context: Context,
     atom_names: &HashMap<AtomId, String>,
     diagnostics: &mut Vec<Diagnostic>,
 ) {
@@ -637,44 +666,48 @@ fn check_unbound_in_pattern_exprs(
             let mut size_scope = scope.clone();
             for seg in segments {
                 if let Some(ref size) = seg.size {
-                    check_unbound_in_expr(size, &size_scope, atom_names, diagnostics);
+                    check_unbound_in_expr(size, &size_scope, context, atom_names, diagnostics);
                 }
-                check_unbound_in_pattern_exprs(&seg.value, scope, atom_names, diagnostics);
+                check_unbound_in_pattern_exprs(&seg.value, scope, context, atom_names, diagnostics);
                 collect_pattern_bindings(&seg.value, &mut size_scope);
             }
         }
         ast::Pattern::Tuple(pats, _) => {
             for p in pats {
-                check_unbound_in_pattern_exprs(p, scope, atom_names, diagnostics);
+                check_unbound_in_pattern_exprs(p, scope, context, atom_names, diagnostics);
             }
         }
         ast::Pattern::Cons(h, t, _) => {
-            check_unbound_in_pattern_exprs(h, scope, atom_names, diagnostics);
-            check_unbound_in_pattern_exprs(t, scope, atom_names, diagnostics);
+            check_unbound_in_pattern_exprs(h, scope, context, atom_names, diagnostics);
+            check_unbound_in_pattern_exprs(t, scope, context, atom_names, diagnostics);
         }
         ast::Pattern::Match(p1, p2, _) => {
-            check_unbound_in_pattern_exprs(p1, scope, atom_names, diagnostics);
-            check_unbound_in_pattern_exprs(p2, scope, atom_names, diagnostics);
+            check_unbound_in_pattern_exprs(p1, scope, context, atom_names, diagnostics);
+            check_unbound_in_pattern_exprs(p2, scope, context, atom_names, diagnostics);
         }
         ast::Pattern::Map(fields, _) => {
             for field in fields {
                 // Map pattern keys are expressions that can reference variables.
-                check_unbound_in_expr(&field.key, scope, atom_names, diagnostics);
-                check_unbound_in_pattern_exprs(&field.value, scope, atom_names, diagnostics);
+                check_unbound_in_expr(&field.key, scope, context, atom_names, diagnostics);
+                check_unbound_in_pattern_exprs(&field.value, scope, context, atom_names, diagnostics);
             }
         }
         ast::Pattern::Record { fields, .. } => {
             for field in fields {
-                check_unbound_in_pattern_exprs(&field.pattern, scope, atom_names, diagnostics);
+                check_unbound_in_pattern_exprs(&field.pattern, scope, context, atom_names, diagnostics);
             }
         }
         ast::Pattern::Concat(lhs, rhs, _) => {
-            check_unbound_in_pattern_exprs(lhs, scope, atom_names, diagnostics);
-            check_unbound_in_pattern_exprs(rhs, scope, atom_names, diagnostics);
+            check_unbound_in_pattern_exprs(lhs, scope, context, atom_names, diagnostics);
+            check_unbound_in_pattern_exprs(rhs, scope, context, atom_names, diagnostics);
         }
-        // Leaf patterns — nothing to check.
-        ast::Pattern::Variable(_, _)
-        | ast::Pattern::Wildcard(_)
+        ast::Pattern::Variable(id, span) => {
+            if context == Context::RecordDefault && !scope.contains(id) {
+                variable_error(*id, *span, context, atom_names, diagnostics);
+            }
+        }
+        // Literal and wildcard patterns introduce no variables.
+        ast::Pattern::Wildcard(_)
         | ast::Pattern::Integer(_, _)
         | ast::Pattern::BigInteger(_, _)
         | ast::Pattern::Float(_, _)
@@ -684,7 +717,7 @@ fn check_unbound_in_pattern_exprs(
         ast::Pattern::MacroCall { args, .. } => {
             if let Some(args) = args {
                 for arg in args {
-                    check_unbound_in_pattern_exprs(arg, scope, atom_names, diagnostics);
+                    check_unbound_in_pattern_exprs(arg, scope, context, atom_names, diagnostics);
                 }
             }
         }

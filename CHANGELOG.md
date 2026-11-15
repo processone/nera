@@ -11,6 +11,16 @@ All notable milestones for the nera project are documented in this file.
   using the same fixture natively and on BEAM. The existing compiler behavior
   is unchanged.
 
+## Record field defaults reject outer variables
+
+- `nera check` and `nera build` reject variables in record field defaults with
+  `variable 'X' in record definition`, including bindings such as
+  `begin X = 1, X end` and bare variable defaults.
+- Unused records and explicitly overridden defaults are checked too. Suppressing
+  warnings does not suppress these errors. Fun-local variables and comprehension
+  generator bindings remain valid.
+- Warning-analysis and CLI regressions cover the diagnostic and both commands.
+
 ## Pattern inputs are checked before their own bindings
 
 - Function heads, `case`, `receive`, `try ... of`, catch and `maybe ... else`

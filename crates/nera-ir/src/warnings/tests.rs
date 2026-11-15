@@ -1314,6 +1314,68 @@ fn pattern_inputs_keep_outer_and_sequential_bindings() {
 }
 
 #[test]
+fn record_defaults_reject_outer_variables() {
+    // Record defaults must reject variables even if the default is unused or
+    // overridden. These are real Erlang forms rejected by erlc, not just reads
+    // that happen to become unbound during lowering.
+    for (expr, name) in [
+        ("X", "X"),
+        ("begin X = 1, X end", "X"),
+        ("begin _X = 1, _X end", "_X"),
+        ("case 1 of X -> X end", "X"),
+        ("receive X -> X after 0 -> ok end", "X"),
+        ("try 1 of X -> X after ok end", "X"),
+        ("try 1 catch C:R:S -> {C, R, S} end", "C"),
+        ("maybe X ?= 1, X end", "X"),
+        ("[begin Y = X, Y end || X <- [1]]", "Y"),
+        ("{#{key => X}, <<X>>}", "X"),
+        ("X()", "X"),
+    ] {
+        for body in ["ok", "#r{}", "#r{value = ok}"] {
+            let source = format!(
+                "-module(test). -export([f/0]).
+                -record(r, {{value = {expr}}}). f() -> {body}."
+            );
+            let (module, names) = parse_module(&source);
+            let diagnostics = analyze_module(&module, &names, None);
+            let diagnostic = diagnostics.iter().find(|d| {
+                d.message == format!("variable '{name}' in record definition")
+            }).unwrap_or_else(|| panic!("{source}\n{diagnostics:?}"));
+            assert_eq!(diagnostic.severity, nera_syntax::error::Severity::Error);
+            let span = diagnostic.span.expect("record variable location");
+            assert_eq!(&source[span.start..span.end], name);
+        }
+    }
+}
+
+#[test]
+fn record_defaults_keep_local_variables() {
+    // erlc permits fun-local bindings and comprehension generator bindings;
+    // rejecting every variable node would break legal record defaults.
+    for expr in [
+        "fun(X) -> X end",
+        "fun() -> X = 1, X end",
+        "fun Again(0) -> ok; Again(X) -> Again(X - 1) end",
+        "[X || X <- [1]]",
+        "<< <<X>> || <<X>> <= <<1>> >>",
+        "[X || X <- begin Y = [1], Y end]",
+        "begin _ = 1, ok end",
+        "{1, [ok], #{key => <<1>>}}",
+    ] {
+        let source = format!(
+            "-module(test). -export([f/0]).
+            -record(r, {{value = {expr}}}). f() -> #r{{}}."
+        );
+        let (module, names) = parse_module(&source);
+        let diagnostics = analyze_module(&module, &names, None);
+        assert!(
+            !diagnostics.iter().any(|d| d.severity == nera_syntax::error::Severity::Error),
+            "{source}\n{diagnostics:?}"
+        );
+    }
+}
+
+#[test]
 fn record_default_pattern_inputs_are_checked() {
     // NERA-80: record defaults are the same expressions outside a function;
     // even an unused or overridden default must reject same-head inputs.
