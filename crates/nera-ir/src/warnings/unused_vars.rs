@@ -6,7 +6,7 @@ use nera_syntax::ast::{self, AtomId, Pattern};
 use nera_syntax::error::Diagnostic;
 
 use super::ast_walkers::{
-    collect_expr_refs, collect_guard_refs, collect_pattern_bindings,
+    collect_enclosing_refs, collect_expr_refs, collect_guard_refs, collect_pattern_bindings,
     collect_pattern_bindings_with_spans, collect_pattern_expr_refs, collect_pattern_local_refs,
 };
 use super::unbound_vars::collect_exported_bindings;
@@ -31,6 +31,7 @@ pub(super) fn check_unused_variables_fn(
             warnings,
             &empty_scope,
             &empty_scope,
+            &empty_scope,
         );
     }
 }
@@ -41,7 +42,12 @@ pub(super) fn check_unused_variables_fn(
 /// `outer_scope` holds the names bound before the clause. `compared` holds
 /// the names its patterns compare against instead of binding: the outer
 /// scope for case, receive, try and maybe arms, and nothing for function and
-/// fun heads, which shadow outer names.
+/// fun heads, which shadow outer names. `used_after` contains reads after the
+/// enclosing expression, restricted to names that expression exports.
+#[expect(
+    clippy::too_many_arguments,
+    reason = "Clause patterns, scope and later reads are distinct inputs to unused-variable analysis"
+)]
 fn check_clause_unused_vars(
     patterns: &[Pattern],
     guard: Option<&ast::Guard>,
@@ -50,6 +56,7 @@ fn check_clause_unused_vars(
     warnings: &mut Vec<Diagnostic>,
     compared: &HashSet<AtomId>,
     outer_scope: &HashSet<AtomId>,
+    used_after: &HashSet<AtomId>,
 ) {
     // 1. Collect all variable bindings from patterns (with spans)
     let mut bound: Vec<(AtomId, nera_syntax::span::Span)> = Vec::new();
@@ -88,6 +95,8 @@ fn check_clause_unused_vars(
         collect_expr_refs(expr, &mut referenced);
     }
 
+    referenced.extend(used_after);
+
     // 5. Emit warning for each bound var not in referenced set
     //    and not used for equality matching (duplicated).
     for (atom_id, span) in &bound {
@@ -103,15 +112,11 @@ fn check_clause_unused_vars(
         if name.starts_with('_') {
             continue;
         }
-        warnings.push(Diagnostic::warning_at(
-            format!("variable '{}' is unused", name),
-            *span,
-        ).with_code("unused_variable"));
+        warnings.push(
+            Diagnostic::warning_at(format!("variable '{}' is unused", name), *span)
+                .with_code("unused_variable"),
+        );
     }
-
-    // 5b. Check for unused variables bound by body-level match expressions.
-    let pattern_bound_ids: HashSet<AtomId> = bound.iter().map(|(id, _)| *id).collect();
-    check_body_match_unused_vars(body, atom_names, warnings, outer_scope, &pattern_bound_ids);
 
     // 6. Build nested scope (outer + newly bound) for recursion into body.
     let mut nested_scope = outer_scope.clone();
@@ -121,19 +126,28 @@ fn check_clause_unused_vars(
 
     // 7. Recurse into case/receive/try/fun clauses nested in body. Walking
     //    in order, `X = 42, case ... of {msg, X} -> ...` sees X in scope.
-    check_unused_in_body(body, atom_names, warnings, &mut nested_scope);
+    check_unused_in_body(body, atom_names, warnings, &mut nested_scope, used_after);
 }
 
 /// Walk a body in order: each expression sees the names earlier ones bind,
-/// including names bound in a block, a branch or a receive timeout.
+/// including names bound in a block, a branch or a receive timeout. Later
+/// reads flow back into nested branches as well as direct matches.
 fn check_unused_in_body(
     body: &[ast::Expr],
     atom_names: &HashMap<AtomId, String>,
     warnings: &mut Vec<Diagnostic>,
     scope: &mut HashSet<AtomId>,
+    used_after: &HashSet<AtomId>,
 ) {
-    for expr in body {
-        check_unused_in_expr(expr, atom_names, warnings, scope);
+    for (i, expr) in body.iter().enumerate() {
+        let mut later_refs = used_after.clone();
+        for later in &body[i + 1..] {
+            collect_enclosing_refs(later, &mut later_refs);
+        }
+        if matches!(expr, ast::Expr::Match(..)) {
+            warn_unused_match_bindings(expr, &later_refs, scope, atom_names, warnings);
+        }
+        check_unused_in_expr(expr, atom_names, warnings, scope, &later_refs);
         collect_exported_bindings(expr, scope);
     }
 }
@@ -145,10 +159,20 @@ fn check_unused_in_expr(
     atom_names: &HashMap<AtomId, String>,
     warnings: &mut Vec<Diagnostic>,
     outer_scope: &HashSet<AtomId>,
+    used_after: &HashSet<AtomId>,
 ) {
+    // Only exported bindings can be used by the continuation. In particular,
+    // an outer read must not mark a same-named fun-local binding as used.
+    let mut exported_uses = HashSet::new();
+    collect_exported_bindings(expr, &mut exported_uses);
+    exported_uses.retain(|id| used_after.contains(id));
+    let used_after = &exported_uses;
+
     match expr {
         ast::Expr::Case(scrutinee, clauses, _) => {
-            check_unused_in_expr(scrutinee, atom_names, warnings, outer_scope);
+            let mut input_uses = used_after.clone();
+            collect_clause_refs(clauses, &mut input_uses);
+            check_unused_in_expr(scrutinee, atom_names, warnings, outer_scope, &input_uses);
             // Names the scrutinee binds are bound in every clause.
             let mut input = outer_scope.clone();
             collect_exported_bindings(scrutinee, &mut input);
@@ -161,6 +185,7 @@ fn check_unused_in_expr(
                     warnings,
                     &input,
                     &input,
+                    used_after,
                 );
             }
         }
@@ -174,12 +199,19 @@ fn check_unused_in_expr(
                     warnings,
                     outer_scope,
                     outer_scope,
+                    used_after,
                 );
             }
             if let Some(after) = after {
                 // As in erlc, the after body does not see the timeout's
                 // bindings.
-                check_unused_in_body(&after.body, atom_names, warnings, &mut outer_scope.clone());
+                check_unused_in_body(
+                    &after.body,
+                    atom_names,
+                    warnings,
+                    &mut outer_scope.clone(),
+                    used_after,
+                );
             }
         }
         ast::Expr::Try {
@@ -191,7 +223,9 @@ fn check_unused_in_expr(
         } => {
             // The of-clauses see the try body's bindings.
             let mut try_scope = outer_scope.clone();
-            check_unused_in_body(body, atom_names, warnings, &mut try_scope);
+            let mut of_uses = HashSet::new();
+            collect_clause_refs(of_clauses, &mut of_uses);
+            check_unused_in_body(body, atom_names, warnings, &mut try_scope, &of_uses);
             for clause in of_clauses {
                 check_clause_unused_vars(
                     std::slice::from_ref(&clause.pattern),
@@ -201,6 +235,7 @@ fn check_unused_in_expr(
                     warnings,
                     &try_scope,
                     &try_scope,
+                    used_after,
                 );
             }
             for clause in catch_clauses {
@@ -222,10 +257,17 @@ fn check_unused_in_expr(
                     warnings,
                     outer_scope,
                     &catch_scope,
+                    used_after,
                 );
             }
             if let Some(after) = after_body {
-                check_unused_in_body(after, atom_names, warnings, &mut outer_scope.clone());
+                check_unused_in_body(
+                    after,
+                    atom_names,
+                    warnings,
+                    &mut outer_scope.clone(),
+                    used_after,
+                );
             }
         }
         ast::Expr::Fun(name, clauses, _) => {
@@ -245,62 +287,75 @@ fn check_unused_in_expr(
                     warnings,
                     &fresh,
                     &fun_scope,
+                    used_after,
                 );
             }
         }
         ast::Expr::If(clauses, _) => {
             for clause in clauses {
-                check_unused_in_body(&clause.body, atom_names, warnings, &mut outer_scope.clone());
+                check_unused_in_body(
+                    &clause.body,
+                    atom_names,
+                    warnings,
+                    &mut outer_scope.clone(),
+                    used_after,
+                );
             }
         }
         // Recurse into sub-expressions for completeness
         ast::Expr::Block(exprs, _) => {
-            check_unused_in_body(exprs, atom_names, warnings, &mut outer_scope.clone());
+            check_unused_in_body(
+                exprs,
+                atom_names,
+                warnings,
+                &mut outer_scope.clone(),
+                used_after,
+            );
         }
         ast::Expr::Tuple(exprs, _) => {
             for e in exprs {
-                check_unused_in_expr(e, atom_names, warnings, outer_scope);
+                check_unused_in_expr(e, atom_names, warnings, outer_scope, used_after);
             }
         }
         ast::Expr::Cons(h, t, _) | ast::Expr::Send(h, t, _) | ast::Expr::BinOp(_, h, t, _) => {
-            check_unused_in_expr(h, atom_names, warnings, outer_scope);
-            check_unused_in_expr(t, atom_names, warnings, outer_scope);
+            check_unused_in_expr(h, atom_names, warnings, outer_scope, used_after);
+            check_unused_in_expr(t, atom_names, warnings, outer_scope, used_after);
         }
         ast::Expr::Match(_, e, _) => {
-            check_unused_in_expr(e, atom_names, warnings, outer_scope);
+            check_unused_in_expr(e, atom_names, warnings, outer_scope, used_after);
         }
         ast::Expr::UnaryOp(_, e, _) | ast::Expr::Throw(e, _) | ast::Expr::Catch(e, _) => {
-            check_unused_in_expr(e, atom_names, warnings, outer_scope);
+            check_unused_in_expr(e, atom_names, warnings, outer_scope, used_after);
         }
         ast::Expr::Call(target, args, _) => {
             if let ast::CallTarget::Remote(module_expr, fun_expr) = target {
-                check_unused_in_expr(module_expr, atom_names, warnings, outer_scope);
-                check_unused_in_expr(fun_expr, atom_names, warnings, outer_scope);
+                check_unused_in_expr(module_expr, atom_names, warnings, outer_scope, used_after);
+                check_unused_in_expr(fun_expr, atom_names, warnings, outer_scope, used_after);
             }
             for arg in args {
-                check_unused_in_expr(arg, atom_names, warnings, outer_scope);
+                check_unused_in_expr(arg, atom_names, warnings, outer_scope, used_after);
             }
         }
         ast::Expr::MapUpdate(base, fields, _) => {
-            check_unused_in_expr(base, atom_names, warnings, outer_scope);
+            check_unused_in_expr(base, atom_names, warnings, outer_scope, used_after);
             for field in fields {
-                check_unused_in_expr(&field.key, atom_names, warnings, outer_scope);
-                check_unused_in_expr(&field.value, atom_names, warnings, outer_scope);
+                check_unused_in_expr(&field.key, atom_names, warnings, outer_scope, used_after);
+                check_unused_in_expr(&field.value, atom_names, warnings, outer_scope, used_after);
             }
         }
         ast::Expr::RecordUpdate { base, fields, .. } => {
-            check_unused_in_expr(base, atom_names, warnings, outer_scope);
+            check_unused_in_expr(base, atom_names, warnings, outer_scope, used_after);
             for field in fields {
-                check_unused_in_expr(&field.value, atom_names, warnings, outer_scope);
+                check_unused_in_expr(&field.value, atom_names, warnings, outer_scope, used_after);
             }
         }
         ast::Expr::RecordCreate { fields, .. } => {
             for field in fields {
-                check_unused_in_expr(&field.value, atom_names, warnings, outer_scope);
+                check_unused_in_expr(&field.value, atom_names, warnings, outer_scope, used_after);
             }
         }
         ast::Expr::RecordAccess { base, .. } => {
-            check_unused_in_expr(base, atom_names, warnings, outer_scope);
+            check_unused_in_expr(base, atom_names, warnings, outer_scope, used_after);
         }
         ast::Expr::ListComp(body, qualifiers, _) | ast::Expr::BinComp(body, qualifiers, _) => {
             // Generator patterns bind names for later qualifiers and the body.
@@ -309,41 +364,43 @@ fn check_unused_in_expr(
                 match q {
                     ast::LcQualifier::Generator(pat, expr, _)
                     | ast::LcQualifier::BinGenerator(pat, expr, _) => {
-                        check_unused_in_expr(expr, atom_names, warnings, &lc_scope);
+                        check_unused_in_expr(expr, atom_names, warnings, &lc_scope, used_after);
                         collect_pattern_bindings(pat, &mut lc_scope);
                     }
                     ast::LcQualifier::Filter(expr, _) => {
-                        check_unused_in_expr(expr, atom_names, warnings, &lc_scope);
+                        check_unused_in_expr(expr, atom_names, warnings, &lc_scope, used_after);
                         collect_exported_bindings(expr, &mut lc_scope);
                     }
                 }
             }
-            check_unused_in_expr(body, atom_names, warnings, &lc_scope);
+            check_unused_in_expr(body, atom_names, warnings, &lc_scope, used_after);
         }
         ast::Expr::Binary(segments, _) => {
             for seg in segments {
-                check_unused_in_expr(&seg.value, atom_names, warnings, outer_scope);
+                check_unused_in_expr(&seg.value, atom_names, warnings, outer_scope, used_after);
                 if let Some(ref size) = seg.size {
-                    check_unused_in_expr(size, atom_names, warnings, outer_scope);
+                    check_unused_in_expr(size, atom_names, warnings, outer_scope, used_after);
                 }
             }
         }
         ast::Expr::Map(fields, _) => {
             for field in fields {
-                check_unused_in_expr(&field.key, atom_names, warnings, outer_scope);
-                check_unused_in_expr(&field.value, atom_names, warnings, outer_scope);
+                check_unused_in_expr(&field.key, atom_names, warnings, outer_scope, used_after);
+                check_unused_in_expr(&field.value, atom_names, warnings, outer_scope, used_after);
             }
         }
-        ast::Expr::Maybe { body, else_clauses, .. } => {
+        ast::Expr::Maybe {
+            body, else_clauses, ..
+        } => {
             let mut maybe_scope = outer_scope.clone();
             for item in body {
                 match item {
                     ast::MaybeExpr::Expr(e) => {
-                        check_unused_in_expr(e, atom_names, warnings, &maybe_scope);
+                        check_unused_in_expr(e, atom_names, warnings, &maybe_scope, used_after);
                         collect_exported_bindings(e, &mut maybe_scope);
                     }
                     ast::MaybeExpr::CondMatch(pat, e, _) => {
-                        check_unused_in_expr(e, atom_names, warnings, &maybe_scope);
+                        check_unused_in_expr(e, atom_names, warnings, &maybe_scope, used_after);
                         collect_exported_bindings(e, &mut maybe_scope);
                         collect_pattern_bindings(pat, &mut maybe_scope);
                     }
@@ -358,6 +415,7 @@ fn check_unused_in_expr(
                     warnings,
                     outer_scope,
                     outer_scope,
+                    used_after,
                 );
             }
         }
@@ -372,16 +430,30 @@ fn check_unused_in_expr(
         | ast::Expr::FunRef(ast::FunRefTarget::Local(..) | ast::FunRefTarget::Remote(..), _)
         | ast::Expr::RecordIndex { .. } => {}
         ast::Expr::FunRef(ast::FunRefTarget::DynamicRemote(m, f, a), _) => {
-            check_unused_in_expr(m, atom_names, warnings, outer_scope);
-            check_unused_in_expr(f, atom_names, warnings, outer_scope);
-            check_unused_in_expr(a, atom_names, warnings, outer_scope);
+            check_unused_in_expr(m, atom_names, warnings, outer_scope, used_after);
+            check_unused_in_expr(f, atom_names, warnings, outer_scope, used_after);
+            check_unused_in_expr(a, atom_names, warnings, outer_scope, used_after);
         }
         ast::Expr::MacroCall { args, .. } => {
             if let Some(args) = args {
                 for arg in args {
-                    check_unused_in_expr(arg, atom_names, warnings, outer_scope);
+                    check_unused_in_expr(arg, atom_names, warnings, outer_scope, used_after);
                 }
             }
+        }
+    }
+}
+
+/// Reads in case/try-of clauses can consume bindings from their input.
+fn collect_clause_refs(clauses: &[ast::CaseClause], refs: &mut HashSet<AtomId>) {
+    for clause in clauses {
+        collect_pattern_bindings(&clause.pattern, refs);
+        collect_pattern_expr_refs(&clause.pattern, refs);
+        if let Some(guard) = &clause.guard {
+            collect_guard_refs(guard, refs);
+        }
+        for expr in &clause.body {
+            collect_enclosing_refs(expr, refs);
         }
     }
 }
@@ -400,35 +472,11 @@ fn collect_match_bindings_and_refs(
     }
 }
 
-/// Check for unused variables bound by top-level match expressions in a
-/// clause body.  Walks the body sequentially: for each `Match` expression,
-/// any NEW bindings that are not referenced by any subsequent expression
-/// (and not `_`-prefixed) are flagged as unused.
-fn check_body_match_unused_vars(
-    body: &[ast::Expr],
-    atom_names: &HashMap<AtomId, String>,
-    warnings: &mut Vec<Diagnostic>,
-    outer_scope: &HashSet<AtomId>,
-    pattern_bound: &HashSet<AtomId>,
-) {
-    let mut in_scope: HashSet<AtomId> = outer_scope.clone();
-    in_scope.extend(pattern_bound);
-
-    for (i, expr) in body.iter().enumerate() {
-        if matches!(expr, ast::Expr::Match(..)) {
-            warn_unused_match_bindings(expr, &body[i + 1..], &in_scope, atom_names, warnings);
-        }
-        // Every name the expression binds, including in a block or a receive
-        // timeout, is bound for later matches: they compare against it.
-        collect_exported_bindings(expr, &mut in_scope);
-    }
-}
-
 /// Warn about each name a body-level match binds fresh that neither the
 /// match itself nor a later expression reads.
 fn warn_unused_match_bindings(
     expr: &ast::Expr,
-    later: &[ast::Expr],
+    later_refs: &HashSet<AtomId>,
     in_scope: &HashSet<AtomId>,
     atom_names: &HashMap<AtomId, String>,
     warnings: &mut Vec<Diagnostic>,
@@ -445,9 +493,7 @@ fn warn_unused_match_bindings(
     }
 
     // Add references from subsequent expressions to the same-match reads.
-    for subsequent in later {
-        collect_expr_refs(subsequent, &mut referenced);
-    }
+    referenced.extend(later_refs);
 
     let mut warned: HashSet<AtomId> = HashSet::new();
     for (atom_id, span) in &new_bindings {
@@ -462,11 +508,8 @@ fn warn_unused_match_bindings(
             continue;
         }
         warnings.push(
-            Diagnostic::warning_at(
-                format!("variable '{}' is unused", name),
-                *span,
-            )
-            .with_code("unused_variable"),
+            Diagnostic::warning_at(format!("variable '{}' is unused", name), *span)
+                .with_code("unused_variable"),
         );
         warned.insert(*atom_id);
     }
