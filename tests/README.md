@@ -353,6 +353,7 @@ These are automatically skipped by the runner and show up as SKIP in output.
 | `list_comprehension.erl` | Basic LC, filters, pattern gen       | ~8         |
 | `comprehension_leading_filter.erl` | Leading and filter-only list/binary comprehensions: boolean results, short-circuit order, list/binary sources, captures, bitstrings and exceptions; same fixture on native and BEAM | Table-driven |
 | `comprehension_guard_filter.erl` | Guard-expression list/binary filters skip raising elements: map_size, arithmetic, compound guards, leading/filter-only forms, record defaults, nested list/binary generators, call resolution, captures and ordinary error controls; same fixture on native and BEAM | Table-driven |
+| `comprehension_filter_bindings.erl` | Filter-bound names read by later sources, map keys, binary sizes, filters, closures and templates across list/binary generators; shadowing, deferred tails, outer resumption and evaluation traces; same fixture on native and BEAM | Completion checked |
 | `lc_nested.erl`          | Nested list comprehension generators | ~8         |
 | `string_as_list.erl`     | String operations, comparison        | ~12        |
 | `string_codepoints.erl` | Non-ASCII expressions, full octal escape range, adjacency, list operations, patterns and Unicode format padding; also run on BEAM | 28 |

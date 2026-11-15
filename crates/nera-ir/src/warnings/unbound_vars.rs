@@ -105,7 +105,7 @@ enum Paths {
 /// bindings; funs, comprehensions, try, maybe, catch operands and skipped
 /// short-circuit operands do not supply definite bindings. The variable
 /// diagnostics and unreachable check share this view of later pattern inputs.
-pub(super) fn collect_exported_bindings(expr: &ast::Expr, scope: &mut HashSet<AtomId>) {
+pub(crate) fn collect_exported_bindings(expr: &ast::Expr, scope: &mut HashSet<AtomId>) {
     collect_bindings(expr, scope, Paths::Every);
 }
 
@@ -464,7 +464,6 @@ fn check_unbound_in_expr(
         ast::Expr::ListComp(body_expr, qualifiers, _)
         | ast::Expr::BinComp(body_expr, qualifiers, _) => {
             let mut lc_scope = scope.clone();
-            let mut before_generator = true;
             for q in qualifiers {
                 match q {
                     ast::LcQualifier::Generator(pat, source_expr, _)
@@ -476,13 +475,12 @@ fn check_unbound_in_expr(
                         // not from the bindings this generator introduces.
                         check_unbound_in_pattern_exprs(pat, &lc_scope, Context::Expression, atom_names, diagnostics);
                         collect_pattern_bindings(pat, &mut lc_scope);
-                        before_generator = false;
                     }
                     ast::LcQualifier::Filter(filter_expr, _) => {
                         check_unbound_in_expr(filter_expr, &lc_scope, context, atom_names, diagnostics);
-                        if before_generator {
-                            collect_exported_bindings(filter_expr, &mut lc_scope);
-                        }
+                        // Every completed filter supplies definite bindings
+                        // to the remaining qualifiers and template.
+                        collect_exported_bindings(filter_expr, &mut lc_scope);
                     }
                 }
             }

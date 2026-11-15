@@ -324,6 +324,7 @@ fn check_unsafe_in_subexprs(
                     }
                     ast::LcQualifier::Filter(filter_expr, _) => {
                         check_unsafe_in_subexprs(filter_expr, &lc_scope, atom_names, diagnostics);
+                        collect_exported_bindings(filter_expr, &mut lc_scope);
                     }
                 }
             }

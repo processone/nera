@@ -1457,6 +1457,69 @@ fn pattern_inputs_keep_exported_bindings() {
 }
 
 #[test]
+fn comprehension_filter_bindings_are_available_to_later_qualifiers() {
+    let (module, names) = parse_module(include_str!(
+        "../../../../tests/comprehension_filter_bindings.erl"
+    ));
+    let diagnostics = analyze_module(&module, &names, None);
+    assert!(
+        !diagnostics.iter().any(|d| d.severity == nera_syntax::error::Severity::Error),
+        "filter bindings must be valid later inputs: {diagnostics:?}"
+    );
+}
+
+#[test]
+fn comprehension_filter_bindings_reach_scope_sensitive_diagnostics() {
+    for (open, close) in [("[", "]"), ("<<", ">>")] {
+        for (template, qualifiers, expected) in [
+            ("case V of N -> <<1>>; _ -> <<0>> end",
+                "X <- [1], begin N = X, true end", None),
+            ("begin case V of true -> N = 1; false -> ok end, <<N>> end",
+                "X <- [1], begin N = X, true end", None),
+            ("begin case V of true -> N = 1; false -> N = 1 end, <<N>> end",
+                "X <- [1], begin N = X, true end", None),
+            ("begin F = fun(N) -> <<N>> end, F(V) end",
+                "X <- [1], begin N = X, true end", Some("shadowed_variable")),
+            ("<<N>>", "X <- [1], begin N = X, true end, N <- [V]",
+                Some("shadowed_variable")),
+            ("<<_N>>", "X <- [V], begin _N = X, true end, begin _N = 1, true end",
+                Some("match_underscore_var")),
+            ("<<_N>>", "X <- [true], X orelse begin _N = 1, true end, _N <- [V]", None),
+            ("<<N>>", "_ <- [V], {N, N} <- [{1, 1}]", None),
+        ] {
+            let source = format!("-module(test). -export([f/1]). f(V) ->
+                {open} ({template}) || {qualifiers} {close}.");
+            let (module, names) = parse_module(&source);
+            let diagnostics = analyze_module(&module, &names, None);
+            assert!(
+                !diagnostics.iter().any(|d| d.severity == nera_syntax::error::Severity::Error),
+                "{source}\n{diagnostics:?}"
+            );
+            let relevant: Vec<_> = diagnostics.iter().filter_map(|d| d.code.as_deref())
+                .filter(|code| ["unsafe_variable", "exported_var", "unreachable_clause",
+                    "unused_variable", "shadowed_variable", "match_underscore_var"].contains(code))
+                .collect();
+            assert_eq!(relevant, expected.into_iter().collect::<Vec<_>>(),
+                "{source}\n{diagnostics:?}");
+        }
+    }
+}
+
+#[test]
+fn comprehension_filters_do_not_export_local_or_partial_bindings() {
+    for expr in [
+        "[N || X <- [1], begin N = X, true end, _ <- [ok]], N",
+        "[N || X <- [1], case X of 1 -> N = 1, true; _ -> true end, _ <- [ok]]",
+        "[N || X <- [1], X > 0 andalso begin N = 1, true end, _ <- [ok]]",
+        "[N || _ <- begin N = 1, [ok] end]",
+    ] {
+        assert_unbound_pattern_input(
+            &format!("-module(test). -export([f/0]). f() -> {expr}."), "N",
+        );
+    }
+}
+
+#[test]
 fn unbound_in_guard() {
     let src = r#"
         -module(test).

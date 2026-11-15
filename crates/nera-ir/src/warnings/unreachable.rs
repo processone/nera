@@ -273,6 +273,7 @@ fn check_unreachable_in_expr(
                     }
                     ast::LcQualifier::Filter(e, _) => {
                         check_unreachable_in_expr(e, &lc_scope, atom_names, warnings);
+                        collect_exported_bindings(e, &mut lc_scope);
                     }
                 }
             }

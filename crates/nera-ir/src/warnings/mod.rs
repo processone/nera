@@ -56,6 +56,7 @@ use nera_syntax::error::Diagnostic;
 pub(crate) use ast_walkers::{collect_pattern_bindings, collect_pattern_refs, collect_expr_refs, collect_guard_refs};
 pub(crate) use binary_segments::first_refused_segment_error;
 pub(crate) use illegal_guards::is_guard_expr;
+pub(crate) use unbound_vars::collect_exported_bindings;
 
 // Re-export for cross-module unused record detection.
 pub use unused_records::collect_used_record_names;

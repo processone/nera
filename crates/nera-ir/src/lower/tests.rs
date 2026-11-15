@@ -1926,6 +1926,12 @@ fn test_binary_bound_segment_lowers() {
 }
 
 #[test]
+fn test_comprehension_filter_bindings_lowers() {
+    lower_source(include_str!("../../../../tests/comprehension_filter_bindings.erl"))
+        .expect("filter bindings must reach later helpers as initialized values");
+}
+
+#[test]
 fn test_generator_size_rebind_lowers() {
     // NERA-52: the final binary-consumption branch must preserve initialized
     // generator bindings through guards, sub-patterns and helper continuations.

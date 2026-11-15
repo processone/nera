@@ -11,6 +11,7 @@ use nera_syntax::error::Diagnostic;
 use nera_syntax::span::Span;
 
 use super::ast_walkers::{collect_pattern_bindings, collect_pattern_bindings_with_spans};
+use super::unbound_vars::collect_exported_bindings;
 
 /// Check a function for `_`-prefixed variables reused in pattern position.
 pub(super) fn check_match_underscore_vars_fn(
@@ -231,6 +232,7 @@ fn check_expr(
                     }
                     ast::LcQualifier::Filter(filter_expr, _) => {
                         check_expr(filter_expr, &lc_scope, atom_names, warnings);
+                        collect_exported_bindings(filter_expr, &mut lc_scope);
                     }
                 }
             }

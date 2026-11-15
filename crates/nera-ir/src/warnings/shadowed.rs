@@ -12,6 +12,7 @@ use nera_syntax::ast::{self, AtomId};
 use nera_syntax::error::Diagnostic;
 
 use super::ast_walkers::{collect_pattern_bindings, collect_pattern_bindings_with_spans};
+use super::unbound_vars::collect_exported_bindings;
 
 /// Check a function for shadowed variables in nested scopes.
 pub(super) fn check_shadowed_variables_fn(
@@ -107,11 +108,12 @@ fn check_shadowed_in_expr(
                     | ast::LcQualifier::BinGenerator(pat, source_expr, _) => {
                         // The source expression is evaluated in the current scope.
                         check_shadowed_in_expr(source_expr, &lc_scope, atom_names, warnings);
-                        // Generator pattern vars can shadow outer scope.
+                        // Generator patterns can shadow outer bindings,
+                        // including earlier generators and filters.
                         let mut bound = Vec::new();
                         collect_pattern_bindings_with_spans(pat, &mut bound);
                         for (atom_id, span) in &bound {
-                            if outer_scope.contains(atom_id) {
+                            if lc_scope.contains(atom_id) {
                                 let name = atom_names
                                     .get(atom_id)
                                     .map(|s| s.as_str())
@@ -126,11 +128,14 @@ fn check_shadowed_in_expr(
                                     ).with_code("shadowed_variable"));
                                 }
                             }
-                            lc_scope.insert(*atom_id);
                         }
+                        // Repeated names within this pattern are comparisons,
+                        // not shadowing of a name this same pattern introduces.
+                        lc_scope.extend(bound.iter().map(|(name, _)| *name));
                     }
                     ast::LcQualifier::Filter(filter_expr, _) => {
                         check_shadowed_in_expr(filter_expr, &lc_scope, atom_names, warnings);
+                        collect_exported_bindings(filter_expr, &mut lc_scope);
                     }
                 }
             }

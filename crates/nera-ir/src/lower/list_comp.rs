@@ -64,27 +64,25 @@ impl IrBuilder {
 
         // ── 3. Analyse free variables ──
         let captured_vars = self.collect_lc_captures(&groups, body_expr);
-        let num_captured = captured_vars.len() as u32;
 
         // ── 4. Pre-generate helper function names for all generators ──
-        let mut helpers: Vec<(AtomId, String, u32)> = Vec::new(); // (name_id, mangled, arity)
+        let mut helpers: Vec<(AtomId, String)> = Vec::new(); // (name_id, mangled)
         let prefix = if finalize_as_binary { "bc" } else { "lc" };
-        for k in 0..n {
+        for _ in 0..n {
             let id = self.lc_counter;
             self.lc_counter += 1;
             let name_str = format!("__{prefix}_{id}");
             let mangled = format!("{}__{prefix}_{id}", self.module_name.0);
             let name_id = self.fresh_atom_id();
             self.atom_names.insert(name_id, name_str);
-            // params: iter + acc + k tails + k heads + captured
-            let arity = 2 + 2 * k as u32 + num_captured;
-            self.module_functions
-                .insert((name_id, arity), mangled.clone());
-            helpers.push((name_id, mangled, arity));
+            helpers.push((name_id, mangled));
         }
 
         // ── 5. Build all helper functions ──
         let saved = self.save_state();
+        // Each completed helper records the names its filters introduced.
+        // Later helpers carry their values, not expressions to evaluate again.
+        let mut filter_bindings = Vec::new();
 
         for k in 0..n {
             if k > 0 {
@@ -97,7 +95,7 @@ impl IrBuilder {
                 self.next_block = 0;
                 self.scopes = vec![HashMap::new()];
             }
-            self.build_lc_helper(k, n, &groups, &helpers, &captured_vars, body_expr, finalize_as_binary, &bin_flags)?;
+            self.build_lc_helper(k, n, &groups, &helpers, &captured_vars, body_expr, finalize_as_binary, &bin_flags, &mut filter_bindings)?;
         }
 
         self.restore_state(saved);
@@ -234,7 +232,8 @@ impl IrBuilder {
     }
 
     /// Capture expression reads before the generator that shadows their name.
-    /// Earlier generator values travel through head parameters, not captures.
+    /// Earlier generator and filter values travel through helper parameters,
+    /// not captures.
     fn collect_lc_captures(
         &mut self,
         groups: &[GeneratorGroup<'_>],
@@ -313,7 +312,7 @@ impl IrBuilder {
     /// Build one LC helper function (helper_k of n total).
     ///
     /// Parameters for helper_k:
-    ///   iter_k, acc, tail_0…tail_{k-1}, head_0…head_{k-1}, captured…
+    ///   iter_k, acc, tail_0…tail_{k-1}, head_0…head_{k-1}, captured…, filter_values…
     ///
     /// The accumulator collects elements in reverse order. When the outermost
     /// helper (k==0) reaches the nil case, it reverses the accumulator via
@@ -324,13 +323,14 @@ impl IrBuilder {
         k: usize,
         n: usize,
         groups: &[GeneratorGroup<'_>],
-        helpers: &[(AtomId, String, u32)], // (name_id, mangled, arity)
+        helpers: &[(AtomId, String)], // (name_id, mangled)
         captured_vars: &[(AtomId, VarId)],
         body_expr: &ast::Expr,
         finalize_as_binary: bool,
         bin_gen_flags: &[bool],
+        filter_bindings: &mut Vec<Vec<AtomId>>,
     ) -> Result<(), LowerError> {
-        let (helper_name_id, ref helper_mangled, helper_arity) = helpers[k];
+        let (helper_name_id, ref helper_mangled) = helpers[k];
         // Each helper is its own function. Deferred tails recorded while
         // building the previous helper name that helper's variables.
         self.match_contexts.clear();
@@ -354,6 +354,18 @@ impl IrBuilder {
             env_params.push(param);
             self.bind_var(*name, param);
         }
+
+        // Preserve one slot per binding layer, even if a later generator
+        // shadows the same name. Resuming an outer helper needs its old value.
+        let filter_params: Vec<Vec<(AtomId, VarId)>> = filter_bindings.iter()
+            .map(|names| names.iter().map(|name| (*name, self.fresh_var())).collect())
+            .collect();
+        let carried_filters: Vec<VarId> = filter_params.iter().flatten()
+            .map(|(_, var)| *var).collect();
+        let helper_arity = 2 + 2 * k as u32 + env_params.len() as u32
+            + carried_filters.len() as u32;
+        self.module_functions.insert((helper_name_id, helper_arity), helper_mangled.clone());
+        let mut new_filter_names = Vec::new();
 
         // ── Nil block ──
         let nil_block = self.fresh_block_with_id();
@@ -390,6 +402,7 @@ impl IrBuilder {
                 chain_args.push(*item);
             }
             chain_args.extend_from_slice(&env_params);
+            chain_args.extend(filter_params[..k - 1].iter().flatten().map(|(_, var)| *var));
             self.set_terminator(Terminator::TailCall(
                 CallTarget::Local(helpers[k - 1].0),
                 chain_args,
@@ -414,6 +427,9 @@ impl IrBuilder {
         // segment size), so they are extracted before it runs.
         for j in 0..k {
             self.bind_generator_pattern(&groups[j].0, head_params[j], false);
+            for (name, var) in &filter_params[j] {
+                self.bind_var(*name, *var);
+            }
         }
 
         let generator_inputs = self.collect_all_bindings();
@@ -442,11 +458,12 @@ impl IrBuilder {
             (generator_scopes, generator_match_contexts)
         };
 
+        let before_filters = self.collect_all_bindings();
         let filters = &groups[k].2;
         let is_innermost = k == n - 1;
 
         // Helper: build args for a self tail-call.
-        // self(tail_var, acc_var, tail_0…tail_{k-1}, head_0…head_{k-1}, captured…)
+        // self(tail_var, acc_var, tail_0…tail_{k-1}, head_0…head_{k-1}, captured…, filter_values…)
         let build_self_args = |tail_params: &[VarId],
                                head_params: &[VarId],
                                env_params: &[VarId],
@@ -457,6 +474,7 @@ impl IrBuilder {
             a.extend_from_slice(tail_params);
             a.extend_from_slice(head_params);
             a.extend_from_slice(env_params);
+            a.extend_from_slice(&carried_filters);
             a
         };
 
@@ -487,6 +505,7 @@ impl IrBuilder {
                 inner_args.extend_from_slice(&head_params);
                 inner_args.push(head_var);
                 inner_args.extend_from_slice(&env_params);
+                inner_args.extend_from_slice(&carried_filters);
                 self.set_terminator(Terminator::TailCall(
                     CallTarget::Local(helpers[k + 1].0),
                     inner_args,
@@ -531,6 +550,21 @@ impl IrBuilder {
                     self_args,
                 ));
             } else {
+                // Lowering may retain names from skipped short-circuit
+                // operands. Only definite exports can cross helper boundaries.
+                let mut definite = HashSet::new();
+                for filter in filters {
+                    crate::warnings::collect_exported_bindings(filter, &mut definite);
+                }
+                new_filter_names = definite.into_iter()
+                    .filter(|name| !before_filters.contains_key(name)
+                        && self.lookup_var(*name).is_some()).collect();
+                new_filter_names.sort_by_key(|name| name.0);
+                // Materialize deferred tails before passing them to a helper.
+                let new_filter_values: Vec<VarId> = new_filter_names.iter().map(|name| {
+                    let var = self.lookup_var(*name).expect("filter binding exists");
+                    self.materialize_bound_variable(*name, var)
+                }).collect();
                 let next_iter = self.lower_expr(groups[k + 1].1, false)?;
 
                 let mut inner_args = vec![next_iter, acc_param];
@@ -539,6 +573,8 @@ impl IrBuilder {
                 inner_args.extend_from_slice(&head_params);
                 inner_args.push(head_var);
                 inner_args.extend_from_slice(&env_params);
+                inner_args.extend_from_slice(&carried_filters);
+                inner_args.extend_from_slice(&new_filter_values);
                 self.set_terminator(Terminator::TailCall(
                     CallTarget::Local(helpers[k + 1].0),
                     inner_args,
@@ -627,6 +663,7 @@ impl IrBuilder {
         all_params.extend_from_slice(&tail_params);
         all_params.extend_from_slice(&head_params);
         all_params.extend_from_slice(&env_params);
+        all_params.extend_from_slice(&carried_filters);
         let mut helper_func = IrFunction {
             name: helper_name_id,
             arity: helper_arity,
@@ -643,6 +680,7 @@ impl IrBuilder {
         #[cfg(test)]
         crate::passes::assert_valid(&helper_func, "after helper yield insertion");
         self.functions.push(helper_func);
+        filter_bindings.push(new_filter_names);
 
         Ok(())
     }
