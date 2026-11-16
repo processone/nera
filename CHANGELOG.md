@@ -35,6 +35,16 @@ All notable milestones for the nera project are documented in this file.
   with BEAM's rounding, option ordering and conversion size limits.
 - `float_text` checks the same output and error assertions natively and on BEAM.
 
+## Failing binary pattern sizes reject the pattern
+
+- An exception while evaluating a binary pattern's size now makes the
+  pattern fail instead of escaping as `badarith` or `badarg`, matching BEAM.
+  Later clauses remain available, and a surrounding `try` does not catch
+  the size error. A failed `=` match still raises its ordinary `badmatch`.
+- `binary_pattern_size_failure` runs unchanged natively and on BEAM,
+  covering arithmetic and BIF sizes, valid extraction, clause fallthrough,
+  function heads, funs, receives, exception handlers, `maybe` and generators.
+
 ## Binary split options match BEAM
 
 - `binary:split/3` now supports `trim` to remove trailing empty parts and

@@ -40,8 +40,28 @@ impl IrBuilder {
         expr: &ast::Expr,
         earlier_segments: &HashSet<AtomId>,
     ) -> Result<VarId, LowerError> {
+        self.with_pattern_expr_inputs(earlier_segments, |builder| builder.lower_expr(expr, false))
+    }
+
+    /// Size evaluation has guard semantics: an exception rejects the pattern.
+    /// The guard lowerer's `false` result is an invalid size, so the matcher's
+    /// checked size conversion takes its ordinary failure path. Pre-binding
+    /// uses the same policy when it repeats extraction in a successful body.
+    pub(crate) fn lower_pattern_size_expr(
+        &mut self,
+        expr: &ast::Expr,
+        earlier_segments: &HashSet<AtomId>,
+    ) -> VarId {
+        self.with_pattern_expr_inputs(earlier_segments, |builder| builder.lower_guard_expr(expr))
+    }
+
+    fn with_pattern_expr_inputs<T>(
+        &mut self,
+        earlier_segments: &HashSet<AtomId>,
+        lower: impl FnOnce(&mut Self) -> T,
+    ) -> T {
         let Some(mut inputs) = self.pattern_inputs.clone() else {
-            return self.lower_expr(expr, false);
+            return lower(self);
         };
         for name in earlier_segments {
             if let Some(var) = self.lookup_var(*name) {
@@ -49,7 +69,7 @@ impl IrBuilder {
             }
         }
         let scopes = std::mem::replace(&mut self.scopes, vec![inputs]);
-        let result = self.lower_expr(expr, false);
+        let result = lower(self);
         self.scopes = scopes;
         result
     }
@@ -223,9 +243,7 @@ impl IrBuilder {
                                             self.emit_const(Literal::Integer(bits))
                                         } else {
                                             // dynamic size — evaluate the expression
-                                            let size_var = self.lower_pattern_expr(size_expr, &earlier_segments).unwrap_or_else(|_| {
-                                                self.emit_const(Literal::Integer(8))
-                                            });
+                                            let size_var = self.lower_pattern_size_expr(size_expr, &earlier_segments);
                                             if unit == 1 {
                                                 size_var
                                             } else {
