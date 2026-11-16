@@ -55,6 +55,11 @@ pub(crate) fn format_short_float(value: f64) -> String {
 /// Legacy scientific spelling: twenty decimals by default, with an explicit
 /// exponent sign and at least two exponent digits, unlike shortest spelling.
 pub(crate) fn scientific(value: f64, precision: usize) -> String {
+    // The ETF decoder accepts non-finite floats. Preserve their native text;
+    // they have no exponent separator and must not panic across the C ABI.
+    if !value.is_finite() {
+        return value.to_string();
+    }
     let raw = format!("{value:.precision$e}");
     let (mantissa, exponent) = raw.split_once('e').unwrap();
     let exponent: i32 = exponent.parse().unwrap();
@@ -176,6 +181,21 @@ pub(crate) unsafe fn with_options(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// These NEW_FLOAT_EXT payloads are accepted by the native ETF decoder.
+    /// Unlike BEAM (which rejects them), native conversion retains safe text.
+    #[test]
+    fn scientific_nonfinite_retains_native_text() {
+        for (bits, expected) in [
+            (0x7ff0_0000_0000_0000, "inf"),
+            (0xfff0_0000_0000_0000, "-inf"),
+            (0x7ff8_0000_0000_0000, "NaN"),
+        ] {
+            for precision in [0, 2, 20, 249] {
+                assert_eq!(scientific(f64::from_bits(bits), precision), expected);
+            }
+        }
+    }
 
     /// OTP 29 readings: negative halves, carry through the integer part,
     /// multiple decimal places, and a non-halfway predecessor of 1.25.

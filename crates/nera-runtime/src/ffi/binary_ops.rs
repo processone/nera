@@ -1373,7 +1373,7 @@ pub unsafe extern "C" fn nera_rt_float_to_binary_2(
             s
         }
     } else {
-        // Default: scientific notation with 20 digits (matches float_to_list/1)
+        // Default: scientific notation with 20 decimal places.
         format!("{:.20e}", val)
     };
 
