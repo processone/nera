@@ -167,7 +167,7 @@ Maintainers with OTP 29.0.4 installed can verify the catalogue with
 | tuple_size/1        | ✅      |
 | setelement/3        | ✅      |
 | byte_size/1         | ✅      | Rounds partial final bytes up, including deferred pattern segments and guards; non-bitstrings raise badarg and fail guards; direct, apply, variable module/function and fun reference calls |
-| bit_size/1          | ✅      | Non-bitstrings raise badarg; guards on a non-bitstring fail |
+| bit_size/1          | ✅      | Non-bitstrings raise badarg; guards on a non-bitstring fail; direct, apply, variable module/function and fun reference calls |
 | map_get/2           | ✅      |
 | is_map_key/2        | ✅      | Auto-imported; guards, negated guards and bodies; non-maps raise badmap |
 | map_size/1          | ✅      | Non-maps raise badmap; guards on a non-map fail |
@@ -181,7 +181,7 @@ Maintainers with OTP 29.0.4 installed can verify the catalogue with
 | is_binary/1         | ✅      |
 | is_map/1            | ✅      |
 | is_function/1,2     | ✅      |
-| is_bitstring/1      | ✅      |
+| is_bitstring/1      | ✅      | Direct, apply, variable module/function and fun reference calls; false for non-bitstrings |
 | is_reference/1      | ✅      |
 | is_boolean/1        | ✅      |
 | atom_to_list/1      | ✅      |

@@ -2,6 +2,16 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Dynamic bitstring BIFs match direct calls
+
+- `bit_size/1` and `is_bitstring/1` now work through `apply/2,3`, variable
+  module/function names and fun references instead of raising `undef`.
+- Dynamic `bit_size/1` returns the bit count and raises `badarg` for
+  non-bitstrings; dynamic `is_bitstring/1` returns `true` or `false`, as on BEAM.
+- `bif_bitstring_dynamic` runs unchanged natively and on BEAM, covering empty,
+  partial-byte, large and extracted bitstrings, non-bitstrings and higher-order
+  fun consumers with explicit completion.
+
 ## Regression coverage for case exports inside maybe bodies
 
 - A diagnostic regression protects names bound in every `case` branch and read
