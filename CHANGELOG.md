@@ -12,6 +12,16 @@ All notable milestones for the nera project are documented in this file.
   partial-byte, large and extracted bitstrings, non-bitstrings and higher-order
   fun consumers with explicit completion.
 
+## Bound catch classes are captured by funs
+
+- A fun that uses an already-bound name only as a catch class now captures
+  its value. A mismatching exception falls through instead of treating the
+  name as a fresh class variable.
+- The same read counts as a use of the outer binding, removing false
+  unused-variable warnings.
+- `fun_catch_class` checks matching and mismatching classes, nested and named
+  funs, comprehension helpers and fun-head shadowing natively and on BEAM.
+
 ## Regression coverage for case exports inside maybe bodies
 
 - A diagnostic regression protects names bound in every `case` branch and read
