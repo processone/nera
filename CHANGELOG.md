@@ -2,6 +2,19 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Binary split options match BEAM
+
+- `binary:split/3` now supports `trim` to remove trailing empty parts and
+  `{scope, {Start, Length}}` to limit matching, including negative lengths.
+  Bytes outside the scope remain in the returned parts; matches must fit
+  wholly inside the scope. `trim_all` still removes every empty part.
+- Unknown options, malformed or out-of-range scopes, and partial-byte
+  subjects now raise `badarg` instead of being ignored or rounded to bytes.
+  `binary:split/2` rejects partial-byte subjects too.
+- `binary_split_options` runs the same assertions natively and on BEAM,
+  including empty inputs, scope boundaries, duplicate options, sub-binaries
+  and direct, apply and fun-reference calls.
+
 ## MFA spawn runs erlang BIFs in the child
 
 - `spawn/3`, `spawn_link/3` and `spawn_monitor/3` now dispatch erlang BIFs
