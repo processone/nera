@@ -493,6 +493,7 @@ These are automatically skipped by the runner and show up as SKIP in output.
 |--------------------|-------------------------------|------------|
 | `lists_bifs.erl`   | lists module BIF functions    | ~12        |
 | `lists_stdlib.erl` | lists module Erlang functions | ~15        |
+| `lists_keysort.erl` | Stable Nth-element tuple sorting, numeric-equal and mixed-type keys, odd/even equal-key runs, long input, every ternary key list through length 5, argument errors and direct/apply/dynamic/fun calls; same fixture on BEAM | Table-driven |
 | `lists_key_numeric.erl` | keydelete/3, keyreplace/4 and keystore/4 numeric equality, nested and map-valued keys, first-match/order/miss behavior, skipped non-tuples/short tuples, invalid positions and direct/apply/dynamic/fun calls; also run on BEAM | Table-driven |
 | `lists_key_argument_errors.erl` | OTP 29 argument errors: keyreplace/4 and keystore/4 `function_clause` for non-tuple replacements; keyfind/3, keymember/3 and keysearch/3 `badarg` for positions below 1, non-integers and integers from 2^59, and for non-lists and improper tails reached before a match; largest valid position; hits before an improper tail; direct/apply/dynamic/fun calls; also run on BEAM | Table-driven |
 | `maps_stdlib.erl`  | maps module functions         | ~12        |

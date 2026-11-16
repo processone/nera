@@ -439,7 +439,7 @@ functions as compiled Erlang in `erlang/stdlib/lists.erl`.
 | keydelete/3       | ✅      | Erlang stdlib; first match, numeric (`==`) equality |
 | keyreplace/4      | ✅      | Erlang stdlib; first match, numeric (`==`) equality; tuple replacement only (`function_clause`) |
 | keystore/4        | ✅      | Erlang stdlib; numeric (`==`) equality, replaces first match or appends; tuple replacement only (`function_clause`) |
-| keysort/2         | ✅      | Erlang stdlib       |
+| keysort/2         | ✅      | Erlang stdlib; stable ascending order by the Nth tuple element, including numeric-equal keys |
 | usort/1,2         | ✅      | Erlang stdlib       |
 | max/1             | ✅      | Erlang stdlib       |
 | min/1             | ✅      | Erlang stdlib       |

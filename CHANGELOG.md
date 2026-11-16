@@ -2,6 +2,17 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Stable tuple-key sorting
+
+- `lists:keysort/2` now compiles natively and sorts tuples in ascending order
+  by their Nth element. Equal keys retain their original order, including
+  integer and float keys that compare equal, as on BEAM.
+- The Erlang stdlib implementation uses contiguous merge-sort halves and
+  keeps all tuples; it does not sort by the other tuple fields.
+- `lists_keysort` runs unchanged natively and on BEAM, covering key positions,
+  equal and mixed-type keys, long inputs, exhaustive short lists, argument
+  errors and direct, apply, dynamic and fun-reference calls.
+
 ## Binary split options match BEAM
 
 - `binary:split/3` now supports `trim` to remove trailing empty parts and
