@@ -394,7 +394,7 @@ impl IrBuilder {
             builder.lower_function(func)?;
         }
 
-        let exports = module
+        let mut exports: Vec<IrExport> = module
             .exports
             .iter()
             .map(|fa| IrExport {
@@ -402,6 +402,14 @@ impl IrBuilder {
                 arity: fa.arity,
             })
             .collect();
+        if module.export_all {
+            // Export source definitions, not lifted lambdas or comprehension helpers.
+            for func in &module.functions {
+                if !exports.iter().any(|export| export.name == func.name && export.arity == func.arity) {
+                    exports.push(IrExport { name: func.name, arity: func.arity });
+                }
+            }
+        }
 
         let ir_module = IrModule {
             name: module.name,

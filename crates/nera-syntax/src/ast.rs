@@ -13,8 +13,8 @@ pub struct Module {
     /// Span covering just the module name atom in `-module(Name).`
     pub name_span: Span,
     pub exports: Vec<FunArity>,
-    /// `-compile(export_all)`. `exports` keeps the declared list; the flag
-    /// only makes `module_info(exports)` list every function, as on BEAM.
+    /// `-compile(export_all)`. `exports` keeps the explicit list; the flag
+    /// also exports every source function and lists it in `module_info(exports)`.
     pub export_all: bool,
     pub imports: Vec<ImportDecl>,
     pub no_auto_import: NoAutoImport,

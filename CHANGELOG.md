@@ -7,8 +7,8 @@ All notable milestones for the nera project are documented in this file.
 - `apply(Module, Function, Args)` and variable module/function calls now raise
   `error:undef` when the target function exists but is not exported, as on BEAM.
   Tail calls, external fun calls and qualified self calls respect the same exports.
-- Exported functions remain callable, while local private calls, local funs and
-  their metadata keep access to private definitions.
+- Exported functions, including those exported by `-compile(export_all)`, remain
+  callable. Local private calls, local funs and their metadata keep private access.
 - `apply_export_visibility` runs the same assertions natively and on BEAM,
   including zero- and multi-argument callbacks and exports with another arity.
 

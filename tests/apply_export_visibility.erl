@@ -1,4 +1,5 @@
 %% EXPECT: apply export visibility ok
+%% MODULES: _apply_export_all.erl
 -module(apply_export_visibility).
 -export([test/0, callback/0, callback/3]).
 
@@ -25,6 +26,15 @@ test() ->
     {name, callback} = erlang:fun_info(Local, name),
     {arity, 1} = erlang:fun_info(Local, arity),
     erase(private_callback_entered),
+    %% export_all is a real export policy, including cross-module direct links.
+    All = id(apply_export_all),
+    ready = apply(All, callback, []),
+    request = apply(All, callback, [request]),
+    request = All:callback(request),
+    ready = apply_export_all:callback(),
+    request = All:tail(request),
+    AllFun = fun All:callback/1,
+    request = AllFun(request),
     io:format("apply export visibility ok~n"),
     ok.
 
