@@ -48,6 +48,7 @@ pub static MALLOC_CONF: Option<&'static libc::c_char> = {
 
 mod base64;
 mod io_format;
+mod float_format;
 mod native_work;
 mod phash2;
 pub mod term;

@@ -99,6 +99,7 @@ pub const BIF_TABLE: &[BifEntry] = &[
     BifEntry { module: "erlang", function: "list_to_integer", arity: 2, ffi_symbol: Some("nera_rt_list_to_integer_2"), param_names: None, spec: Some("-spec list_to_integer(String, Base) -> integer() when Base :: 2..36.") },
     BifEntry { module: "erlang", function: "list_to_integer", arity: 1, ffi_symbol: Some("nera_rt_list_to_integer"), param_names: None, spec: Some("-spec list_to_integer(String) -> integer().") },
     BifEntry { module: "erlang", function: "float_to_list",   arity: 1, ffi_symbol: Some("nera_rt_float_to_list"),   param_names: None, spec: Some("-spec float_to_list(Float) -> string().") },
+    BifEntry { module: "erlang", function: "float_to_list",   arity: 2, ffi_symbol: Some("nera_rt_float_to_list_2"), param_names: Some(&["Float", "Options"]), spec: Some("-spec float_to_list(Float, Options) -> string().") },
     BifEntry { module: "erlang", function: "list_to_tuple",      arity: 1, ffi_symbol: Some("nera_rt_list_to_tuple"),      param_names: None, spec: Some("-spec list_to_tuple(List) -> tuple().") },
     BifEntry { module: "erlang", function: "tuple_to_list",      arity: 1, ffi_symbol: Some("nera_rt_tuple_to_list"),      param_names: None, spec: Some("-spec tuple_to_list(Tuple) -> [term()].") },
     BifEntry { module: "erlang", function: "integer_to_binary",  arity: 1, ffi_symbol: Some("nera_rt_integer_to_binary"),  param_names: None, spec: Some("-spec integer_to_binary(Integer) -> binary().") },
