@@ -40,8 +40,6 @@ use signatures::{
 use liveness::{compute_suspend_points, SuspendPoint};
 #[cfg(test)]
 use liveness::{collect_instruction_defs, collect_instruction_uses, collect_terminator_uses, terminator_successors};
-#[cfg(test)]
-use std::collections::HashSet;
 
 /// Error during function translation.
 #[derive(Debug)]
