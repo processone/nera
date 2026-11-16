@@ -94,6 +94,7 @@ pub unsafe extern "C" fn nera_rt_intern_atoms_batch(
 /// `fun_terms`:  array of `count` function atom terms (u64).
 /// `arities`:    array of `count` arities (u32).
 /// `func_ptrs`:  array of `count` function pointers.
+/// `exports`:    array of `count` export flags (u32, zero for private definitions).
 /// `count`:      number of functions.
 #[no_mangle]
 pub unsafe extern "C" fn nera_rt_register_functions_batch(
@@ -101,6 +102,7 @@ pub unsafe extern "C" fn nera_rt_register_functions_batch(
     fun_terms: *const u64,
     arities: *const u32,
     func_ptrs: *const crate::process::ErlFn,
+    exports: *const u32,
     count: u32,
 ) {
     let ft = global_function_table();
@@ -110,7 +112,8 @@ pub unsafe extern "C" fn nera_rt_register_functions_batch(
         let fun_id = ErlTerm(unsafe { *fun_terms.add(i) }).as_atom_id().unwrap_or(0);
         let arity = unsafe { *arities.add(i) };
         let func = unsafe { *func_ptrs.add(i) };
-        table.insert((mod_id, fun_id, arity), func);
+        let exported = unsafe { *exports.add(i) } != 0;
+        table.insert((mod_id, fun_id, arity), crate::entry::RegisteredFunction { func, exported });
     }
 }
 

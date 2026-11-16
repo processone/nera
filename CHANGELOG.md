@@ -2,6 +2,16 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## External calls respect module exports
+
+- `apply(Module, Function, Args)` and variable module/function calls now raise
+  `error:undef` when the target function exists but is not exported, as on BEAM.
+  Tail calls, external fun calls and qualified self calls respect the same exports.
+- Exported functions remain callable, while local private calls, local funs and
+  their metadata keep access to private definitions.
+- `apply_export_visibility` runs the same assertions natively and on BEAM,
+  including zero- and multi-argument callbacks and exports with another arity.
+
 ## Stable tuple-key sorting
 
 - `lists:keysort/2` now compiles natively and sorts tuples in ascending order

@@ -449,6 +449,7 @@ These are automatically skipped by the runner and show up as SKIP in output.
 | `xmod_bidir.erl`    | Bidirectional cross-module calls | ~4         |
 | `xmod_multi.erl`    | Multi-module linking             | ~4         |
 | `dynamic_apply.erl` | apply/3, fun M:F/A               | ~8         |
+| `apply_export_visibility.erl` | Unexported callbacks raise `error:undef` through apply/3, variable module/function calls, tail calls and remote funs; exported overloads, local private calls, local funs and their metadata still work; same fixture on native and BEAM | Completion checked |
 
 ### IO & Formatting
 

@@ -22,10 +22,16 @@ pub(crate) fn runtime_start_instant() -> &'static std::time::Instant {
 // FunctionTable
 // ---------------------------------------------------------------------------
 
+/// A compiled definition retained for internal lookup and fun metadata.
+pub(crate) struct RegisteredFunction {
+    pub(crate) func: ErlFn,
+    pub(crate) exported: bool,
+}
+
 /// A registry mapping `(module_atom_id, function_atom_id, arity)` to a
-/// compiled function pointer. Populated by generated code at startup.
+/// compiled definition. Populated by generated code at startup.
 pub struct FunctionTable {
-    pub(crate) table: RwLock<HashMap<(u32, u32, u32), ErlFn>>,
+    pub(crate) table: RwLock<HashMap<(u32, u32, u32), RegisteredFunction>>,
 }
 
 impl Default for FunctionTable {
@@ -42,14 +48,24 @@ impl FunctionTable {
         }
     }
 
-    /// Register a compiled function.
+    /// Register an externally callable compiled function.
     pub fn register(&self, module: u32, function: u32, arity: u32, func: ErlFn) {
-        self.table.write().insert((module, function, arity), func);
+        self.table.write().insert(
+            (module, function, arity),
+            RegisteredFunction { func, exported: true },
+        );
     }
 
-    /// Look up a function by MFA triple.
+    /// Look up an internal definition by MFA triple, regardless of visibility.
     pub fn lookup(&self, module: u32, function: u32, arity: u32) -> Option<ErlFn> {
-        self.table.read().get(&(module, function, arity)).copied()
+        self.table.read().get(&(module, function, arity)).map(|entry| entry.func)
+    }
+
+    /// External calls may only enter the module's exported definitions.
+    pub fn lookup_exported(&self, module: u32, function: u32, arity: u32) -> Option<ErlFn> {
+        self.table.read().get(&(module, function, arity))
+            .filter(|entry| entry.exported)
+            .map(|entry| entry.func)
     }
 }
 

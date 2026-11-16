@@ -79,10 +79,9 @@ pub fn check_unresolved_calls(
                     match instr {
                         Instruction::Call(_result, CallTarget::Remote(mod_id, fun_id), args) => {
                             let arity = args.len() as u32;
-                            // Skip calls within the same module (local-to-remote
-                            // rewrites such as auto-imported BIFs share the
-                            // module atom ID, but intra-module calls don't need
-                            // export checks).
+                            // Leave qualified self calls to runtime undef checks.
+                            // Local-to-remote rewrites such as auto-imported
+                            // BIFs also share the module atom ID.
                             if mod_id.0 != module.name.0 {
                                 check_target(
                                     mod_id.0,
