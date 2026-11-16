@@ -1059,16 +1059,18 @@ impl<'src> Formatter<'src> {
     /// This prevents `(A =:= B) and (C =:= D)` from being emitted as
     /// `A =:= B and C =:= D` (which re-parses with different grouping).
     fn format_binop_child(&mut self, child: &Expr, parent_prec: u8) -> Doc {
-        if let Expr::BinOp(child_op, _, _, _) = child {
-            if binop_precedence(*child_op) < parent_prec {
-                return concat_all(vec![
-                    text("("),
-                    self.format_expr(child),
-                    text(")"),
-                ]);
-            }
+        let needs_grouping = match child {
+            Expr::BinOp(child_op, _, _, _) => binop_precedence(*child_op) < parent_prec,
+            // These bind more weakly than every binary operator, including
+            // when they occur at either end of a flattened operator chain.
+            Expr::Match(..) | Expr::Send(..) | Expr::Catch(..) => true,
+            _ => false,
+        };
+        if needs_grouping {
+            concat_all(vec![text("("), self.format_expr(child), text(")")])
+        } else {
+            self.format_expr(child)
         }
-        self.format_expr(child)
     }
 
     // ── Helper formatters ───────────────────────────────────────────

@@ -68,6 +68,22 @@ All notable milestones for the nera project are documented in this file.
   mixed generators, closures, deferred bitstring tails, short-circuit filters,
   conditional rematches and evaluation traces.
 
+## Short-circuit bindings report their unsafe operator
+
+- `nera check` and `nera build` report `variable 'Y' unsafe in 'andalso'`
+  (or `orelse`) when later code reads a name bound only in the right operand,
+  matching `erlc` rather than reporting only an unbound-variable error.
+- Prebound names, bindings from the left operand and names used only within
+  the right operand remain valid. Fun and comprehension bindings stay local.
+- Enclosing match patterns and later `maybe` items or comprehension filters
+  cannot reuse conditional names as fresh bindings. The same checks apply in
+  expression callees, receive timeouts and record-default expressions.
+- Formatting preserves parentheses around match, send and catch operands of
+  binary operators, including flattened chains, so these programs retain their
+  syntax and grouping after formatting.
+- Analyzer, formatter and compile-error regressions cover both short-circuit
+  operators.
+
 ## Unsupported float segment widths compile as on OTP 29
 
 - Literal float segment widths outside the supported encodings no longer reject

@@ -341,28 +341,7 @@ fn collect_refs(expr: &ast::Expr, refs: &mut HashSet<AtomId>, scoping: RefScopin
         ast::Expr::ListComp(body, qualifiers, _) | ast::Expr::BinComp(body, qualifiers, _)
             if scoping == RefScoping::Lexical =>
         {
-            // Generator patterns bind fresh names for later qualifiers and the
-            // body. A generator's source and pattern inputs are read before
-            // its own pattern binds.
-            let mut fresh = HashSet::new();
-            let mut local = HashSet::new();
-            for q in qualifiers {
-                match q {
-                    ast::LcQualifier::Generator(pat, expr, _)
-                    | ast::LcQualifier::BinGenerator(pat, expr, _) => {
-                        collect_pattern_refs(pat, &mut local);
-                        collect_refs(expr, &mut local, scoping);
-                        refs.extend(local.drain().filter(|id| !fresh.contains(id)));
-                        collect_pattern_bindings(pat, &mut fresh);
-                    }
-                    ast::LcQualifier::Filter(expr, _) => {
-                        collect_refs(expr, &mut local, scoping);
-                        refs.extend(local.drain().filter(|id| !fresh.contains(id)));
-                    }
-                }
-            }
-            collect_refs(body, &mut local, scoping);
-            refs.extend(local.difference(&fresh).copied());
+            collect_comprehension_refs(body, qualifiers, refs);
         }
         ast::Expr::ListComp(body, qualifiers, _) | ast::Expr::BinComp(body, qualifiers, _) => {
             collect_refs(body, refs, scoping);
@@ -406,6 +385,15 @@ fn collect_refs(expr: &ast::Expr, refs: &mut HashSet<AtomId>, scoping: RefScopin
                 }
             }
             for clause in catch_clauses {
+                if scoping == RefScoping::Lexical {
+                    if let ast::CatchClass::Variable(name, _) = clause.class {
+                        refs.insert(name);
+                    }
+                    if let Some(stacktrace) = &clause.stacktrace {
+                        collect_pattern_bindings(stacktrace, refs);
+                        collect_pattern_refs(stacktrace, refs);
+                    }
+                }
                 collect_pattern_bindings(&clause.pattern, refs);
                 collect_pattern_refs(&clause.pattern, refs);
                 if let Some(ref guard) = clause.guard {
@@ -469,6 +457,9 @@ fn collect_refs(expr: &ast::Expr, refs: &mut HashSet<AtomId>, scoping: RefScopin
                 match item {
                     ast::MaybeExpr::Expr(e) => collect_refs(e, refs, scoping),
                     ast::MaybeExpr::CondMatch(pat, e, _) => {
+                        if scoping == RefScoping::Lexical {
+                            collect_pattern_bindings(pat, refs);
+                        }
                         collect_pattern_refs(pat, refs);
                         collect_refs(e, refs, scoping);
                     }
@@ -515,6 +506,37 @@ fn collect_refs(expr: &ast::Expr, refs: &mut HashSet<AtomId>, scoping: RefScopin
             }
         }
     }
+}
+
+/// Reads supplied before these qualifiers, respecting later generator
+/// bindings. Unsafe-name checks use the same lexical rules as captures.
+pub(super) fn collect_comprehension_refs(
+    body: &ast::Expr,
+    qualifiers: &[ast::LcQualifier],
+    refs: &mut HashSet<AtomId>,
+) {
+    // Generator patterns bind fresh names for later qualifiers and the
+    // body. A generator's source and pattern inputs are read before
+    // its own pattern binds.
+    let mut fresh = HashSet::new();
+    let mut local = HashSet::new();
+    for q in qualifiers {
+        match q {
+            ast::LcQualifier::Generator(pat, expr, _)
+            | ast::LcQualifier::BinGenerator(pat, expr, _) => {
+                collect_pattern_refs(pat, &mut local);
+                collect_enclosing_refs(expr, &mut local);
+                refs.extend(local.drain().filter(|id| !fresh.contains(id)));
+                collect_pattern_bindings(pat, &mut fresh);
+            }
+            ast::LcQualifier::Filter(expr, _) => {
+                collect_enclosing_refs(expr, &mut local);
+                refs.extend(local.drain().filter(|id| !fresh.contains(id)));
+            }
+        }
+    }
+    collect_enclosing_refs(body, &mut local);
+    refs.extend(local.difference(&fresh).copied());
 }
 
 /// Collect variable references in a guard.

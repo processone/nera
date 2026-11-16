@@ -1,7 +1,8 @@
 //! Unsafe variable detection.
 //!
 //! In Erlang, a variable is "unsafe" when it is bound inside some but not all
-//! branches of a branching expression (`case`, `if`, `receive`, `try`) and is
+//! branches of a branching expression (`case`, `if`, `receive`, `try`,
+//! `andalso`, `orelse`) and is
 //! then referenced after the expression.  OTP's `erl_lint` emits:
 //!
 //! ```text
@@ -22,8 +23,11 @@ use nera_syntax::ast::{self, AtomId};
 use nera_syntax::error::Diagnostic;
 use nera_syntax::span::Span;
 
-use super::ast_walkers::{collect_enclosing_refs, collect_pattern_bindings};
-use super::unbound_vars::collect_exported_bindings;
+use super::ast_walkers::{
+    collect_comprehension_refs, collect_enclosing_refs, collect_guard_refs, collect_pattern_bindings,
+    collect_pattern_refs,
+};
+use super::unbound_vars::{collect_exported_bindings, collect_possible_bindings};
 
 /// Check a function for unsafe variable references.
 pub(super) fn check_unsafe_variables_fn(
@@ -40,6 +44,21 @@ pub(super) fn check_unsafe_variables_fn(
     }
 }
 
+/// Record defaults have their own scope, including defaults never constructed.
+pub(super) fn check_unsafe_variables_records(
+    module: &ast::Module,
+    atom_names: &HashMap<AtomId, String>,
+    diagnostics: &mut Vec<Diagnostic>,
+) {
+    for record in &module.records {
+        for field in &record.fields {
+            if let Some(default) = &field.default {
+                check_unsafe_in_subexprs(default, &HashSet::new(), atom_names, diagnostics);
+            }
+        }
+    }
+}
+
 /// Walk a body (sequence of expressions) looking for branching constructs
 /// that introduce unsafe variables used in subsequent expressions.
 fn check_unsafe_in_body(
@@ -51,11 +70,8 @@ fn check_unsafe_in_body(
     let mut scope = outer_scope.clone();
 
     for (i, expr) in body.iter().enumerate() {
-        // For match expressions, add the bound variables to the scope.
-        if let ast::Expr::Match(pat, _rhs, _) = expr {
-            collect_pattern_bindings(pat, &mut scope);
-        }
-
+        // Inspect the expression before adding its exports: a match pattern
+        // does not make bindings in its own RHS safe.
         // Collect unsafe vars introduced by this expression.
         let unsafe_vars = collect_unsafe_from_expr(expr, &scope);
 
@@ -68,31 +84,7 @@ fn check_unsafe_in_body(
                 collect_enclosing_refs(later_expr, &mut later_refs);
             }
 
-            for (var_id, construct, construct_span) in &unsafe_vars {
-                if later_refs.contains(var_id) {
-                    let name = match atom_names.get(var_id) {
-                        Some(s) => s.as_str(),
-                        None => continue,
-                    };
-                    // Skip underscore-prefixed variables.
-                    if name == "_" || name.starts_with('_') {
-                        continue;
-                    }
-                    diagnostics.push(
-                        Diagnostic::error_at(
-                            format!("variable '{}' unsafe in '{}'", name, construct),
-                            *construct_span,
-                        )
-                        .with_code("unsafe_variable".to_string())
-                        .with_label(format!("'{}' is bound in some branches but not all", name))
-                        .with_hint(format!(
-                            "variable '{}' is bound inside a '{}' expression but not in every branch, \
-                             so it may not have a value when used after the '{}'",
-                            name, construct, construct
-                        )),
-                    );
-                }
-            }
+            report_unsafe_refs(&unsafe_vars, &later_refs, atom_names, diagnostics);
         }
 
         // Recurse into sub-expressions to find nested unsafe patterns.
@@ -100,6 +92,56 @@ fn check_unsafe_in_body(
         // Definite exports are already bound when a later branch matches
         // the same name; those matches cannot make it unsafe again.
         collect_exported_bindings(expr, &mut scope);
+    }
+}
+
+/// Check names consumed after an expression, whether by a later body
+/// expression or by an enclosing pattern/branch in the same expression.
+fn report_unsafe_refs(
+    unsafe_vars: &[(AtomId, &'static str, Span)],
+    refs: &HashSet<AtomId>,
+    atom_names: &HashMap<AtomId, String>,
+    diagnostics: &mut Vec<Diagnostic>,
+) {
+    for (var_id, construct, construct_span) in unsafe_vars {
+        if refs.contains(var_id) {
+            let name = match atom_names.get(var_id) {
+                Some(s) => s.as_str(),
+                None => continue,
+            };
+            // A named underscore variable is still unsafe after a
+            // skipped operand; only bare `_` discards the binding.
+            if name == "_" || (name.starts_with('_') && !matches!(*construct, "andalso" | "orelse"))
+            {
+                continue;
+            }
+            diagnostics.push(
+                Diagnostic::error_at(
+                    format!("variable '{}' unsafe in '{}'", name, construct),
+                    *construct_span,
+                )
+                .with_code("unsafe_variable".to_string())
+                .with_label(format!("'{}' is bound in some branches but not all", name))
+                .with_hint(format!(
+                    "variable '{}' is bound inside a '{}' expression but not in every branch, \
+                     so it may not have a value when used after the '{}'",
+                    name, construct, construct
+                )),
+            );
+        }
+    }
+}
+
+fn collect_clause_refs(clauses: &[ast::CaseClause], refs: &mut HashSet<AtomId>) {
+    for clause in clauses {
+        collect_pattern_bindings(&clause.pattern, refs);
+        collect_pattern_refs(&clause.pattern, refs);
+        if let Some(guard) = &clause.guard {
+            collect_guard_refs(guard, refs);
+        }
+        for expr in &clause.body {
+            collect_enclosing_refs(expr, refs);
+        }
     }
 }
 
@@ -112,18 +154,128 @@ fn collect_unsafe_from_expr(
     scope: &HashSet<AtomId>,
 ) -> Vec<(AtomId, &'static str, Span)> {
     match expr {
-        ast::Expr::Case(_scrutinee, clauses, span) => {
+        ast::Expr::BinOp(op @ (ast::BinOp::Andalso | ast::BinOp::Orelse), lhs, rhs, span) => {
+            let construct = if *op == ast::BinOp::Andalso {
+                "andalso"
+            } else {
+                "orelse"
+            };
+            let mut input_scope = scope.clone();
+            collect_exported_bindings(lhs, &mut input_scope);
+            let mut bindings = HashSet::new();
+            collect_possible_bindings(rhs, &mut bindings);
+            let mut unsafe_vars = collect_unsafe_from_expr(lhs, scope);
+            unsafe_vars.extend(
+                bindings
+                    .difference(&input_scope)
+                    .map(|id| (*id, construct, *span)),
+            );
+            unsafe_vars
+        }
+
+        // These wrappers do not hide a conditional binding from the following
+        // body expressions, e.g. `_ = Flag andalso (Y = true), Y`.
+        ast::Expr::Match(_, rhs, _)
+        | ast::Expr::UnaryOp(_, rhs, _)
+        | ast::Expr::Throw(rhs, _)
+        | ast::Expr::RecordAccess { base: rhs, .. } => collect_unsafe_from_expr(rhs, scope),
+        ast::Expr::Tuple(exprs, _) => exprs
+            .iter()
+            .flat_map(|expr| collect_unsafe_from_expr(expr, scope))
+            .collect(),
+        ast::Expr::Block(exprs, _) => {
+            let mut block_scope = scope.clone();
+            let mut unsafe_vars = Vec::new();
+            for expr in exprs {
+                unsafe_vars.extend(collect_unsafe_from_expr(expr, &block_scope));
+                collect_exported_bindings(expr, &mut block_scope);
+            }
+            unsafe_vars
+        }
+        ast::Expr::Cons(lhs, rhs, _)
+        | ast::Expr::Send(lhs, rhs, _)
+        | ast::Expr::BinOp(_, lhs, rhs, _) => {
+            let mut unsafe_vars = collect_unsafe_from_expr(lhs, scope);
+            unsafe_vars.extend(collect_unsafe_from_expr(rhs, scope));
+            unsafe_vars
+        }
+        ast::Expr::Binary(segments, _) => segments
+            .iter()
+            .flat_map(|segment| {
+                let mut unsafe_vars = collect_unsafe_from_expr(&segment.value, scope);
+                if let Some(size) = &segment.size {
+                    unsafe_vars.extend(collect_unsafe_from_expr(size, scope));
+                }
+                unsafe_vars
+            })
+            .collect(),
+        ast::Expr::Map(fields, _) => fields
+            .iter()
+            .flat_map(|field| {
+                let mut unsafe_vars = collect_unsafe_from_expr(&field.key, scope);
+                unsafe_vars.extend(collect_unsafe_from_expr(&field.value, scope));
+                unsafe_vars
+            })
+            .collect(),
+        ast::Expr::MapUpdate(base, fields, _) => {
+            let mut unsafe_vars = collect_unsafe_from_expr(base, scope);
+            for field in fields {
+                unsafe_vars.extend(collect_unsafe_from_expr(&field.key, scope));
+                unsafe_vars.extend(collect_unsafe_from_expr(&field.value, scope));
+            }
+            unsafe_vars
+        }
+        ast::Expr::RecordCreate { fields, .. } => fields
+            .iter()
+            .flat_map(|field| collect_unsafe_from_expr(&field.value, scope))
+            .collect(),
+        ast::Expr::RecordUpdate { base, fields, .. } => {
+            let mut unsafe_vars = collect_unsafe_from_expr(base, scope);
+            for field in fields {
+                unsafe_vars.extend(collect_unsafe_from_expr(&field.value, scope));
+            }
+            unsafe_vars
+        }
+        ast::Expr::FunRef(ast::FunRefTarget::DynamicRemote(module, function, arity), _) => {
+            let mut unsafe_vars = collect_unsafe_from_expr(module, scope);
+            unsafe_vars.extend(collect_unsafe_from_expr(function, scope));
+            unsafe_vars.extend(collect_unsafe_from_expr(arity, scope));
+            unsafe_vars
+        }
+        ast::Expr::Call(target, args, _) => {
+            let mut unsafe_vars = Vec::new();
+            match target {
+                ast::CallTarget::Remote(module, function) => {
+                    unsafe_vars.extend(collect_unsafe_from_expr(module, scope));
+                    unsafe_vars.extend(collect_unsafe_from_expr(function, scope));
+                }
+                ast::CallTarget::Expr(callee) => {
+                    unsafe_vars.extend(collect_unsafe_from_expr(callee, scope));
+                }
+                _ => {}
+            }
+            for arg in args {
+                unsafe_vars.extend(collect_unsafe_from_expr(arg, scope));
+            }
+            unsafe_vars
+        }
+
+        ast::Expr::Case(scrutinee, clauses, span) => {
+            let mut input_scope = scope.clone();
+            collect_exported_bindings(scrutinee, &mut input_scope);
             let branch_bindings: Vec<HashSet<AtomId>> = clauses
                 .iter()
                 .map(|clause| {
                     let mut binds = HashSet::new();
                     collect_pattern_bindings(&clause.pattern, &mut binds);
                     collect_body_bindings(&clause.body, &mut binds);
-                    // Only include variables not already in scope.
-                    binds.difference(scope).copied().collect()
+                    // The scrutinee completes before any branch runs.
+                    binds.difference(&input_scope).copied().collect()
                 })
                 .collect();
-            find_unsafe_vars(&branch_bindings, "case", *span)
+            let mut unsafe_vars = collect_unsafe_from_expr(scrutinee, scope);
+            unsafe_vars.extend(find_unsafe_vars(&branch_bindings, "case", *span));
+            unsafe_vars
         }
 
         ast::Expr::If(clauses, span) => {
@@ -250,9 +402,10 @@ fn check_unsafe_in_subexprs(
     diagnostics: &mut Vec<Diagnostic>,
 ) {
     match expr {
-        ast::Expr::Fun(_name, clauses, _) => {
+        ast::Expr::Fun(name, clauses, _) => {
             for clause in clauses {
                 let mut fun_scope = scope.clone();
+                fun_scope.extend(name);
                 for pat in &clause.patterns {
                     collect_pattern_bindings(pat, &mut fun_scope);
                 }
@@ -262,8 +415,18 @@ fn check_unsafe_in_subexprs(
 
         ast::Expr::Case(scrutinee, clauses, _) => {
             check_unsafe_in_subexprs(scrutinee, scope, atom_names, diagnostics);
+            let mut refs = HashSet::new();
+            collect_clause_refs(clauses, &mut refs);
+            report_unsafe_refs(
+                &collect_unsafe_from_expr(scrutinee, scope),
+                &refs,
+                atom_names,
+                diagnostics,
+            );
+            let mut input_scope = scope.clone();
+            collect_exported_bindings(scrutinee, &mut input_scope);
             for clause in clauses {
-                let mut clause_scope = scope.clone();
+                let mut clause_scope = input_scope.clone();
                 collect_pattern_bindings(&clause.pattern, &mut clause_scope);
                 check_unsafe_in_body(&clause.body, &clause_scope, atom_names, diagnostics);
             }
@@ -282,6 +445,7 @@ fn check_unsafe_in_subexprs(
                 check_unsafe_in_body(&clause.body, &clause_scope, atom_names, diagnostics);
             }
             if let Some(after) = after {
+                check_unsafe_in_subexprs(&after.timeout, scope, atom_names, diagnostics);
                 check_unsafe_in_body(&after.body, scope, atom_names, diagnostics);
             }
         }
@@ -294,13 +458,28 @@ fn check_unsafe_in_subexprs(
             ..
         } => {
             check_unsafe_in_body(body, scope, atom_names, diagnostics);
+            let mut refs = HashSet::new();
+            collect_clause_refs(of_clauses, &mut refs);
+            let mut input_scope = scope.clone();
+            for expr in body {
+                report_unsafe_refs(
+                    &collect_unsafe_from_expr(expr, &input_scope),
+                    &refs,
+                    atom_names,
+                    diagnostics,
+                );
+                collect_exported_bindings(expr, &mut input_scope);
+            }
             for clause in of_clauses {
-                let mut clause_scope = scope.clone();
+                let mut clause_scope = input_scope.clone();
                 collect_pattern_bindings(&clause.pattern, &mut clause_scope);
                 check_unsafe_in_body(&clause.body, &clause_scope, atom_names, diagnostics);
             }
             for clause in catch_clauses {
                 let mut clause_scope = scope.clone();
+                if let ast::CatchClass::Variable(name, _) = clause.class {
+                    clause_scope.insert(name);
+                }
                 collect_pattern_bindings(&clause.pattern, &mut clause_scope);
                 if let Some(ref stk) = clause.stacktrace {
                     collect_pattern_bindings(stk, &mut clause_scope);
@@ -315,7 +494,7 @@ fn check_unsafe_in_subexprs(
         ast::Expr::ListComp(body_expr, qualifiers, _)
         | ast::Expr::BinComp(body_expr, qualifiers, _) => {
             let mut lc_scope = scope.clone();
-            for q in qualifiers {
+            for (i, q) in qualifiers.iter().enumerate() {
                 match q {
                     ast::LcQualifier::Generator(pat, source_expr, _)
                     | ast::LcQualifier::BinGenerator(pat, source_expr, _) => {
@@ -324,6 +503,14 @@ fn check_unsafe_in_subexprs(
                     }
                     ast::LcQualifier::Filter(filter_expr, _) => {
                         check_unsafe_in_subexprs(filter_expr, &lc_scope, atom_names, diagnostics);
+                        let mut refs = HashSet::new();
+                        collect_comprehension_refs(body_expr, &qualifiers[i + 1..], &mut refs);
+                        report_unsafe_refs(
+                            &collect_unsafe_from_expr(filter_expr, &lc_scope),
+                            &refs,
+                            atom_names,
+                            diagnostics,
+                        );
                         collect_exported_bindings(filter_expr, &mut lc_scope);
                     }
                 }
@@ -333,16 +520,44 @@ fn check_unsafe_in_subexprs(
 
         ast::Expr::Maybe { body, else_clauses, .. } => {
             let mut maybe_scope = scope.clone();
-            for item in body {
+            for (i, item) in body.iter().enumerate() {
+                let expr = match item {
+                    ast::MaybeExpr::Expr(expr) | ast::MaybeExpr::CondMatch(_, expr, _) => expr,
+                };
+                let mut refs = HashSet::new();
+                for later in &body[i + 1..] {
+                    match later {
+                        ast::MaybeExpr::Expr(expr) => collect_enclosing_refs(expr, &mut refs),
+                        ast::MaybeExpr::CondMatch(pat, expr, _) => {
+                            collect_pattern_bindings(pat, &mut refs);
+                            collect_pattern_refs(pat, &mut refs);
+                            collect_enclosing_refs(expr, &mut refs);
+                        }
+                    }
+                }
+                report_unsafe_refs(
+                    &collect_unsafe_from_expr(expr, &maybe_scope),
+                    &refs,
+                    atom_names,
+                    diagnostics,
+                );
                 match item {
                     ast::MaybeExpr::Expr(e) => {
-                        if let ast::Expr::Match(pat, _, _) = e {
-                            collect_pattern_bindings(pat, &mut maybe_scope);
-                        }
                         check_unsafe_in_subexprs(e, &maybe_scope, atom_names, diagnostics);
+                        collect_exported_bindings(e, &mut maybe_scope);
                     }
                     ast::MaybeExpr::CondMatch(pat, e, _) => {
                         check_unsafe_in_subexprs(e, &maybe_scope, atom_names, diagnostics);
+                        let mut refs = HashSet::new();
+                        collect_pattern_bindings(pat, &mut refs);
+                        collect_pattern_refs(pat, &mut refs);
+                        report_unsafe_refs(
+                            &collect_unsafe_from_expr(e, &maybe_scope),
+                            &refs,
+                            atom_names,
+                            diagnostics,
+                        );
+                        collect_exported_bindings(e, &mut maybe_scope);
                         collect_pattern_bindings(pat, &mut maybe_scope);
                     }
                 }
@@ -359,13 +574,36 @@ fn check_unsafe_in_subexprs(
         }
 
         // Binary sub-expressions.
-        ast::Expr::Match(_, rhs, _) => {
+        ast::Expr::Match(pat, rhs, _) => {
             check_unsafe_in_subexprs(rhs, scope, atom_names, diagnostics);
+            let mut refs = HashSet::new();
+            collect_pattern_bindings(pat, &mut refs);
+            collect_pattern_refs(pat, &mut refs);
+            report_unsafe_refs(
+                &collect_unsafe_from_expr(rhs, scope),
+                &refs,
+                atom_names,
+                diagnostics,
+            );
         }
         ast::Expr::Tuple(exprs, _) => {
             for e in exprs {
                 check_unsafe_in_subexprs(e, scope, atom_names, diagnostics);
             }
+        }
+        ast::Expr::BinOp(ast::BinOp::Andalso | ast::BinOp::Orelse, lhs, rhs, _) => {
+            check_unsafe_in_subexprs(lhs, scope, atom_names, diagnostics);
+            let mut refs = HashSet::new();
+            collect_enclosing_refs(rhs, &mut refs);
+            report_unsafe_refs(
+                &collect_unsafe_from_expr(lhs, scope),
+                &refs,
+                atom_names,
+                diagnostics,
+            );
+            let mut input_scope = scope.clone();
+            collect_exported_bindings(lhs, &mut input_scope);
+            check_unsafe_in_subexprs(rhs, &input_scope, atom_names, diagnostics);
         }
         ast::Expr::Cons(h, t, _) | ast::Expr::Send(h, t, _) | ast::Expr::BinOp(_, h, t, _) => {
             check_unsafe_in_subexprs(h, scope, atom_names, diagnostics);
@@ -375,9 +613,15 @@ fn check_unsafe_in_subexprs(
             check_unsafe_in_subexprs(e, scope, atom_names, diagnostics);
         }
         ast::Expr::Call(target, args, _) => {
-            if let ast::CallTarget::Remote(module_expr, fun_expr) = target {
-                check_unsafe_in_subexprs(module_expr, scope, atom_names, diagnostics);
-                check_unsafe_in_subexprs(fun_expr, scope, atom_names, diagnostics);
+            match target {
+                ast::CallTarget::Remote(module_expr, fun_expr) => {
+                    check_unsafe_in_subexprs(module_expr, scope, atom_names, diagnostics);
+                    check_unsafe_in_subexprs(fun_expr, scope, atom_names, diagnostics);
+                }
+                ast::CallTarget::Expr(callee) => {
+                    check_unsafe_in_subexprs(callee, scope, atom_names, diagnostics);
+                }
+                _ => {}
             }
             for arg in args {
                 check_unsafe_in_subexprs(arg, scope, atom_names, diagnostics);

@@ -124,6 +124,7 @@ pub fn analyze_module_with_source(
     unused_funcs::check_unused_functions(module, atom_names, &mut warnings);
     binary_segments::check_binary_segments_records(module, &mut warnings);
     unbound_vars::check_unbound_variables_records(module, atom_names, &mut warnings);
+    unsafe_vars::check_unsafe_variables_records(module, atom_names, &mut warnings);
     unused_records::check_unused_records(module, atom_names, &mut warnings);
     unused_types::check_unused_types(module, atom_names, &mut warnings);
     undefined_exports::check_undefined_exports(module, atom_names, &mut warnings);
