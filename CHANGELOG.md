@@ -43,6 +43,20 @@ All notable milestones for the nera project are documented in this file.
 - `fun_catch_class` checks matching and mismatching classes, nested and named
   funs, comprehension helpers and fun-head shadowing natively and on BEAM.
 
+## Branch exports count later reads as uses
+
+- Names bound in `case`, `if` and `receive` branches no longer get false
+  unused-variable warnings when code reads them after the construct, including
+  nested branches, clause patterns, receive timeouts and later fun captures.
+- The unused-variable pass checks direct matches consistently in branch bodies
+  and keeps warnings for genuinely unread or fun-local bindings. A later fun
+  that shadows a name does not count as reading the exported value.
+- Later reads inside comprehensions and `maybe`, including conditional-pattern
+  comparisons, and key/size reads in match patterns reach the bindings they
+  consume without leaking across local scopes.
+- Warning regressions cover the existing `nested_case_exports` fixture and
+  `branch_export_warnings`, shared by native and BEAM execution.
+
 ## Regression coverage for case exports inside maybe bodies
 
 - A diagnostic regression protects names bound in every `case` branch and read

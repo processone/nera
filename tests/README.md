@@ -518,6 +518,7 @@ committed catalogue with the pinned OTP abstract code.
 
 | Test File                      | Feature Category                                       | Assertions      |
 |--------------------------------|--------------------------------------------------------|-----------------|
+| `branch_export_warnings.erl` | Later reads of case/if/receive bindings, nested branches, patterns, timeouts and captures; comprehension/maybe continuations and RHS key/size inputs; unread, generator-shadowed and fun-local controls; shared with warning analysis and run on BEAM | Exact unused diagnostics and completion |
 | `pattern_expr_warnings.erl` | Map-key and binary-size reads, including earlier segments in clause/body-match patterns; real unused-value controls; shared with warning analysis and run on BEAM | Exact diagnostics and completion |
 | `andalso_unsafe_binding.erl` | Reject a later read of a name bound only in the right operand of `andalso`, with OTP's unsafe-variable diagnostic | (compile error) |
 | `orelse_unsafe_binding.erl` | Reject a later read of a name bound only in the right operand of `orelse`, with OTP's unsafe-variable diagnostic | (compile error) |

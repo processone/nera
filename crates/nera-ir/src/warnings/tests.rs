@@ -1470,37 +1470,76 @@ fn comprehension_filter_bindings_are_available_to_later_qualifiers() {
 
 #[test]
 fn comprehension_filter_bindings_reach_scope_sensitive_diagnostics() {
+    // A later fun head or generator shadows N, so the earlier filter's N
+    // is genuinely unused as well as shadowed (erlc -Wall).
+    let cases: &[(&str, &str, &[&str])] = &[
+        (
+            "case V of N -> <<1>>; _ -> <<0>> end",
+            "X <- [1], begin N = X, true end",
+            &[],
+        ),
+        (
+            "begin case V of true -> N = 1; false -> ok end, <<N>> end",
+            "X <- [1], begin N = X, true end",
+            &[],
+        ),
+        (
+            "begin case V of true -> N = 1; false -> N = 1 end, <<N>> end",
+            "X <- [1], begin N = X, true end",
+            &[],
+        ),
+        (
+            "begin F = fun(N) -> <<N>> end, F(V) end",
+            "X <- [1], begin N = X, true end",
+            &["unused_variable", "shadowed_variable"],
+        ),
+        (
+            "<<N>>",
+            "X <- [1], begin N = X, true end, N <- [V]",
+            &["unused_variable", "shadowed_variable"],
+        ),
+        (
+            "<<_N>>",
+            "X <- [V], begin _N = X, true end, begin _N = 1, true end",
+            &["match_underscore_var"],
+        ),
+        (
+            "<<_N>>",
+            "X <- [true], X orelse begin _N = 1, true end, _N <- [V]",
+            &[],
+        ),
+        ("<<N>>", "_ <- [V], {N, N} <- [{1, 1}]", &[]),
+    ];
     for (open, close) in [("[", "]"), ("<<", ">>")] {
-        for (template, qualifiers, expected) in [
-            ("case V of N -> <<1>>; _ -> <<0>> end",
-                "X <- [1], begin N = X, true end", None),
-            ("begin case V of true -> N = 1; false -> ok end, <<N>> end",
-                "X <- [1], begin N = X, true end", None),
-            ("begin case V of true -> N = 1; false -> N = 1 end, <<N>> end",
-                "X <- [1], begin N = X, true end", None),
-            ("begin F = fun(N) -> <<N>> end, F(V) end",
-                "X <- [1], begin N = X, true end", Some("shadowed_variable")),
-            ("<<N>>", "X <- [1], begin N = X, true end, N <- [V]",
-                Some("shadowed_variable")),
-            ("<<_N>>", "X <- [V], begin _N = X, true end, begin _N = 1, true end",
-                Some("match_underscore_var")),
-            ("<<_N>>", "X <- [true], X orelse begin _N = 1, true end, _N <- [V]", None),
-            ("<<N>>", "_ <- [V], {N, N} <- [{1, 1}]", None),
-        ] {
-            let source = format!("-module(test). -export([f/1]). f(V) ->
-                {open} ({template}) || {qualifiers} {close}.");
+        for (template, qualifiers, expected) in cases {
+            let source = format!(
+                "-module(test). -export([f/1]). f(V) ->
+                {open} ({template}) || {qualifiers} {close}."
+            );
             let (module, names) = parse_module(&source);
             let diagnostics = analyze_module(&module, &names, None);
             assert!(
-                !diagnostics.iter().any(|d| d.severity == nera_syntax::error::Severity::Error),
+                !diagnostics
+                    .iter()
+                    .any(|d| d.severity == nera_syntax::error::Severity::Error),
                 "{source}\n{diagnostics:?}"
             );
-            let relevant: Vec<_> = diagnostics.iter().filter_map(|d| d.code.as_deref())
-                .filter(|code| ["unsafe_variable", "exported_var", "unreachable_clause",
-                    "unused_variable", "shadowed_variable", "match_underscore_var"].contains(code))
+            let relevant: Vec<_> = diagnostics
+                .iter()
+                .filter_map(|d| d.code.as_deref())
+                .filter(|code| {
+                    [
+                        "unsafe_variable",
+                        "exported_var",
+                        "unreachable_clause",
+                        "unused_variable",
+                        "shadowed_variable",
+                        "match_underscore_var",
+                    ]
+                    .contains(code)
+                })
                 .collect();
-            assert_eq!(relevant, expected.into_iter().collect::<Vec<_>>(),
-                "{source}\n{diagnostics:?}");
+            assert_eq!(relevant, *expected, "{source}\n{diagnostics:?}");
         }
     }
 }

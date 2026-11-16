@@ -1,4 +1,4 @@
-//! Regressions for false unused-variable warnings on pattern reads.
+//! Regressions for unused-variable diagnostics on real Erlang programs.
 
 use nera_syntax::error::Severity;
 use nera_syntax::parser::Parser;
@@ -23,6 +23,66 @@ fn bound_catch_class_is_used_inside_fun() {
         .filter(|d| d.code.as_deref() == Some("unused_variable"))
         .collect();
     assert!(unused.is_empty(), "unexpected unused variables: {unused:#?}");
+}
+
+#[test]
+fn branch_exports_read_afterward_are_used() {
+    // Intent: exported branch bindings read after case/if/receive are used,
+    // as with erlc -Wall. Unread and fun-local bindings must still warn.
+    let source = include_str!("../../../../tests/branch_export_warnings.erl");
+    let mut parser = Parser::new(source);
+    let parsed = parser.parse_module();
+    assert!(parsed.errors.is_empty(), "{:?}", parsed.errors);
+    let diagnostics = crate::warnings::analyze_module(&parsed.module, &parser.atom_names(), None);
+    assert!(
+        diagnostics.iter().all(|d| d.severity != Severity::Error),
+        "unexpected errors: {diagnostics:#?}"
+    );
+    let mut actual: Vec<_> = diagnostics
+        .iter()
+        .filter(|d| d.code.as_deref() == Some("unused_variable"))
+        .map(|d| (d.message.clone(), d.span.expect("binding span").start))
+        .collect();
+    let mut expected: Vec<_> = [
+        ("UnusedFilter", "UnusedFilter = Input"),
+        ("LocalCode", "LocalCode = 200"),
+        ("LocalCode", "LocalCode = 503"),
+        ("UnusedPrimary", "UnusedPrimary = 200"),
+        ("UnusedFallback", "UnusedFallback = 503"),
+        ("UnusedIf", "UnusedIf = 200"),
+        ("UnusedIf", "UnusedIf = 503"),
+        ("UnusedResponse", "UnusedResponse = 200"),
+        ("UnusedTimeout", "UnusedTimeout = 504"),
+        ("ShadowedCode", "ShadowedCode = 200"),
+        ("ShadowedCode", "ShadowedCode = 503"),
+    ]
+    .into_iter()
+    .map(|(name, binding)| {
+        (
+            format!("variable '{name}' is unused"),
+            source.find(binding).expect("control binding in fixture"),
+        )
+    })
+    .collect();
+    actual.sort();
+    expected.sort();
+    assert_eq!(actual, expected, "unexpected diagnostics: {diagnostics:#?}");
+}
+
+#[test]
+fn nested_case_exports_read_afterward_are_used() {
+    // The existing native fixture supplied the original false-warning report.
+    let source = include_str!("../../../../tests/nested_case_exports.erl");
+    let mut parser = Parser::new(source);
+    let parsed = parser.parse_module();
+    assert!(parsed.errors.is_empty(), "{:?}", parsed.errors);
+    let diagnostics = crate::warnings::analyze_module(&parsed.module, &parser.atom_names(), None);
+    assert!(
+        diagnostics
+            .iter()
+            .all(|d| d.severity != Severity::Error && d.code.as_deref() != Some("unused_variable")),
+        "unexpected diagnostics: {diagnostics:#?}"
+    );
 }
 
 #[test]
