@@ -481,7 +481,7 @@ are not finite real numbers (such as a negative number's square root), raise
 | Function  | Status | Notes                        |
 |-----------|--------|------------------------------|
 | split/2   | ✅      | BIF; binary or nonempty list of nonempty binaries, earliest then longest match |
-| split/3   | ✅      | BIF, same patterns; `global` and `trim_all` options (`trim` and `scope` are not supported yet) |
+| split/3   | ✅      | BIF, same patterns; `global`, `trim`, `trim_all` and `{scope, {Start, Length}}` (negative lengths included); invalid options/scopes and partial-byte subjects raise badarg |
 | part/3    | ✅      | BIF, sub-binary extraction   |
 | at/2      | ✅      | Byte at position             |
 | last/1    | ✅      | Final byte; rejects empty binaries and non-byte-aligned bitstrings |

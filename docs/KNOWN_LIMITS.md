@@ -84,7 +84,7 @@ platform and scope.
   arrives in the caller's mailbox. OTP's process aliases prevent that, and
   Nera does not use them.
 - **`binary`:** `compile_pattern/1`, `matches/2,3` and `replace/3,4` are
-  missing. `binary:split/3` ignores `trim` and `{scope, ...}`.
+  missing.
 
 ## Wrong results and crashes still known
 

@@ -220,6 +220,7 @@ These are automatically skipped by the runner and show up as SKIP in output.
 | `binary_copy.erl` | binary:copy/2: size overflow, unsigned-word count validation, monitored errors, chunked/sub-binary results and dynamic calls; also run on BEAM | Table-driven |
 | `binary_copy_scheduler.erl` | binary:copy/2: large and repeated near-chunk copies share a scheduler; strict ordering through single_scheduler/0 with NERA_SCHEDULERS=1 | 4 workloads |
 | `binary_split.erl`             | binary:split/2,3 with [global]             | ~8         |
+| `binary_split_options.erl`     | binary:split/3 trim, scoped matching (negative/empty windows, match boundaries, duplicate scopes and sub-binaries), invalid options/scopes and binary:split/2,3 partial-byte subjects; direct, apply and fun calls; same fixture on BEAM | Table-driven |
 | `binary_split_patterns.erl`    | binary:split/2,3 with a list of patterns: one-element lists, Cowlib's server-sent events line and field splits, longest match at the same offset, non-overlapping global splits, trim_all, a 1,000-line stream and a view into it, apply and fun calls, badarg patterns; also run on BEAM | Table-driven |
 | `binary_longest_common_prefix.erl` | Complete proper-list/binary validation, shared/shifted prefixes and dynamic calls | 17 |
 | `binary_float.erl`             | Float binary segments (<<X:64/float>>)     | ~6         |

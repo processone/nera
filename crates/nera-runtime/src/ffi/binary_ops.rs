@@ -1620,8 +1620,9 @@ pub unsafe extern "C" fn nera_rt_binary_split_2(
 
 /// binary:split/3 — split binary on a pattern or list of patterns with options.
 /// Each split is at the earliest match, the longest pattern at that offset.
-/// Options: `global` splits on all non-overlapping matches; `trim_all` removes
-/// empty parts.
+/// Options: `global` splits on all non-overlapping matches; `trim` removes
+/// trailing empty parts; `trim_all` removes every empty part. A `scope` limits
+/// matching to a byte range without discarding the subject's prefix or suffix.
 #[no_mangle]
 pub unsafe extern "C" fn nera_rt_binary_split_3(
     ctx: *mut ProcessContext,
@@ -1629,56 +1630,67 @@ pub unsafe extern "C" fn nera_rt_binary_split_3(
     pattern_term: u64,
     opts_term: u64,
 ) -> u64 {
-    let subject_bytes = match unsafe { binary_data(ErlTerm(subject_term)) } {
-        Some((ptr, len)) => unsafe { std::slice::from_raw_parts(ptr, len) },
-        None => return raise_error(ctx, ErlTerm::atom(crate::atom_table::ATOM_BADARG).0),
-    };
+    let subject = ErlTerm(subject_term);
+    if !unsafe { subject.is_binary() } { return raise_badarg(ctx); }
+    let (ptr, len) = unsafe { binary_data(subject).unwrap() };
+    let subject_bytes = unsafe { std::slice::from_raw_parts(ptr, len) };
     let Some(patterns) = (unsafe { search_patterns(ErlTerm(pattern_term)) }) else {
         return raise_badarg(ctx);
     };
 
-    // Read splitting and empty-field options independently of their order.
-    let (global, trim_all) = {
-        let mut g = false;
-        let mut t = false;
-        let mut cursor = ErlTerm(opts_term);
-        while cursor.is_cons() {
-            if let Some(ptr) = cursor.as_cons_ptr() {
-                unsafe {
-                    let elem = (*ptr).head;
-                    if let Some(atom_id) = elem.as_atom_id() {
-                        if let Some(name) = global_atom_table().resolve(atom_id) {
-                            if name == "global" {
-                                g = true;
-                            } else if name == "trim_all" {
-                                t = true;
-                            }
-                        }
-                    }
-                    cursor = (*ptr).tail;
-                }
-            } else {
-                break;
+    let (mut global, mut trim, mut trim_all) = (false, false, false);
+    let mut scope = 0..len;
+    let mut cursor = ErlTerm(opts_term);
+    if !cursor.is_nil() && !cursor.is_cons() { return raise_badarg(ctx); }
+    while let Some(ptr) = cursor.as_cons_ptr() {
+        let option = unsafe { (*ptr).head };
+        cursor = unsafe { (*ptr).tail };
+        let name = option.as_atom_id().and_then(|id| global_atom_table().resolve(id));
+        match name.as_deref() {
+            Some("global") => global = true,
+            Some("trim") => trim = true,
+            Some("trim_all") => trim_all = true,
+            _ => {
+                let Some([key, range]) = (unsafe { pair_elements(option) }) else { return raise_badarg(ctx); };
+                let key = key.as_atom_id().and_then(|id| global_atom_table().resolve(id));
+                if key.as_deref() != Some("scope") { return raise_badarg(ctx); }
+                let Some([start, length]) = (unsafe { pair_elements(range) }) else { return raise_badarg(ctx); };
+                let (Some(start), Some(length)) = (start.as_small_int(), length.as_small_int())
+                    else { return raise_badarg(ctx); };
+                let Some(end) = start.checked_add(length) else { return raise_badarg(ctx); };
+                let (low, high) = if length < 0 { (end, start) } else { (start, end) };
+                let (Ok(low), Ok(high)) = (usize::try_from(low), usize::try_from(high))
+                    else { return raise_badarg(ctx); };
+                if high > len { return raise_badarg(ctx); }
+                // Validate every scope, even one a later scope replaces.
+                scope = low..high;
             }
         }
-        (g, t)
-    };
+    }
+    // Like BEAM, ignore an improper tail after the final option cell.
 
-    // Split at the first match, or at every match after the previous one with
-    // `global`; the rest after the last match, possibly empty, ends the list.
+    // Search only within the scope, but keep bytes outside it in the result.
+    // Global matches do not overlap; the final part extends to the subject end.
     let mut parts: Vec<&[u8]> = Vec::new();
-    let mut start = 0;
-    while let Some((offset, length)) = first_match(&subject_bytes[start..], &patterns) {
-        parts.push(&subject_bytes[start..start + offset]);
-        start += offset + length;
+    let mut part_start = 0;
+    let mut search_start = scope.start;
+    while let Some((offset, length)) = first_match(&subject_bytes[search_start..scope.end], &patterns) {
+        let match_start = search_start + offset;
+        parts.push(&subject_bytes[part_start..match_start]);
+        part_start = match_start + length;
+        search_start = part_start;
         if !global {
             break;
         }
     }
-    parts.push(&subject_bytes[start..]);
+    parts.push(&subject_bytes[part_start..]);
 
     if trim_all {
         parts.retain(|part| !part.is_empty());
+    } else if trim {
+        while parts.last().is_some_and(|part| part.is_empty()) {
+            parts.pop();
+        }
     }
 
     // Build list of binaries
