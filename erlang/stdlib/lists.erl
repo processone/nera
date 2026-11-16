@@ -17,7 +17,7 @@
 -export([map/2, filter/2, filtermap/2, foldl/3, foldr/3, foreach/2,
          all/2, any/2, flatmap/2, partition/2,
          takewhile/2, dropwhile/2,
-         sort/1, sort/2,
+         sort/1, sort/2, keysort/2,
          flatten/1, flatten/2,
          zip/2, unzip/1,
          seq/2, seq/3,
@@ -128,6 +128,17 @@ sort(_Fun, [X]) -> [X];
 sort(Fun, L) ->
     {A, B} = split_halves(L),
     merge_fun(Fun, sort(Fun, A), sort(Fun, B)).
+
+%% keysort/2 — stable merge sort by the Nth tuple element.
+keysort(N, L) when is_integer(N), N > 0 ->
+    keysort_fun(fun(A, B) -> element(N, A) =< element(N, B) end, L).
+
+keysort_fun(_Fun, []) -> [];
+keysort_fun(_Fun, [X]) -> [X];
+keysort_fun(Fun, L) ->
+    %% Contiguous halves preserve input order; split_halves/1 does not.
+    {A, B} = split(length(L) div 2, L),
+    merge_fun(Fun, keysort_fun(Fun, A), keysort_fun(Fun, B)).
 
 %% flatten/1 — flatten arbitrarily nested lists
 %% Uses explicit continuation stack to avoid stack overflow on long lists.
