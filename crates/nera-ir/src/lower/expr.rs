@@ -311,12 +311,11 @@ impl IrBuilder {
 
                 if let ast::CallTarget::Local(name, _) = target {
                     if resolved == crate::resolution::Resolution::AutoImport {
-                        // Check if this is spawn/3 or spawn_link/3
-                        // (NOT spawn_monitor/3 which returns {Pid, Ref})
+                        // Only spawn/3 uses the unlinked Spawn instruction.
+                        // spawn_link/3 must keep its atomic linking BIF call.
                         if args.len() == 3 {
                             let fn_name = self.atom_names.get(name).map(|s| s.as_str());
-                            let is_spawn_like = matches!(fn_name, Some("spawn") | Some("spawn_link"));
-                            if is_spawn_like {
+                            if fn_name == Some("spawn") {
                                 if let (ast::Expr::Atom(mod_atom, _), ast::Expr::Atom(fun_atom, _)) =
                                     (&args[0], &args[1])
                                 {

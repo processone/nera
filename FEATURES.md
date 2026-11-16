@@ -195,12 +195,12 @@ Maintainers with OTP 29.0.4 installed can verify the catalogue with
 | list_to_tuple/1     | ✅      |
 | tuple_to_list/1     | ✅      |
 | self/0              | ✅      |
-| spawn/1             | ✅      | Closures              |
-| spawn/3             | ✅      | Module:Function/Arity |
-| spawn_link/1        | ✅      | Closures              |
-| spawn_link/3        | ✅      | Module:Function/Arity |
-| spawn_monitor/1     | ✅      | Closures              |
-| spawn_monitor/3     | ✅      | Module:Function/Arity |
+| spawn/1             | ✅      | Closures and external funs; nonzero arity fails with child badarity |
+| spawn/3             | ✅      | Compiled MFA and erlang BIFs; BIF errors occur in the child |
+| spawn_link/1        | ✅      | Zero-arity closures and external funs; nonzero arity raises caller badarg |
+| spawn_link/3        | ✅      | Compiled MFA and erlang BIFs; atomic link |
+| spawn_monitor/1     | ✅      | Zero-arity closures and external funs; nonzero arity raises caller badarg |
+| spawn_monitor/3     | ✅      | Compiled MFA and erlang BIFs; atomic monitor |
 | make_ref/0          | ✅      |                       |
 | register/2          | ✅      |                       |
 | whereis/1           | ✅      |                       |
@@ -213,7 +213,7 @@ Maintainers with OTP 29.0.4 installed can verify the catalogue with
 | process_flag/2      | ✅      | trap_exit, fullsweep_after, max_heap_size (integer or default-policy size map); nondefault kill/logging/shared-binary policies remain unsupported |
 | garbage_collect/0   | ✅      | Full collection after saving compiled roots; returns true on resumption. Other arities are not implemented. |
 | hibernate/3         | ✅      | Shrink heap to zero, wake on message      |
-| spawn_opt/2         | ✅      | Closure + options (link, monitor, heap)   |
+| spawn_opt/2         | ✅      | Closures and external funs + options (link, monitor, heap); nonzero arity fails with child badarity |
 | spawn_opt/4         | ✅      | M:F:A + options                           |
 | put/2               | ✅      | Exact (`=:=`) keys, including numeric types within compounds; returns old value or `undefined` |
 | get/1               | ✅      | Exact key lookup; returns value or `undefined` |

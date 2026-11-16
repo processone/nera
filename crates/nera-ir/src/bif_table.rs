@@ -152,7 +152,7 @@ pub const BIF_TABLE: &[BifEntry] = &[
     BifEntry { module: "erlang", function: "fun_info_mfa", arity: 1, ffi_symbol: Some("nera_rt_fun_info_mfa"), param_names: None, spec: Some("-spec fun_info_mfa(Fun) -> {module(), atom(), arity()} when Fun :: function().") },
     BifEntry { module: "erlang", function: "self",       arity: 0, ffi_symbol: Some("nera_rt_get_self"),         param_names: None, spec: Some("-spec self() -> pid().") },
     BifEntry { module: "erlang", function: "spawn",      arity: 1, ffi_symbol: Some("nera_rt_spawn_closure"),    param_names: None, spec: Some("-spec spawn(Fun) -> pid().") },
-    BifEntry { module: "erlang", function: "spawn",      arity: 3, ffi_symbol: Some("nera_rt_spawn_process"),    param_names: Some(&["Module", "Function", "Args"]), spec: Some("-spec spawn(Module, Function, Args) -> pid().") },
+    BifEntry { module: "erlang", function: "spawn",      arity: 3, ffi_symbol: Some("nera_rt_spawn"),    param_names: Some(&["Module", "Function", "Args"]), spec: Some("-spec spawn(Module, Function, Args) -> pid().") },
     BifEntry { module: "erlang", function: "spawn_link",    arity: 1, ffi_symbol: Some("nera_rt_spawn_link_closure"),    param_names: None, spec: Some("-spec spawn_link(Fun) -> pid().") },
     BifEntry { module: "erlang", function: "spawn_link",    arity: 3, ffi_symbol: Some("nera_rt_spawn_link"),         param_names: Some(&["Module", "Function", "Args"]), spec: Some("-spec spawn_link(Module, Function, Args) -> pid().") },
     BifEntry { module: "erlang", function: "spawn_monitor", arity: 1, ffi_symbol: Some("nera_rt_spawn_monitor_closure"), param_names: None, spec: Some("-spec spawn_monitor(Fun) -> {pid(), reference()}.") },
