@@ -157,7 +157,8 @@ guard({Name, Body}) ->
 
 %% Outside try, the process stops at the failed operation. This fixture
 %% owns the reason and side effects, not the complete exit envelope;
-%% uncaught_error_exit owns the stricter error-envelope assertions.
+%% uncaught_error_exit and uncaught_throw_exit own the stricter
+%% error- and throw-envelope assertions.
 unprotected() ->
     [{add, badarith, [], fun(P) -> _ = 1 + id(a), P ! sent end},
      {subtract, badarith, [], fun(P) -> _ = id(a) - 1, P ! sent end},

@@ -20,8 +20,7 @@ test() ->
         end, MfaStack),
         %% Spawning erlang:throw/1 itself; BEAM gives it an empty trace.
         {Bif, BifRef} = spawn_monitor(erlang, throw, [bif_throw]),
-        {{nocatch, bif_throw}, BifStack} = down(Bif, BifRef),
-        true = is_list(BifStack),
+        {{nocatch, bif_throw}, []} = down(Bif, BifRef),
 
         %% Thrown values that are also special exit reasons stay wrapped.
         normal = monitored(fun() -> throw(id(normal)) end),
