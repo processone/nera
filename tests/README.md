@@ -248,6 +248,7 @@ These are automatically skipped by the runner and show up as SKIP in output.
 | Test File            | Feature Category                | Assertions |
 |----------------------|---------------------------------|------------|
 | `bool_ops.erl`       | and/or/not, andalso/orelse      | ~20        |
+| `andalso_orelse_badarg.erl` | `andalso`/`orelse` with a non-boolean left side raise `error:{badarg, Left}` before the right side runs: in and outside `try`, `catch`, `of`, `after`, tail position, funs and comprehension filters; the right side's value stays unchecked; a guard with such a left side just fails; also run on BEAM | Table-driven |
 | `comparison_ops.erl` | Equality, ordering, mixed types | ~30        |
 | `deep_term_ops.erl` | 200,000-level head-nested iolists: both ordering directions, equal-prefix tails, exact ETF bytes, flattened bytes and OTP-derived portable hashes; same fixture on native and BEAM | Full outputs |
 | `map_comparison.erl` | Exact recursive map-key ordering, numeric map-value equality, insertion order, comparison operators, sibling key searches and ETS ordered-set identity/order; also run on BEAM | Table-driven |

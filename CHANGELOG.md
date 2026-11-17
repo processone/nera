@@ -2,6 +2,17 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## andalso and orelse check their left side
+
+- `andalso` and `orelse` whose left side is not `true` or `false` now raise
+  `error:{badarg, Left}` before the right side runs, as on BEAM, instead of
+  returning a value. Inside `try` the handler gets it and no later code runs;
+  outside `try` the process stops there.
+- The right side's value is still returned unchecked. A guard with a
+  non-boolean left side fails without raising; one that compares such an
+  `andalso`, as in `when (X andalso true) =:= 5`, used to pass and now fails.
+- `andalso_orelse_badarg` runs unchanged natively and on BEAM.
+
 ## Invalid raise arguments return badarg
 
 - `erlang:raise/3` now returns the atom `badarg` without raising when the
