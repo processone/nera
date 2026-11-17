@@ -85,8 +85,8 @@ pub(super) unsafe fn apply_impl(
     }
     let arity = arg_terms.len() as u32;
 
-    // Look up the function in the global function table
-    if let Some(func) = global_function_table().lookup(mod_id, fun_id, arity) {
+    // apply/3 and M:F(...) are external calls, even within the same module.
+    if let Some(func) = global_function_table().lookup_exported(mod_id, fun_id, arity) {
         // SAFETY: the context and argument storage are live and exclusively
         // accessible here; no heap borrow crosses this reentry boundary.
         unsafe { func(ctx, arg_terms.as_ptr(), arity); }

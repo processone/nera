@@ -224,8 +224,8 @@ unsafe fn closure_mfa(fun: ErlTerm) -> Option<(u32, u32, u32)> {
                      unsafe { ErlTerm(*ptr.add(4)) }.as_atom_id()?, arity));
     }
     let table = crate::entry::global_function_table().table.read();
-    table.iter().find_map(|(&(module, name, _), &wrapper)|
-        (wrapper as usize as u64 == function).then_some((module, name, arity)))
+    table.iter().find_map(|(&(module, name, _), entry)|
+        (entry.func as usize as u64 == function).then_some((module, name, arity)))
 }
 
 /// The metadata fields required by EUnit: module, name and user arity.

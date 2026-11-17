@@ -1,5 +1,6 @@
+%% EXPECT: dynamic apply ok
 -module(dynamic_apply).
--export([test/0]).
+-export([test/0, helper_add/3, helper_mul/3, helper_id/1, helper_crash/1]).
 
 %% Test dynamic remote calls: Mod:Fun(Args) syntax
 
@@ -12,6 +13,7 @@ test() ->
     test_try_catch(),
     test_tail_position(),
     test_undef_error(),
+    io:format("dynamic apply ok~n"),
     ok.
 
 %% Var:atom(args) — variable module, atom function

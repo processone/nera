@@ -209,6 +209,10 @@ impl ModuleCompiler {
                 continue; // skip self — already declared as local exports
             }
             for func in &other_module.functions {
+                if !other_module.exports.iter().any(|export|
+                    export.name == func.name && export.arity == func.arity) {
+                    continue;
+                }
                 let sig = build_erlang_signature(func.arity);
                 let func_id = object_module
                     .declare_function(&func.mangled_name, Linkage::Import, &sig)
@@ -475,12 +479,14 @@ impl ModuleCompiler {
             .map_err(|e| CompileError::Module(e.to_string()))?;
 
         // nera_rt_register_functions_batch(mod_ids: *const u32, fun_ids: *const u32,
-        //                                  arities: *const u32, func_ptrs: *const fn, count: u32)
+        //                                  arities: *const u32, func_ptrs: *const fn,
+        //                                  exports: *const u32, count: u32)
         let mut reg_batch_sig = Signature::new(cc);
         reg_batch_sig.params.push(AbiParam::new(types::I64)); // mod_ids
         reg_batch_sig.params.push(AbiParam::new(types::I64)); // fun_ids
         reg_batch_sig.params.push(AbiParam::new(types::I64)); // arities
         reg_batch_sig.params.push(AbiParam::new(types::I64)); // func_ptrs
+        reg_batch_sig.params.push(AbiParam::new(types::I64)); // exports
         reg_batch_sig.params.push(AbiParam::new(types::I32)); // count
         let reg_batch_id = module
             .declare_function("nera_rt_register_functions_batch", Linkage::Import, &reg_batch_sig)
@@ -632,6 +638,7 @@ impl ModuleCompiler {
             fun_atom_id: u32,
             arity: u32,
             wrapper_func_id: FuncId,
+            exported: bool,
         }
         let mut func_entries: Vec<FuncEntry> = Vec::new();
 
@@ -653,6 +660,8 @@ impl ModuleCompiler {
                     fun_atom_id: func_ir.name.0,
                     arity: func_ir.arity,
                     wrapper_func_id: w_id,
+                    exported: other_module.exports.iter().any(|export|
+                        export.name == func_ir.name && export.arity == func_ir.arity),
                 });
             }
         }
@@ -660,6 +669,23 @@ impl ModuleCompiler {
         let func_count = func_entries.len();
 
         if func_count > 0 {
+            // Keep every definition for local fun metadata, but distinguish the
+            // exports that external apply dispatch is allowed to call.
+            let mut exports_data = Vec::with_capacity(func_count * 4);
+            for entry in &func_entries {
+                exports_data.extend_from_slice(&u32::from(entry.exported).to_le_bytes());
+            }
+            let func_exports_id = module
+                .declare_data("__nera_func_exports", Linkage::Local, false, false)
+                .map_err(|e| CompileError::Module(e.to_string()))?;
+            {
+                let mut desc = cranelift_module::DataDescription::new();
+                desc.define(exports_data.into_boxed_slice());
+                desc.set_align(4);
+                module.define_data(func_exports_id, &desc)
+                    .map_err(|e| CompileError::Module(e.to_string()))?;
+            }
+
             // Arities are compile-time constants → read-only data section
             let mut arities_data: Vec<u8> = Vec::with_capacity(func_count * 4);
             for entry in &func_entries {
@@ -718,11 +744,13 @@ impl ModuleCompiler {
             let fun_terms_gv = module.declare_data_in_func(func_fun_terms_id, builder.func);
             let arities_gv = module.declare_data_in_func(func_arities_id, builder.func);
             let ptrs_gv = module.declare_data_in_func(func_ptrs_id, builder.func);
+            let exports_gv = module.declare_data_in_func(func_exports_id, builder.func);
 
             let mod_terms_ptr = builder.ins().global_value(types::I64, mod_terms_gv);
             let fun_terms_ptr = builder.ins().global_value(types::I64, fun_terms_gv);
             let arities_ptr = builder.ins().global_value(types::I64, arities_gv);
             let ptrs_ptr = builder.ins().global_value(types::I64, ptrs_gv);
+            let exports_ptr = builder.ins().global_value(types::I64, exports_gv);
 
             // Fill arrays from code using runtime values
             for (i, entry) in func_entries.iter().enumerate() {
@@ -751,7 +779,7 @@ impl ModuleCompiler {
             let func_count_val = builder.ins().iconst(types::I32, func_count as i64);
 
             builder.ins().call(reg_batch_ref, &[
-                mod_terms_ptr, fun_terms_ptr, arities_ptr, ptrs_ptr, func_count_val,
+                mod_terms_ptr, fun_terms_ptr, arities_ptr, ptrs_ptr, exports_ptr, func_count_val,
             ]);
 
             // 3b. Set up the global function info table for compact stack frame resolution.

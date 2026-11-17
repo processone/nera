@@ -208,8 +208,10 @@ impl FuncTranslator {
                             ).is_some();
 
                             if !is_ffi {
-                                // Check intra-module qualified calls (e.g. maps:map from within maps.erl)
+                                // Qualified self calls are external too: only
+                                // exported definitions may bypass apply lookup.
                                 let local_func = mod_ctx.module_funcs.get(&(fun_id, arity))
+                                    .filter(|_| mod_ctx.exports.contains(&(fun_id, arity)))
                                     .and_then(|mangled| mod_ctx.func_ids.get(mangled));
                                 let xmod_func = mod_ctx.cross_module_funcs.get(&(mod_id, fun_id, arity));
                                 if let Some(&fid) = local_func.filter(|_| mod_id == mod_ctx.module_name_id).or(xmod_func) {

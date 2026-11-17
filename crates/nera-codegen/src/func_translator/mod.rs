@@ -16,7 +16,7 @@ mod terminators;
 #[cfg(test)]
 mod tests;
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use cranelift_codegen::ir::{
     types, AbiParam, Function, InstBuilder, MemFlags, Signature, Value,
@@ -40,8 +40,6 @@ use signatures::{
 use liveness::{compute_suspend_points, SuspendPoint};
 #[cfg(test)]
 use liveness::{collect_instruction_defs, collect_instruction_uses, collect_terminator_uses, terminator_successors};
-#[cfg(test)]
-use std::collections::HashSet;
 
 /// Error during function translation.
 #[derive(Debug)]
@@ -61,6 +59,8 @@ pub struct ModuleContext {
     pub module_funcs: HashMap<(u32, u32), String>,
     /// Module name atom id
     pub module_name_id: u32,
+    /// Exported (function atom ID, arity) pairs, including qualified self calls.
+    pub exports: HashSet<(u32, u32)>,
     /// Cross-module functions for direct linking: (module_atom_id, func_atom_id, arity) -> FuncId
     pub cross_module_funcs: HashMap<(u32, u32, u32), FuncId>,
     /// Map from (module_atom_id, func_atom_id, arity) -> func_index for compact stack frames
@@ -90,6 +90,7 @@ impl ModuleContext {
             func_ids,
             module_funcs,
             module_name_id: ir_module.name.0,
+            exports: ir_module.exports.iter().map(|export| (export.name.0, export.arity)).collect(),
             cross_module_funcs: HashMap::new(),
             func_index_map: HashMap::new(),
         })
