@@ -2,8 +2,9 @@
 %% `andalso` and `orelse` whose left side is not a boolean raise
 %% error:{badarg, Left} before the right side runs, as on BEAM: inside try
 %% the handler gets it and no later code runs; outside try the process
-%% stops there. The right side's value is never checked, and a guard with
-%% such a left side just fails. Run this same fixture on native Nera and BEAM.
+%% stops there. The right side's value is never checked. A guard or map
+%% pattern key with such a left side just fails, as does any map pattern key
+%% that raises. Run this same fixture on native Nera and BEAM.
 -module(andalso_orelse_badarg).
 -export([test/0]).
 
@@ -11,6 +12,7 @@ test() ->
     lists:foreach(fun check/1, protected()),
     lists:foreach(fun value/1, values()),
     lists:foreach(fun guard/1, guards()),
+    lists:foreach(fun guard/1, map_keys()),
     lists:foreach(fun unprotected/1, unprotected()),
     io:format("andalso_orelse_badarg_ok~n").
 
@@ -94,6 +96,22 @@ guards() ->
 guard({Name, Expected, Body}) ->
     {Name, Expected} = {Name, Body()}.
 
+%% A map pattern key that raises makes the pattern not match.
+map_keys() ->
+    [{case_clause, nomatch, fun() -> map_key(5, id(#{5 => a, true => b})) end},
+     {case_clause_true, b, fun() -> map_key(true, id(#{5 => a, true => b})) end},
+     {orelse_false, c, fun() -> map_key_orelse(false, id(#{false => c})) end},
+     {match_expression, {error, {badmatch, #{5 => a}}},
+      fun() -> K = id(5), try #{(K orelse false) := V} = id(#{5 => a}), V catch C:E -> {C, E} end end},
+     {fun_head, nomatch,
+      fun() -> K = id(5), F = fun(#{(K andalso true) := V}) -> V; (_) -> nomatch end, F(id(#{5 => a})) end},
+     {receive_pattern, {none, [#{5 => a}]},
+      fun() -> K = id(5), self() ! #{5 => a},
+               R = receive #{(K orelse false) := V} -> {got, V} after 0 -> none end,
+               {R, flush()} end},
+     {arithmetic, nomatch,
+      fun() -> K = id(a), case id(#{5 => a}) of #{(K + 1) := V} -> V; _ -> nomatch end end}].
+
 %% Outside try, the process stops at the failed operator.
 unprotected() ->
     [{andalso_integer, {badarg, 5}, [], fun(P) -> _ = id(5) andalso true, P ! sent end},
@@ -131,6 +149,12 @@ guard_alternative(_) -> no.
 
 guard_type_test(X) when is_integer(X) andalso X > 3 -> big;
 guard_type_test(_) -> no.
+
+map_key(K, M) ->
+    case M of #{(K andalso true) := V} -> V; _ -> nomatch end.
+
+map_key_orelse(K, M) ->
+    case M of #{(K orelse false) := V} -> V; _ -> nomatch end.
 
 flush() ->
     receive M -> [M | flush()] after 0 -> [] end.

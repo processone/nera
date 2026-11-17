@@ -11,6 +11,11 @@ All notable milestones for the nera project are documented in this file.
 - The right side's value is still returned unchecked. A guard with a
   non-boolean left side fails without raising; one that compares such an
   `andalso`, as in `when (X andalso true) =:= 5`, used to pass and now fails.
+- A map pattern key that raises, such as `#{(K andalso true) := V}` or
+  `#{(K + 1) := V}` with a wrong `K`, now makes the pattern not match, as on
+  BEAM, instead of raising or matching another key.
+- `andalso` and `orelse` now test their left side for `true` without a
+  runtime call.
 - `andalso_orelse_badarg` runs unchanged natively and on BEAM.
 
 ## Invalid raise arguments return badarg

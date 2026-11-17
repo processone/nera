@@ -1385,10 +1385,8 @@ fn compile_single_pattern_impl(
             let mut sub_patterns = Vec::new();
 
             for field in fields {
-                // Lower the key expression to get a key variable
-                let key_var = builder.lower_pattern_expr(&field.key, &HashSet::new()).unwrap_or_else(|_| {
-                    builder.emit_const(Literal::Nil)
-                });
+                // Lower the key expression; an exception in it rejects the pattern.
+                let key_var = builder.lower_pattern_key_expr(&field.key, fail_block);
 
                 // A missing key rejects this pattern; maps:get itself raises badkey.
                 let is_key = builder.atom_id_for("is_key");
