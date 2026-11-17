@@ -95,32 +95,30 @@ impl IrBuilder {
                         let merge_block = self.fresh_block_with_id();
 
                         // andalso: true → eval rhs, false → lhs is the result
-                        // orelse:  false → eval rhs, true → lhs is the result
-                        let (continue_atom, stop_atom) = match op {
-                            BinOp::Andalso => (self.true_atom_id, self.false_atom_id),
-                            BinOp::Orelse => (self.false_atom_id, self.true_atom_id),
+                        // orelse:  true → lhs is the result, false → eval rhs
+                        // A branch tests for `true` directly, without a call.
+                        let (on_true, on_false) = match op {
+                            BinOp::Andalso => (eval_rhs_block, skip_block),
+                            BinOp::Orelse => (skip_block, eval_rhs_block),
                             _ => unreachable!(),
                         };
-                        let continue_val = self.emit_const(Literal::Atom(continue_atom));
-                        let continues = self.fresh_var();
-                        self.emit(Instruction::BinOp(continues, BinOp::ExactEq, lhs_var, continue_val));
 
                         if Self::expr_is_boolean(lhs) {
-                            self.set_terminator(Terminator::Branch(continues, eval_rhs_block, skip_block));
+                            self.set_terminator(Terminator::Branch(lhs_var, on_true, on_false));
                             self.close_current_block();
                         } else {
                             // Any other left value raises error:{badarg, Value}
                             // before the right side runs, as on BEAM.
                             let check_block = self.fresh_block_with_id();
                             let badarg_block = self.fresh_block_with_id();
-                            self.set_terminator(Terminator::Branch(continues, eval_rhs_block, check_block));
+                            self.set_terminator(Terminator::Branch(lhs_var, on_true, check_block));
                             self.close_current_block();
 
                             self.start_block(check_block);
-                            let stop_val = self.emit_const(Literal::Atom(stop_atom));
-                            let stops = self.fresh_var();
-                            self.emit(Instruction::BinOp(stops, BinOp::ExactEq, lhs_var, stop_val));
-                            self.set_terminator(Terminator::Branch(stops, skip_block, badarg_block));
+                            let false_val = self.emit_const(Literal::Atom(self.false_atom_id));
+                            let is_false = self.fresh_var();
+                            self.emit(Instruction::BinOp(is_false, BinOp::ExactEq, lhs_var, false_val));
+                            self.set_terminator(Terminator::Branch(is_false, on_false, badarg_block));
                             self.close_current_block();
 
                             self.start_block(badarg_block);
