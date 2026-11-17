@@ -47,7 +47,7 @@ and known differences from BEAM.
 | List append/subtract (++, --)               | ✅      | Via FFI calls                 |
 | Unary negation (-)                          | ✅      |                               |
 | Match operator (=)                          | ✅      | In patterns and body          |
-| Send operator (!)                           | ✅      | To PIDs and registered names  |
+| Send operator (!)                           | ✅      | To PIDs, registered names and `{Name, Node}`; another node drops the message |
 | Block expressions (begin...end)             | ✅      |                               |
 | List comprehensions                         | ✅      | Generator patterns checked before filters/body; filters stop at the first `false`; keys/sizes read outer or earlier-generator inputs; a non-list source or improper tail raises `{bad_generator, Term}` |
 | Fun expressions (fun(...) -> ... end)       | ✅      | Closure capture includes head keys/sizes and nested callee expressions |
@@ -751,7 +751,7 @@ an external adapter now passes all 36 assertion bodies
 | Feature                            | Status | Notes                          |
 |------------------------------------|--------|--------------------------------|
 | Process spawning (spawn/1,3)       | ✅      | Closures and M:F/A             |
-| Message send (!)                   | ✅      | Deep-copy, to PIDs and names   |
+| Message send (!)                   | ✅      | Deep-copy, to PIDs, names and `{Name, Node}` |
 | Message receive                    | ✅      | With pattern matching          |
 | Receive with timeout (after)       | ✅      | Monotonic clock (NTP-safe)     |
 | Process isolation (separate heaps) | ✅      |                                |

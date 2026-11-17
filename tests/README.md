@@ -445,6 +445,7 @@ These are automatically skipped by the runner and show up as SKIP in output.
 | `register_reuse.erl`      | Re-register after process death        | ~4         |
 | `register_self_send.erl`  | Self-send via registered name          | ~4         |
 | `register_freed_before_signal.erl` | A dead process's name is free when its `'EXIT'` or `'DOWN'` arrives: normal exit, own reason, trapped link, `exit(Pid, kill)` and link cascade, 500 rounds each; a supervisor restarts its named child 100 times; also run on BEAM | 7 |
+| `send_name_node.erl` | `{Name, Node} ! Msg` with the local node delivers to a registered process, another or itself, in order; it drops the message without an error for a name nobody registered, inside and outside `try`, and for a name whose process has exited; the send evaluates to Msg; a plain message and a tuple built in the send; on a node that is not distributed, a send to another node is dropped; other tuple destinations and an unregistered bare name are still `badarg`; also run on BEAM | Table-driven |
 
 ### Cross-Module & Dynamic Dispatch
 

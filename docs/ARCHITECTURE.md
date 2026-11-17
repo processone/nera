@@ -381,7 +381,7 @@ The IR lowering emits a scan loop: fail_block calls `receive_next`, updates the 
 - **spawn/1,3**: `spawn_closure` deep-copies the complete fun to the child heap, then invokes the checked closure dispatcher there to handle external funs and validate invocation arity
 - **Links**: Bidirectional, with `trap_exit` flag for converting exit signals to messages
 - **Monitors**: Unidirectional, delivering `{'DOWN', Ref, process, Pid, Reason}` on exit
-- **Registered processes**: `registered_names: Arc<RwLock<HashMap<u32, ProcessId>>>` — `register/2`, `whereis/1`, `unregister/1`, send-by-name via atom resolution
+- **Registered processes**: `registered_names: Arc<RwLock<HashMap<u32, ProcessId>>>` — `register/2`, `whereis/1`, `unregister/1`, send-by-name via atom or `{Name, Node}` resolution
 - **Exit code**: Only the initial process (PID 1) affects the program exit code; spawned process crashes print stderr reports but don't change exit code
 
 ---
@@ -419,7 +419,7 @@ The IR lowering emits a scan loop: fail_block calls `receive_next`, updates the 
 | Records                 | Done   | Desugared to tuples at IR level                                                                |
 | Map create/update       | Done   | `#{k => v}`, `M#{k := v}`, `M#{k => v}`                                                        |
 | Preprocessor            | Done   | `-define`, `-ifdef`/`-ifndef`/`-else`/`-endif`, `-include`, macros with args                   |
-| Send `!`                | Done   | With registered name resolution                                                                |
+| Send `!`                | Done   | With registered name and local `{Name, Node}` resolution                                       |
 | Spawn                   | Done   | `spawn/1` (closures), `spawn/3` (M:F:A)                                                        |
 | Links & monitors        | Done   | `link/1`, `monitor/2`, `process_flag(trap_exit, true)`                                         |
 | Process hardening       | Done   | `process_flag(fullsweep_after/max_heap_size)`, `hibernate/3`, `spawn_opt/2,4`                  |
