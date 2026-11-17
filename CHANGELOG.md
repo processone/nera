@@ -13,6 +13,18 @@ All notable milestones for the nera project are documented in this file.
   equal and mixed-type keys, long inputs, exhaustive short lists, argument
   errors and direct, apply, dynamic and fun-reference calls.
 
+## Float text matches BEAM
+
+- `~w` and `~p` use the same shortest round-tripping float text as
+  `float_to_binary/2` with `[short]`, including scientific notation for
+  `9007199254740992.0` and `1.0e16`.
+- `float_to_list/1` keeps twenty decimal places and writes exponent signs
+  and at least two digits, such as `e+15`, `e+00` and `e-03`.
+- `float_to_list/2` now compiles and runs through direct, apply and fun calls.
+  It supports `short`, `compact`, `{decimals, N}` and `{scientific, N}`,
+  with BEAM's rounding, option ordering and conversion size limits.
+- `float_text` checks the same output and error assertions natively and on BEAM.
+
 ## Binary split options match BEAM
 
 - `binary:split/3` now supports `trim` to remove trailing empty parts and

@@ -190,6 +190,7 @@ pub(super) unsafe fn apply_impl(
         (Some("erlang"), Some("list_to_integer"), 2) => Some(nera_rt_list_to_integer_2(ctx, arg_terms[0], arg_terms[1])),
         (Some("erlang"), Some("list_to_integer"), 1) => Some(nera_rt_list_to_integer(ctx, arg_terms[0])),
         (Some("erlang"), Some("float_to_list"), 1) => Some(nera_rt_float_to_list(ctx, arg_terms[0])),
+        (Some("erlang"), Some("float_to_list"), 2) => Some(nera_rt_float_to_list_2(ctx, arg_terms[0], arg_terms[1])),
         (Some("erlang"), Some("list_to_tuple"), 1) => Some(nera_rt_list_to_tuple(ctx, arg_terms[0])),
         (Some("erlang"), Some("tuple_to_list"), 1) => Some(nera_rt_tuple_to_list(ctx, arg_terms[0])),
         (Some("erlang"), Some("integer_to_list"), 2) => Some(nera_rt_integer_to_list_2(ctx, arg_terms[0], arg_terms[1])),

@@ -107,6 +107,22 @@ pub unsafe extern "C" fn nera_rt_float_to_list(ctx: *mut ProcessContext, term: u
     }
 }
 
+/// erlang:float_to_list/2
+#[no_mangle]
+pub unsafe extern "C" fn nera_rt_float_to_list_2(
+    ctx: *mut ProcessContext,
+    term: u64,
+    options: u64,
+) -> u64 {
+    let result = with_ctx_heap(ctx, |heap| {
+        bif::bif_float_to_list(heap, &[ErlTerm(term), ErlTerm(options)])
+    });
+    match result {
+        Ok(val) => val.0,
+        Err(_) => raise_badarg(ctx),
+    }
+}
+
 /// erlang:list_to_tuple/1
 #[no_mangle]
 pub unsafe extern "C" fn nera_rt_list_to_tuple(ctx: *mut ProcessContext, term: u64) -> u64 {

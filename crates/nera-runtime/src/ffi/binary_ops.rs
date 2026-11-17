@@ -2,6 +2,7 @@
 
 #![allow(unused_unsafe)]
 
+use crate::float_format::format_short_float;
 use crate::binary::BinaryData;
 use crate::binary::bit_copy::copy_bits;
 use crate::match_context::MatchContext;
@@ -1372,63 +1373,11 @@ pub unsafe extern "C" fn nera_rt_float_to_binary_2(
             s
         }
     } else {
-        // Default: scientific notation with 20 digits (matches float_to_list/1)
+        // Default: scientific notation with 20 decimal places.
         format!("{:.20e}", val)
     };
 
     with_ctx_heap(ctx, |heap| heap.alloc_binary_auto(s.as_bytes()).0)
-}
-
-/// Erlang short formatting uses nearest, ties-to-even shortest digits, then
-/// chooses the shorter notation (fixed on ties). At |value| >= 2^53 it always
-/// uses scientific notation, even when a fixed spelling would be shorter.
-fn format_short_float(value: f64) -> String {
-    if value == 0.0 || !value.is_finite() {
-        return if value == 0.0 {
-            if value.is_sign_negative() {
-                "-0.0"
-            } else {
-                "0.0"
-            }
-            .to_owned()
-        } else {
-            value.to_string()
-        };
-    }
-    let mut buffer = ryu::Buffer::new();
-    let raw = buffer.format_finite(value.abs());
-    let (mantissa, exponent) = match raw.split_once('e') {
-        Some((mantissa, exponent)) => (mantissa, exponent.parse::<i32>().unwrap()),
-        None => (raw, 0),
-    };
-    let point = mantissa.find('.').unwrap_or(mantissa.len()) as i32;
-    let digits = mantissa.replace('.', "");
-    let leading = digits.bytes().take_while(|&c| c == b'0').count();
-    let exponent = exponent + point - leading as i32 - 1;
-    let digits = digits[leading..].trim_end_matches('0');
-    let sign = if value.is_sign_negative() { "-" } else { "" };
-    let fraction = if digits.len() == 1 { "0" } else { &digits[1..] };
-    let scientific = format!("{sign}{}.{fraction}e{exponent}", &digits[..1]);
-    if value.abs() >= 9_007_199_254_740_992.0 {
-        return scientific;
-    }
-    let point = exponent + 1;
-    let fixed = if point <= 0 {
-        format!("{sign}0.{}{digits}", "0".repeat((-point) as usize))
-    } else if point as usize >= digits.len() {
-        format!(
-            "{sign}{digits}{}.0",
-            "0".repeat(point as usize - digits.len())
-        )
-    } else {
-        let (whole, fraction) = digits.split_at(point as usize);
-        format!("{sign}{whole}.{fraction}")
-    };
-    if scientific.len() < fixed.len() {
-        scientific
-    } else {
-        fixed
-    }
 }
 
 /// Trim trailing zeros from a decimal number string, keeping at least one digit after the dot.
@@ -2653,34 +2602,6 @@ mod integer_domain_tests {
 #[cfg(test)]
 mod short_float_tests {
     use super::*;
-
-    #[test]
-    fn short_float_boundaries_match_beam() {
-        for (value, expected) in [
-            (0.0, "0.0"),
-            (-0.0, "-0.0"),
-            (100.0, "100.0"),
-            // Exact halfway value 1331752170181752.25: choose the even last digit.
-            (f64::from_bits(0x4312_ece2_dc21_51e1), "1331752170181752.2"),
-            (9_007_199_254_740_991.0, "9007199254740991.0"),
-            (9_007_199_254_740_992.0, "9.007199254740992e15"),
-            (563_761_063_810_007_800.0, "5.637610638100078e17"),
-            (1000.0, "1.0e3"),
-            (0.0001, "0.0001"),
-            (0.00001, "1.0e-5"),
-            (1.234e-4, "1.234e-4"),
-            (99.99, "99.99"),
-            (-9.9e100, "-9.9e100"),
-            (0.1 + 0.2, "0.30000000000000004"),
-            (f64::from_bits(1), "5.0e-324"),
-            (f64::MIN_POSITIVE, "2.2250738585072014e-308"),
-            (f64::MAX, "1.7976931348623157e308"),
-        ] {
-            let text = format_short_float(value);
-            assert_eq!(text, expected);
-            assert_eq!(text.parse::<f64>().unwrap().to_bits(), value.to_bits());
-        }
-    }
 
     #[test]
     fn short_float_uses_compact_scientific_notation() {

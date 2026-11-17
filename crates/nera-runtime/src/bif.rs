@@ -758,7 +758,7 @@ pub unsafe fn bif_list_to_integer(heap: &mut ProcessHeap, args: &[ErlTerm]) -> R
     }
 }
 
-/// `erlang:float_to_list/1` -- convert float to list of codepoints.
+/// `erlang:float_to_list/1,2` -- convert float to list of codepoints.
 ///
 /// Uses Erlang's default scientific notation format.
 /// # Safety
@@ -766,7 +766,7 @@ pub unsafe fn bif_list_to_integer(heap: &mut ProcessHeap, args: &[ErlTerm]) -> R
 /// immutable and unmoved throughout this call, including externally owned
 /// storage. No moving GC or reentrant mutation may occur during graph access.
 pub unsafe fn bif_float_to_list(heap: &mut ProcessHeap, args: &[ErlTerm]) -> Result<ErlTerm, ErlTerm> {
-    if args.len() != 1 {
+    if args.is_empty() || args.len() > 2 {
         return Err(ErlTerm::atom(ATOM_BADARG));
     }
     let val = if args[0].is_boxed() {
@@ -784,7 +784,12 @@ pub unsafe fn bif_float_to_list(heap: &mut ProcessHeap, args: &[ErlTerm]) -> Res
     } else {
         return Err(ErlTerm::atom(ATOM_BADARG));
     };
-    let s = format!("{:.20e}", val);
+    let s = if args.len() == 2 {
+        crate::float_format::with_options(val, args[1])
+            .map_err(|()| ErlTerm::atom(ATOM_BADARG))?
+    } else {
+        crate::float_format::scientific(val, 20)
+    };
     let codepoints: Vec<ErlTerm> = s.chars().map(|c| ErlTerm::small_int(c as i64)).collect();
     Ok(heap.alloc_list_from_slice(&codepoints))
 }
@@ -1245,12 +1250,7 @@ unsafe fn format_boxed(term: ErlTerm, unicode: bool) -> String {
             BOXED_FLOAT => {
                 let bits = *ptr.add(1);
                 let val = f64::from_bits(bits);
-                // Use Erlang-like float formatting.
-                if val.fract() == 0.0 && val.is_finite() {
-                    format!("{:.1}", val)
-                } else {
-                    format!("{}", val)
-                }
+                crate::float_format::format_short_float(val)
             }
             BOXED_BINARY => {
                 // arity stores bit count; derive byte count
@@ -2834,8 +2834,8 @@ mod tests {
         let f = heap.alloc_float(3.25);
         let result = unsafe { bif_float_to_list(&mut heap, &[f]) }.unwrap();
         let s = unsafe { term_to_string(result) }.unwrap();
-        // Should be scientific notation
-        assert!(s.contains('e') || s.contains('E'), "expected scientific notation: {}", s);
+        // Legacy conversion uses a signed, two-digit exponent (OTP 29).
+        assert_eq!(s, "3.25000000000000000000e+00");
     }
 
     #[test]

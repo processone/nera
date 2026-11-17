@@ -191,7 +191,7 @@ Maintainers with OTP 29.0.4 installed can verify the catalogue with
 | integer_to_list/1,2 | ✅      | Base 2..36 for /2     |
 | list_to_integer/1   | ✅      |                       |
 | list_to_integer/2   | ✅      | Base 2..36; flat ASCII lists, optional sign, bignums; badarg like BEAM |
-| float_to_list/1     | ✅      |
+| float_to_list/1,2   | ✅      | /1: signed, padded scientific exponent; /2: short, decimals, scientific and compact options |
 | list_to_tuple/1     | ✅      |
 | tuple_to_list/1     | ✅      |
 | self/0              | ✅      |
