@@ -1053,9 +1053,7 @@ fn compile_single_pattern_impl(
                             Some(n) => builder.emit_const(Literal::Integer(n)),
                             None => {
                                 let size_var = if let Some(size_expr) = &seg.size {
-                                    builder.lower_pattern_expr(size_expr, &earlier_segments).unwrap_or_else(|_| {
-                                        builder.emit_const(Literal::Integer(8))
-                                    })
+                                    builder.lower_pattern_size_expr(size_expr, &earlier_segments)
                                 } else {
                                     builder.emit_const(Literal::Integer(8))
                                 };
