@@ -239,8 +239,9 @@ pub unsafe extern "C" fn nera_rt_get_exception_stacktrace(ctx: *mut ProcessConte
 /// `erlang:raise/3` — re-raise an exception with a given class, reason, and stacktrace.
 ///
 /// Class must be one of `throw`, `error`, `exit`.
-/// Stacktrace must be a list of `{Module, Function, Arity, Info}` tuples
-/// (or any list — we store the raw term and let the runtime format it on crash).
+/// Stacktrace must be a proper list. Invalid classes and non-list stacktraces
+/// return the atom `badarg` without changing the exception state, as on BEAM.
+/// Frame-format validation is not implemented here.
 ///
 /// Unlike throw/error/exit, raise does NOT capture the current call stack.
 /// Instead it uses the provided stacktrace to populate the exception trace.
@@ -260,7 +261,7 @@ pub unsafe extern "C" fn nera_rt_raise(
     let class_erl = ErlTerm(class_term);
     let class_atom = match class_erl.as_atom_id() {
         Some(id) => id,
-        None => return super::helpers::raise_badarg(ctx),
+        None => return ErlTerm::atom(ATOM_BADARG).0,
     };
 
     let table = global_atom_table();
@@ -275,13 +276,17 @@ pub unsafe extern "C" fn nera_rt_raise(
     } else if class_atom == exit_id {
         2
     } else {
-        return super::helpers::raise_error(ctx, ErlTerm::atom(ATOM_BADARG).0);
+        return ErlTerm::atom(ATOM_BADARG).0;
     };
 
-    // Validate that stacktrace is a list (proper list or nil)
+    // Reject non-lists and improper tails before changing any exception state.
     let st = ErlTerm(stacktrace);
-    if !st.is_nil() && !st.is_cons() {
-        return super::helpers::raise_error(ctx, ErlTerm::atom(ATOM_BADARG).0);
+    let mut tail = st;
+    while let Some(cell) = tail.as_cons_ptr() {
+        tail = (*cell).tail;
+    }
+    if !tail.is_nil() {
+        return ErlTerm::atom(ATOM_BADARG).0;
     }
 
     // Set exception state

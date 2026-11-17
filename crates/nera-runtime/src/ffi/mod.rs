@@ -659,49 +659,68 @@ mod tests {
     }
 
     #[test]
-    fn raise_badarg_on_invalid_class() {
+    fn raise_returns_badarg_on_invalid_class() {
         use super::exception::nera_rt_raise;
         use crate::atom_table::global_atom_table;
         let mut stack = Vec::new();
         let mut trace = Vec::new();
         let mut ctx = make_test_ctx(&mut stack, &mut trace);
         let table = global_atom_table();
-        let bad_class = ErlTerm::atom(table.intern("not_a_class"));
-        let reason = ErlTerm::small_int(1);
-        unsafe { nera_rt_raise(&mut ctx, bad_class.0, reason.0, ErlTerm::nil().0); }
-        // Should raise an error (badarg)
-        assert_eq!(ctx.status, STATUS_EXCEPTION);
-        assert_eq!(ctx.exception_class, 1); // error
-        assert_eq!(ctx.result, ErlTerm::atom(crate::atom_table::ATOM_BADARG).0);
+        // The invalid-class case from the native/BEAM raise_badarg fixture.
+        let bad_class = ErlTerm::atom(table.intern("bogus"));
+        let reason = ErlTerm::atom(table.intern("z"));
+        let previous = (ctx.status, ctx.exception_class, ctx.result);
+        // SAFETY: ctx is live and the arguments are immediate terms.
+        let returned = unsafe {
+            nera_rt_raise(&mut ctx, bad_class.0, reason.0, ErlTerm::nil().0)
+        };
+        assert_eq!(returned, ErlTerm::atom(crate::atom_table::ATOM_BADARG).0);
+        assert_eq!((ctx.status, ctx.exception_class, ctx.result), previous);
+        assert!(stack.is_empty());
+        assert!(trace.is_empty());
     }
 
     #[test]
-    fn raise_badarg_on_non_atom_class() {
+    fn raise_returns_badarg_on_non_atom_class() {
         use super::exception::nera_rt_raise;
         let mut stack = Vec::new();
         let mut trace = Vec::new();
         let mut ctx = make_test_ctx(&mut stack, &mut trace);
+        // The non-atom class from the native/BEAM raise_badarg fixture.
         let not_atom = ErlTerm::small_int(42);
-        let reason = ErlTerm::small_int(1);
-        unsafe { nera_rt_raise(&mut ctx, not_atom.0, reason.0, ErlTerm::nil().0); }
-        assert_badarg(&ctx);
+        let reason = ErlTerm::atom(crate::atom_table::global_atom_table().intern("z"));
+        let previous = (ctx.status, ctx.exception_class, ctx.result);
+        // SAFETY: ctx is live and the arguments are immediate terms.
+        let returned = unsafe {
+            nera_rt_raise(&mut ctx, not_atom.0, reason.0, ErlTerm::nil().0)
+        };
+        assert_eq!(returned, ErlTerm::atom(crate::atom_table::ATOM_BADARG).0);
+        assert_eq!((ctx.status, ctx.exception_class, ctx.result), previous);
+        assert!(stack.is_empty());
+        assert!(trace.is_empty());
     }
 
     #[test]
-    fn raise_badarg_on_non_list_stacktrace() {
+    fn raise_returns_badarg_on_non_list_stacktrace() {
         use super::exception::nera_rt_raise;
         use crate::atom_table::global_atom_table;
         let mut stack = Vec::new();
         let mut trace = Vec::new();
         let mut ctx = make_test_ctx(&mut stack, &mut trace);
         let table = global_atom_table();
-        let throw_atom = ErlTerm::atom(table.intern("throw"));
-        let reason = ErlTerm::small_int(1);
-        let not_a_list = ErlTerm::small_int(99); // integer, not a list
-        unsafe { nera_rt_raise(&mut ctx, throw_atom.0, reason.0, not_a_list.0); }
-        // Should raise error (badarg) because stacktrace is not a list
-        assert_eq!(ctx.status, STATUS_EXCEPTION);
-        assert_eq!(ctx.exception_class, 1); // error
+        // The non-list stacktrace from the native/BEAM raise_badarg fixture.
+        let error_atom = ErlTerm::atom(table.intern("error"));
+        let reason = ErlTerm::atom(table.intern("z"));
+        let not_a_list = ErlTerm::atom(table.intern("not_a_list"));
+        let previous = (ctx.status, ctx.exception_class, ctx.result);
+        // SAFETY: ctx is live and the arguments are immediate terms.
+        let returned = unsafe {
+            nera_rt_raise(&mut ctx, error_atom.0, reason.0, not_a_list.0)
+        };
+        assert_eq!(returned, ErlTerm::atom(crate::atom_table::ATOM_BADARG).0);
+        assert_eq!((ctx.status, ctx.exception_class, ctx.result), previous);
+        assert!(stack.is_empty());
+        assert!(trace.is_empty());
     }
 
     #[test]
