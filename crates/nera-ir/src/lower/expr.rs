@@ -90,23 +90,48 @@ impl IrBuilder {
                         let lhs_var = self.lower_expr(lhs, false)?;
                         let result = self.fresh_var();
 
-                        let true_atom = self.emit_const(Literal::Atom(self.true_atom_id));
-                        let is_true = self.fresh_var();
-                        self.emit(Instruction::BinOp(is_true, BinOp::ExactEq, lhs_var, true_atom));
-
                         let eval_rhs_block = self.fresh_block_with_id();
                         let skip_block = self.fresh_block_with_id();
                         let merge_block = self.fresh_block_with_id();
 
-                        // andalso: true → eval rhs, else → lhs is the result (false)
-                        // orelse:  true → lhs is the result (true), else → eval rhs
-                        let (true_target, false_target) = match op {
+                        // andalso: true → eval rhs, false → lhs is the result
+                        // orelse:  true → lhs is the result, false → eval rhs
+                        // A branch tests for `true` directly, without a call.
+                        let (on_true, on_false) = match op {
                             BinOp::Andalso => (eval_rhs_block, skip_block),
                             BinOp::Orelse => (skip_block, eval_rhs_block),
                             _ => unreachable!(),
                         };
-                        self.set_terminator(Terminator::Branch(is_true, true_target, false_target));
-                        self.close_current_block();
+
+                        if Self::expr_is_boolean(lhs) {
+                            self.set_terminator(Terminator::Branch(lhs_var, on_true, on_false));
+                            self.close_current_block();
+                        } else {
+                            // Any other left value raises error:{badarg, Value}
+                            // before the right side runs, as on BEAM.
+                            let check_block = self.fresh_block_with_id();
+                            let badarg_block = self.fresh_block_with_id();
+                            self.set_terminator(Terminator::Branch(lhs_var, on_true, check_block));
+                            self.close_current_block();
+
+                            self.start_block(check_block);
+                            let false_val = self.emit_const(Literal::Atom(self.false_atom_id));
+                            let is_false = self.fresh_var();
+                            self.emit(Instruction::BinOp(is_false, BinOp::ExactEq, lhs_var, false_val));
+                            self.set_terminator(Terminator::Branch(is_false, on_false, badarg_block));
+                            self.close_current_block();
+
+                            self.start_block(badarg_block);
+                            self.emit_set_line(lhs.span());
+                            let badarg = self.atom_id_for("badarg");
+                            let badarg = self.emit_const(Literal::Atom(badarg));
+                            let reason = self.fresh_var();
+                            self.emit(Instruction::MakeTuple(reason, vec![badarg, lhs_var]));
+                            let exc_result = self.fresh_var();
+                            self.emit(Instruction::RaiseException(exc_result, ExceptionClass::Error, reason));
+                            self.set_raise_terminator(exc_result);
+                            self.close_current_block();
+                        }
 
                         // eval_rhs: evaluate rhs and use it as result
                         self.start_block(eval_rhs_block);
@@ -1600,11 +1625,33 @@ impl IrBuilder {
         Ok(result_var)
     }
 
+    /// Whether an expression can only yield `true` or `false` when it returns:
+    /// a comparison, `not`, a strict boolean operator, or `andalso`/`orelse`
+    /// whose right side is one of these. Its `andalso`/`orelse` needs no
+    /// check that the left side is a boolean.
+    fn expr_is_boolean(expr: &ast::Expr) -> bool {
+        match expr {
+            ast::Expr::BinOp(op, _, right, _) => match op {
+                BinOp::Eq | BinOp::ExactEq | BinOp::NotEq | BinOp::ExactNotEq
+                | BinOp::Lt | BinOp::Gt | BinOp::LtEq | BinOp::GtEq
+                | BinOp::And | BinOp::Or | BinOp::Xor => true,
+                BinOp::Andalso | BinOp::Orelse => Self::expr_is_boolean(right),
+                _ => false,
+            },
+            ast::Expr::UnaryOp(ast::UnaryOp::Not, _, _) => true,
+            _ => false,
+        }
+    }
+
     fn guard_expr_may_throw(expr: &ast::Expr) -> bool {
         match expr {
             // Comparisons, type tests, boolean ops are safe
             ast::Expr::BinOp(op, left, right, _) => {
                 match op {
+                    // A left side that may not be a boolean raises badarg.
+                    BinOp::Andalso | BinOp::Orelse => !Self::expr_is_boolean(left)
+                        || Self::guard_expr_may_throw(left)
+                        || Self::guard_expr_may_throw(right),
                     // Arithmetic can throw (badarith)
                     BinOp::Add | BinOp::Sub | BinOp::Mul | BinOp::Div
                     | BinOp::IntDiv | BinOp::Rem | BinOp::Band | BinOp::Bor

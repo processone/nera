@@ -43,6 +43,41 @@ impl IrBuilder {
         self.with_pattern_expr_inputs(earlier_segments, |builder| builder.lower_expr(expr, false))
     }
 
+    /// A map pattern key has guard semantics: an exception while evaluating
+    /// it, such as a non-boolean `andalso` left side, rejects the pattern
+    /// through `fail_block`. Unlike a size, every key value is valid, so the
+    /// guard lowerer's `false` result cannot stand for the failure.
+    pub(crate) fn lower_pattern_key_expr(
+        &mut self,
+        expr: &ast::Expr,
+        fail_block: BlockId,
+    ) -> VarId {
+        let landing_pad = self.fresh_block_with_id();
+        self.try_exception_targets.push(landing_pad);
+        let previous_context = self.evaluation_context;
+        self.evaluation_context = EvaluationContext::Guard;
+        let key = self.lower_pattern_expr(expr, &HashSet::new()).unwrap_or_else(|_| {
+            self.emit_const(Literal::Nil)
+        });
+        self.evaluation_context = previous_context;
+        self.try_exception_targets.pop();
+
+        // A call records its exception instead of branching.
+        let raised = self.fresh_var();
+        self.emit(Instruction::CheckException(raised));
+        let next = self.fresh_block_with_id();
+        self.set_terminator(Terminator::Branch(raised, landing_pad, next));
+        self.close_current_block();
+
+        self.start_block(landing_pad);
+        self.emit(Instruction::ClearException);
+        self.set_terminator(Terminator::Jump(fail_block, vec![]));
+        self.close_current_block();
+
+        self.start_block(next);
+        key
+    }
+
     /// Size evaluation has guard semantics: an exception rejects the pattern.
     /// The guard lowerer's `false` result is an invalid size, so the matcher's
     /// checked size conversion takes its ordinary failure path. Pre-binding
