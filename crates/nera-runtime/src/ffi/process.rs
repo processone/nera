@@ -68,7 +68,7 @@ unsafe fn resolve_name_node_target(ctx: *mut ProcessContext, dest: ErlTerm, no_s
     let Some((name, node)) = name_node_pair(dest) else {
         return Err(raise_badarg(ctx));
     };
-    if node != super::misc::local_node_atom() {
+    if !super::misc::is_local_node(node) {
         return Ok(None);
     }
     registered_pid(ctx, name).ok_or(no_scheduler)

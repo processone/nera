@@ -10,8 +10,10 @@ All notable milestones for the nera project are documented in this file.
   error and the send still evaluates to `Msg`, inside and outside `try`.
 - Nera is never distributed, so a send to `{Name, Node}` with another node
   is dropped, as on a BEAM node that is not alive.
-- A destination that is not a pid, an atom or a tuple of two atoms still
-  raises `badarg`, as does a bare name nobody registered.
+- Other destinations are unchanged. A bare name nobody registered raises
+  `badarg`, as on BEAM. Any destination that is not a pid, an atom or a tuple
+  of two atoms also raises `badarg`; BEAM accepts a reference there as a
+  process alias, which Nera does not support.
 - `send_name_node` runs unchanged natively and on BEAM.
 
 ## List generators reject sources that are not proper lists
