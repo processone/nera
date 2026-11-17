@@ -37,35 +37,74 @@ unsafe extern "C" fn resume_garbage_collect(ctx: *mut ProcessContext, _: *const 
     unsafe { (*ctx).result = ErlTerm::atom(crate::atom_table::ATOM_TRUE).0; }
 }
 
-/// Send a message to a process by PID.
+/// The process a send goes to, or `None` when the message is dropped.
+/// `Err` holds the value to return at once: badarg was raised, or the
+/// caller's value when no scheduler is running.
+type SendTarget = Result<Option<crate::process::ProcessId>, u64>;
+
+/// Resolve `Dest` of `Dest ! Msg`: a pid, a registered name or `{Name, Node}`.
+#[inline(always)]
+unsafe fn resolve_send_target(ctx: *mut ProcessContext, dest: ErlTerm, no_scheduler: u64) -> SendTarget {
+    if let Some(id) = dest.as_pid_id() {
+        Ok(Some(id))
+    } else if let Some(name) = dest.as_atom_id() {
+        // A bare name must be registered.
+        match registered_pid(ctx, name) {
+            Some(Some(pid)) => Ok(Some(pid)),
+            Some(None) => Err(raise_badarg(ctx)),
+            None => Err(no_scheduler),
+        }
+    } else {
+        resolve_name_node_target(ctx, dest, no_scheduler)
+    }
+}
+
+/// `{Name, Node} ! Msg`. Nera is never distributed, so, as on BEAM when the
+/// node is not alive, a send to another node or to a name not registered
+/// here is dropped without an error. Any other destination is badarg.
+#[cold]
+#[inline(never)]
+unsafe fn resolve_name_node_target(ctx: *mut ProcessContext, dest: ErlTerm, no_scheduler: u64) -> SendTarget {
+    let Some((name, node)) = name_node_pair(dest) else {
+        return Err(raise_badarg(ctx));
+    };
+    if node != super::misc::local_node_atom() {
+        return Ok(None);
+    }
+    registered_pid(ctx, name).ok_or(no_scheduler)
+}
+
+/// The two atoms of a `{Name, Node}` tuple; `None` for any other term.
+unsafe fn name_node_pair(dest: ErlTerm) -> Option<(u32, u32)> {
+    if !dest.is_tuple() {
+        return None;
+    }
+    let ptr = dest.as_boxed_ptr()?;
+    if BoxedHeader(*ptr).arity() != 2 {
+        return None;
+    }
+    let name = ErlTerm(*ptr.add(1)).strip_external_bit().as_atom_id()?;
+    let node = ErlTerm(*ptr.add(2)).strip_external_bit().as_atom_id()?;
+    Some((name, node))
+}
+
+/// The pid registered under `name`; `None` when no scheduler is running.
+#[inline(always)]
+unsafe fn registered_pid(ctx: *mut ProcessContext, name: u32) -> Option<Option<crate::process::ProcessId>> {
+    with_sched_from_ctx(ctx, #[inline(always)] |scheduler| {
+        scheduler.map(|sched| sched.registered_names.read().get(&name).copied())
+    })
+}
+
+/// Send a message to a pid, a registered name or `{Name, Node}`.
 /// Deep-copies the message to the receiver's heap.
 /// Returns the message term (Erlang convention: Pid ! Msg evaluates to Msg).
 #[no_mangle]
 pub unsafe extern "C" fn nera_rt_send_message(ctx: *mut ProcessContext, pid_term: u64, msg: u64) -> u64 {
-    let pid_erl = ErlTerm(pid_term);
-
-    // Resolve the target: either a PID directly, or an atom (registered name).
-    let target_pid = if let Some(id) = pid_erl.as_pid_id() {
-        id
-    } else if let Some(atom_id) = pid_erl.as_atom_id() {
-        // Look up registered name
-        match with_sched_from_ctx(ctx, #[inline(always)] |scheduler| {
-            match scheduler {
-                Some(sched) => {
-                    let names = sched.registered_names.read();
-                    match names.get(&atom_id) {
-                        Some(&pid) => Ok(pid),
-                        None => Err(raise_badarg(ctx)), // Name not registered
-                    }
-                }
-                None => Err(msg),
-            }
-        }) {
-            Ok(pid) => pid,
-            Err(result) => return result,
-        }
-    } else {
-        return raise_badarg(ctx); // Not a PID and not an atom
+    let target_pid = match resolve_send_target(ctx, ErlTerm(pid_term), msg) {
+        Ok(Some(pid)) => pid,
+        Ok(None) => return msg,
+        Err(result) => return result,
     };
 
     // Self-send: push directly to our own mailbox via the ProcessContext
@@ -213,6 +252,21 @@ unsafe fn build_tuple_on_heap(
     }
 }
 
+// `Pid ! Msg` evaluates to Msg: build the sent tuple on the sender's heap,
+// which may keep the sender's own children.
+unsafe fn sender_tuple(ctx: *mut ProcessContext, arity: usize, raw: &[u64; 4]) -> u64 {
+    if ctx.is_null() || (*ctx).heap_ptr.is_null() {
+        return ErlTerm::nil().0;
+    }
+    let heap = &mut *(*ctx).heap_ptr;
+    let tuple_ptr = heap.alloc_words(1 + arity);
+    *tuple_ptr = BoxedHeader::new(crate::term::BoxedSubtype::Tuple, arity as u64).0;
+    for (i, item) in raw[..arity].iter().enumerate() {
+        *tuple_ptr.add(1 + i) = *item;
+    }
+    ErlTerm::boxed_unchecked(tuple_ptr as *const u64).0
+}
+
 /// Fused MakeTuple + Send: constructs an isolated receiver tuple and returns
 /// the sender's message tuple. Arity ≤ 4.
 /// Signature: (ctx, pid, arity, e0, e1, e2, e3) — unused elems are 0.
@@ -300,29 +354,10 @@ pub unsafe extern "C" fn nera_rt_send_tuple(
         unsafe { crate::message::MessageFragment::from_owned_heap(frag_heap, copied) }
     }
 
-    let pid_erl = ErlTerm(pid_term);
-
-    // Resolve target PID (same logic as nera_rt_send_message).
-    let target_pid = if let Some(id) = pid_erl.as_pid_id() {
-        id
-    } else if let Some(atom_id) = pid_erl.as_atom_id() {
-        match with_sched_from_ctx(ctx, #[inline(always)] |scheduler| {
-            match scheduler {
-                Some(sched) => {
-                    let names = sched.registered_names.read();
-                    match names.get(&atom_id) {
-                        Some(&pid) => Ok(pid),
-                        None => Err(raise_badarg(ctx)),
-                    }
-                }
-                None => Err(ErlTerm::nil().0),
-            }
-        }) {
-            Ok(pid) => pid,
-            Err(result) => return result,
-        }
-    } else {
-        return raise_badarg(ctx);
+    let target_pid = match resolve_send_target(ctx, ErlTerm(pid_term), ErlTerm::nil().0) {
+        Ok(Some(pid)) => pid,
+        Ok(None) => return sender_tuple(ctx, arity, &raw_elems),
+        Err(result) => return result,
     };
 
     // Self-send: build tuple on own heap, push to own mailbox.
@@ -367,29 +402,7 @@ pub unsafe extern "C" fn nera_rt_send_tuple(
             e
         });
 
-        // Build a result tuple on the sender's heap for the return value (Erlang convention).
-        // Actually, we need to return the message term. For SendDirect, the result is the
-        // tuple itself. We must build it somewhere for the sender's return value.
-        // Optimization: build on sender heap only if the sender actually uses the result.
-        // For now, return ErlTerm::nil().0 — the codegen should know the result is unused in
-        // the common case. Actually, Erlang says `Pid ! Msg` evaluates to `Msg`, so we
-        // need to return the tuple. Let's build it on the sender heap.
-        let return_val = if !ctx.is_null() {
-            let heap_ptr = (*ctx).heap_ptr;
-            if !heap_ptr.is_null() {
-                let heap = &mut *heap_ptr;
-                let tuple_ptr = heap.alloc_words(1 + arity);
-                *tuple_ptr = BoxedHeader::new(crate::term::BoxedSubtype::Tuple, arity as u64).0;
-                for (i, item) in raw_elems[..arity].iter().enumerate() {
-                    *tuple_ptr.add(1 + i) = *item;
-                }
-                ErlTerm::boxed_unchecked(tuple_ptr as *const u64).0
-            } else {
-                ErlTerm::nil().0
-            }
-        } else {
-            ErlTerm::nil().0
-        };
+        let return_val = sender_tuple(ctx, arity, &raw_elems);
 
         if let Some(entry) = entry {
             // As in nera_rt_send_message, a queued inbox keeps this send there.

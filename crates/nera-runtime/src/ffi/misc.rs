@@ -20,10 +20,15 @@ pub unsafe extern "C" fn nera_rt_get_self(ctx: *mut ProcessContext) -> u64 {
     ErlTerm::pid(pid).0
 }
 
+/// The local node's name: Nera runs as a local, non-distributed node.
+pub(super) fn local_node_atom() -> u32 {
+    global_atom_table().intern("nonode@nohost")
+}
+
 /// erlang:node/0 — Nera runs as a local, non-distributed node.
 #[no_mangle]
 pub unsafe extern "C" fn nera_rt_node(_ctx: *mut ProcessContext) -> u64 {
-    ErlTerm::atom(global_atom_table().intern("nonode@nohost")).0
+    ErlTerm::atom(local_node_atom()).0
 }
 
 /// erlang:node/1 — all supported PIDs and references originate locally.
