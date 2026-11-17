@@ -271,6 +271,7 @@ These are automatically skipped by the runner and show up as SKIP in output.
 | `nested_case_exports.erl` | All-path nested case bindings used afterward as direct reads, map keys, binary sizes, captures and later partial matches; mixed direct/nested branches, both branches nested, three levels and a matched case result; same fixture on BEAM | 4 input combinations |
 | `receive_timeout_bindings.erl` | Names bound in a `receive`'s `after` timeout expression, read after the `receive`: the timeout and message paths, a block timeout, binary tails, later patterns, guards, fun captures and fun-head map keys; also run on BEAM | 6 |
 | `exception_basic.erl` | try/catch/throw/error/exit    | ~12        |
+| `raise_badarg.erl` | raise/3 returns badarg without raising for invalid classes and non-list/improper stacktraces: direct, tail, apply, computed and fun calls; continuation, catch, cleanup preserving the original exception and valid-class controls; same fixture on native and BEAM | Table-driven |
 | `stacktrace_order.erl` | Innermost function before non-tail callers: current_stacktrace, caught error/throw/exit/badmatch, full and shortened real traces through raise/3, monitored {Reason, Stack} exits and failed gen_server starts; also run on BEAM | Table-driven |
 | `try_of.erl`          | try...of clause               | ~6         |
 | `try_clause.erl` | Unmatched try-of results raise error:{try_clause, Value}: exact unmatched terms, failed guards, local-catch bypass and after cleanup, with matching and body-exception controls; also run on BEAM | Table-driven |

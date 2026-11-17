@@ -2,6 +2,16 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Invalid raise arguments return badarg
+
+- `erlang:raise/3` now returns the atom `badarg` without raising when the
+  class is not `error`, `exit` or `throw`, or the stacktrace is not a proper
+  list, matching BEAM. A rejected call in an `after` body no longer replaces
+  the original exception.
+- `raise_badarg` runs unchanged natively and on BEAM, covering direct, tail,
+  apply, computed and fun calls, continuation after rejection, cleanup and
+  valid exception classes. Stack frame-format validation remains separate.
+
 ## External calls respect module exports
 
 - `apply(Module, Function, Args)` and variable module/function calls now raise
