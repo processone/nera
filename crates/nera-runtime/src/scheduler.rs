@@ -1724,19 +1724,29 @@ fn worker_loop(
                         _ => "unknown",
                     };
                     let reason = crate::term::ErlTerm(proc.context.result);
-                    exit_reason = if proc.context.exception_class == 1 {
-                        // Uncaught errors exit with {Reason, Stacktrace}, as on
-                        // BEAM. Build it before propagation while the dying
-                        // process still owns the reason and captured trace.
-                        // SAFETY: run_slice refreshed the context's heap/trace
-                        // pointers; the process is locked and no GC or compiled
-                        // execution runs before its signals have been copied.
-                        let stack = unsafe {
-                            crate::ffi::nera_rt_get_exception_stacktrace(&mut proc.context)
-                        };
-                        proc.heap.alloc_tuple(&[reason, crate::term::ErlTerm(stack)])
-                    } else {
-                        reason
+                    exit_reason = match proc.context.exception_class {
+                        // Uncaught errors exit with {Reason, Stacktrace} and
+                        // uncaught throws with {{nocatch, Value}, Stacktrace},
+                        // as on BEAM. Build it before propagation while the
+                        // dying process still owns the reason and captured trace.
+                        class @ (0 | 1) => {
+                            // SAFETY: run_slice refreshed the context's heap/trace
+                            // pointers; the process is locked and no GC or compiled
+                            // execution runs before its signals have been copied.
+                            let stack = unsafe {
+                                crate::ffi::nera_rt_get_exception_stacktrace(&mut proc.context)
+                            };
+                            let reason = if class == 0 {
+                                let nocatch = crate::term::ErlTerm::atom(
+                                    crate::atom_table::global_atom_table().intern("nocatch"),
+                                );
+                                proc.heap.alloc_tuple(&[nocatch, reason])
+                            } else {
+                                reason
+                            };
+                            proc.heap.alloc_tuple(&[reason, crate::term::ErlTerm(stack)])
+                        }
+                        _ => reason,
                     };
                     let is_exit_class = proc.context.exception_class == 2;
                     if !is_exit_class {

@@ -2,6 +2,28 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Uncaught throws exit with nocatch
+
+- A process started directly with the native spawn BIFs that dies from an
+  uncaught `throw(Value)` now exits with `{{nocatch, Value}, Stacktrace}`, as
+  on BEAM. Monitors receive it in `'DOWN'` messages, and linked processes
+  receive the same reason, including a process trapping exits in an `'EXIT'`
+  message. Previously they received only `Value`, which could not be told
+  apart from an `exit/1` reason.
+- A thrown `normal` or `kill` is no longer taken for that exit reason. A
+  linked process that does not trap exits used to carry on after a thrown
+  `normal` and die as `killed` after a thrown `kill`; it now dies with the
+  same wrapped reason, as on BEAM.
+- The stacktrace is the captured one, including a trace supplied by
+  `erlang:raise/3`. A throw caught by `catch` or `try` still ends the process
+  normally. The crash report printed for the process is unchanged.
+- Processes started through the bundled `proc_lib` spawn wrappers are not
+  covered: those wrappers catch the throw and exit with the bare value.
+- The `uncaught_throw_exit` fixture checks monitor and link delivery,
+  propagation through a non-trapping link, rethrown, unmatched and
+  `try ... after` throws, saved and empty traces, and caught throws, natively
+  and on BEAM.
+
 ## andalso and orelse check their left side
 
 - `andalso` and `orelse` whose left side is not `true` or `false` now raise
