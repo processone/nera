@@ -2,6 +2,20 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## List generators reject sources that are not proper lists
+
+- A list generator whose source is not a list, or whose list ends in an
+  improper tail, now raises `error:{bad_generator, Term}` as on BEAM, with
+  `Term` the source or the tail it reaches. `[Y || Y <- id(a)]`,
+  `[Y || Y <- id([1 | a])]` and `<< Y || Y <- id([<<1>> | a]) >>` raise
+  `{bad_generator, a}`. Previously they raised `badarg`.
+- This holds for list and binary comprehensions and for inner generators.
+  Elements before an improper tail are still produced, filtered and
+  generated from first.
+- Programs that run on BEAM are unaffected.
+- The `lc_bad_generator` fixture runs these comprehensions natively and on
+  BEAM.
+
 ## Uncaught throws exit with nocatch
 
 - A process started directly with the native spawn BIFs that dies from an

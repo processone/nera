@@ -37,6 +37,10 @@ impl IrBuilder {
     ///             if innermost: tail-call self(T, [Body|Acc], …)
     ///             else:         tail-call helper_{K+1}(eval(E_{K+1}), Acc, …)
     ///     []    → tail-call helper_{K-1}(TailK-1, Acc, …)
+    ///
+    /// Any other IterK of a list generator (a source that is not a list, or
+    /// an improper tail) raises `error({bad_generator, IterK})`, as on BEAM;
+    /// so does a binary generator's source that is not a bitstring.
     pub(super) fn lower_comprehension(
         &mut self,
         body_expr: &ast::Expr,
@@ -632,30 +636,39 @@ impl IrBuilder {
         self.pop_scope();
 
         // Binary iterators match prefixes directly, including partial-byte
-        // sources. A non-bitstring source is a bad_generator, not exhaustion.
+        // sources. List iterators continue on a cons and end on []. Any other
+        // source, or an improper tail such as the `a` in [1 | a], is a
+        // bad_generator carrying that term, not exhaustion, as on BEAM.
         self.start_block(entry_block);
+        let invalid_block = self.fresh_block_with_id();
         if bin_gen_flags[k] {
-            let invalid_block = self.fresh_block_with_id();
             let is_bits = self.fresh_var();
             self.emit(Instruction::TypeTest(is_bits, TypeTestKind::IsBitstring, iter_param));
             self.set_terminator(Terminator::Branch(is_bits, cons_block, invalid_block));
-            self.close_current_block();
-            self.start_block(invalid_block);
-            let tag = self.atom_id_for("bad_generator");
-            let tag = self.emit_const(Literal::Atom(tag));
-            let reason = self.fresh_var();
-            self.emit(Instruction::MakeTuple(reason, vec![tag, iter_param]));
-            let result = self.fresh_var();
-            self.emit(Instruction::RaiseException(result, ExceptionClass::Error, reason));
-            self.set_terminator(Terminator::Return(result));
         } else {
+            let not_nil_block = self.fresh_block_with_id();
             let nil_const = self.emit_const(Literal::Nil);
-            let is_cons = self.fresh_var();
+            let not_nil = self.fresh_var();
             self.emit(Instruction::BinOp(
-                is_cons, BinOp::ExactNotEq, iter_param, nil_const,
+                not_nil, BinOp::ExactNotEq, iter_param, nil_const,
             ));
-            self.set_terminator(Terminator::Branch(is_cons, cons_block, nil_block));
+            self.set_terminator(Terminator::Branch(not_nil, not_nil_block, nil_block));
+            self.close_current_block();
+            // Past [], a list is a cons cell.
+            self.start_block(not_nil_block);
+            let is_cons = self.fresh_var();
+            self.emit(Instruction::TypeTest(is_cons, TypeTestKind::IsList, iter_param));
+            self.set_terminator(Terminator::Branch(is_cons, cons_block, invalid_block));
         }
+        self.close_current_block();
+        self.start_block(invalid_block);
+        let tag = self.atom_id_for("bad_generator");
+        let tag = self.emit_const(Literal::Atom(tag));
+        let reason = self.fresh_var();
+        self.emit(Instruction::MakeTuple(reason, vec![tag, iter_param]));
+        let result = self.fresh_var();
+        self.emit(Instruction::RaiseException(result, ExceptionClass::Error, reason));
+        self.set_terminator(Terminator::Return(result));
         self.close_current_block();
 
         // ── Package the helper function ──
