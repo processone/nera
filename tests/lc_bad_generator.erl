@@ -85,12 +85,13 @@ traces() ->
         traced(fun() -> [trace({X, Y}) || X <- id([1, 2]), Y <- gen(X)] end),
     ok.
 
-%% Outside any try, the bad_generator error ends the process.
+%% Outside any try, the bad_generator error ends the process with the error
+%% and its stack trace as the exit reason.
 uncaught() ->
     {Pid, Ref} = spawn_monitor(fun() -> [Y || Y <- id([1 | a])] end),
     receive
-        {'DOWN', Ref, process, Pid, {bad_generator, a}} -> ok;
-        {'DOWN', Ref, process, Pid, {{bad_generator, a}, _}} -> ok
+        {'DOWN', Ref, process, Pid, {{bad_generator, a}, Stack}} when is_list(Stack) -> ok;
+        {'DOWN', Ref, process, Pid, Other} -> erlang:error({wrong_exit, Other})
     after 5000 -> erlang:error(no_down)
     end.
 
