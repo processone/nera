@@ -469,6 +469,12 @@ These are automatically skipped by the runner and show up as SKIP in output.
 | `io_concurrent.erl` | Concurrent io:format from processes | ~4         |
 | `file_io.erl`       | file:read_file/1, file:write_file/2 | ~6         |
 
+### Sockets
+
+| Test File                 | Feature Category                          | Assertions |
+|---------------------------|-------------------------------------------|------------|
+| `tcp_line_terminator.erl` | An active `{packet, line}` socket delivers each line with its `"\r\n"` or `"\n"`: `{active, once}` armed before the data arrives and while it is waiting, then a passive recv of the rest; `{active, true}` with several lines and empty lines in one write, and lines split across writes, one between `"\r"` and `"\n"`; a partial line completed by a later write; also run on BEAM | 5 cases |
+
 ### OTP Behaviours
 
 | Test File                | Feature Category                       | Assertions |

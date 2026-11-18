@@ -389,7 +389,8 @@ functions as compiled Erlang in `erlang/stdlib/maps.erl`.
 Socket handles are plain integers (GC-safe). Blocking I/O operations are
 dispatched to an async I/O thread pool so scheduler threads stay free for
 CPU-bound process reductions. Active-mode sockets (`{active, once}`) deliver
-`{tcp, Socket, Data}` messages to the controlling process.
+`{tcp, Socket, Data}` messages to the controlling process. In `{packet, line}`
+mode each message is one line with its `"\r\n"` or `"\n"`, as on BEAM.
 On the mio reactor path, queued and in-flight registration commands keep the
 scheduler alive until registration completes or fails. This includes active
 TCP registration before any readiness event exists.

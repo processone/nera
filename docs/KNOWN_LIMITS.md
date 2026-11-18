@@ -79,7 +79,12 @@ platform and scope.
   `named_table` returns an integer where BEAM returns a reference.
 - **Sockets:** `gen_tcp:listen/2` ignores the `{port, P}` option when given in
   the options list. `{active, 1}` returns `ok` but delivers no data and no
-  `tcp_passive` message. `{active, once}` and `{packet, line}` work.
+  `tcp_passive` message. `{active, once}` and `{packet, line}` work: an active
+  socket delivers each line with its `"\r\n"` or `"\n"`, as BEAM does. In
+  `{packet, line}` mode, a passive `gen_tcp:recv/2,3` returns every byte
+  waiting, not one line. An incomplete last line is delivered when the peer
+  closes, where BEAM drops it. The start of a line read in active mode is lost
+  if the socket is then re-armed or read passively before the line ends.
 - **Late replies:** after a `gen_server:call` times out, the late reply still
   arrives in the caller's mailbox. OTP's process aliases prevent that, and
   Nera does not use them.

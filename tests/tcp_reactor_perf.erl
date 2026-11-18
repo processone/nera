@@ -98,7 +98,7 @@ perf_rearm_loop(SSock, CSock, N) ->
     ok = inet:setopts(SSock, [{active, once}]),
     ok = gen_tcp:send(CSock, <<"P\r\n">>),
     receive
-        {tcp, SSock, <<"P">>} -> ok
+        {tcp, SSock, <<"P\r\n">>} -> ok
     after 2000 ->
         erlang:error({timeout_perf_rearm, N})
     end,

@@ -701,26 +701,17 @@ fn handle_active_read_on_worker(
                     if let Some(ppos) = peek_buf[..n].iter().position(|&b| b == b'\n') {
                         // Newline found in peeked data — consume up to and
                         // including the newline, leaving excess in kernel.
-                        let consume_len = ppos + 1;
-                        let mut tmp = vec![0u8; consume_len];
+                        let line_len = ppos + 1;
+                        let mut tmp = vec![0u8; line_len];
                         let _ = crate::socket::consume_exact_fd(fd, &mut tmp);
 
-                        // Build the line: line_buf (partial) + peek_buf[..ppos],
-                        // stripping trailing \r.
-                        let line_end = if ppos > 0 && peek_buf[ppos - 1] == b'\r' {
-                            ppos - 1
-                        } else if ppos == 0 && line_buf.last() == Some(&b'\r') {
-                            // \r was last byte of line_buf, \n is first byte of peek
-                            line_buf.pop();
-                            0
-                        } else {
-                            ppos
-                        };
-
+                        // Build the line: line_buf (partial) + peek_buf[..=ppos].
+                        // It keeps its "\n" or "\r\n" terminator, as BEAM
+                        // delivers it, even when "\r" ended line_buf.
                         if line_buf.is_empty() {
-                            build_tcp_data(proc, stream_handle, &peek_buf[..line_end]);
+                            build_tcp_data(proc, stream_handle, &peek_buf[..line_len]);
                         } else {
-                            line_buf.extend_from_slice(&peek_buf[..line_end]);
+                            line_buf.extend_from_slice(&peek_buf[..line_len]);
                             build_tcp_data(proc, stream_handle, &line_buf);
                             line_buf.clear();
                         }

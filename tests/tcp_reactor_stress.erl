@@ -46,7 +46,7 @@ rearm_loop(SSock, CSock, N) ->
     ok = inet:setopts(SSock, [{active, once}]),
     ok = gen_tcp:send(CSock, <<"P\r\n">>),
     receive
-        {tcp, SSock, <<"P">>} -> ok
+        {tcp, SSock, <<"P\r\n">>} -> ok
     after 2000 ->
         erlang:error({timeout_rearm, N})
     end,
@@ -175,7 +175,7 @@ mp_rearm_loop(SSock, CSock, N) ->
     ok = inet:setopts(SSock, [{active, once}]),
     ok = gen_tcp:send(CSock, <<"Q\r\n">>),
     receive
-        {tcp, SSock, <<"Q">>} -> ok
+        {tcp, SSock, <<"Q\r\n">>} -> ok
     after 2000 ->
         erlang:error({timeout_mp_rearm, N})
     end,

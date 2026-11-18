@@ -28,9 +28,10 @@ test_active_once_line_framing() ->
     %% Client sends command line + value bytes in one write
     ok = gen_tcp:send(CSock, <<"SET key 0 0 5\r\nhello\r\n">>),
 
-    %% Server should receive ONLY the command line as active message
+    %% Server should receive ONLY the command line as active message,
+    %% terminator included
     receive
-        {tcp, _, <<"SET key 0 0 5">>} -> ok;
+        {tcp, _, <<"SET key 0 0 5\r\n">>} -> ok;
         {tcp, _, Other} -> erlang:error({unexpected_active_data, Other})
     after 2000 ->
         erlang:error(timeout_waiting_for_active_msg)
@@ -110,8 +111,8 @@ multi_round_loop(SSock, CSock, N) ->
     Val = <<"VAL", (integer_to_binary(N))/binary, "\r\n">>,
     ok = gen_tcp:send(CSock, <<Cmd/binary, Val/binary>>),
 
-    %% Server receives command via active (line mode strips \r\n)
-    CmdExpected = <<"CMD ", (integer_to_binary(N))/binary>>,
+    %% Server receives command via active (line mode keeps \r\n)
+    CmdExpected = Cmd,
     receive
         {tcp, _, Received} ->
             case Received =:= CmdExpected of
