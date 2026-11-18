@@ -26,7 +26,7 @@ nera test --list
 # Control parallelism and timeout
 nera test -j 4 --timeout 30
 
-# Check uncaught crash output using the same stacktrace_order fixture
+# Check uncaught crash output using the stacktrace_order and stacktrace_depth fixtures
 python3 scripts/test-stacktrace-order.py
 ```
 
@@ -274,6 +274,7 @@ These are automatically skipped by the runner and show up as SKIP in output.
 | `exception_basic.erl` | try/catch/throw/error/exit    | ~12        |
 | `raise_badarg.erl` | raise/3 returns badarg without raising for invalid classes and non-list/improper stacktraces: direct, tail, apply, computed and fun calls; continuation, catch, cleanup preserving the original exception and valid-class controls; same fixture on native and BEAM | Table-driven |
 | `stacktrace_order.erl` | Innermost function before non-tail callers: current_stacktrace, caught error/throw/exit/badmatch, full and shortened real traces through raise/3, monitored {Reason, Stack} exits and failed gen_server starts; also run on BEAM | Table-driven |
+| `stacktrace_depth.erl` | Captured stacktraces keep their 8 innermost frames: caught error/throw/exit/badmatch, catch, raise/3 with a longer real trace, a monitored {Reason, Stack} exit equal to the caught trace, and current_stacktrace; also run on BEAM | Table-driven |
 | `try_of.erl`          | try...of clause               | ~6         |
 | `try_clause.erl` | Unmatched try-of results raise error:{try_clause, Value}: exact unmatched terms, failed guards, local-catch bypass and after cleanup, with matching and body-exception controls; also run on BEAM | Table-driven |
 | `try_catch_bound_vars.erl` | Bound names in try-of and catch class/reason patterns: exact equality, guards, fresh names, binary tails and re-raise; also run on BEAM | Table-driven |

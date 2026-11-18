@@ -1168,7 +1168,7 @@ unsafe fn gather_process_info_snapshot(
             if !base.is_null() && cursor > base {
                 let depth = (cursor as usize - base as usize) / std::mem::size_of::<crate::process::CompactFrame>();
                 let frames = unsafe { std::slice::from_raw_parts(base, depth) };
-                compact_stacktrace(frames).collect()
+                compact_stacktrace(frames).take(crate::process::BACKTRACE_DEPTH).collect()
             } else {
                 Vec::new()
             }

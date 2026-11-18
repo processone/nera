@@ -59,7 +59,7 @@ and known differences from BEAM.
 | Implicit string concatenation               | ✅      | Adjacent strings merged       |
 | Record index (#rec.field)                   | ✅      | Returns 1-based field index   |
 | Named funs (fun Name(...) -> ... end)       | ✅      | With self-recursion           |
-| 3-part catch (Class:Reason:Stacktrace)      | ✅      | OTP 21+ binding; raising function first, then callers, as on BEAM |
+| 3-part catch (Class:Reason:Stacktrace)      | ✅      | OTP 21+ binding; raising function first, then callers, 8 frames at most, as on BEAM |
 | maybe expression (OTP 25+)                  | ✅      | `?=` cond match, else clauses |
 | Map comprehensions (OTP 26+)                | ❌      |                               |
 | Sigils / triple-quoted strings (OTP 27+)    | ❌      |                               |
@@ -265,7 +265,7 @@ Maintainers with OTP 29.0.4 installed can verify the catalogue with
 | term_to_binary/1    | ✅      | ETF v131 encoding     |
 | binary_to_term/1    | ✅      | ETF v131 decoding     |
 | size/1              | ✅      | Deprecated but common |
-| raise/3             | ✅      | Re-raise with trace   |
+| raise/3             | ✅      | Re-raise with trace; keeps its first 8 frames |
 | process_info/1      | ✅      | All-info form         |
 
 process_info items supported: `registered_name`, `message_queue_len`,
@@ -919,7 +919,7 @@ See [scope and reproduction](tests/integration/proper/README.md).
 | Behaviour callback validation       | ✅      | Missing callbacks for OTP behaviours|
 | Reserved keyword checks             | ✅      | All 27 Erlang reserved words        |
 | Runtime error reporting             | ✅      | Process crash with class/reason     |
-| Stack traces                        | ✅      | module:function/arity frames        |
+| Stack traces                        | ✅      | module:function/arity frames, 8 at most |
 
 ## Formatter (nera-fmt)
 

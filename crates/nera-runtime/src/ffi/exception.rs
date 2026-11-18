@@ -244,7 +244,8 @@ pub unsafe extern "C" fn nera_rt_get_exception_stacktrace(ctx: *mut ProcessConte
 /// Frame-format validation is not implemented here.
 ///
 /// Unlike throw/error/exit, raise does NOT capture the current call stack.
-/// Instead it uses the provided stacktrace to populate the exception trace.
+/// Instead it uses the provided stacktrace to populate the exception trace,
+/// keeping its first `BACKTRACE_DEPTH` frames, as BEAM truncates it.
 #[no_mangle]
 pub unsafe extern "C" fn nera_rt_raise(
     ctx: *mut ProcessContext,
@@ -301,7 +302,7 @@ pub unsafe extern "C" fn nera_rt_raise(
         trace.clear();
 
         let mut cursor = st;
-        while cursor.is_cons() {
+        while cursor.is_cons() && trace.len() < crate::process::BACKTRACE_DEPTH {
             let cell = &*cursor.as_cons_ptr().unwrap();
             let elem = cell.head;
             // Try to extract {Module, Function, Arity, Info}

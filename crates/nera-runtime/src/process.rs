@@ -209,6 +209,11 @@ pub const REDUCTION_LIMIT: i64 = 4000;
 /// reuse the current frame.
 pub const STACK_DEPTH_LIMIT: usize = 10_000;
 
+/// Maximum number of frames kept in a captured stacktrace: BEAM's default
+/// `backtrace_depth`. Caught traces, `{Reason, Stack}` exit reasons, crash
+/// reports and `current_stacktrace` keep the innermost frames up to it.
+pub const BACKTRACE_DEPTH: usize = 8;
+
 /// How many reductions each back-edge yield check costs.
 /// Increasing this reduces the effective check frequency:
 /// e.g., COST=4 means ~1000 yield checks per slice instead of 4000.
