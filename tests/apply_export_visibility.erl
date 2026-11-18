@@ -1,5 +1,5 @@
 %% EXPECT: apply export visibility ok
-%% MODULES: _apply_export_all.erl
+%% MODULES: _apply_export_all.erl _apply_export_all_only.erl
 -module(apply_export_visibility).
 -export([test/0, callback/0, callback/3]).
 
@@ -35,8 +35,25 @@ test() ->
     request = All:tail(request),
     AllFun = fun All:callback/1,
     request = AllFun(request),
+    %% Static calls, tail calls, remote funs and spawn/3 reach definitions that
+    %% only export_all exports, with or without an -export list.
+    request = apply_export_all:callback(request),
+    request = apply_export_all:tail(request),
+    request = static_tail(request),
+    StaticFun = fun apply_export_all:callback/1,
+    request = StaticFun(request),
+    {ok, request} = apply_export_all_only:start_link(request),
+    StartFun = fun apply_export_all_only:start_link/1,
+    {ok, request} = StartFun(request),
+    _ = spawn(apply_export_all_only, reply, [self(), request]),
+    receive
+        {apply_export_all_only, request} -> ok
+    after 5000 -> error(spawn_timeout)
+    end,
     io:format("apply export visibility ok~n"),
     ok.
+
+static_tail(Value) -> apply_export_all:callback(Value).
 
 outcome(Mode, Function, Args) ->
     try invoke(Mode, Function, Args) of

@@ -481,6 +481,25 @@ fn exported_function_not_warned() {
 }
 
 #[test]
+fn export_all_function_not_warned() {
+    // Other modules may call these by name, as erlc assumes.
+    let src = r#"
+        -module(test).
+        -compile(export_all).
+        start_link(Arg) -> {ok, Arg}.
+        helper(X) -> X * 2.
+    "#;
+    let (module, names) = parse_module(src);
+    let ws = analyze_module(&module, &names, None);
+    let msgs = warning_messages(&ws);
+    assert!(
+        !msgs.iter().any(|m| m.contains("unused") && m.contains("function")),
+        "did not expect unused function warning under export_all, got: {:?}",
+        msgs
+    );
+}
+
+#[test]
 fn locally_called_function_not_warned() {
     let src = r#"
         -module(test).

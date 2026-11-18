@@ -2,6 +2,15 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## export_all modules called from other modules
+
+- A module compiled with `-compile(export_all)` no longer gets
+  `function '...' is unused` warnings, as with erlc: every function is
+  exported, so other modules may call any of them.
+- `apply_export_visibility` now also checks static calls, a static tail call,
+  static remote funs and `spawn/3` into functions that only `export_all`
+  exports, with or without an `-export` list, natively and on BEAM.
+
 ## Send to {Name, Node} on the local node
 
 - `{Name, Node} ! Msg` with `Node` the local node now delivers `Msg` to the
