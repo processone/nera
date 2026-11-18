@@ -2,6 +2,23 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Active line-mode sockets keep the line terminator
+
+- A socket in `{packet, line}` mode with `{active, once}` or `{active, true}`
+  now delivers each line with its terminator, `"\r\n"` or `"\n"`, as on BEAM.
+  `"P\r\nQ\n"` arrives as `<<"P\r\n">>` and then `<<"Q\n">>`. Previously Nera
+  removed the terminator and delivered `<<"P">>`, so code written for BEAM that
+  matches on the terminator never matched, and an empty line arrived as `<<>>`.
+- This holds whether the line is already waiting when the socket is armed or
+  arrives later, for lines that arrive in pieces, including a split between
+  `"\r"` and `"\n"`, and for the line reader used where the reactor is
+  unavailable.
+- Code that relied on Nera removing the terminator must now remove it itself,
+  as on BEAM.
+- `tcp_line_terminator` runs these cases natively and on BEAM. The
+  `tcp_active_once`, `tcp_reactor`, `tcp_reactor_perf` and
+  `tcp_reactor_stress` fixtures now expect the terminator.
+
 ## Stacktraces keep eight frames
 
 - A captured stacktrace now keeps at most its 8 innermost frames, BEAM's

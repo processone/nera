@@ -991,13 +991,14 @@ pub unsafe extern "C" fn nera_rt_inet_setopts(
                             }
                             Ok(n) => {
                                 if let Some(pos) = peek_buf[..n].iter().position(|&b| b == b'\n') {
-                                    // Complete line available — consume and deliver
-                                    if crate::socket::consume_exact_fd(fd, &mut peek_buf[..pos + 1]).is_ok() {
-                                        let end = if pos > 0 && peek_buf[pos - 1] == b'\r' { pos - 1 } else { pos };
+                                    // Complete line available — consume and deliver it
+                                    // with its "\n" or "\r\n" terminator, as BEAM does.
+                                    let line_len = pos + 1;
+                                    if crate::socket::consume_exact_fd(fd, &mut peek_buf[..line_len]).is_ok() {
                                         crate::reactor::COUNTER_SETOPTS_FASTPATH.fetch_add(
                                             1, std::sync::atomic::Ordering::Relaxed,
                                         );
-                                        deliver_tcp_data_to_self(ctx, handle, &peek_buf[..end]);
+                                        deliver_tcp_data_to_self(ctx, handle, &peek_buf[..line_len]);
                                         if active == ActiveMode::Once {
                                             // Fast path once — no reactor involved
                                             crate::socket::set_active_local(handle, ActiveMode::Passive);

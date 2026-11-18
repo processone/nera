@@ -66,8 +66,8 @@ test_active_true_line() ->
     %% Collect exactly 5 line messages
     Lines = collect_lines(SSock, 5, []),
     5 = length(Lines),
-    <<"line1">> = lists:nth(1, Lines),
-    <<"line5">> = lists:nth(5, Lines),
+    <<"line1\r\n">> = lists:nth(1, Lines),
+    <<"line5\r\n">> = lists:nth(5, Lines),
 
     ok = gen_tcp:close(CSock),
     ok = gen_tcp:close(SSock),
@@ -144,7 +144,7 @@ rapid_rearm_loop(SSock, CSock, N) ->
     ok = gen_tcp:send(CSock, <<"REQ\r\n">>),
     %% Server receives via active
     receive
-        {tcp, SSock, <<"REQ">>} -> ok;
+        {tcp, SSock, <<"REQ\r\n">>} -> ok;
         {tcp, SSock, Wrong} -> erlang:error({wrong_req, N, Wrong})
     after 2000 ->
         erlang:error({timeout_rapid_rearm, N})
@@ -186,8 +186,8 @@ interleave_loop(SSock, CSock, N) ->
     Cmd = <<"SET key 0 0 ", SizeStr/binary, "\r\n">>,
     ok = gen_tcp:send(CSock, <<Cmd/binary, Val/binary, "\r\n">>),
 
-    %% Server receives command via active mode
-    CmdExpected = <<"SET key 0 0 ", SizeStr/binary>>,
+    %% Server receives command via active mode, terminator included
+    CmdExpected = Cmd,
     receive
         {tcp, SSock, CmdExpected} -> ok;
         {tcp, SSock, BadCmd} -> erlang:error({bad_cmd, N, BadCmd})
@@ -283,8 +283,8 @@ test_active_once_large_line() ->
 
     receive
         {tcp, SSock, Received} ->
-            6000 = byte_size(Received),
-            BigLine = Received
+            6002 = byte_size(Received),
+            <<BigLine:6000/binary, "\r\n">> = Received
     after 3000 ->
         erlang:error(timeout_large_line)
     end,
