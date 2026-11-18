@@ -2,6 +2,23 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Stacktraces keep eight frames
+
+- A captured stacktrace now keeps at most its 8 innermost frames, BEAM's
+  default `backtrace_depth`. Previously Nera kept every active call, up to
+  10,000 frames. This applies to `try ... catch Class:Reason:Stack`,
+  `catch Expr`, `{Reason, Stack}` and `{{nocatch, Value}, Stack}` exit
+  reasons, the uncaught crash report and
+  `process_info(self(), current_stacktrace)`, so each shows the same frames,
+  as on BEAM.
+- `erlang:raise/3` keeps the first 8 frames of a longer stacktrace, as on
+  BEAM. Shorter stacktraces are kept whole.
+- `erlang:system_flag(backtrace_depth, Depth)` is not supported; the depth
+  is always 8.
+- The `stacktrace_depth` fixture checks each exception class, `catch`,
+  `raise/3`, an error's exit reason and the current stacktrace natively and
+  on BEAM; `scripts/test-stacktrace-order.py` checks the native crash report.
+
 ## export_all modules called from other modules
 
 - A module compiled with `-compile(export_all)` no longer gets

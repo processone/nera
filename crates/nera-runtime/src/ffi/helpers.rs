@@ -133,7 +133,8 @@ where
 /// Reads compact frames from the cursor-based stack and reconstructs
 /// full StackFrames using the global func_info_table. Falls back to
 /// stack_ptr (Vec<StackFrame>) for tests and legacy callers. Captured traces
-/// are innermost-first, like Erlang stacktrace lists supplied to raise/3.
+/// are innermost-first, like Erlang stacktrace lists supplied to raise/3, and
+/// keep at most `BACKTRACE_DEPTH` frames, as on BEAM.
 /// # Safety
 /// The context and the pointees accessed by this operation must be live and
 /// exclusively accessible on this thread; no competing process execution or
@@ -168,10 +169,15 @@ enum TraceFrames<'a> {
 }
 
 fn fill_exception_trace(trace: &mut Vec<crate::process::StackFrame>, frames: TraceFrames<'_>) {
+    use crate::process::BACKTRACE_DEPTH;
     trace.clear();
     match frames {
-        TraceFrames::Full(frames) => trace.extend(frames.iter().rev().copied()),
-        TraceFrames::Compact(frames) => trace.extend(compact_stacktrace(frames)),
+        TraceFrames::Full(frames) => {
+            trace.extend(frames.iter().rev().copied().take(BACKTRACE_DEPTH))
+        }
+        TraceFrames::Compact(frames) => {
+            trace.extend(compact_stacktrace(frames).take(BACKTRACE_DEPTH))
+        }
     }
 }
 
