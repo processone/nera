@@ -729,9 +729,14 @@ applications with supervision trees (validated with OneCached).
 | ?LINE / ?FILE                 | ✅      | Built-in preprocessor macros                          |
 | ?FUNCTION_NAME / ?FUNCTION_ARITY | ✅   | OTP 19+ macros                                        |
 | -import declaration           | ✅      | Explicit module/function/arity resolution for ordinary and tail calls; see rules below |
-| -on_load / -compile / -vsn    | 🔶     | Parsed but silently ignored                           |
+| -compile                      | 🔶     | `export_all`, `no_auto_import` and the `eunit_autoexport` transform; other options are ignored |
+| -on_load / -vsn               | 🔶     | Parsed but silently ignored                           |
 | -type / -spec declarations    | 🔶     | Parsed but ignored                                    |
 | -behaviour / -callback        | ✅      | Parsed; callback validation for OTP behaviours        |
+
+`-compile(export_all)` exports every function of the module, with or without
+an `-export` list, as on BEAM. Other modules can call these functions directly,
+through `apply/3` or a remote fun, and spawn them with `spawn/3`.
 
 An explicit `-import(Module, [Name/Arity])` makes that signature available
 without a module qualifier. Duplicate imports and conflicts with local function

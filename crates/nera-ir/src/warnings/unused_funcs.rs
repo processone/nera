@@ -15,6 +15,11 @@ pub(super) fn check_unused_functions(
     atom_names: &HashMap<AtomId, String>,
     warnings: &mut Vec<Diagnostic>,
 ) {
+    // export_all exports every function, so none is unused (as with erlc).
+    if module.export_all {
+        return;
+    }
+
     // 1. Build set of exported function signatures.
     let exported: HashSet<(AtomId, u32)> = module
         .exports
