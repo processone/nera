@@ -68,6 +68,7 @@ fixtures! {
     map_update => "tests/map_exact_update.erl",
     list_comprehension => "tests/lc_nested.erl",
     comprehension_leading_filter => "tests/comprehension_leading_filter.erl",
+    comprehension_bad_filter => "tests/lc_bad_filter.erl",
     generator_pattern => "tests/lc_generator_pattern.erl",
     closures => "tests/fun_nested.erl",
     recursive_closure => "tests/tco_closure_tail.erl",

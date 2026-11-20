@@ -40,7 +40,9 @@ impl IrBuilder {
     ///
     /// Any other IterK of a list generator (a source that is not a list, or
     /// an improper tail) raises `error({bad_generator, IterK})`, as on BEAM;
-    /// so does a binary generator's source that is not a bitstring.
+    /// so does a binary generator's source that is not a bitstring. A filter
+    /// that is not a guard test and returns neither `true` nor `false` raises
+    /// `error({bad_filter, Value})`.
     pub(super) fn lower_comprehension(
         &mut self,
         body_expr: &ast::Expr,
@@ -140,10 +142,8 @@ impl IrBuilder {
             let ast::LcQualifier::Filter(filter, _) = qualifier else {
                 unreachable!("leading qualifiers are filters");
             };
-            let condition = self.lower_comprehension_filter(filter)?;
             let next_block = self.fresh_block_with_id();
-            self.set_terminator(Terminator::Branch(condition, next_block, skip_block));
-            self.close_current_block();
+            self.lower_comprehension_filter(filter, next_block, skip_block)?;
             self.start_block(next_block);
         }
 
@@ -182,15 +182,53 @@ impl IrBuilder {
         Ok(result)
     }
 
-    /// Guard-expression filters fail rather than raise, just like `when`
-    /// tests. Classify the whole expression before lowering: an ordinary call
-    /// anywhere inside it must keep its exceptions, even if it calls a BIF.
-    fn lower_comprehension_filter(&mut self, filter: &ast::Expr) -> Result<VarId, LowerError> {
+    /// Evaluate one filter, then continue at `next` when it is `true` and at
+    /// `skip` when it is not. Guard-expression filters fail rather than raise,
+    /// just like `when` tests: any value but `true` skips. Classify the whole
+    /// expression before lowering: an ordinary call anywhere inside it must
+    /// keep its exceptions, even if it calls a BIF. Any other filter must
+    /// return a boolean; another value raises `error({bad_filter, Value})`,
+    /// as on BEAM.
+    fn lower_comprehension_filter(
+        &mut self, filter: &ast::Expr, next: BlockId, skip: BlockId,
+    ) -> Result<(), LowerError> {
         if crate::warnings::is_guard_expr(filter, &self.atom_names, &self.resolution, &self.record_defs) {
-            Ok(self.lower_guard_expr(filter))
-        } else {
-            self.lower_expr(filter, false)
+            let condition = self.lower_guard_expr(filter);
+            self.set_terminator(Terminator::Branch(condition, next, skip));
+            self.close_current_block();
+            return Ok(());
         }
+        // A branch takes its first target only when its condition is the
+        // atom `true`, so `true` costs no more than before. A filter that
+        // can only return a boolean, such as `id(X) > 0`, needs no check.
+        let value = self.lower_expr(filter, false)?;
+        if Self::expr_is_boolean(filter) {
+            self.set_terminator(Terminator::Branch(value, next, skip));
+            self.close_current_block();
+            return Ok(());
+        }
+        let not_true_block = self.fresh_block_with_id();
+        self.set_terminator(Terminator::Branch(value, next, not_true_block));
+        self.close_current_block();
+
+        self.start_block(not_true_block);
+        let false_atom = self.emit_const(Literal::Atom(self.false_atom_id));
+        let is_false = self.fresh_var();
+        self.emit(Instruction::BinOp(is_false, BinOp::ExactEq, value, false_atom));
+        let bad_block = self.fresh_block_with_id();
+        self.set_terminator(Terminator::Branch(is_false, skip, bad_block));
+        self.close_current_block();
+
+        self.start_block(bad_block);
+        let tag = self.atom_id_for("bad_filter");
+        let tag = self.emit_const(Literal::Atom(tag));
+        let reason = self.fresh_var();
+        self.emit(Instruction::MakeTuple(reason, vec![tag, value]));
+        let raised = self.fresh_var();
+        self.emit(Instruction::RaiseException(raised, ExceptionClass::Error, reason));
+        self.set_raise_terminator(raised);
+        self.close_current_block();
+        Ok(())
     }
 
     /// Split LC qualifiers into generator groups. Leading filters have already
@@ -522,17 +560,13 @@ impl IrBuilder {
 
             // Filters run in order and stop at the first that is not true,
             // as on BEAM: `X /= 0.0, 1 / X > 0` never divides by zero.
-            // A branch takes its first target only when its condition is the
-            // atom `true`.
             for (index, filter_expr) in filters.iter().enumerate() {
-                let filter_var = self.lower_comprehension_filter(filter_expr)?;
                 let next_block = if index + 1 == filters.len() {
                     produce_block
                 } else {
                     self.fresh_block_with_id()
                 };
-                self.set_terminator(Terminator::Branch(filter_var, next_block, skip_block));
-                self.close_current_block();
+                self.lower_comprehension_filter(filter_expr, next_block, skip_block)?;
                 if next_block != produce_block {
                     self.start_block(next_block);
                 }

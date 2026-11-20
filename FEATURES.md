@@ -49,12 +49,12 @@ and known differences from BEAM.
 | Match operator (=)                          | ✅      | In patterns and body          |
 | Send operator (!)                           | ✅      | To PIDs, registered names and `{Name, Node}`; another node drops the message |
 | Block expressions (begin...end)             | ✅      |                               |
-| List comprehensions                         | ✅      | Generator patterns checked before filters/body; filters stop at the first `false`; keys/sizes read outer or earlier-generator inputs; a non-list source or improper tail raises `{bad_generator, Term}` |
+| List comprehensions                         | ✅      | Generator patterns checked before filters/body; filters stop at the first `false`; a filter that is not a guard test and returns neither `true` nor `false` raises `{bad_filter, Value}`; keys/sizes read outer or earlier-generator inputs; a non-list source or improper tail raises `{bad_generator, Term}` |
 | Fun expressions (fun(...) -> ... end)       | ✅      | Closure capture includes head keys/sizes and nested callee expressions |
 | Fun references (fun F/A, fun M:F/A)         | ✅      | Local and remote; imported functions require `fun M:F/A`, as on BEAM |
 | Try/catch/after                             | 🔶      | throw/error/exit; bound pattern variables compare with `=:=`; resumed outer handlers regression-tested (P0-1 repaired) |
 | Throw/exit/error                            | ✅      | Via ProcessContext status     |
-| Binary comprehensions                       | ✅      | List + pattern-sized binary generators; bodies of any bit length; non-bitstring bodies raise badarg; bad generator sources raise `{bad_generator, Term}` |
+| Binary comprehensions                       | ✅      | List + pattern-sized binary generators; bodies of any bit length; non-bitstring bodies raise badarg; bad generator sources raise `{bad_generator, Term}`; non-boolean filters raise `{bad_filter, Value}` as in list comprehensions |
 | Catch expression                            | 🔶      | Immediate and resumed catch cases regression-tested (P0-1 repaired) |
 | Implicit string concatenation               | ✅      | Adjacent strings merged       |
 | Record index (#rec.field)                   | ✅      | Returns 1-based field index   |
@@ -120,7 +120,7 @@ and known differences from BEAM.
 | String segments in binary construction | ✅ | One segment per codepoint with the string's own size, unit, type and flags (`<<"é":16>>` is `<<0,233>>`); default 8-bit segments truncate each codepoint; `/utf8`, `/utf16` and `/utf32` encode it |
 | String segments in binary patterns | ✅ | One segment per codepoint; default values above 255 never match (BEAM semantics); UTF-8/16/32 patterns compare decoded codepoints; a size or a non-UTF type (`<<"ab":16>>`, `<<X, "ab"/binary>>`) is a compile error, as in OTP |
 | Bit-level sizes                 | ✅      | Sub-byte segments        |
-| Binary comprehensions           | ✅      | List + pattern-sized binary generators; bodies of any bit length; non-bitstring bodies raise badarg; bad generator sources raise `{bad_generator, Term}` |
+| Binary comprehensions           | ✅      | List + pattern-sized binary generators; bodies of any bit length; non-bitstring bodies raise badarg; bad generator sources raise `{bad_generator, Term}`; non-boolean filters raise `{bad_filter, Value}` as in list comprehensions |
 
 ## Built-in Functions (BIFs)
 

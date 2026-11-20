@@ -1628,8 +1628,9 @@ impl IrBuilder {
     /// Whether an expression can only yield `true` or `false` when it returns:
     /// a comparison, `not`, a strict boolean operator, or `andalso`/`orelse`
     /// whose right side is one of these. Its `andalso`/`orelse` needs no
-    /// check that the left side is a boolean.
-    fn expr_is_boolean(expr: &ast::Expr) -> bool {
+    /// check that the left side is a boolean, and a comprehension filter of
+    /// this form needs no `bad_filter` check.
+    pub(super) fn expr_is_boolean(expr: &ast::Expr) -> bool {
         match expr {
             ast::Expr::BinOp(op, _, right, _) => match op {
                 BinOp::Eq | BinOp::ExactEq | BinOp::NotEq | BinOp::ExactNotEq

@@ -2,6 +2,21 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Non-boolean comprehension filters raise bad_filter
+
+- A list or binary comprehension filter that is not a guard test and returns
+  neither `true` nor `false` now raises `error:{bad_filter, Value}` as on
+  BEAM. `[X || X <- [1], self() ! later]` raises `{bad_filter, later}`.
+  Previously Nera skipped the element, so a filter that returned the wrong
+  value by mistake silently dropped elements instead of crashing.
+- This holds for list and binary generators, for filters on inner and outer
+  generators, for filters before the first generator and for a filter after
+  other true filters. Elements before the bad one are still produced; later
+  filters, bodies and elements do not run.
+- A filter that is a guard test, such as `X` or `X + 1`, keeps guard rules:
+  any value but `true` skips the element, as on BEAM.
+- The `lc_bad_filter` fixture runs these comprehensions natively and on BEAM.
+
 ## Out-of-range floats raise badarg or fail to compile
 
 - `float/1` now raises `error:badarg` for an integer that rounds beyond the
