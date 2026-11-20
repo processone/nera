@@ -281,7 +281,7 @@ fn valid_separators(text: &str, radix: u32) -> bool {
 }
 
 /// Parse a float literal, rounding to the nearest float. A literal beyond the
-/// float range reads as infinity, which the lexer wrapper rejects.
+/// float range reads as infinity; see [`crate::lexer::illegal_floats`].
 fn parse_float(lex: &mut logos::Lexer<'_, Token>) -> Option<f64> {
     let raw = lex.slice();
     if !valid_separators(raw, 10) { return None; }

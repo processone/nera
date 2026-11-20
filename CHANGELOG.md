@@ -13,9 +13,10 @@ All notable milestones for the nera project are documented in this file.
   are infinity or NaN, alone or inside another term, as on BEAM. Previously it
   returned `inf`, `-inf` or `NaN`.
 - A float literal beyond the float range, such as `1.0e309`, is now a compile
-  error with OTP's `illegal float` message. Previously it compiled to an
-  infinite float. Literals that round to the largest float, and literals that
-  underflow to zero, still compile, as with `erlc`.
+  error with OTP's `illegal float` message, also in an unused macro
+  definition. Previously it compiled to an infinite float. As with `erlc`, a
+  literal in a section that `-ifdef` or `-if` skips is ignored, and literals
+  that round to the largest float or underflow to zero still compile.
 - The `float_conversion_badarg` fixture runs the conversions natively and on
   BEAM; `float_literal_out_of_range` checks the compile error.
 
