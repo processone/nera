@@ -55,8 +55,9 @@ pub(crate) fn format_short_float(value: f64) -> String {
 /// Legacy scientific spelling: twenty decimals by default, with an explicit
 /// exponent sign and at least two exponent digits, unlike shortest spelling.
 pub(crate) fn scientific(value: f64, precision: usize) -> String {
-    // The ETF decoder accepts non-finite floats. Preserve their native text;
-    // they have no exponent separator and must not panic across the C ABI.
+    // No Erlang float is infinite or NaN. Should one reach this conversion,
+    // keep its native text: it has no exponent separator and must not panic
+    // across the C ABI.
     if !value.is_finite() {
         return value.to_string();
     }
@@ -182,8 +183,8 @@ pub(crate) unsafe fn with_options(
 mod tests {
     use super::*;
 
-    /// These NEW_FLOAT_EXT payloads are accepted by the native ETF decoder.
-    /// Unlike BEAM (which rejects them), native conversion retains safe text.
+    /// These NEW_FLOAT_EXT payloads are not Erlang floats, and the native ETF
+    /// decoder rejects them as BEAM does. Conversion still retains safe text.
     #[test]
     fn scientific_nonfinite_retains_native_text() {
         for (bits, expected) in [
