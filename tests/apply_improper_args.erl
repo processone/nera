@@ -3,8 +3,9 @@
 %% Args is not a proper list: a term that is not a list, or a list with an
 %% improper tail. The function is not called. This holds for built-in and
 %% compiled functions, unknown functions, computed names, tail calls, a nested
-%% apply, remote funs and a term that is not a fun. A proper list still calls
-%% the function. Run this same fixture on native Nera and BEAM.
+%% apply, remote funs, fun erlang:apply/2,3, a term that is not a fun and a
+%% process spawned to run apply. A proper list still calls the function. Run
+%% this same fixture on native Nera and BEAM.
 -module(apply_improper_args).
 -export([test/0, zero/0, one/1, note/1, note0/0]).
 
@@ -13,6 +14,8 @@ test() ->
     F0 = fun() -> Self ! {called, fun0}, zero end,
     F1 = fun(X) -> Self ! {called, fun1}, X end,
     Mod = id(erlang),
+    Apply2 = fun erlang:apply/2,
+    Apply3 = fun erlang:apply/3,
     Badarg = [
         {bif_improper, fun() -> apply(erlang, length, [[1, 2] | id(z)]) end},
         {bif_not_a_list, fun() -> apply(erlang, node, id(not_a_list)) end},
@@ -34,12 +37,22 @@ test() ->
         {bif_fun, fun() -> apply(fun erlang:length/1, [[1] | id(z)]) end},
         {not_a_fun, fun() -> apply(id(not_a_fun), [a | id(z)]) end},
         {fun_tail_call, fun() -> tail_apply(F1, [1 | id(z)]) end},
-        {nested_fun, fun() -> apply(erlang, apply, [F1, [1 | id(z)]]) end}
+        {nested_fun, fun() -> apply(erlang, apply, [F1, [1 | id(z)]]) end},
+        {apply_3_as_fun, fun() -> Apply3(erlang, length, [[1] | id(z)]) end},
+        {apply_2_as_fun, fun() -> Apply2(F1, [1 | id(z)]) end}
     ],
     [{Name, {error, badarg}} = {Name, outcome(F)} || {Name, F} <- Badarg],
 
     %% None of those calls reached the function.
     [] = drain(),
+
+    %% A process whose last call is apply, and a process spawned to run
+    %% erlang:apply/3, exit with badarg.
+    Spawned = [
+        {spawned_tail_call, spawn_monitor(fun() -> tail_apply(erlang, length, [[1] | id(z)]) end)},
+        {spawned_apply, spawn_monitor(erlang, apply, [erlang, length, [[1] | id(z)]])}
+    ],
+    [{Name, badarg} = {Name, down_reason(PidRef)} || {Name, PidRef} <- Spawned],
 
     Proper = [
         {bif, 2, fun() -> apply(erlang, length, id([[1, 2]])) end},
@@ -72,6 +85,12 @@ one(X) -> {one, X}.
 note(X) -> self() ! {called, note, X}.
 
 note0() -> self() ! {called, note0}.
+
+down_reason({Pid, Ref}) ->
+    receive
+        {'DOWN', Ref, process, Pid, {Reason, Stack}} when is_list(Stack) -> Reason
+    after 5000 -> timeout
+    end.
 
 outcome(F) ->
     try {ok, F()} catch Class:Reason -> {Class, Reason} end.

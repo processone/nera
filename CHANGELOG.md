@@ -12,8 +12,9 @@ All notable milestones for the nera project are documented in this file.
   `apply(erlang, node, not_a_list)` called `node()`.
 - This holds for built-in and compiled functions, unknown functions, computed
   module and function names, tail calls, `erlang:apply/3` applied to itself,
-  remote funs and terms that are not funs. `apply_improper_args` runs these
-  cases natively and on BEAM.
+  remote funs including `fun erlang:apply/3`, terms that are not funs and
+  processes spawned to run apply. `apply_improper_args` runs these cases
+  natively and on BEAM.
 
 ## Active line-mode sockets keep the line terminator
 

@@ -457,7 +457,7 @@ These are automatically skipped by the runner and show up as SKIP in output.
 | `xmod_multi.erl`    | Multi-module linking             | ~4         |
 | `dynamic_apply.erl` | apply/3, fun M:F/A               | ~8         |
 | `apply_export_visibility.erl` | Unexported callbacks raise `error:undef` through apply/3, variable module/function calls, tail calls and remote funs; exported overloads, local private calls, local funs, their metadata and `export_all` callbacks still work; static calls, a static tail call, static remote funs and `spawn/3` reach functions only `export_all` exports, with or without an `-export` list; helpers `_apply_export_all.erl` and `_apply_export_all_only.erl`; same fixture on native and BEAM | Completion checked |
-| `apply_improper_args.erl` | apply/3 and apply/2 raise `error:badarg` without calling the function when Args is not a list or has an improper tail: built-in, compiled and unknown functions, error/2, computed names, tail calls, nested apply, remote funs, wrong-arity funs and non-funs; proper lists still call the function; also run on BEAM | Table-driven |
+| `apply_improper_args.erl` | apply/3 and apply/2 raise `error:badarg` without calling the function when Args is not a list or has an improper tail: built-in, compiled and unknown functions, error/2, computed names, tail calls, nested apply, remote funs, `fun erlang:apply/2,3`, wrong-arity funs, non-funs and spawned processes; proper lists still call the function; also run on BEAM | Table-driven |
 
 ### IO & Formatting
 
