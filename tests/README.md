@@ -148,6 +148,8 @@ These are automatically skipped by the runner and show up as SKIP in output.
 | `arith_float.erl`      | Float arithmetic                       | ~10        |
 | `unary_plus.erl` | Unary plus numeric identity (big integers, float bits and signed zero), non-number badarith, ignored results, guards, try short-circuiting, precedence, operand evaluation, first arguments/elements, maybe bodies, bare binary segments, signed literal patterns and conditional compilation; also run on BEAM | Table-driven |
 | `float_arith_badarith.erl` | `/` with a zero divisor, signed zeros included, float overflow of `+`, `-`, `*` and `/`, and integers too large for a float raise `badarith`: inside `try` before a later send, in guards and in an uncaught process; literal operands; finite and underflowing results unchanged; a false list or binary comprehension filter stops the later filters; also run on BEAM | Table-driven |
+| `float_conversion_badarg.erl` | `float/1` of an integer that rounds beyond the float range and `binary_to_term/1` of an encoded infinite or NaN float raise `badarg`: direct, `apply` and fun reference calls, guards, inside a list and in an uncaught process; conversions at the edge of the float range unchanged; also run on BEAM | Table-driven |
+| `float_literal_out_of_range.erl` | Reject a float literal beyond the float range with OTP's `illegal float` message | (compile error) |
 | `base_n_integer.erl`   | Base-N integer literals (16#FF, 2#101) | ~8         |
 | `number_separators.erl` | Decimal/base-N/big integer and float separators, macros, patterns and binaries | 11 |
 | `char_literal.erl`     | Character literals ($a, $\n, etc.)     | ~6         |
