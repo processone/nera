@@ -53,6 +53,24 @@ pub unsafe extern "C" fn nera_rt_apply(
     apply_impl(ctx, mod_atom, fun_atom, args, true)
 }
 
+/// The elements of `list`, or `None` when it is not a proper list: a term
+/// that is not a list, or a list ending in a tail other than `[]`. apply/2,3
+/// raise badarg then without calling anything, as on BEAM.
+///
+/// # Safety
+/// `list` must be a live term whose cons cells stay valid during the walk.
+unsafe fn proper_list_elements(list: u64) -> Option<Vec<u64>> {
+    let mut elements = Vec::new();
+    let mut current = ErlTerm(list);
+    while let Some(ptr) = current.as_cons_ptr() {
+        unsafe {
+            elements.push((*ptr).head.0);
+            current = (*ptr).tail;
+        }
+    }
+    current.is_nil().then_some(elements)
+}
+
 /// `resolve` is false only for dispatch owned by the tail-call loop.
 pub(super) unsafe fn apply_impl(
     ctx: *mut ProcessContext,
@@ -71,18 +89,9 @@ pub(super) unsafe fn apply_impl(
     };
 
     // Collect args from the Erlang list and count arity
-    let mut arg_terms: Vec<u64> = Vec::new();
-    let mut current = ErlTerm(args);
-    while current.is_cons() {
-        if let Some(ptr) = current.as_cons_ptr() {
-            unsafe {
-                arg_terms.push((*ptr).head.0);
-                current = (*ptr).tail;
-            }
-        } else {
-            break;
-        }
-    }
+    let Some(arg_terms) = (unsafe { proper_list_elements(args) }) else {
+        return raise_badarg(ctx);
+    };
     let arity = arg_terms.len() as u32;
 
     // apply/3 and M:F(...) are external calls, even within the same module.
@@ -112,18 +121,11 @@ pub(super) unsafe fn apply_impl(
     // arg_terms[0] = Fun (closure or remote fun ref), arg_terms[1] = Args list.
     if mod_name.as_deref() == Some("erlang") && fun_name.as_deref() == Some("apply") && arity == 2 {
         let fun_term = arg_terms[0];
-        let mut call_args: Vec<u64> = Vec::new();
-        let mut current = ErlTerm(arg_terms[1]);
-        while current.is_cons() {
-            if let Some(ptr) = current.as_cons_ptr() {
-                unsafe {
-                    call_args.push((*ptr).head.0);
-                    current = (*ptr).tail;
-                }
-            } else {
-                break;
-            }
-        }
+        // BEAM checks the list before the fun: a non-fun with an improper
+        // list is badarg, not badfun.
+        let Some(call_args) = (unsafe { proper_list_elements(arg_terms[1]) }) else {
+            return raise_badarg(ctx);
+        };
         let call_arity = call_args.len() as u32;
         return unsafe {
             super::closure::call_closure_impl(
