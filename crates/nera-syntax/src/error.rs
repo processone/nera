@@ -23,7 +23,8 @@ pub enum ParseError {
     #[error("invalid integer literal")]
     InvalidInteger { span: Span },
 
-    #[error("invalid float literal")]
+    /// A float literal beyond the float range; OTP's scanner gives this text.
+    #[error("illegal float")]
     InvalidFloat { span: Span },
 
     #[error("bit type {{unit,{value}}} undefined")]
@@ -93,7 +94,7 @@ impl ParseError {
             ParseError::UnexpectedToken { .. } => "unexpected token",
             ParseError::UnexpectedEof { .. } => "unexpected end of file",
             ParseError::InvalidInteger { .. } => "invalid integer literal",
-            ParseError::InvalidFloat { .. } => "invalid float literal",
+            ParseError::InvalidFloat { .. } => "beyond the float range",
             ParseError::InvalidBinaryUnit { .. } => "binary segment unit must be in 1..=256",
             ParseError::LexerError { .. } => "unrecognized token",
             ParseError::UndefinedMacro { .. } => "undefined macro",

@@ -38,7 +38,10 @@ impl<'src> Lexer<'src> {
             let span = Span::new(span_range.start, span_range.end);
             match result {
                 Ok(Token::Comment) => {} // filter out comments
-                Ok(tok) => tokens.push((tok.normalized(), span)),
+                Ok(tok) => match checked(tok, span) {
+                    Ok(token) => tokens.push(token),
+                    Err(error) => errors.push(error),
+                },
                 Err(()) => errors.push(ParseError::LexerError {
                     position: span_range.start,
                 }),
@@ -68,7 +71,10 @@ impl<'src> Lexer<'src> {
                     let text = source[span_range].to_string();
                     comments.push((text, span));
                 }
-                Ok(tok) => tokens.push((tok.normalized(), span)),
+                Ok(tok) => match checked(tok, span) {
+                    Ok(token) => tokens.push(token),
+                    Err(error) => errors.push(error),
+                },
                 Err(()) => errors.push(ParseError::LexerError {
                     position: span_range.start,
                 }),
@@ -80,6 +86,16 @@ impl<'src> Lexer<'src> {
         } else {
             Err(errors)
         }
+    }
+}
+
+/// Normalize a lexed token. A float literal beyond the float range reads as
+/// infinity, which is not an Erlang float: OTP's scanner rejects it as an
+/// illegal float, and so does this lexer.
+fn checked(tok: Token, span: Span) -> Result<(Token, Span), ParseError> {
+    match tok.normalized() {
+        Token::Float(value) if !value.is_finite() => Err(ParseError::InvalidFloat { span }),
+        token => Ok((token, span)),
     }
 }
 
@@ -97,7 +113,7 @@ impl<'src> Iterator for Lexer<'src> {
                     let span = Span::new(span_range.start, span_range.end);
                     match result {
                         Ok(Token::Comment) => continue, // skip comments in iterator
-                        Ok(tok) => return Some(Ok((tok.normalized(), span))),
+                        Ok(tok) => return Some(checked(tok, span)),
                         Err(()) => return Some(Err(ParseError::LexerError {
                             position: span_range.start,
                         })),
@@ -204,6 +220,33 @@ mod tests {
         let tokens = Lexer::lex_all("3.14 1.0e10").unwrap();
         assert!(matches!(tokens[0].0, Token::Float(_)));
         assert!(matches!(tokens[1].0, Token::Float(_)));
+    }
+
+    /// OTP 29's scanner rounds a float literal to the nearest float and gives
+    /// `{illegal, float}` only when that is beyond the float range.
+    #[test]
+    fn lex_float_beyond_range_is_illegal() {
+        let digits_309 = format!("1{}.0", "0".repeat(309));
+        for source in ["1.0e309", "1.7976931348623159e308", "9.9e99999999999", &digits_309] {
+            let expected = Span::new(0, source.len());
+            for errors in [
+                Lexer::lex_all(source).unwrap_err(),
+                Lexer::new(source).filter_map(Result::err).collect(),
+                Lexer::lex_all_with_comments(source).err().unwrap(),
+            ] {
+                assert!(matches!(errors.as_slice(),
+                    [ParseError::InvalidFloat { span }] if *span == expected), "{source}");
+            }
+        }
+        for (source, expected) in [
+            ("1.7976931348623158e308", f64::MAX),
+            ("1.0e-400", 0.0),
+            ("2.5e-324", 5.0e-324),
+            ("0.0e99999999999", 0.0),
+        ] {
+            let tokens = Lexer::lex_all(source).unwrap();
+            assert_eq!(tokens, vec![(Token::Float(expected), Span::new(0, source.len()))], "{source}");
+        }
     }
 
     #[test]

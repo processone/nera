@@ -280,6 +280,8 @@ fn valid_separators(text: &str, radix: u32) -> bool {
             && (bytes[i + 1] as char).is_digit(radix)))
 }
 
+/// Parse a float literal, rounding to the nearest float. A literal beyond the
+/// float range reads as infinity, which the lexer wrapper rejects.
 fn parse_float(lex: &mut logos::Lexer<'_, Token>) -> Option<f64> {
     let raw = lex.slice();
     if !valid_separators(raw, 10) { return None; }
