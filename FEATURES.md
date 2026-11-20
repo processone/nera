@@ -227,7 +227,7 @@ Maintainers with OTP 29.0.4 installed can verify the catalogue with
 | error/3             | 🔶      | Raises error:Reason through direct, apply and fun calls; Args and Options are accepted but not kept in the stacktrace, including error_info metadata |
 | exit/1,2            | ✅      |                       |
 | throw/1             | ✅      |                       |
-| apply/3             | ✅      | Via nera_rt_apply    |
+| apply/2,3           | ✅      | Via nera_rt_apply; Args that is not a proper list (not a list, or an improper tail) raises badarg without calling the function |
 | node/0,1            | 🔶     | Local node is `nonode@nohost`; /1 accepts local PIDs and references, otherwise badarg; guards and dynamic calls. Ports/distribution are not supported. |
 | append_element/2    | ✅      |                       |
 | integer_to_binary/1,2 | ✅    | Base 2..36 for /2     |

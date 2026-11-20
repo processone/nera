@@ -2,6 +2,19 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## apply rejects an argument list that is not a proper list
+
+- `apply(Module, Function, Args)` and `apply(Fun, Args)` now raise
+  `error:badarg` when `Args` is not a list or ends in an improper tail, as on
+  BEAM, and the function is not called. Previously Nera stopped at the first
+  tail that was not a list and called the function with the elements before
+  it: `apply(erlang, length, [[1, 2] | z])` returned 2, and
+  `apply(erlang, node, not_a_list)` called `node()`.
+- This holds for built-in and compiled functions, unknown functions, computed
+  module and function names, tail calls, `erlang:apply/3` applied to itself,
+  remote funs and terms that are not funs. `apply_improper_args` runs these
+  cases natively and on BEAM.
+
 ## Active line-mode sockets keep the line terminator
 
 - A socket in `{packet, line}` mode with `{active, once}` or `{active, true}`
