@@ -18,7 +18,7 @@ that editors can match on.
 | `unexpected token: expected {expected}, found {found}` | Error |
 | `unexpected end of file` | Error |
 | `invalid integer literal` | Error |
-| `invalid float literal` | Error |
+| `illegal float` | Error |
 | `lexer error` | Error |
 | `undefined macro: {name}` | Error |
 | `unclosed conditional: -ifdef/-ifndef without -endif` | Error |

@@ -552,10 +552,11 @@ pub unsafe fn bif_float(heap: &mut ProcessHeap, args: &[ErlTerm]) -> Result<ErlT
         return Ok(heap.alloc_float(val as f64));
     }
 
-    // Bigint → float
+    // Bigint → float. An integer that rounds beyond the float range converts
+    // to infinity, which is not an Erlang float: badarg, as on BEAM.
     if let Some(big) = crate::bigint::term_to_bigint(term) {
         use num_traits::ToPrimitive;
-        if let Some(f) = big.to_f64() {
+        if let Some(f) = big.to_f64().filter(|f| f.is_finite()) {
             return Ok(heap.alloc_float(f));
         }
         return Err(ErlTerm::atom(ATOM_BADARG));
@@ -1740,6 +1741,8 @@ fn etf_decode(heap: &mut ProcessHeap, data: &[u8], pos: usize) -> Result<(ErlTer
                 data[pos+4], data[pos+5], data[pos+6], data[pos+7],
             ]);
             let val = f64::from_bits(bits);
+            // Infinity and NaN are not Erlang floats; BEAM rejects them.
+            if !val.is_finite() { return Err(()); }
             Ok((heap.alloc_float(val), pos + 8))
         }
 
@@ -3450,40 +3453,30 @@ mod tests {
         }
     }
 
+    /// Infinity and NaN are not Erlang floats. The encoder still writes their
+    /// bits, but decoding them raises badarg, as BEAM's binary_to_term does.
     #[test]
-    fn etf_roundtrip_float_infinity() {
+    fn etf_binary_to_term_rejects_float_infinity() {
         let mut heap = ProcessHeap::new();
         let term = heap.alloc_float(f64::INFINITY);
         let bin = unsafe { bif_term_to_binary(&mut heap, &[term]) }.unwrap();
-        let decoded = unsafe { bif_binary_to_term(&mut heap, &[bin]) }.unwrap();
-        unsafe {
-            let val = f64::from_bits(*decoded.as_boxed_ptr().unwrap().add(1));
-            assert!(val.is_infinite() && val.is_sign_positive());
-        }
+        assert!(unsafe { bif_binary_to_term(&mut heap, &[bin]) }.is_err());
     }
 
     #[test]
-    fn etf_roundtrip_float_neg_infinity() {
+    fn etf_binary_to_term_rejects_float_neg_infinity() {
         let mut heap = ProcessHeap::new();
         let term = heap.alloc_float(f64::NEG_INFINITY);
         let bin = unsafe { bif_term_to_binary(&mut heap, &[term]) }.unwrap();
-        let decoded = unsafe { bif_binary_to_term(&mut heap, &[bin]) }.unwrap();
-        unsafe {
-            let val = f64::from_bits(*decoded.as_boxed_ptr().unwrap().add(1));
-            assert!(val.is_infinite() && val.is_sign_negative());
-        }
+        assert!(unsafe { bif_binary_to_term(&mut heap, &[bin]) }.is_err());
     }
 
     #[test]
-    fn etf_roundtrip_float_nan() {
+    fn etf_binary_to_term_rejects_float_nan() {
         let mut heap = ProcessHeap::new();
         let term = heap.alloc_float(f64::NAN);
         let bin = unsafe { bif_term_to_binary(&mut heap, &[term]) }.unwrap();
-        let decoded = unsafe { bif_binary_to_term(&mut heap, &[bin]) }.unwrap();
-        unsafe {
-            let val = f64::from_bits(*decoded.as_boxed_ptr().unwrap().add(1));
-            assert!(val.is_nan());
-        }
+        assert!(unsafe { bif_binary_to_term(&mut heap, &[bin]) }.is_err());
     }
 
     // -----------------------------------------------------------------------

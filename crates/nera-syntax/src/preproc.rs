@@ -8,7 +8,7 @@ use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
 
 use crate::error::ParseError;
-use crate::lexer::Lexer;
+use crate::lexer::{illegal_floats, Lexer};
 use crate::span::Span;
 use crate::token::Token;
 
@@ -214,8 +214,20 @@ impl<'src> Preprocessor<'src> {
         let mut output = Vec::new();
         let mut errors = Vec::new();
         let mut pos = 0;
+        // Tokens before `checked` were consumed while `checked_active` held.
+        // As in OTP's epp, an illegal float is an error in active code,
+        // directives and macro definitions included, and is ignored in a
+        // skipped conditional section.
+        let mut checked = 0;
+        let mut checked_active = self.is_active();
 
         while pos < tokens.len() {
+            if checked_active {
+                errors.extend(illegal_floats(&tokens[checked..pos]));
+            }
+            checked = pos;
+            checked_active = self.is_active();
+
             // Check if this is a directive: Minus followed by a directive atom
             if tokens[pos].0 == Token::Minus && pos + 1 < tokens.len() {
                 let directive_name = self.token_text(&tokens[pos + 1]);
@@ -363,6 +375,9 @@ impl<'src> Preprocessor<'src> {
                 output.push(tokens[pos].clone());
             }
             pos += 1;
+        }
+        if checked_active {
+            errors.extend(illegal_floats(&tokens[checked..]));
         }
 
         // Check for unclosed conditionals
@@ -1552,6 +1567,37 @@ mod tests {
         let kinds = token_kinds(&tokens);
         // foo() -> ok. should be present
         assert!(kinds.contains(&Token::Arrow));
+    }
+
+    /// OTP 29 readings: erlc rejects a float literal beyond the float range
+    /// as an illegal float in active code, an unused macro definition and an
+    /// `-if` condition included, and ignores it in a skipped section.
+    #[test]
+    fn illegal_float_only_in_active_code() {
+        let digits_309 = format!("1{}.0", "0".repeat(309));
+        for literal in ["1.0e309", "1.7976931348623159e308", "9.9e99999999999", &digits_309] {
+            for (prefix, suffix) in [
+                ("f() -> ", "."),
+                ("-define(BIG, ", ").\nf() -> ok."),
+                ("-if(", " > 1).\n-endif.\nf() -> ok."),
+            ] {
+                let source = format!("{prefix}{literal}{suffix}");
+                let start = prefix.len();
+                let expected = Span::new(start, start + literal.len());
+                let errors = preprocess(&source).unwrap_err();
+                let floats: Vec<Span> = errors.iter().filter_map(|error| match error {
+                    ParseError::InvalidFloat { span } => Some(*span),
+                    _ => None,
+                }).collect();
+                assert_eq!(floats, vec![expected], "{source}: {errors:?}");
+            }
+        }
+        let skipped = "-ifdef(UNDEF).\nbig() -> 1.0e309.\n-endif.\n\
+                       -if(false).\nbig() -> 1.0e309.\n-endif.\n\
+                       -define(D, 1).\n-ifdef(D).\nf() -> ok.\n-else.\nbig() -> 1.0e309.\n-endif.\n\
+                       -ifdef(UNDEF).\n-ifdef(D).\nbig() -> 1.0e309.\n-endif.\n-define(BIG, 1.0e309).\n-endif.\n";
+        let tokens = preprocess(skipped).unwrap();
+        assert_eq!(token_kinds(&tokens), token_kinds(&Lexer::lex_all("f() -> ok.").unwrap()));
     }
 
     #[test]

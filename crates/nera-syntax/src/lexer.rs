@@ -83,6 +83,18 @@ impl<'src> Lexer<'src> {
     }
 }
 
+/// Errors for float literals beyond the float range. Such a literal lexes as
+/// an infinite float, which is not an Erlang float: OTP's scanner calls it an
+/// illegal float. The preprocessor reports it only in active code, as OTP's
+/// preprocessor ignores it in a skipped conditional section; compiling always
+/// preprocesses.
+pub(crate) fn illegal_floats(tokens: &[(Token, Span)]) -> impl Iterator<Item = ParseError> + '_ {
+    tokens.iter().filter_map(|(token, span)| match token {
+        Token::Float(value) if !value.is_finite() => Some(ParseError::InvalidFloat { span: *span }),
+        _ => None,
+    })
+}
+
 impl<'src> Iterator for Lexer<'src> {
     type Item = Result<(Token, Span), ParseError>;
 
@@ -204,6 +216,22 @@ mod tests {
         let tokens = Lexer::lex_all("3.14 1.0e10").unwrap();
         assert!(matches!(tokens[0].0, Token::Float(_)));
         assert!(matches!(tokens[1].0, Token::Float(_)));
+    }
+
+    /// OTP 29's scanner rounds a float literal to the nearest float; only a
+    /// literal that rounds beyond the float range is illegal.
+    #[test]
+    fn lex_float_rounds_to_nearest() {
+        for (source, expected) in [
+            ("1.7976931348623158e308", f64::MAX),
+            ("1.0e-400", 0.0),
+            ("2.5e-324", 5.0e-324),
+            ("0.0e99999999999", 0.0),
+            ("1.0e309", f64::INFINITY),
+        ] {
+            let tokens = Lexer::lex_all(source).unwrap();
+            assert_eq!(tokens, vec![(Token::Float(expected), Span::new(0, source.len()))], "{source}");
+        }
     }
 
     #[test]

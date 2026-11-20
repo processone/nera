@@ -84,7 +84,7 @@ and known differences from BEAM.
 | Wildcards (_)                 | ✅      |                               |
 | Underscore variables (_Var)   | ✅      | Repeated vars in patterns     |
 | Integer literals              | ✅      | Arbitrary precision; decimal and Base#Digits, positive/negative |
-| Float literals                | ✅      |                               |
+| Float literals                | ✅      | A literal beyond the float range is an `illegal float` compile error |
 | Atom literals                 | ✅      |                               |
 | String literals               | ✅      | Compiled to list patterns     |
 | Tuple patterns                | ✅      | With arity discrimination     |
@@ -258,12 +258,12 @@ Maintainers with OTP 29.0.4 installed can verify the catalogue with
 | binary_to_atom/1,2  | ✅      | /2: latin1, unicode or utf8; 255-character limit |
 | round/1             | ✅      |                       |
 | trunc/1             | ✅      |                       |
-| float/1             | ✅      |                       |
+| float/1             | ✅      | `badarg` for an integer beyond the float range |
 | ceil/1              | ✅      | OTP 20+              |
 | floor/1             | ✅      | OTP 20+              |
 | phash2/1,2          | ✅      |                       |
 | term_to_binary/1    | ✅      | ETF v131 encoding     |
-| binary_to_term/1    | ✅      | ETF v131 decoding     |
+| binary_to_term/1    | ✅      | ETF v131 decoding; `badarg` for an infinite or NaN float |
 | size/1              | ✅      | Deprecated but common |
 | raise/3             | ✅      | Re-raise with trace; keeps its first 8 frames |
 | process_info/1      | ✅      | All-info form         |

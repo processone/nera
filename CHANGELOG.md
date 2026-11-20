@@ -2,6 +2,24 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Out-of-range floats raise badarg or fail to compile
+
+- `float/1` now raises `error:badarg` for an integer that rounds beyond the
+  float range, as on BEAM. Previously `float(1 bsl 1100)` returned an
+  infinite float, which prints as `inf`; a guard such as `float(X) > 0.0`
+  passed, and `float(X) + 1.0` raised `badarith` instead of `badarg`.
+  Integers up to the largest float still convert.
+- `binary_to_term/1` now raises `error:badarg` for an encoded float whose bits
+  are infinity or NaN, alone or inside another term, as on BEAM. Previously it
+  returned `inf`, `-inf` or `NaN`.
+- A float literal beyond the float range, such as `1.0e309`, is now a compile
+  error with OTP's `illegal float` message, also in an unused macro
+  definition. Previously it compiled to an infinite float. As with `erlc`, a
+  literal in a section that `-ifdef` or `-if` skips is ignored, and literals
+  that round to the largest float or underflow to zero still compile.
+- The `float_conversion_badarg` fixture runs the conversions natively and on
+  BEAM; `float_literal_out_of_range` checks the compile error.
+
 ## apply rejects an argument list that is not a proper list
 
 - `apply(Module, Function, Args)` and `apply(Fun, Args)` now raise
