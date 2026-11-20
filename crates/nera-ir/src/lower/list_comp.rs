@@ -199,8 +199,14 @@ impl IrBuilder {
             return Ok(());
         }
         // A branch takes its first target only when its condition is the
-        // atom `true`, so `true` costs no more than before.
+        // atom `true`, so `true` costs no more than before. A filter that
+        // can only return a boolean, such as `id(X) > 0`, needs no check.
         let value = self.lower_expr(filter, false)?;
+        if Self::expr_is_boolean(filter) {
+            self.set_terminator(Terminator::Branch(value, next, skip));
+            self.close_current_block();
+            return Ok(());
+        }
         let not_true_block = self.fresh_block_with_id();
         self.set_terminator(Terminator::Branch(value, next, not_true_block));
         self.close_current_block();
