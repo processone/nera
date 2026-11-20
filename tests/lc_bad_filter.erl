@@ -10,6 +10,7 @@
 %% Run this same fixture on native Nera and BEAM.
 -module(lc_bad_filter).
 -export([test/0]).
+-compile(nowarn_deprecated_catch).
 
 -record(r, {a = 1}).
 
@@ -61,6 +62,7 @@ shapes() ->
     [{binary_comprehension, bad(1), fun() -> << <<X>> || X <- id([1, 2]), id(X) >> end},
      {binary_generator, bad(nope), fun() -> [X || <<X>> <= id(<<1, 2>>), id(nope)] end},
      {binary_both, bad(1), fun() -> << <<X>> || <<X>> <= id(<<1, 2>>), id(X) >> end},
+     {outer_binary_generator, bad(1), fun() -> [{X, Y} || <<X>> <= id(<<1, 2>>), id(X), Y <- id([a])] end},
      {inner_generator, bad(a), fun() -> [{X, Y} || X <- id([1, 2]), Y <- id([a, b]), id(Y)] end},
      {outer_generator, bad(1), fun() -> [{X, Y} || X <- id([1, 2]), id(X), Y <- id([a])] end},
      {after_true, bad(1), fun() -> [X || X <- id([1, 2]), id(true), id(X)] end},
@@ -80,12 +82,14 @@ guards() ->
     [{guard_variable, [true], fun() -> [X || X <- id([a, true, 1]), X] end},
      {guard_arithmetic, [], fun() -> [X || X <- id([1, 2]), X + 1] end},
      {guard_element, [{true}], fun() -> [T || T <- id([{a}, {true}]), element(1, T)] end},
+     {guard_andalso_binary, <<2>>, fun() -> << <<X>> || <<X>> <= id(<<1, 2>>), X =:= 2 orelse X >> end},
      {guard_leading, [], fun() -> L = id(later), [X || L, X <- id([1])] end}].
 
 %% Filters that return booleans keep and skip elements as before; a false
 %% filter stops before any later, non-boolean filter.
 valid() ->
     [{boolean_call, [1, 3], fun() -> [X || X <- id([1, 2, 3]), id(X rem 2 =:= 1)] end},
+     {comparison_of_call, [2, 3], fun() -> [X || X <- id([1, 2, 3]), id(X) > 1] end},
      {false_first, [], fun() -> [X || X <- id([1, 2]), id(false), id(X)] end},
      {false_guard_first, [2], fun() -> [X || X <- id([1, 2]), X > 1 orelse X =:= 3, id(X =:= 2)] end},
      {binary_boolean, <<2>>, fun() -> << <<X>> || <<X>> <= id(<<1, 2>>), id(X > 1) >> end},
@@ -105,7 +109,8 @@ traces() ->
         traced(fun() -> [trace(X) || filter(2), X <- id([1])] end),
     ok.
 
-%% Inside a try, the error skips the rest of the try body.
+%% Inside a try, the error skips the rest of the try body; catch returns it
+%% with its stack trace.
 try_bodies() ->
     caught = try
         _ = [X || X <- id([1]), id(oops)],
@@ -117,6 +122,8 @@ try_bodies() ->
         self() ! leaked
     catch error:{bad_filter, oops} -> caught
     end,
+    {'EXIT', {{bad_filter, oops}, Stack}} = (catch [X || X <- id([1]), id(oops)]),
+    true = is_list(Stack),
     receive leaked -> erlang:error(leaked) after 0 -> ok end.
 
 %% Outside any try, the error ends the process with the error and its stack
