@@ -40,6 +40,13 @@ pub enum Doc {
     /// and measurement, behaves like a breaking Group (content measured up
     /// to first Line/HardLine only).
     ForceBreak(Box<Doc>),
+    /// A trailing comment. It is printed at the end of the current output
+    /// line, after any separator that follows it, and has no width. The next
+    /// soft line break always breaks, so code written after the comment never
+    /// joins its line.
+    LineComment(String),
+    /// Prints nothing, but no enclosing group can render flat around it.
+    BreakParent,
 }
 
 // ── Builder helpers ─────────────────────────────────────────────────
@@ -80,6 +87,16 @@ pub fn if_break(break_doc: Doc, flat_doc: Doc) -> Doc {
     Doc::IfBreak(Box::new(break_doc), Box::new(flat_doc))
 }
 
+/// A trailing comment printed at the end of the current output line.
+pub fn line_comment<S: Into<String>>(comment: S) -> Doc {
+    Doc::LineComment(comment.into())
+}
+
+/// Make every enclosing group break.
+pub fn break_parent() -> Doc {
+    Doc::BreakParent
+}
+
 /// Build a Fill doc from a flat list of alternating content/separator docs.
 pub fn fill(parts: Vec<Doc>) -> Doc {
     Doc::Fill(parts)
@@ -95,14 +112,30 @@ pub fn best_of(alternatives: Vec<Doc>) -> Doc {
 /// Returns true if the document can be rendered entirely on one line (no HardLine).
 pub fn can_flatten(doc: &Doc) -> bool {
     match doc {
-        Doc::Nil | Doc::Text(_) | Doc::Line => true,
-        Doc::HardLine => false,
+        Doc::Nil | Doc::Text(_) | Doc::Line | Doc::LineComment(_) => true,
+        Doc::HardLine | Doc::BreakParent => false,
         Doc::ForceBreak(_) => false,
         Doc::Concat(a, b) => can_flatten(a) && can_flatten(b),
         Doc::Group(inner) | Doc::Nest(_, inner) => can_flatten(inner),
         Doc::IfBreak(_, flat_doc) => can_flatten(flat_doc),
         Doc::Fill(parts) => parts.iter().all(can_flatten),
         Doc::BestOf(alts) => alts.first().is_none_or(can_flatten),
+    }
+}
+
+/// Returns true if the document holds a trailing comment.
+pub fn contains_line_comment(doc: &Doc) -> bool {
+    match doc {
+        Doc::LineComment(_) => true,
+        Doc::Nil | Doc::Text(_) | Doc::Line | Doc::HardLine | Doc::BreakParent => false,
+        Doc::Concat(a, b) => contains_line_comment(a) || contains_line_comment(b),
+        Doc::Group(inner) | Doc::Nest(_, inner) | Doc::ForceBreak(inner) => {
+            contains_line_comment(inner)
+        }
+        Doc::IfBreak(break_doc, flat_doc) => {
+            contains_line_comment(break_doc) || contains_line_comment(flat_doc)
+        }
+        Doc::Fill(parts) | Doc::BestOf(parts) => parts.iter().any(contains_line_comment),
     }
 }
 
@@ -172,128 +205,10 @@ enum Mode {
 /// Render a document to a string within the given width.
 pub fn render(width: usize, doc: &Doc) -> String {
     let mut out = String::new();
-    // Stack of (indent, mode, doc)
-    let mut stack: Vec<(i32, Mode, &Doc)> = vec![(0, Mode::Break, doc)];
     let mut col: usize = 0;
-
-    while let Some((indent, mode, doc)) = stack.pop() {
-        match doc {
-            Doc::Nil => {}
-            Doc::Text(s) => {
-                out.push_str(s);
-                col += s.len();
-            }
-            Doc::Concat(a, b) => {
-                // Push b first so a is processed first (LIFO)
-                stack.push((indent, mode, b));
-                stack.push((indent, mode, a));
-            }
-            Doc::Line => {
-                match mode {
-                    Mode::Flat => {
-                        out.push(' ');
-                        col += 1;
-                    }
-                    Mode::Break => {
-                        out.push('\n');
-                        let spaces = indent.max(0) as usize;
-                        for _ in 0..spaces {
-                            out.push(' ');
-                        }
-                        col = spaces;
-                    }
-                }
-            }
-            Doc::HardLine => {
-                out.push('\n');
-                let spaces = indent.max(0) as usize;
-                for _ in 0..spaces {
-                    out.push(' ');
-                }
-                col = spaces;
-            }
-            Doc::Nest(extra, inner) => {
-                stack.push((indent + extra, mode, inner));
-            }
-            Doc::Group(inner) => {
-                // Try flat mode: measure if it fits
-                if fits(width as i32 - col as i32, &[(indent, Mode::Flat, inner.as_ref())]) {
-                    stack.push((indent, Mode::Flat, inner));
-                } else {
-                    stack.push((indent, Mode::Break, inner));
-                }
-            }
-            Doc::ForceBreak(inner) => {
-                stack.push((indent, Mode::Break, inner));
-            }
-            Doc::IfBreak(break_doc, flat_doc) => {
-                match mode {
-                    Mode::Break => stack.push((indent, mode, break_doc)),
-                    Mode::Flat => stack.push((indent, mode, flat_doc)),
-                }
-            }
-            Doc::Fill(parts) => {
-                match mode {
-                    Mode::Flat => {
-                        // Render all parts flat: push in reverse for LIFO stack.
-                        for part in parts.iter().rev() {
-                            stack.push((indent, Mode::Flat, part));
-                        }
-                    }
-                    Mode::Break => {
-                        // Greedy fill: render each part inline, making per-separator
-                        // decisions based on the current column. For the next content,
-                        // we measure its *first-line width* (the width up to any soft
-                        // break inside it) — this lets content start on the current
-                        // line and then break internally as a group.
-                        let mut idx = 0;
-                        while idx < parts.len() {
-                            let is_sep = idx % 2 == 1;
-                            if is_sep {
-                                // Does sep(flat) + next_content's first line fit?
-                                // For the next content we measure its first line assuming
-                                // its top-level Group will break — i.e. the width of its
-                                // own first element. This matches how the content will
-                                // actually be rendered starting at this column.
-                                let sep = &parts[idx];
-                                let fits_flat = if idx + 1 < parts.len() {
-                                    let sep_w = measure_first_line(sep);
-                                    let next_w = measure_first_token(&parts[idx + 1]);
-                                    (col as i32) + sep_w + next_w <= width as i32
-                                } else {
-                                    fits(
-                                        width as i32 - col as i32,
-                                        &[(indent, Mode::Flat, sep)],
-                                    )
-                                };
-                                let sep_mode = if fits_flat { Mode::Flat } else { Mode::Break };
-                                render_subdoc(&mut out, &mut col, width, indent, sep_mode, sep);
-                            } else {
-                                // Content: render with inherited Break mode (inner groups
-                                // will still independently decide via fits()).
-                                render_subdoc(&mut out, &mut col, width, indent, Mode::Break, &parts[idx]);
-                            }
-                            idx += 1;
-                        }
-                    }
-                }
-            }
-            Doc::BestOf(alternatives) => {
-                let last_idx = alternatives.len() - 1;
-                let mut chosen = last_idx;
-                for (i, alt) in alternatives.iter().enumerate() {
-                    if i == last_idx {
-                        break;
-                    }
-                    if fits(width as i32 - col as i32, &[(indent, Mode::Flat, alt)]) {
-                        chosen = i;
-                        break;
-                    }
-                }
-                stack.push((indent, Mode::Break, &alternatives[chosen]));
-            }
-        }
-    }
+    let mut comments = String::new();
+    render_subdoc(&mut out, &mut col, &mut comments, width, 0, Mode::Break, doc);
+    out.push_str(&comments);
 
     // Strip trailing whitespace from each line
     out.split('\n')
@@ -302,12 +217,27 @@ pub fn render(width: usize, doc: &Doc) -> String {
         .join("\n")
 }
 
+/// End the current output line: print the comments waiting for it, then a
+/// newline and the indentation of the next line.
+fn break_line(out: &mut String, col: &mut usize, comments: &mut String, indent: i32) {
+    out.push_str(comments);
+    comments.clear();
+    out.push('\n');
+    let spaces = indent.max(0) as usize;
+    for _ in 0..spaces {
+        out.push(' ');
+    }
+    *col = spaces;
+}
+
 /// Render a single sub-document to `out`, starting at column `col` with the given
 /// initial mode. Updates `col` in place. Uses a local stack so it does not interfere
-/// with the main renderer's stack.
+/// with the main renderer's stack. `comments` holds the trailing comments waiting
+/// for the end of the current line.
 fn render_subdoc(
     out: &mut String,
     col: &mut usize,
+    comments: &mut String,
     width: usize,
     initial_indent: i32,
     initial_mode: Mode,
@@ -316,7 +246,7 @@ fn render_subdoc(
     let mut stack: Vec<(i32, Mode, &Doc)> = vec![(initial_indent, initial_mode, doc)];
     while let Some((indent, mode, doc)) = stack.pop() {
         match doc {
-            Doc::Nil => {}
+            Doc::Nil | Doc::BreakParent => {}
             Doc::Text(s) => {
                 out.push_str(s);
                 *col += s.len();
@@ -325,27 +255,18 @@ fn render_subdoc(
                 stack.push((indent, mode, b));
                 stack.push((indent, mode, a));
             }
-            Doc::Line => match mode {
-                Mode::Flat => {
+            Doc::Line => {
+                if mode == Mode::Flat && comments.is_empty() {
                     out.push(' ');
                     *col += 1;
+                } else {
+                    break_line(out, col, comments, indent);
                 }
-                Mode::Break => {
-                    out.push('\n');
-                    let spaces = indent.max(0) as usize;
-                    for _ in 0..spaces {
-                        out.push(' ');
-                    }
-                    *col = spaces;
-                }
-            },
-            Doc::HardLine => {
-                out.push('\n');
-                let spaces = indent.max(0) as usize;
-                for _ in 0..spaces {
-                    out.push(' ');
-                }
-                *col = spaces;
+            }
+            Doc::HardLine => break_line(out, col, comments, indent),
+            Doc::LineComment(comment) => {
+                comments.push(' ');
+                comments.push_str(comment);
             }
             Doc::Nest(extra, inner) => {
                 stack.push((indent + extra, mode, inner));
@@ -388,9 +309,9 @@ fn render_subdoc(
                                 fits(width as i32 - *col as i32, &[(indent, Mode::Flat, sep)])
                             };
                             let sep_mode = if fits_flat { Mode::Flat } else { Mode::Break };
-                            render_subdoc(out, col, width, indent, sep_mode, sep);
+                            render_subdoc(out, col, comments, width, indent, sep_mode, sep);
                         } else {
-                            render_subdoc(out, col, width, indent, Mode::Break, &parts[idx]);
+                            render_subdoc(out, col, comments, width, indent, Mode::Break, &parts[idx]);
                         }
                         idx += 1;
                     }
@@ -424,7 +345,7 @@ fn measure_first_line(doc: &Doc) -> i32 {
     let mut stack: Vec<(Mode, &Doc)> = vec![(Mode::Flat, doc)];
     while let Some((mode, doc)) = stack.pop() {
         match doc {
-            Doc::Nil => {}
+            Doc::Nil | Doc::LineComment(_) | Doc::BreakParent => {}
             Doc::Text(s) => total += s.len() as i32,
             Doc::Concat(a, b) => {
                 stack.push((mode, b));
@@ -470,7 +391,7 @@ fn measure_first_token(doc: &Doc) -> i32 {
     let mut stack: Vec<&Doc> = vec![doc];
     while let Some(doc) = stack.pop() {
         match doc {
-            Doc::Nil => {}
+            Doc::Nil | Doc::LineComment(_) | Doc::BreakParent => {}
             Doc::Text(s) => total += s.len() as i32,
             Doc::Concat(a, b) => {
                 stack.push(b);
@@ -500,6 +421,7 @@ fn measure_first_token(doc: &Doc) -> i32 {
 /// Check if the document fits within `remaining` columns in flat mode.
 fn fits(mut remaining: i32, stack: &[(i32, Mode, &Doc)]) -> bool {
     let mut work: Vec<(i32, Mode, &Doc)> = stack.iter().rev().cloned().collect();
+    let mut saw_comment = false;
 
     while remaining >= 0 {
         let (indent, mode, doc) = match work.pop() {
@@ -509,6 +431,12 @@ fn fits(mut remaining: i32, stack: &[(i32, Mode, &Doc)]) -> bool {
 
         match doc {
             Doc::Nil => {}
+            Doc::LineComment(_) => saw_comment = true,
+            Doc::BreakParent => {
+                if mode == Mode::Flat {
+                    return false;
+                }
+            }
             Doc::Text(s) => {
                 remaining -= s.len() as i32;
             }
@@ -518,6 +446,9 @@ fn fits(mut remaining: i32, stack: &[(i32, Mode, &Doc)]) -> bool {
             }
             Doc::Line => {
                 match mode {
+                    // Code after a trailing comment starts a new line, so
+                    // this layout cannot stay flat.
+                    Mode::Flat if saw_comment => return false,
                     Mode::Flat => {
                         remaining -= 1; // space
                     }

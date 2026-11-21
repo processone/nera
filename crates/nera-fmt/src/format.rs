@@ -12,9 +12,9 @@ pub struct Formatter<'src> {
     source: &'src str,
     comments: Vec<Comment>,
     comment_cursor: usize,
-    /// Trailing comments skipped by `drain_comments_before`, waiting to be
-    /// picked up by `take_trailing_comment`.
-    pending_trailing: Vec<Comment>,
+    /// End offsets of the expressions and patterns being formatted, innermost
+    /// last. A comment past the innermost end belongs to that enclosing node.
+    enclosing_ends: Vec<usize>,
     interner: &'src DefaultStringInterner,
     config: FormatConfig,
 }
@@ -30,7 +30,7 @@ impl<'src> Formatter<'src> {
             source,
             comments,
             comment_cursor: 0,
-            pending_trailing: Vec::new(),
+            enclosing_ends: Vec::new(),
             interner,
             config,
         }
@@ -71,66 +71,89 @@ impl<'src> Formatter<'src> {
         )
     }
 
-    /// Build a hanging-bracket container with comment draining between items.
-    /// Each `(span_start, Doc)` pair allows draining comments before each element.
-    /// If any item has leading comments, the container is forced to break so
-    /// comments appear on their own indented lines.
+    /// Format one container element together with the comments before it.
+    /// Elements are formatted in source order so nested comments stay inside
+    /// the element they were written in.
+    fn container_item(
+        &mut self,
+        span: Span,
+        format: impl FnOnce(&mut Self) -> Doc,
+    ) -> ContainerItem {
+        let trailing = self.take_trailing_before(span.start);
+        let leading = self.drain_comments_before(span.start);
+        let doc = format(self);
+        ContainerItem { span, trailing, leading, doc }
+    }
+
+    /// Build a hanging-bracket container whose elements may carry comments.
+    /// A commented container keeps its written line structure, because the
+    /// comments describe those lines.
     fn hanging_container_with_comments(
         &mut self,
         open: &str,
-        items: Vec<(usize, Doc)>,
+        items: Vec<ContainerItem>,
         close: &str,
     ) -> Doc {
         if items.is_empty() {
             return text(format!("{}{}", open, close));
         }
-        let indent = self.config.indent_size as i32;
-        // Check if any item has leading comments — forces container to break
-        let has_inner_comments = items.iter().any(|(s, _)| self.has_comments_before(*s));
-        if has_inner_comments {
-            // Force break: comments need their own lines
-            let mut item_docs = Vec::new();
-            for (i, (span_start, doc)) in items.into_iter().enumerate() {
-                let comments = self.drain_comments_before(span_start);
-                if i > 0 {
-                    item_docs.push(text(","));
-                    if let Some(tc) = self.take_trailing_comment() {
-                        item_docs.push(tc);
-                    }
-                    item_docs.push(hardline());
-                }
-                item_docs.push(comments);
-                item_docs.push(doc);
-            }
-            concat_all(vec![
-                text(open.to_string()),
-                nest(
-                    indent,
-                    concat(hardline(), concat_all(item_docs)),
-                ),
-                hardline(),
-                text(close.to_string()),
-            ])
-        } else {
-            let mut item_docs = Vec::new();
-            for (i, (span_start, doc)) in items.into_iter().enumerate() {
-                self.drain_comments_before(span_start);
-                if i > 0 {
-                    item_docs.push(text(","));
-                    item_docs.push(line());
-                }
-                item_docs.push(doc);
-            }
-            group(concat_all(vec![
-                text(open.to_string()),
-                nest(
-                    indent,
-                    concat(if_break(hardline(), nil()), concat_all(item_docs)),
-                ),
-                if_break(hardline(), nil()),
-                text(close.to_string()),
-            ]))
+        let last = items.len() - 1;
+        let has_comments = items.iter().enumerate().any(|(i, item)| {
+            !matches!(item.leading, Doc::Nil)
+                || !matches!(item.trailing, Doc::Nil)
+                || (i < last && contains_line_comment(&item.doc))
+        });
+        if has_comments {
+            return self.commented_container(open, items, close);
         }
+        let indent = self.config.indent_size as i32;
+        let docs = items.into_iter().map(|item| item.doc).collect();
+        group(concat_all(vec![
+            text(open.to_string()),
+            nest(
+                indent,
+                concat(
+                    if_break(hardline(), nil()),
+                    intersperse(docs, concat(text(","), line())),
+                ),
+            ),
+            if_break(hardline(), nil()),
+            text(close.to_string()),
+        ]))
+    }
+
+    /// Lay out a container that holds comments: the brackets on their own
+    /// lines, and elements broken where the source breaks them.
+    fn commented_container(&self, open: &str, items: Vec<ContainerItem>, close: &str) -> Doc {
+        let mut opening_comment = nil();
+        let mut body = Vec::new();
+        let mut prev_end = None;
+        for item in items {
+            match prev_end {
+                None => opening_comment = item.trailing,
+                Some(end) => {
+                    body.push(text(","));
+                    body.push(item.trailing);
+                    let same_line = matches!(item.leading, Doc::Nil)
+                        && !self.source[end..item.span.start].contains('\n');
+                    body.push(if same_line { text(" ") } else { hardline() });
+                }
+            }
+            body.push(item.leading);
+            body.push(item.doc);
+            prev_end = Some(item.span.end);
+        }
+        concat_all(vec![
+            break_parent(),
+            text(open.to_string()),
+            opening_comment,
+            nest(
+                self.config.indent_size as i32,
+                concat(hardline(), concat_all(body)),
+            ),
+            hardline(),
+            text(close.to_string()),
+        ])
     }
 
     /// Build a hanging-bracket container: when flat, renders as `OPEN a, b, c CLOSE`;
@@ -202,26 +225,53 @@ impl<'src> Formatter<'src> {
         false
     }
 
-    /// Drain standalone comments that appear before `pos` and return them as a Doc.
-    /// Trailing comments (code on the same line before the comment) are skipped
-    /// so that `trailing_comment_at` can attach them inline after `;` or `.`.
-    /// Preserves blank lines between consecutive comments and between the
-    /// last comment and the code at `pos`.
+    /// Take the trailing comments that start before `pos`. Callers place the
+    /// result before the line break that follows the code those comments end.
+    fn take_trailing_before(&mut self, pos: usize) -> Doc {
+        let mut docs = Vec::new();
+        let mut i = self.comment_cursor;
+        while i < self.comments.len() && self.comments[i].span.start < pos {
+            if self.comments[i].is_trailing {
+                docs.push(line_comment(self.comments.remove(i).text));
+            } else {
+                i += 1;
+            }
+        }
+        concat_all(docs)
+    }
+
+    /// Take the trailing comment that directly follows code ending at `end`.
+    /// Only separators, closing brackets and operators may sit between them.
+    /// A comment past the enclosing node's end is left for that node, so it
+    /// stays after a closing bracket that the node prints.
+    fn take_trailing_after(&mut self, end: usize) -> Doc {
+        let next = (self.comment_cursor..self.comments.len())
+            .find(|&i| self.comments[i].span.start >= end);
+        let Some(i) = next else { return nil() };
+        let comment = &self.comments[i];
+        let enclosing_end = self.enclosing_ends.last().copied().unwrap_or(usize::MAX);
+        if !comment.is_trailing
+            || comment.span.start >= enclosing_end
+            || !only_continuation_tokens(&self.source[end..comment.span.start])
+        {
+            return nil();
+        }
+        line_comment(self.comments.remove(i).text)
+    }
+
+    /// Drain the comments that appear before `pos` and return them as a Doc.
+    /// Standalone comments keep their own lines. Callers take trailing
+    /// comments first when they end a line before `pos`; any left here still
+    /// print, at the end of the current line. Preserves blank lines between
+    /// consecutive comments and between the last comment and the code at `pos`.
     fn drain_comments_before(&mut self, pos: usize) -> Doc {
+        let trailing = self.take_trailing_before(pos);
         let mut docs = Vec::new();
         let mut prev_end: Option<usize> = None;
         while self.comment_cursor < self.comments.len()
             && self.comments[self.comment_cursor].span.start < pos
         {
             let comment = &self.comments[self.comment_cursor];
-            if comment.is_trailing {
-                // Save trailing comments for take_trailing_comment() to
-                // attach inline after `;` or `.`. Advance cursor so we
-                // don't block subsequent standalone comments.
-                self.pending_trailing.push(comment.clone());
-                self.comment_cursor += 1;
-                continue;
-            }
             // Preserve blank line between consecutive comments
             if let Some(pe) = prev_end {
                 if self.has_blank_line_between(pe, comment.span.start) {
@@ -239,18 +289,18 @@ impl<'src> Formatter<'src> {
                 docs.push(hardline());
             }
         }
-        concat_all(docs)
+        concat(trailing, concat_all(docs))
     }
 
-    /// Take the oldest pending trailing comment (saved by `drain_comments_before`)
-    /// and return it as an inline Doc (` % comment`).
-    fn take_trailing_comment(&mut self) -> Option<Doc> {
-        if !self.pending_trailing.is_empty() {
-            let comment = self.pending_trailing.remove(0);
-            Some(concat(text(" "), text(comment.text)))
-        } else {
-            None
+    /// Start clause `index` of a clause list: the `;` that ends the previous
+    /// clause with its trailing comment, then the comments before this clause.
+    fn push_clause_start(&mut self, index: usize, start: usize, parts: &mut Vec<Doc>) {
+        if index > 0 {
+            parts.push(text(";"));
+            parts.push(self.take_trailing_before(start));
+            parts.push(hardline());
         }
+        parts.push(self.drain_comments_before(start));
     }
 
     /// Drain all remaining comments, preserving blank lines between them.
@@ -331,9 +381,19 @@ impl<'src> Formatter<'src> {
     // ── Function ────────────────────────────────────────────────────
 
     fn format_function(&mut self, func: &Function) -> Doc {
-        let mut clause_docs = Vec::new();
-        for clause in &func.clauses {
-            let mut parts = Vec::new();
+        let mut parts = Vec::new();
+        for (i, clause) in func.clauses.iter().enumerate() {
+            // Each clause ends with its own trailing comment (erlfmt-style),
+            // before later clauses can take it.
+            if i > 0 {
+                parts.push(text(";"));
+                parts.push(self.take_trailing_before(clause.span.start));
+                // Preserve blank line between clauses
+                if self.has_blank_line_between(func.clauses[i - 1].span.end, clause.span.start) {
+                    parts.push(hardline());
+                }
+                parts.push(hardline());
+            }
 
             // Comments before clause
             parts.push(self.drain_comments_before(clause.span.start));
@@ -355,76 +415,18 @@ impl<'src> Formatter<'src> {
             }
 
             // arrow and body
-            let has_body_comment = !clause.body.is_empty()
-                && self.has_comments_before(clause.body[0].span().start);
-            let body = self.format_body(&clause.body);
-            let can_flatten = Self::body_can_flatten(&clause.body) && !has_body_comment;
-            parts.push(self.arrow_body(body, can_flatten));
-
-            // Drain up to clause end to capture any trailing comments into pending_trailing.
-            // (Standalone comments here would be unusual but are appended for safety.)
-            parts.push(self.drain_comments_before(clause.span.end));
-
-            clause_docs.push(concat_all(parts));
+            parts.push(self.clause_body(&clause.body));
         }
-
-        // Join clauses with semicolons, preserving blank lines between them.
-        // Trailing comments go after `;` or `.` (erlfmt-style).
-        let mut result_parts = Vec::new();
-        for (i, doc) in clause_docs.into_iter().enumerate() {
-            if i > 0 {
-                result_parts.push(text(";"));
-                // Attach trailing comment from previous clause after `;`
-                if let Some(tc) = self.take_trailing_comment() {
-                    result_parts.push(tc);
-                }
-                // Preserve blank line between clauses
-                let prev_clause = &func.clauses[i - 1];
-                let curr_clause = &func.clauses[i];
-                if self.has_blank_line_between(prev_clause.span.end, curr_clause.span.start) {
-                    result_parts.push(hardline());
-                }
-                result_parts.push(hardline());
-            }
-            result_parts.push(doc);
+        parts.push(text("."));
+        // A trailing comment after the final dot stays on its line; anything
+        // else left inside the form follows on its own lines.
+        parts.push(self.take_trailing_before(self.source.len()));
+        let rest = self.drain_comments_before(self.source.len());
+        if !matches!(rest, Doc::Nil) {
+            parts.push(hardline());
+            parts.push(rest);
         }
-        result_parts.push(text("."));
-        // Drain up to end-of-source to capture trailing comment after last clause
-        self.drain_comments_before(self.source.len());
-        // Attach trailing comment from last clause after `.`
-        if let Some(tc) = self.take_trailing_comment() {
-            result_parts.push(tc);
-        }
-        concat_all(result_parts)
-    }
-
-    // ── Body (sequence of expressions) ──────────────────────────────
-
-    fn format_body(&mut self, exprs: &[Expr]) -> Doc {
-        let mut docs = Vec::new();
-        for (i, expr) in exprs.iter().enumerate() {
-            // Drain comments between previous expression and this one BEFORE
-            // emitting ',' so trailing comments from the preceding line are
-            // available for take_trailing_comment() to attach to the comma.
-            let pre_comments = self.drain_comments_before(expr.span().start);
-            if i > 0 {
-                docs.push(text(","));
-                // Trailing comment after `,`
-                if let Some(tc) = self.take_trailing_comment() {
-                    docs.push(tc);
-                }
-                // Preserve a single blank line between body expressions
-                if let Some(prev) = exprs.get(i - 1) {
-                    if self.has_blank_line_between(prev.span().end, expr.span().start) {
-                        docs.push(hardline());
-                    }
-                }
-                docs.push(hardline());
-            }
-            docs.push(pre_comments);
-            docs.push(self.format_expr(expr));
-        }
-        concat_all(docs)
+        concat_all(parts)
     }
 
     // ── Guard ───────────────────────────────────────────────────────
@@ -446,6 +448,16 @@ impl<'src> Formatter<'src> {
     // ── Pattern ─────────────────────────────────────────────────────
 
     fn format_pattern(&mut self, pat: &Pattern) -> Doc {
+        let span = nera_syntax::parser::pattern_span(pat);
+        let before = self.take_trailing_before(span.start);
+        self.enclosing_ends.push(span.end);
+        let doc = self.format_pattern_inner(pat);
+        self.enclosing_ends.pop();
+        let after = self.take_trailing_after(span.end);
+        concat(before, concat(doc, after))
+    }
+
+    fn format_pattern_inner(&mut self, pat: &Pattern) -> Doc {
         match pat {
             Pattern::Wildcard(_) => text("_"),
             Pattern::Variable(id, _) => text(self.atom_str(*id).to_string()),
@@ -485,7 +497,7 @@ impl<'src> Formatter<'src> {
                     concat(text(" = "), self.format_pattern(rhs)),
                 )
             }
-            Pattern::Binary(segments, _) => self.format_bin_segments_pat(segments),
+            Pattern::Binary(segments, span) => self.format_bin_segments_pat(segments, *span),
             Pattern::Map(fields, _) => {
                 let docs: Vec<Doc> = fields
                     .iter()
@@ -545,6 +557,16 @@ impl<'src> Formatter<'src> {
     // ── Expression ──────────────────────────────────────────────────
 
     fn format_expr(&mut self, expr: &Expr) -> Doc {
+        let span = expr.span();
+        let before = self.take_trailing_before(span.start);
+        self.enclosing_ends.push(span.end);
+        let doc = self.format_expr_inner(expr);
+        self.enclosing_ends.pop();
+        let after = self.take_trailing_after(span.end);
+        concat(before, concat(doc, after))
+    }
+
+    fn format_expr_inner(&mut self, expr: &Expr) -> Doc {
         match expr {
             Expr::Integer(_, span) | Expr::BigInteger(_, span) | Expr::Float(_, span) => {
                 // Preserve separators, bases, characters and float exponents.
@@ -555,9 +577,9 @@ impl<'src> Formatter<'src> {
             Expr::Nil(_) => text("[]"),
             Expr::Variable(id, _) => text(self.atom_str(*id).to_string()),
             Expr::Tuple(elems, _) => {
-                let items: Vec<(usize, Doc)> = elems
+                let items = elems
                     .iter()
-                    .map(|e| (e.span().start, self.format_expr(e)))
+                    .map(|e| self.container_item(e.span(), |f| f.format_expr(e)))
                     .collect();
                 self.hanging_container_with_comments("{", items, "}")
             }
@@ -633,17 +655,12 @@ impl<'src> Formatter<'src> {
                     self.format_expr(scrutinee),
                     text(" of"),
                 ];
+                if let Some(first) = clauses.first() {
+                    parts.push(self.take_trailing_before(first.span.start));
+                }
                 let mut clause_parts = Vec::new();
                 for (i, c) in clauses.iter().enumerate() {
-                    if i > 0 {
-                        clause_parts.push(text(";"));
-                        if let Some(tc) = self.take_trailing_comment() {
-                            clause_parts.push(tc);
-                        }
-                        clause_parts.push(hardline());
-                    }
-                    let comments = self.drain_comments_before(c.span.start);
-                    clause_parts.push(comments);
+                    self.push_clause_start(i, c.span.start, &mut clause_parts);
                     clause_parts.push(self.format_case_clause(c));
                 }
                 parts.push(nest(
@@ -655,21 +672,18 @@ impl<'src> Formatter<'src> {
                 concat_all(parts)
             }
             Expr::If(clauses, _) => {
+                let keyword_comment = match clauses.first() {
+                    Some(first) => self.take_trailing_before(first.span.start),
+                    None => nil(),
+                };
                 let mut clause_parts = Vec::new();
                 for (i, c) in clauses.iter().enumerate() {
-                    if i > 0 {
-                        clause_parts.push(text(";"));
-                        if let Some(tc) = self.take_trailing_comment() {
-                            clause_parts.push(tc);
-                        }
-                        clause_parts.push(hardline());
-                    }
-                    let comments = self.drain_comments_before(c.span.start);
-                    clause_parts.push(comments);
+                    self.push_clause_start(i, c.span.start, &mut clause_parts);
                     clause_parts.push(self.format_if_clause(c));
                 }
                 concat_all(vec![
                     text("if"),
+                    keyword_comment,
                     nest(
                         self.config.indent_size as i32,
                         concat(hardline(), concat_all(clause_parts)),
@@ -680,18 +694,11 @@ impl<'src> Formatter<'src> {
             }
             Expr::Receive(clauses, after, _) => {
                 let mut parts = vec![text("receive")];
-                if !clauses.is_empty() {
+                if let Some(first) = clauses.first() {
+                    parts.push(self.take_trailing_before(first.span.start));
                     let mut clause_parts = Vec::new();
                     for (i, c) in clauses.iter().enumerate() {
-                        if i > 0 {
-                            clause_parts.push(text(";"));
-                            if let Some(tc) = self.take_trailing_comment() {
-                                clause_parts.push(tc);
-                            }
-                            clause_parts.push(hardline());
-                        }
-                        let comments = self.drain_comments_before(c.span.start);
-                        clause_parts.push(comments);
+                        self.push_clause_start(i, c.span.start, &mut clause_parts);
                         clause_parts.push(self.format_case_clause(c));
                     }
                     parts.push(nest(
@@ -702,20 +709,15 @@ impl<'src> Formatter<'src> {
                 if let Some(after_clause) = after {
                     parts.push(hardline());
                     parts.push(text("after"));
+                    let timeout_start = after_clause.timeout.span().start;
+                    parts.push(self.take_trailing_before(timeout_start));
                     // Drain comments before the timeout expression
-                    let timeout_comments = self.drain_comments_before(after_clause.timeout.span().start);
-                    let has_body_comment = !after_clause.body.is_empty()
-                        && self.has_comments_before(after_clause.body[0].span().start);
-                    let after_body = self.format_body_exprs(&after_clause.body);
-                    let can_flatten = Self::body_can_flatten(&after_clause.body) && !has_body_comment;
+                    let timeout_comments = self.drain_comments_before(timeout_start);
+                    let timeout = self.format_expr(&after_clause.timeout);
+                    let after_body = self.clause_body(&after_clause.body);
                     parts.push(nest(
                         self.config.indent_size as i32,
-                        concat_all(vec![
-                            hardline(),
-                            timeout_comments,
-                            self.format_expr(&after_clause.timeout),
-                            self.arrow_body(after_body, can_flatten),
-                        ]),
+                        concat_all(vec![hardline(), timeout_comments, timeout, after_body]),
                     ));
                 }
                 parts.push(hardline());
@@ -760,8 +762,13 @@ impl<'src> Formatter<'src> {
                 )
             }
             Expr::Block(exprs, _) => {
+                let keyword_comment = match exprs.first() {
+                    Some(first) => self.take_trailing_before(first.span().start),
+                    None => nil(),
+                };
                 concat_all(vec![
                     text("begin"),
+                    keyword_comment,
                     nest(
                         self.config.indent_size as i32,
                         concat(hardline(), self.format_body_exprs(exprs)),
@@ -770,68 +777,42 @@ impl<'src> Formatter<'src> {
                     text("end"),
                 ])
             }
-            Expr::Binary(segments, _) => self.format_bin_segments_expr(segments),
+            Expr::Binary(segments, span) => self.format_bin_segments_expr(segments, *span),
             Expr::Map(fields, _) => {
-                let items: Vec<(usize, Doc)> = fields
+                let items = fields
                     .iter()
-                    .map(|f| (f.span.start, self.format_map_field(f)))
+                    .map(|f| self.container_item(f.span, |s| s.format_map_field(f)))
                     .collect();
                 self.hanging_container_with_comments("#{", items, "}")
             }
             Expr::MapUpdate(base, fields, _) => {
-                let items: Vec<(usize, Doc)> = fields
+                let base_doc = self.format_expr(base);
+                let items = fields
                     .iter()
-                    .map(|f| (f.span.start, self.format_map_update_field(f)))
+                    .map(|f| self.container_item(f.span, |s| s.format_map_update_field(f)))
                     .collect();
-                concat(self.format_expr(base), self.hanging_container_with_comments("#{", items, "}"))
+                concat(base_doc, self.hanging_container_with_comments("#{", items, "}"))
             }
             Expr::ListComp(body, quals, _) => {
-                let has_qual_comments = quals.iter().any(|q| self.has_comments_before(qualifier_span(q).start));
-                let brk = if has_qual_comments { hardline() } else { line() };
-                let mut qual_parts = Vec::new();
-                for (i, q) in quals.iter().enumerate() {
-                    let pre_comments = self.drain_comments_before(qualifier_span(q).start);
-                    if i > 0 {
-                        qual_parts.push(text(","));
-                        if let Some(tc) = self.take_trailing_comment() {
-                            qual_parts.push(tc);
-                        }
-                        qual_parts.push(brk.clone());
-                    }
-                    qual_parts.push(pre_comments);
-                    qual_parts.push(self.format_qualifier(q));
-                }
+                let body_doc = self.format_expr(body);
+                let (brk, qual_parts) = self.format_qualifiers(quals);
                 group(concat_all(vec![
                     text("["),
                     nest(
                         self.config.indent_size as i32,
                         concat_all(vec![
-                            self.format_expr(body),
+                            body_doc,
                             text(" ||"),
                             brk,
-                            concat_all(qual_parts),
+                            qual_parts,
                         ]),
                     ),
                     text("]"),
                 ]))
             }
             Expr::BinComp(body, quals, span) => {
-                let has_qual_comments = quals.iter().any(|q| self.has_comments_before(qualifier_span(q).start));
-                let brk = if has_qual_comments { hardline() } else { line() };
-                let mut qual_parts = Vec::new();
-                for (i, q) in quals.iter().enumerate() {
-                    let pre_comments = self.drain_comments_before(qualifier_span(q).start);
-                    if i > 0 {
-                        qual_parts.push(text(","));
-                        if let Some(tc) = self.take_trailing_comment() {
-                            qual_parts.push(tc);
-                        }
-                        qual_parts.push(brk.clone());
-                    }
-                    qual_parts.push(pre_comments);
-                    qual_parts.push(self.format_qualifier(q));
-                }
                 let body_doc = self.format_expr(body);
+                let (brk, qual_parts) = self.format_qualifiers(quals);
                 let body_doc = if self.bin_comp_body_needs_parens(span.start, body) {
                     concat_all(vec![text("("), body_doc, text(")")])
                 } else {
@@ -845,7 +826,7 @@ impl<'src> Formatter<'src> {
                             body_doc,
                             text(" ||"),
                             brk,
-                            concat_all(qual_parts),
+                            qual_parts,
                         ]),
                     ),
                     text(" >>"),
@@ -853,6 +834,9 @@ impl<'src> Formatter<'src> {
             }
             Expr::Try { body, of_clauses, catch_clauses, after_body, .. } => {
                 let mut parts = vec![text("try")];
+                if let Some(first) = body.first() {
+                    parts.push(self.take_trailing_before(first.span().start));
+                }
                 parts.push(nest(
                     self.config.indent_size as i32,
                     concat(hardline(), self.format_body_exprs(body)),
@@ -860,17 +844,10 @@ impl<'src> Formatter<'src> {
                 if !of_clauses.is_empty() {
                     parts.push(hardline());
                     parts.push(text("of"));
+                    parts.push(self.take_trailing_before(of_clauses[0].span.start));
                     let mut clause_parts = Vec::new();
                     for (i, c) in of_clauses.iter().enumerate() {
-                        if i > 0 {
-                            clause_parts.push(text(";"));
-                            if let Some(tc) = self.take_trailing_comment() {
-                                clause_parts.push(tc);
-                            }
-                            clause_parts.push(hardline());
-                        }
-                        let comments = self.drain_comments_before(c.span.start);
-                        clause_parts.push(comments);
+                        self.push_clause_start(i, c.span.start, &mut clause_parts);
                         clause_parts.push(self.format_case_clause(c));
                     }
                     parts.push(nest(
@@ -881,17 +858,10 @@ impl<'src> Formatter<'src> {
                 if !catch_clauses.is_empty() {
                     parts.push(hardline());
                     parts.push(text("catch"));
+                    parts.push(self.take_trailing_before(catch_clauses[0].span.start));
                     let mut clause_parts = Vec::new();
                     for (i, c) in catch_clauses.iter().enumerate() {
-                        if i > 0 {
-                            clause_parts.push(text(";"));
-                            if let Some(tc) = self.take_trailing_comment() {
-                                clause_parts.push(tc);
-                            }
-                            clause_parts.push(hardline());
-                        }
-                        let comments = self.drain_comments_before(c.span.start);
-                        clause_parts.push(comments);
+                        self.push_clause_start(i, c.span.start, &mut clause_parts);
                         clause_parts.push(self.format_catch_clause(c));
                     }
                     parts.push(nest(
@@ -902,6 +872,9 @@ impl<'src> Formatter<'src> {
                 if let Some(after) = after_body {
                     parts.push(hardline());
                     parts.push(text("after"));
+                    if let Some(first) = after.first() {
+                        parts.push(self.take_trailing_before(first.span().start));
+                    }
                     parts.push(nest(
                         self.config.indent_size as i32,
                         concat(hardline(), self.format_body_exprs(after)),
@@ -919,24 +892,17 @@ impl<'src> Formatter<'src> {
             }
             Expr::Fun(name, clauses, _) => {
                 let mut parts = vec![text("fun")];
+                if let Some(first) = clauses.first() {
+                    let keyword_comment = self.take_trailing_before(first.span.start);
+                    // Code written after a comment cannot share its line.
+                    let needs_break = !matches!(keyword_comment, Doc::Nil)
+                        || self.has_comments_before(first.span.start);
+                    parts.push(keyword_comment);
+                    parts.push(if needs_break { hardline() } else { text(" ") });
+                }
                 let mut clause_parts = Vec::new();
                 for (i, c) in clauses.iter().enumerate() {
-                    if i > 0 {
-                        clause_parts.push(text(";"));
-                        if let Some(tc) = self.take_trailing_comment() {
-                            clause_parts.push(tc);
-                        }
-                        clause_parts.push(hardline());
-                    } else {
-                        // Before the first clause: check for leading comments
-                        if self.has_comments_before(c.span.start) {
-                            clause_parts.push(hardline());
-                        } else {
-                            clause_parts.push(text(" "));
-                        }
-                    }
-                    let comments = self.drain_comments_before(c.span.start);
-                    clause_parts.push(comments);
+                    self.push_clause_start(i, c.span.start, &mut clause_parts);
                     clause_parts.push(self.format_fun_clause(c, name));
                 }
                 parts.push(concat_all(clause_parts));
@@ -946,32 +912,21 @@ impl<'src> Formatter<'src> {
             }
             Expr::FunRef(target, _) => self.format_fun_ref(target),
             Expr::RecordCreate { record_name, fields, .. } => {
-                let items: Vec<(usize, Doc)> = fields
+                let items = fields
                     .iter()
-                    .map(|f| {
-                        let doc = concat(
-                            self.format_atom(f.field_name),
-                            concat(text(" = "), self.format_expr(&f.value)),
-                        );
-                        (f.span.start, doc)
-                    })
+                    .map(|f| self.container_item(f.span, |s| s.format_record_field(f)))
                     .collect();
                 let name_doc = concat(text("#"), self.format_atom(*record_name));
                 concat(name_doc, self.hanging_container_with_comments("{", items, "}"))
             }
             Expr::RecordUpdate { base, record_name, fields, .. } => {
-                let items: Vec<(usize, Doc)> = fields
+                let base_doc = self.format_expr(base);
+                let items = fields
                     .iter()
-                    .map(|f| {
-                        let doc = concat(
-                            self.format_atom(f.field_name),
-                            concat(text(" = "), self.format_expr(&f.value)),
-                        );
-                        (f.span.start, doc)
-                    })
+                    .map(|f| self.container_item(f.span, |s| s.format_record_field(f)))
                     .collect();
                 concat_all(vec![
-                    self.format_expr(base),
+                    base_doc,
                     text("#"),
                     self.format_atom(*record_name),
                     self.hanging_container_with_comments("{", items, "}"),
@@ -1013,6 +968,13 @@ impl<'src> Formatter<'src> {
             }
             Expr::Maybe { body, else_clauses, .. } => {
                 let mut parts = vec![text("maybe")];
+                if let Some(first) = body.first() {
+                    let start = match first {
+                        MaybeExpr::Expr(e) => e.span().start,
+                        MaybeExpr::CondMatch(_, _, span) => span.start,
+                    };
+                    parts.push(self.take_trailing_before(start));
+                }
                 let body_docs: Vec<Doc> = body
                     .iter()
                     .map(|me| match me {
@@ -1035,17 +997,10 @@ impl<'src> Formatter<'src> {
                 if !else_clauses.is_empty() {
                     parts.push(hardline());
                     parts.push(text("else"));
+                    parts.push(self.take_trailing_before(else_clauses[0].span.start));
                     let mut clause_parts = Vec::new();
                     for (i, c) in else_clauses.iter().enumerate() {
-                        if i > 0 {
-                            clause_parts.push(text(";"));
-                            if let Some(tc) = self.take_trailing_comment() {
-                                clause_parts.push(tc);
-                            }
-                            clause_parts.push(hardline());
-                        }
-                        let comments = self.drain_comments_before(c.span.start);
-                        clause_parts.push(comments);
+                        self.push_clause_start(i, c.span.start, &mut clause_parts);
                         clause_parts.push(self.format_case_clause(c));
                     }
                     parts.push(nest(
@@ -1125,25 +1080,25 @@ impl<'src> Formatter<'src> {
     }
 
     fn format_list_expr(&mut self, head: &Expr, tail: &Expr) -> Doc {
-        let mut items: Vec<(usize, Doc)> = vec![(head.span().start, self.format_expr(head))];
+        let mut items = vec![self.container_item(head.span(), |f| f.format_expr(head))];
         let mut current: &Expr = tail;
         loop {
             match current {
                 Expr::Cons(h, t, _) => {
-                    items.push((h.span().start, self.format_expr(h)));
+                    items.push(self.container_item(h.span(), |f| f.format_expr(h)));
                     current = t.as_ref();
                 }
                 Expr::Nil(_) => break,
                 _ => {
                     // Improper list: last elem | tail
-                    let (_, last) = items.pop().unwrap();
-                    let improper = group(concat_all(vec![
-                        last,
-                        line(),
-                        text("| "),
-                        self.format_expr(current),
-                    ]));
-                    items.push((current.span().start, improper));
+                    let last = items.pop().unwrap();
+                    let tail_doc = self.format_expr(current);
+                    items.push(ContainerItem {
+                        span: Span::new(last.span.start, current.span().end),
+                        trailing: last.trailing,
+                        leading: last.leading,
+                        doc: group(concat_all(vec![last.doc, line(), text("| "), tail_doc])),
+                    });
                     break;
                 }
             }
@@ -1198,32 +1153,44 @@ impl<'src> Formatter<'src> {
     /// arrow's line when it fits (erlfmt style: `ok -> 1`); a multi-expression
     /// body always starts on the next line — flattening a body that contains
     /// hardlines produces inconsistent half-broken output.
-    fn arrow_body(&self, body: Doc, single_expr: bool) -> Doc {
+    fn arrow_body(&self, arrow_comment: Doc, body: Doc, single_expr: bool) -> Doc {
         let indent = self.config.indent_size as i32;
+        let arrow = concat(text(" ->"), arrow_comment);
         if single_expr {
-            concat(
-                text(" ->"),
-                group(nest(indent, concat(line(), body))),
-            )
+            concat(arrow, group(nest(indent, concat(line(), body))))
         } else {
-            concat(
-                text(" ->"),
-                nest(indent, concat(hardline(), body)),
-            )
+            concat(arrow, nest(indent, concat(hardline(), body)))
         }
+    }
+
+    /// Build a clause's arrow and body. A comment after the arrow stays on
+    /// the arrow's line and moves the body to the next line.
+    fn clause_body(&mut self, body: &[Expr]) -> Doc {
+        let (arrow_comment, has_body_comment) = match body.first() {
+            Some(first) => {
+                let start = first.span().start;
+                let arrow_comment = self.take_trailing_before(start);
+                let has_comment = !matches!(arrow_comment, Doc::Nil)
+                    || self.has_comments_before(start);
+                (arrow_comment, has_comment)
+            }
+            None => (nil(), false),
+        };
+        let body_doc = self.format_body_exprs(body);
+        let can_flatten = Self::body_can_flatten(body) && !has_body_comment;
+        self.arrow_body(arrow_comment, body_doc, can_flatten)
     }
 
     fn format_body_exprs(&mut self, exprs: &[Expr]) -> Doc {
         let mut docs = Vec::new();
         for (i, expr) in exprs.iter().enumerate() {
-            // Drain comments BEFORE emitting ',' — same reasoning as format_body.
+            // Take comments BEFORE emitting ',' so a trailing comment on the
+            // preceding line prints after the comma.
+            let trailing = self.take_trailing_before(expr.span().start);
             let pre_comments = self.drain_comments_before(expr.span().start);
             if i > 0 {
                 docs.push(text(","));
-                // Trailing comment after `,`
-                if let Some(tc) = self.take_trailing_comment() {
-                    docs.push(tc);
-                }
+                docs.push(trailing);
                 // Preserve a single blank line between body expressions
                 if let Some(prev) = exprs.get(i - 1) {
                     if self.has_blank_line_between(prev.span().end, expr.span().start) {
@@ -1231,11 +1198,38 @@ impl<'src> Formatter<'src> {
                     }
                 }
                 docs.push(hardline());
+            } else {
+                docs.push(trailing);
             }
             docs.push(pre_comments);
             docs.push(self.format_expr(expr));
         }
         concat_all(docs)
+    }
+
+    /// Format comprehension qualifiers. Returns the break that separates
+    /// them, which is forced when a standalone comment sits between them.
+    fn format_qualifiers(&mut self, quals: &[LcQualifier]) -> (Doc, Doc) {
+        let has_qual_comments = quals
+            .iter()
+            .any(|q| self.has_comments_before(qualifier_span(q).start));
+        let brk = if has_qual_comments { hardline() } else { line() };
+        let mut parts = Vec::new();
+        for (i, q) in quals.iter().enumerate() {
+            let start = qualifier_span(q).start;
+            let trailing = self.take_trailing_before(start);
+            let pre_comments = self.drain_comments_before(start);
+            if i > 0 {
+                parts.push(text(","));
+                parts.push(trailing);
+                parts.push(brk.clone());
+            } else {
+                parts.push(trailing);
+            }
+            parts.push(pre_comments);
+            parts.push(self.format_qualifier(q));
+        }
+        (brk, concat_all(parts))
     }
 
     /// Build a call doc with argument expansion (first or last expandable arg).
@@ -1261,11 +1255,13 @@ impl<'src> Formatter<'src> {
 
         let expand_doc = &arg_docs[expand_idx];
         let expandable_is_flattenable = can_flatten(expand_doc);
+        // The compact layouts would pull a following argument onto a commented line.
+        let has_comment = arg_docs[..arg_docs.len() - 1].iter().any(contains_line_comment);
 
         let mut alternatives = Vec::new();
 
         // Layout 1: everything flat — only if expandable arg has no HardLine
-        if expandable_is_flattenable {
+        if expandable_is_flattenable && !has_comment {
             alternatives.push(group(concat_all(vec![
                 target_doc.clone(),
                 text("("),
@@ -1281,7 +1277,7 @@ impl<'src> Formatter<'src> {
         }
 
         // Layout 2: expandable arg expanded in place, rest flat
-        {
+        if !has_comment {
             let mut parts = vec![target_doc.clone(), text("(")];
             for (i, doc) in arg_docs.iter().enumerate() {
                 if i > 0 {
@@ -1315,7 +1311,10 @@ impl<'src> Formatter<'src> {
             ]));
         }
 
-        best_of(alternatives)
+        match alternatives.len() {
+            1 => alternatives.remove(0),
+            _ => best_of(alternatives),
+        }
     }
 
     fn format_call_target(&mut self, target: &CallTarget) -> Doc {
@@ -1352,24 +1351,13 @@ impl<'src> Formatter<'src> {
         if let Some(guard) = &clause.guard {
             parts.push(self.when_guard(guard));
         }
-        let has_body_comment = !clause.body.is_empty()
-            && self.has_comments_before(clause.body[0].span().start);
-        let body = self.format_body_exprs(&clause.body);
-        let can_flatten = Self::body_can_flatten(&clause.body) && !has_body_comment;
-        parts.push(self.arrow_body(body, can_flatten));
-        // Drain up to clause end to capture trailing comments into pending_trailing
-        parts.push(self.drain_comments_before(clause.span.end));
+        parts.push(self.clause_body(&clause.body));
         concat_all(parts)
     }
 
     fn format_if_clause(&mut self, clause: &IfClause) -> Doc {
         let mut parts = vec![self.format_guard(&clause.guard)];
-        let has_body_comment = !clause.body.is_empty()
-            && self.has_comments_before(clause.body[0].span().start);
-        let body = self.format_body_exprs(&clause.body);
-        let can_flatten = Self::body_can_flatten(&clause.body) && !has_body_comment;
-        parts.push(self.arrow_body(body, can_flatten));
-        parts.push(self.drain_comments_before(clause.span.end));
+        parts.push(self.clause_body(&clause.body));
         concat_all(parts)
     }
 
@@ -1392,12 +1380,7 @@ impl<'src> Formatter<'src> {
         if let Some(guard) = &clause.guard {
             parts.push(self.when_guard(guard));
         }
-        let has_body_comment = !clause.body.is_empty()
-            && self.has_comments_before(clause.body[0].span().start);
-        let body = self.format_body_exprs(&clause.body);
-        let can_flatten = Self::body_can_flatten(&clause.body) && !has_body_comment;
-        parts.push(self.arrow_body(body, can_flatten));
-        parts.push(self.drain_comments_before(clause.span.end));
+        parts.push(self.clause_body(&clause.body));
         concat_all(parts)
     }
 
@@ -1415,12 +1398,7 @@ impl<'src> Formatter<'src> {
         if let Some(guard) = &clause.guard {
             parts.push(self.when_guard(guard));
         }
-        let has_body_comment = !clause.body.is_empty()
-            && self.has_comments_before(clause.body[0].span().start);
-        let body = self.format_body_exprs(&clause.body);
-        let can_flatten = Self::body_can_flatten(&clause.body) && !has_body_comment;
-        parts.push(self.arrow_body(body, can_flatten));
-        parts.push(self.drain_comments_before(clause.span.end));
+        parts.push(self.clause_body(&clause.body));
         concat_all(parts)
     }
 
@@ -1477,6 +1455,13 @@ impl<'src> Formatter<'src> {
         )
     }
 
+    fn format_record_field(&mut self, field: &RecordFieldAssign) -> Doc {
+        concat(
+            self.format_atom(field.field_name),
+            concat(text(" = "), self.format_expr(&field.value)),
+        )
+    }
+
     fn format_qualifier(&mut self, qual: &LcQualifier) -> Doc {
         match qual {
             LcQualifier::Generator(pat, expr, _) => {
@@ -1497,7 +1482,27 @@ impl<'src> Formatter<'src> {
 
     // ── Binary segments ─────────────────────────────────────────────
 
-    fn format_bin_segments_expr(&mut self, segments: &[BinSegment<Expr>]) -> Doc {
+    /// True when a comment sits in a binary outside its written specifier
+    /// lists, which are printed verbatim with any comments inside them.
+    fn binary_has_comments<T>(&self, span: Span, segments: &[BinSegment<T>]) -> bool {
+        self.comments[self.comment_cursor..].iter().any(|c| {
+            let pos = c.span.start;
+            pos >= span.start
+                && pos < span.end
+                && !segments.iter().any(|s| {
+                    s.type_spec.specifiers_span.is_some_and(|sp| pos >= sp.start && pos < sp.end)
+                })
+        })
+    }
+
+    fn format_bin_segments_expr(&mut self, segments: &[BinSegment<Expr>], span: Span) -> Doc {
+        if self.binary_has_comments(span, segments) {
+            let items = segments
+                .iter()
+                .map(|s| self.container_item(s.span, |f| f.format_bin_segment_expr(s)))
+                .collect();
+            return self.commented_container("<<", items, ">>");
+        }
         let docs: Vec<Doc> = segments.iter().map(|s| self.format_bin_segment_expr(s)).collect();
         group(concat_all(vec![
             text("<<"),
@@ -1542,7 +1547,14 @@ impl<'src> Formatter<'src> {
         concat_all(parts)
     }
 
-    fn format_bin_segments_pat(&mut self, segments: &[BinSegment<Pattern>]) -> Doc {
+    fn format_bin_segments_pat(&mut self, segments: &[BinSegment<Pattern>], span: Span) -> Doc {
+        if self.binary_has_comments(span, segments) {
+            let items = segments
+                .iter()
+                .map(|s| self.container_item(s.span, |f| f.format_bin_segment_pat(s)))
+                .collect();
+            return self.commented_container("<<", items, ">>");
+        }
         let docs: Vec<Doc> = segments.iter().map(|s| self.format_bin_segment_pat(s)).collect();
         group(concat_all(vec![
             text("<<"),
@@ -1615,14 +1627,66 @@ impl<'src> Formatter<'src> {
             let consumed = self.comments[..self.comment_cursor].iter().filter(|c| !outside(c)).count();
             self.comments.retain(outside);
             self.comment_cursor -= consumed;
-            self.pending_trailing.retain(outside);
             return self.span_text(span).to_string();
         }
         String::new()
     }
 }
 
+/// A container element with the comments written before it.
+struct ContainerItem {
+    span: Span,
+    /// Trailing comments of the code before this element.
+    trailing: Doc,
+    /// Standalone comments on the lines above this element.
+    leading: Doc,
+    doc: Doc,
+}
+
 // ── Utility functions ───────────────────────────────────────────────
+
+/// True when `text` holds only tokens that continue the code before it:
+/// separators, closing brackets and binary operators. Anything else starts
+/// new code, so a comment after it does not describe the code before `text`.
+fn only_continuation_tokens(text: &str) -> bool {
+    use nera_syntax::lexer::Lexer;
+    use nera_syntax::token::Token;
+    Lexer::lex_all_with_comments(text).is_ok_and(|lexed| {
+        lexed.comments.is_empty()
+            && lexed.tokens.iter().all(|(token, _)| {
+                matches!(
+                    token,
+                    Token::Comma | Token::Semicolon | Token::Dot | Token::RParen
+                        | Token::RBrace | Token::RBracket | Token::BinClose
+                        | Token::Arrow | Token::LArrow | Token::BinLArrow
+                        | Token::FatArrow | Token::ColonEq | Token::Equals
+                        | Token::MaybeMatch | Token::Pipe | Token::DoublePipe
+                        | Token::Colon | Token::Bang | Token::Plus | Token::Minus
+                        | Token::Star | Token::Slash | Token::PlusPlus
+                        | Token::MinusMinus | Token::ExactEq | Token::ExactNotEq
+                        | Token::Eq | Token::NotEq | Token::Lt | Token::Gt
+                        | Token::LtEq | Token::GtEq | Token::KwAnd | Token::KwOr
+                        | Token::KwXor | Token::KwAndalso | Token::KwOrelse
+                        | Token::KwDiv | Token::KwRem | Token::KwBand | Token::KwBor
+                        | Token::KwBxor | Token::KwBsl | Token::KwBsr
+                )
+            })
+    })
+}
+
+/// True when a comment sits between a form's first and last tokens.
+fn has_inner_comment(form: &str) -> bool {
+    let Ok(lexed) = nera_syntax::lexer::Lexer::lex_all_with_comments(form) else {
+        return false;
+    };
+    match (lexed.tokens.first(), lexed.tokens.last()) {
+        (Some((_, first)), Some((_, last))) => lexed
+            .comments
+            .iter()
+            .any(|(_, c)| c.start > first.start && c.start < last.start),
+        _ => false,
+    }
+}
 
 /// Get the span of a list comprehension qualifier.
 fn qualifier_span(q: &LcQualifier) -> Span {
@@ -1796,7 +1860,12 @@ pub fn format_source_forms(
         // We'll re-attach it after formatting so formatters don't need to handle it.
         let (form_text, trailing_comment) = split_trailing_comment(trimmed);
 
-        if is_define_directive(form_text) {
+        if is_attribute_only(form_text) && has_inner_comment(form_text) {
+            // Attribute layouts have no place for a comment between their
+            // tokens, so such a form keeps the lines it was written on.
+            output.push_str(trimmed);
+            output.push('\n');
+        } else if is_define_directive(form_text) {
             match try_format_define_form(form_text, config) {
                 Some(formatted) => {
                     push_formatted(&mut output, &formatted, trailing_comment);
@@ -2185,7 +2254,7 @@ fn try_format_define_body(wrapper_source: &str, config: &FormatConfig) -> Option
             let body_doc = if clause.body.len() == 1 {
                 formatter.format_expr(&clause.body[0])
             } else {
-                formatter.format_body(&clause.body)
+                formatter.format_body_exprs(&clause.body)
             };
             let rendered = render(config.max_width, &body_doc);
             return Some(rendered);
@@ -2327,24 +2396,22 @@ fn push_formatted(output: &mut String, formatted: &str, trailing_comment: Option
 
 /// Extract a trailing comment from the end of a form text.
 /// A trailing comment is a `% ...` after the terminating `.` on the same line.
+/// Reads tokens, because a comment's own text may hold dots and percent signs.
 /// Returns `(form_without_trailing, Option<trailing_comment_text>)`.
 fn split_trailing_comment(s: &str) -> (&str, Option<&str>) {
-    // Find the last `.` that terminates the form
-    // The trailing comment would be after it on the same line
-    if let Some(dot_pos) = s.rfind('.') {
-        let after_dot = &s[dot_pos + 1..];
-        // Check if there's a comment on the same line after the dot
-        if let Some(pct_offset) = after_dot.find('%') {
-            let between = &after_dot[..pct_offset];
-            // Only if no newline between dot and comment
-            if !between.contains('\n') {
-                let comment_start = dot_pos + 1 + pct_offset;
-                let comment = s[comment_start..].trim_end();
-                return (&s[..dot_pos + 1], Some(comment));
-            }
+    use nera_syntax::token::Token;
+    let Ok(lexed) = nera_syntax::lexer::Lexer::lex_all_with_comments(s) else {
+        return (s, None);
+    };
+    let Some((Token::Dot, dot)) = lexed.tokens.last() else {
+        return (s, None);
+    };
+    match lexed.comments.iter().find(|(_, c)| c.start >= dot.end) {
+        Some((_, comment)) if !s[dot.end..comment.start].contains('\n') => {
+            (&s[..dot.end], Some(s[comment.start..].trim_end()))
         }
+        _ => (s, None),
     }
-    (s, None)
 }
 
 /// Extract leading comment lines (including their trailing newlines) from a
@@ -2446,11 +2513,10 @@ pub fn format_term_file(
     let leading = formatter.drain_comments_before(expr.span().start);
     let expr_doc = formatter.format_expr(&expr);
 
-    let doc = concat(leading, expr_doc);
+    // The dot is part of the doc so a trailing comment prints after it.
+    let doc = concat_all(vec![leading, expr_doc, text(".")]);
     let mut output = render(config.max_width, &doc);
-
-    // Append trailing dot
-    output.push_str(".\n");
+    output.push('\n');
 
     // Append any remaining comments (after the term)
     let remaining = formatter.drain_remaining_comments();

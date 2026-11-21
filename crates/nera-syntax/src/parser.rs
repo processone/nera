@@ -3689,7 +3689,7 @@ fn expr_span(expr: &Expr) -> Span {
     }
 }
 
-fn pattern_span(pat: &Pattern) -> Span {
+pub fn pattern_span(pat: &Pattern) -> Span {
     match pat {
         Pattern::Wildcard(s)
         | Pattern::Variable(_, s)
