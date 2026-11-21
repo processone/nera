@@ -2,6 +2,18 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Formatter keeps binary comprehension body parentheses
+
+- `nera fmt` now keeps the parentheses around a binary comprehension body such
+  as `<< (id(1)) || _ <- L >>` or `<< (erlang:error(boom)) || _ <- L >>`.
+  Previously it removed them. `erlc` rejects the result, and Nera read the
+  remote call as a segment `erlang` with a size, so a second format deleted
+  the call.
+- A body that OTP only accepts in parentheses, such as a call, an operator
+  expression, a map, a record or a signed number, is always printed with them.
+  Binaries and variables stay bare, and other bodies keep the form they were
+  written in.
+
 ## Non-boolean comprehension filters raise bad_filter
 
 - A list or binary comprehension filter that is not a guard test and returns
