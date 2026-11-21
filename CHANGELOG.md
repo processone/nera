@@ -2,6 +2,17 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Formatter keeps trailing comments on their lines
+
+- `nera fmt` now keeps a trailing comment on the line of the code it follows,
+  so formatting a formatted file changes nothing. Previously a comment could
+  move to a later clause on each run, and some comments were deleted, such as
+  all but the first comment on the elements of a list.
+- A list, tuple, map, record or binary that holds comments keeps the line
+  breaks it was written with, because the comments describe those lines.
+- An attribute with a comment between its tokens, such as a `-record` with a
+  comment on each field, keeps the lines it was written on.
+
 ## Formatter keeps binary comprehension body parentheses
 
 - `nera fmt` now keeps the parentheses around a binary comprehension body such
