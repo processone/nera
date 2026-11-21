@@ -815,7 +815,7 @@ impl<'src> Formatter<'src> {
                     text("]"),
                 ]))
             }
-            Expr::BinComp(body, quals, _) => {
+            Expr::BinComp(body, quals, span) => {
                 let has_qual_comments = quals.iter().any(|q| self.has_comments_before(qualifier_span(q).start));
                 let brk = if has_qual_comments { hardline() } else { line() };
                 let mut qual_parts = Vec::new();
@@ -831,12 +831,18 @@ impl<'src> Formatter<'src> {
                     qual_parts.push(pre_comments);
                     qual_parts.push(self.format_qualifier(q));
                 }
+                let body_doc = self.format_expr(body);
+                let body_doc = if self.bin_comp_body_needs_parens(span.start, body) {
+                    concat_all(vec![text("("), body_doc, text(")")])
+                } else {
+                    body_doc
+                };
                 group(concat_all(vec![
                     text("<< "),
                     nest(
                         self.config.indent_size as i32,
                         concat_all(vec![
-                            self.format_expr(body),
+                            body_doc,
                             text(" ||"),
                             brk,
                             concat_all(qual_parts),
@@ -1578,6 +1584,27 @@ impl<'src> Formatter<'src> {
         needs_parens_in_bin_segment(size) || self.span_text(size.span()).starts_with(['-', '+'])
     }
 
+    /// Whether a binary comprehension body is printed in parentheses.
+    ///
+    /// OTP accepts only a primary expression here, and Nera reads a bare
+    /// `M:F(...)` as a segment with a size. The AST drops source parentheses,
+    /// so a body that may stay bare keeps the ones it was written with: what
+    /// a macro expands to can depend on them.
+    fn bin_comp_body_needs_parens(&self, comp_start: usize, body: &Expr) -> bool {
+        match body {
+            Expr::Variable(..) | Expr::Binary(..) | Expr::BinComp(..) => false,
+            _ if !is_primary_expr(body) => true,
+            _ if self.span_text(body.span()).starts_with(['-', '+']) => true,
+            _ => {
+                // Only blanks, comments and open parentheses precede the body.
+                let before_body = Span::new(comp_start + "<<".len(), body.span().start);
+                self.span_text(before_body)
+                    .lines()
+                    .any(|line| line.split('%').next().is_some_and(|code| code.contains('(')))
+            }
+        }
+    }
+
     fn format_bin_type_spec(&mut self, spec: &BinSegmentType) -> String {
         // A written list is source, not just effective flags. Reconstructing
         // it can erase a semantic conflict or change an alias's spelling.
@@ -1672,6 +1699,36 @@ fn needs_parens_in_bin_segment(expr: &Expr) -> bool {
             | Expr::String(_, _)
             | Expr::Nil(_)
             | Expr::Variable(_, _)
+    )
+}
+
+/// Returns true for the forms OTP's grammar calls `expr_max`, which need no
+/// parentheses where only a primary expression is allowed. A macro counts:
+/// its expansion decides, and it may expand to a binary.
+fn is_primary_expr(expr: &Expr) -> bool {
+    matches!(
+        expr,
+        Expr::Integer(..)
+            | Expr::BigInteger(..)
+            | Expr::Float(..)
+            | Expr::Atom(..)
+            | Expr::String(..)
+            | Expr::Nil(..)
+            | Expr::Variable(..)
+            | Expr::Tuple(..)
+            | Expr::Cons(..)
+            | Expr::Binary(..)
+            | Expr::ListComp(..)
+            | Expr::BinComp(..)
+            | Expr::Block(..)
+            | Expr::If(..)
+            | Expr::Case(..)
+            | Expr::Receive(..)
+            | Expr::Try { .. }
+            | Expr::Fun(..)
+            | Expr::FunRef(..)
+            | Expr::Maybe { .. }
+            | Expr::MacroCall { .. }
     )
 }
 
