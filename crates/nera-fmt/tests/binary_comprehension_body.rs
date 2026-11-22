@@ -88,3 +88,20 @@ fn a_parenthesis_in_a_leading_comment_is_not_a_parenthesis() {
     let formatted = format_source(&source, &FormatConfig::default()).unwrap();
     assert!(formatted.contains("1 ||") && !formatted.contains("(1)"), "{formatted}");
 }
+
+// OTP rejects these bodies, so the formatter has no valid form to print and
+// must not delete the size, the type or the call.
+#[test]
+fn a_body_written_as_a_segment_is_left_as_written() {
+    for body in ["X:16", "X/binary", "erlang:error(boom)", "X, X"] {
+        let source = comprehension(body);
+        assert_eq!(format_source(&source, &FormatConfig::default()).unwrap(), source);
+    }
+}
+
+// erlc accepts a macro that is never used, whatever its body is.
+#[test]
+fn an_unused_macro_keeps_a_body_written_as_a_segment() {
+    let source = "-module(t).\n-define(U(E), << E:8 || _ <- [a] >>).\n";
+    assert_eq!(format_source(source, &FormatConfig::default()).unwrap(), source);
+}
