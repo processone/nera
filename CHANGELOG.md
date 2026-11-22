@@ -2,6 +2,17 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Binary comprehension bodies written as segments are rejected
+
+- A binary comprehension body with a size, a type or several segments, such as
+  `<< X:16 || X <- L >>` or `<< X, Y || X <- L >>`, is now a compile error, as
+  in `erlc`. Previously Nera compiled it and ignored the size and type.
+- A bare remote call such as `<< erlang:error(boom) || _ <- L >>` is also an
+  error. Previously Nera read `erlang` as the value and the call as its size,
+  so the call never ran. Write `<< (erlang:error(boom)) || _ <- L >>`.
+- `nera fmt` leaves these bodies as written instead of deleting the size, the
+  type or the call.
+
 ## Formatter keeps trailing comments on their lines
 
 - `nera fmt` now keeps a trailing comment on the line of the code it follows,

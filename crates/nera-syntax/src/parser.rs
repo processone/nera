@@ -1532,14 +1532,9 @@ impl<'src> Parser<'src> {
                 self.advance();
                 let segments = self.parse_bin_segments_expr()?;
                 // Check for binary comprehension: << Body || Qualifiers >>
-                if self.eat(&Token::DoublePipe) {
-                    // Binary comprehension: extract body expression from the single segment
-                    let body_expr = if segments.len() == 1 {
-                        segments.into_iter().next().unwrap().value
-                    } else {
-                        // Multiple segments or empty: wrap back into Binary
-                        Expr::Binary(segments, span)
-                    };
+                if self.check(&Token::DoublePipe) {
+                    let body_expr = self.bin_comp_body(segments)?;
+                    self.advance(); // consume '||'
                     let qualifiers = self.parse_lc_qualifiers()?;
                     self.expect(&Token::BinClose)?;
                     let end = self.prev_span();
@@ -2526,6 +2521,29 @@ impl<'src> Parser<'src> {
             segments.push(self.parse_bin_segment_expr()?);
         }
         Ok(segments)
+    }
+
+    /// The body of a binary comprehension, read from the segments before `||`.
+    ///
+    /// OTP's grammar takes one expression here, not a segment, so a size, a
+    /// type or a second segment is a syntax error rather than a part to drop.
+    fn bin_comp_body(&self, mut segments: Vec<BinSegment<Expr>>) -> Result<Expr, ParseError> {
+        if let [segment] = segments.as_slice() {
+            if segment.size.is_none() && !segment.type_spec.explicit {
+                return Ok(segments.remove(0).value);
+            }
+        }
+        let body_span = segments[0].span.merge(segments[segments.len() - 1].span);
+        Err(ParseError::UnexpectedToken {
+            expected: "a single expression as the binary comprehension body".into(),
+            found: "a binary segment".into(),
+            span: body_span,
+            hint: Some(
+                "put segments in their own binary, as in `<< <<X:16>> || ... >>`, \
+                 and a remote call in parentheses, as in `<< (m:f(X)) || ... >>`"
+                    .into(),
+            ),
+        })
     }
 
     /// Parse a single binary segment expression: `Value[:Size][/TypeSpecifiers]`
