@@ -2,6 +2,12 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Formatter keeps named fun names unquoted
+
+- `nera fmt` now prints a named fun's variable name as written, so
+  `fun Loop(0) -> ...` stays valid Erlang. Previously it printed
+  `fun 'Loop'(0) -> ...`, which `erlc` rejects with a syntax error.
+
 ## Binary comprehension bodies written as segments are rejected
 
 - A binary comprehension body with a size, a type or several segments, such as

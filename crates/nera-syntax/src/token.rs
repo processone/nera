@@ -419,6 +419,12 @@ pub fn atom_needs_quoting(text: &str) -> bool {
     !identifier || reserved
 }
 
+/// Whether `text` is exactly one variable token, such as `Loop`, `_` or `_F1`.
+pub fn is_variable_name(text: &str) -> bool {
+    let mut lexer = Token::lexer(text);
+    matches!(lexer.next(), Some(Ok(Token::Variable))) && lexer.next().is_none()
+}
+
 fn scan_triple_string(lex: &mut logos::Lexer<'_, Token>) -> Result<(), ()> {
     let end = lex.remainder().find("\"\"\"").ok_or(())?;
     lex.bump(end + 3);
