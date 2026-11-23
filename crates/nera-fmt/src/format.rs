@@ -1387,7 +1387,7 @@ impl<'src> Formatter<'src> {
     fn format_fun_clause(&mut self, clause: &FunctionClause, name: &Option<AtomId>) -> Doc {
         let mut parts = Vec::new();
         if let Some(name_id) = name {
-            parts.push(self.format_atom(*name_id));
+            parts.push(self.format_fun_name(*name_id));
         }
         let params: Vec<Doc> = clause
             .patterns
@@ -1400,6 +1400,17 @@ impl<'src> Formatter<'src> {
         }
         parts.push(self.clause_body(&clause.body));
         concat_all(parts)
+    }
+
+    /// Print a named fun's name. Erlang requires a variable here, so a name
+    /// shaped like one is never quoted; the parser also accepts atoms.
+    fn format_fun_name(&self, id: AtomId) -> Doc {
+        let name = self.atom_str(id);
+        if nera_syntax::token::is_variable_name(name) {
+            text(name.to_string())
+        } else {
+            self.format_atom(id)
+        }
     }
 
     fn format_fun_ref(&mut self, target: &FunRefTarget) -> Doc {
