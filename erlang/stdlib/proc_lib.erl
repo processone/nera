@@ -91,8 +91,8 @@ init_ack(Parent, Return) ->
 start_link(Mod, Fun, Args) ->
     start_link(Mod, Fun, Args, infinity, []).
 
-%% start_link/5 — timeout and spawn options are not yet supported.
-start_link(Mod, Fun, Args, _Timeout, _Opts) ->
+%% start_link/5 — spawn options are not yet supported.
+start_link(Mod, Fun, Args, Timeout, _Opts) ->
     Parent = self(),
     %% Monitor from creation: the child can die before the caller runs again.
     {Pid, MRef} = erlang:spawn_opt(fun() ->
@@ -109,6 +109,14 @@ start_link(Mod, Fun, Args, _Timeout, _Opts) ->
             erlang:unlink(Pid),
             receive {'EXIT', Pid, _} -> ok after 0 -> ok end,
             {error, Reason}
+    after Timeout ->
+        %% Unlink before killing so a non-trapping caller survives the timeout.
+        %% Await DOWN even for a trapping child: return only after it is dead.
+        erlang:unlink(Pid),
+        erlang:exit(Pid, kill),
+        receive {'DOWN', MRef, process, Pid, _} -> ok end,
+        receive {'EXIT', Pid, _} -> ok after 0 -> ok end,
+        {error, timeout}
     end.
 
 start_init(Parent, Mod, Fun, Args) ->

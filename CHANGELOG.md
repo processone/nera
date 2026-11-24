@@ -2,6 +2,14 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Process startup deadlines
+
+- `proc_lib:start_link/5` now kills an unacknowledged child when its finite
+  timeout expires and returns `{error, timeout}`, including to callers that
+  do not trap exits. Zero polls immediately; `infinity` remains unbounded.
+- Timeout cleanup waits for child termination and removes only that child's
+  startup monitor and exit signals, preserving unrelated mailbox messages.
+
 ## TCP receive deadlines
 
 - `gen_tcp:recv/3` now returns `{error, timeout}` when its finite timeout
