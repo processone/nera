@@ -963,7 +963,7 @@ pub unsafe extern "C" fn nera_rt_inet_setopts(
                         // (preventing edge-triggered kqueue spin when the
                         // reactor registers the fd).
                         let mut peek_buf = [0u8; 4096];
-                        match crate::socket::peek_recv_fd(fd, &mut peek_buf) {
+                        match crate::socket::peek_recv_fd(handle, fd, &mut peek_buf) {
                             Ok(0) => {
                                 // Connection closed — fast path, no reactor involved
                                 deliver_tcp_closed_to_self(ctx, handle);
@@ -975,7 +975,7 @@ pub unsafe extern "C" fn nera_rt_inet_setopts(
                                     // Complete line available — consume and deliver it
                                     // with its "\n" or "\r\n" terminator, as BEAM does.
                                     let line_len = pos + 1;
-                                    if crate::socket::consume_exact_fd(fd, &mut peek_buf[..line_len]).is_ok() {
+                                    if crate::socket::consume_exact_fd(handle, fd, &mut peek_buf[..line_len]).is_ok() {
                                         crate::reactor::COUNTER_SETOPTS_FASTPATH.fetch_add(
                                             1, std::sync::atomic::Ordering::Relaxed,
                                         );
@@ -1002,7 +1002,7 @@ pub unsafe extern "C" fn nera_rt_inet_setopts(
                                     // into the line buffer so the kernel buffer
                                     // drains (avoids kqueue spin on re-register).
                                     let mut consume_buf = vec![0u8; n];
-                                    let _ = crate::socket::consume_exact_fd(fd, &mut consume_buf);
+                                    let _ = crate::socket::consume_exact_fd(handle, fd, &mut consume_buf);
                                     crate::socket::set_line_buffer(handle, peek_buf[..n].to_vec());
                                     // Register with reactor for more data.
                                     crate::socket::set_active_local(handle, active);

@@ -479,6 +479,9 @@ impl IoReactor {
                                 &mut SourceFd(&fd), token, Interest::READABLE,
                             );
                         }
+                        if crate::socket::has_recv_buffer(stream_handle) {
+                            self.handle_event(token);
+                        }
                     }
                 }
                 ReactorCommand::Shutdown => {
@@ -933,7 +936,7 @@ impl IoReactor {
             const MAX_LINE: usize = 300_000;
             let mut peek_buf = [0u8; 4096];
             loop {
-                match crate::socket::peek_recv_fd(fd, &mut peek_buf) {
+                match crate::socket::peek_recv_fd(stream_handle, fd, &mut peek_buf) {
                     Ok(0) => {
                         self.deregister_fd(stream_handle);
                         if buf.is_empty() {
@@ -946,8 +949,8 @@ impl IoReactor {
                     }
                     Ok(n) => {
                         if let Some(pos) = peek_buf[..n].iter().position(|&b| b == b'\n') {
-                            // Found newline — consume_exact pos+1 bytes from kernel.
-                            match crate::socket::consume_exact_fd(fd, &mut peek_buf[..pos + 1]) {
+                            // Leave bytes after this newline available for the next receive.
+                            match crate::socket::consume_exact_fd(stream_handle, fd, &mut peek_buf[..pos + 1]) {
                                 Ok(()) => {
                                     buf.extend_from_slice(&peek_buf[..pos]);
                                     if buf.last() == Some(&b'\r') {
@@ -964,7 +967,7 @@ impl IoReactor {
                             return;
                         }
                         // No newline — consume_exact all peeked bytes, append to buf.
-                        match crate::socket::consume_exact_fd(fd, &mut peek_buf[..n]) {
+                        match crate::socket::consume_exact_fd(stream_handle, fd, &mut peek_buf[..n]) {
                             Ok(()) => {
                                 buf.extend_from_slice(&peek_buf[..n]);
                             }
@@ -1097,6 +1100,12 @@ impl IoReactor {
             });
             self.active_handle_to_token.insert(stream_handle, token);
             PENDING_COUNT.fetch_add(1, Ordering::Relaxed);
+        }
+        // epoll/kqueue cannot signal bytes retained outside the kernel receive buffer.
+        if crate::socket::has_recv_buffer(stream_handle) {
+            if let Some(&token) = self.active_handle_to_token.get(&stream_handle) {
+                self.handle_event(token);
+            }
         }
     }
 

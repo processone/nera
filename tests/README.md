@@ -57,6 +57,12 @@ requires the `recv_timeout_ok` completion marker. The delayed sends deliberately
 cross a completed receive's deadline to detect a stale timeout waking a later
 receive. The same fixture runs on BEAM with `erlc` and `tcp_recv_timeout:test/0`.
 
+`tcp_recv_timeout_active` checks recovery through raw `{active, true}` and
+`{active, once}`, retained lines longer than a read chunk, and a retained line
+prefix followed by new socket data. It requires `recv_timeout_active_ok` and
+also runs unchanged on BEAM. These assertions prevent kernel-only readiness or
+line scanning from stranding retained bytes or delivering later bytes first.
+
 ## Focused runtime contracts
 
 The [runtime contract index](../docs/RUNTIME_CONTRACTS.md) names the semantic

@@ -59,10 +59,11 @@ test() ->
 
 timeout_recv(S, Length, Timeout) ->
     Start = erlang:monotonic_time(millisecond),
-    {error, timeout} = gen_tcp:recv(S, Length, Timeout),
+    Result = gen_tcp:recv(S, Length, Timeout),
     Elapsed = erlang:monotonic_time(millisecond) - Start,
+    {error, timeout} = Result,
     case Elapsed >= Timeout andalso Elapsed < Timeout + 2000 of
-        true -> io:format("idle length=~p timeout=~p elapsed=~p~n", [Length, Timeout, Elapsed]);
+        true -> io:format("recv length=~p timeout=~p result=~p elapsed=~p~n", [Length, Timeout, Result, Elapsed]);
         false -> fail({elapsed, Length, Timeout, Elapsed})
     end.
 

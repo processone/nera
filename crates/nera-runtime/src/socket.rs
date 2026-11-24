@@ -28,6 +28,7 @@
 //! blocking I/O thread pool.
 
 use std::io;
+use std::collections::VecDeque;
 use std::sync::Arc;
 
 use parking_lot::{Mutex, RwLock};
@@ -96,8 +97,8 @@ pub struct SocketOpts {
     /// edge-triggered kqueue spin). On the next readability event, this
     /// buffer is prepended to newly read data before scanning for newline.
     pub line_buffer: Vec<u8>,
-    /// Bytes consumed by an exact read whose deadline expired.
-    pub recv_buffer: Vec<u8>,
+    /// Retained read prefixes are shared across option snapshots, not copied with them.
+    pub recv_buffer: Arc<Mutex<VecDeque<u8>>>,
 }
 
 
@@ -531,23 +532,34 @@ pub fn try_accept(listener_handle: SocketHandle) -> io::Result<SocketHandle> {
     Ok(stream_handle)
 }
 
-pub(crate) fn restore_recv_buffer(handle: SocketHandle, mut bytes: Vec<u8>) {
-    if !bytes.is_empty() {
-        with_entry_opts(handle, |opts| {
-            bytes.append(&mut opts.recv_buffer);
-            opts.recv_buffer = bytes;
-        });
-    }
+pub(crate) fn restore_recv_buffer(handle: SocketHandle, bytes: Vec<u8>) {
+    with_entry_opts(handle, |opts| {
+        let mut buffer = opts.recv_buffer.lock();
+        for byte in bytes.into_iter().rev() {
+            buffer.push_front(byte);
+        }
+    });
+}
+
+#[cfg(mio_supported)]
+pub(crate) fn has_recv_buffer(handle: SocketHandle) -> bool {
+    with_entry_opts(handle, |opts| !opts.recv_buffer.lock().is_empty()).unwrap_or(false)
+}
+
+fn consume_recv_buffer(handle: SocketHandle, dest: &mut [u8]) -> usize {
+    with_entry_opts(handle, |opts| {
+        let mut buffer = opts.recv_buffer.lock();
+        let n = dest.len().min(buffer.len());
+        for (dest, byte) in dest.iter_mut().zip(buffer.drain(..n)) {
+            *dest = byte;
+        }
+        n
+    }).unwrap_or(0)
 }
 
 pub(crate) fn recv_into(handle: SocketHandle, dest: &mut [u8]) -> io::Result<usize> {
     let stream = get_stream(handle)?;
-    let buffered = with_entry_opts(handle, |opts| {
-        let n = dest.len().min(opts.recv_buffer.len());
-        dest[..n].copy_from_slice(&opts.recv_buffer[..n]);
-        opts.recv_buffer.drain(..n);
-        n
-    }).unwrap_or(0);
+    let buffered = consume_recv_buffer(handle, dest);
     if buffered > 0 {
         return Ok(buffered);
     }
@@ -646,9 +658,18 @@ pub(crate) fn get_raw_fd(handle: SocketHandle) -> Option<std::os::unix::io::RawF
     }
 }
 
-/// Peek using a raw fd directly (no registry lookup).
+/// Retained bytes precede kernel bytes even after switching packet or active mode.
 #[cfg(mio_supported)]
-pub(crate) fn peek_recv_fd(fd: std::os::unix::io::RawFd, buf: &mut [u8]) -> io::Result<usize> {
+pub(crate) fn peek_recv_fd(handle: SocketHandle, fd: std::os::unix::io::RawFd, buf: &mut [u8]) -> io::Result<usize> {
+    let buffered = with_entry_opts(handle, |opts| {
+        let buffer = opts.recv_buffer.lock();
+        let n = buffer.len().min(buf.len());
+        for (dest, byte) in buf.iter_mut().zip(buffer.iter()).take(n) {
+            *dest = *byte;
+        }
+        n
+    }).unwrap_or(0);
+    if buffered > 0 { return Ok(buffered); }
     let n = unsafe {
         libc::recv(
             fd,
@@ -687,15 +708,15 @@ pub(crate) fn consume_fd(
     }
 }
 
-/// Consume exactly `dest.len()` bytes from a raw fd, looping on short reads.
-/// The caller should have peeked first to confirm the data is available.
-/// Use for line-mode reads where partial consume would desync buffers.
+/// The caller must peek through `peek_recv_fd` first: both operations consume
+/// the retained prefix before kernel bytes, keeping line boundaries aligned.
 #[cfg(mio_supported)]
 pub(crate) fn consume_exact_fd(
+    handle: SocketHandle,
     fd: std::os::unix::io::RawFd,
     dest: &mut [u8],
 ) -> io::Result<()> {
-    let mut offset = 0;
+    let mut offset = consume_recv_buffer(handle, dest);
     while offset < dest.len() {
         let n = unsafe {
             libc::recv(
