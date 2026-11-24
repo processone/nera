@@ -706,7 +706,7 @@ optimization as counters — on par with BEAM performance.
 | gen_server                    | ✅      | start_link, call, cast, info, reply; `{error, Reason}` when init/1 fails, `ignore` when it ignores; stops with its parent when it traps exits |
 | supervisor (one_for_one)      | ✅      | start_link, child specs, restart logic with retries; OTP start results: `{error, Reason}` when init/1 fails, `failed_to_start_child`, `ignore`; stops with its parent and stops its children in reverse start order by their shutdown setting |
 | application                   | ✅      | start/stop, app_name → app_name_app    |
-| proc_lib                      | ✅      | spawn, spawn_link, init_ack; start_link/3,5 returns `{error, Reason}` to trapping callers when the child dies before acknowledgement; finite timeouts and spawn options ignored |
+| proc_lib                      | ✅      | spawn, spawn_link, init_ack; start_link/3,5 returns `{error, Reason}` to trapping callers when the child dies before acknowledgement; finite timeouts kill unacknowledged children and return `{error, timeout}`; spawn options ignored |
 | error_logger                  | ✅      | info/error/warning with colored output |
 | gen_event                     | ❌      |                                        |
 | gen_statem                    | ❌      |                                        |
