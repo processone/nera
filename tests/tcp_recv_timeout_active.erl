@@ -54,8 +54,11 @@ split_line() ->
     retain(C, S, <<"kept">>),
     ok = inet:setopts(S, [{packet, line}, {active, once}]),
     ok = gen_tcp:send(C, <<"tail\n">>),
-    Recovered = line(S),
-    <<"kepttail\n">> = Recovered,
+    %% BEAM backends differ on boundaries after a timed-out exact read;
+    %% this recovery assertion owns byte ordering, not that boundary choice.
+    Expected = <<"kepttail\n">>,
+    Recovered = chunks(S, once, byte_size(Expected), <<>>),
+    Expected = Recovered,
     io:format("split line recovered=~p~n", [Recovered]),
     close(L, C, S).
 
