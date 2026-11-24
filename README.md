@@ -34,7 +34,7 @@ See the [installation guide](docs/USAGE.md#installation) for archive setup.
 
 To build from source, install [Rust through rustup](https://rustup.rs/), Git
 and a C linker: Xcode Command Line Tools on macOS, or GCC/Clang on Linux.
-The checkout selects Rust 1.99.0.
+The checkout selects Rust 1.100.0.
 
 Run this in a POSIX shell:
 

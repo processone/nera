@@ -1,14 +1,15 @@
 # Nera public-preview status
 
-Updated **2026-11-12** (baseline text below dated 2026-10-10). This is the active restart and preview-readiness record.
+Updated **2026-11-24** (baseline text below dated 2026-10-10). This is the active restart and preview-readiness record.
 The wider roadmaps are design/history documents, not release checklists.
 
 **Verdict: the three P0 fixes are implemented and verified on macOS arm64;
 public-preview readiness is still blocked by the remaining items below.** The
 repairs are recorded in separate commits. The original baseline is preserved;
 [repair evidence](baselines/2026-10-10-repairs/README.md) records the new results.
-The subsequent [toolchain refresh](baselines/2026-10-10-toolchain/README.md)
-pins Rust 1.99.0 and upgrades Cranelift to 0.129.2 with no new local regressions.
+The earlier [toolchain refresh](baselines/2026-10-10-toolchain/README.md)
+pinned Rust 1.99.0 and upgraded Cranelift to 0.129.2 with no new local regressions.
+This update advances the active Rust pin to 1.100.0.
 The [deprecation follow-up](baselines/2026-10-10-deprecation/README.md) now passes
 all **1,686 Rust tests** locally, with 285 Erlang passes and two expected skips.
 The follow-up is recorded with its tests and baseline; remote CI results below
@@ -214,10 +215,12 @@ is covered by the local baseline; remote validation must use its published head.
 
 ### P1-3 — Reproducibility and release gates
 
-The Rust refresh pins 1.99.0 in the project and CI, makes the root `Cargo.lock`
-eligible for version control, and requires locked builds in CI and packaging.
-The local macOS baseline found no new regressions with dependencies unchanged.
-These changes are recorded in separate Rust and Cranelift commits.
+The original Rust refresh pinned 1.99.0 in the project and CI, made the root
+`Cargo.lock` eligible for version control, and required locked builds in CI and
+packaging. The current project and CI pin is 1.100.0. The recorded macOS
+baseline for the original refresh found no new regressions with dependencies
+unchanged. Those original changes are recorded in separate Rust and Cranelift
+commits.
 See the [toolchain refresh](baselines/2026-10-10-toolchain/README.md) for separate
 Rust and Cranelift evidence.
 
