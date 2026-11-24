@@ -769,7 +769,7 @@ fn handle_active_read_on_worker(
         // ── Raw mode: consume whatever is available ──
         let mut buf = [0u8; 4096];
         loop {
-            match crate::socket::consume_fd(fd, &mut buf) {
+            match crate::socket::recv_into(stream_handle, &mut buf) {
                 Ok(0) => {
                     build_tcp_closed(proc, stream_handle);
                     crate::socket::set_active_local(stream_handle, ActiveMode::Passive);
@@ -921,6 +921,8 @@ pub enum IoResult {
     Ok,
     /// A socket was closed while its operation was pending.
     Closed,
+    /// A TCP receive deadline elapsed without completing the read.
+    Timeout,
     /// I/O error.
     Err(std::io::Error),
 }

@@ -47,6 +47,16 @@ the project working directory so relative fixtures continue to work.
 Run `python3 scripts/test-test-storage.py` after rebuilding to check this contract
 at the real native linker boundary on Unix.
 
+## TCP receive timeout regression
+
+`nera test tcp_recv_timeout` exercises the `gen_tcp:recv/3` deadline contract
+on real loopback sockets: idle reads with zero and positive lengths, zero
+polling, retained partial exact reads, data arriving before the deadline, and
+socket reuse with `infinity` and `recv/2`. It checks elapsed monotonic time and
+requires the `recv_timeout_ok` completion marker. The delayed sends deliberately
+cross a completed receive's deadline to detect a stale timeout waking a later
+receive. The same fixture runs on BEAM with `erlc` and `tcp_recv_timeout:test/0`.
+
 ## Focused runtime contracts
 
 The [runtime contract index](../docs/RUNTIME_CONTRACTS.md) names the semantic

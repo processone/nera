@@ -2,6 +2,15 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## TCP receive deadlines
+
+- `gen_tcp:recv/3` now returns `{error, timeout}` when its finite timeout
+  expires, for both available-data and exact-length reads. Previously an idle
+  connection could wait forever. A timeout leaves the connection open and
+  preserves bytes already read for the next receive.
+- A zero timeout polls without waiting; `infinity` and `gen_tcp:recv/2` still
+  wait without a deadline.
+
 ## Formatter keeps named fun names unquoted
 
 - `nera fmt` now prints a named fun's variable name as written, so
