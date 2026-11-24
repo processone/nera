@@ -28,6 +28,7 @@
 //! blocking I/O thread pool.
 
 use std::io;
+use std::collections::VecDeque;
 use std::sync::Arc;
 
 use parking_lot::{Mutex, RwLock};
@@ -96,6 +97,8 @@ pub struct SocketOpts {
     /// edge-triggered kqueue spin). On the next readability event, this
     /// buffer is prepended to newly read data before scanning for newline.
     pub line_buffer: Vec<u8>,
+    /// Retained read prefixes are shared across option snapshots, not copied with them.
+    pub recv_buffer: Arc<Mutex<VecDeque<u8>>>,
 }
 
 
@@ -529,14 +532,54 @@ pub fn try_accept(listener_handle: SocketHandle) -> io::Result<SocketHandle> {
     Ok(stream_handle)
 }
 
+pub(crate) fn restore_recv_buffer(handle: SocketHandle, bytes: Vec<u8>) {
+    with_entry_opts(handle, |opts| {
+        let mut buffer = opts.recv_buffer.lock();
+        for byte in bytes.into_iter().rev() {
+            buffer.push_front(byte);
+        }
+    });
+}
+
+#[cfg(mio_supported)]
+pub(crate) fn has_recv_buffer(handle: SocketHandle) -> bool {
+    with_entry_opts(handle, |opts| !opts.recv_buffer.lock().is_empty()).unwrap_or(false)
+}
+
+fn consume_recv_buffer(handle: SocketHandle, dest: &mut [u8]) -> usize {
+    with_entry_opts(handle, |opts| {
+        let mut buffer = opts.recv_buffer.lock();
+        let n = dest.len().min(buffer.len());
+        for (dest, byte) in dest.iter_mut().zip(buffer.drain(..n)) {
+            *dest = byte;
+        }
+        n
+    }).unwrap_or(0)
+}
+
+pub(crate) fn recv_into(handle: SocketHandle, dest: &mut [u8]) -> io::Result<usize> {
+    let stream = get_stream(handle)?;
+    let buffered = consume_recv_buffer(handle, dest);
+    if buffered > 0 {
+        return Ok(buffered);
+    }
+    #[cfg(mio_supported)]
+    {
+        use std::os::unix::io::AsRawFd;
+        consume_fd(stream.as_raw_fd(), dest)
+    }
+    #[cfg(not(mio_supported))]
+    {
+        use std::io::Read;
+        (&*stream).read(dest)
+    }
+}
+
 /// Try a non-blocking read from a stream. Returns data or WouldBlock.
 #[cfg(mio_supported)]
 pub fn try_recv(stream_handle: SocketHandle) -> io::Result<Vec<u8>> {
-    use std::io::Read;
-
-    let stream = get_stream(stream_handle)?;
     let mut buf = vec![0u8; 4096];
-    match (&*stream).read(&mut buf) {
+    match recv_into(stream_handle, &mut buf) {
         Ok(0) => Err(io::Error::new(io::ErrorKind::ConnectionAborted, "closed")),
         Ok(n) => {
             buf.truncate(n);
@@ -615,9 +658,18 @@ pub(crate) fn get_raw_fd(handle: SocketHandle) -> Option<std::os::unix::io::RawF
     }
 }
 
-/// Peek using a raw fd directly (no registry lookup).
+/// Retained bytes precede kernel bytes even after switching packet or active mode.
 #[cfg(mio_supported)]
-pub(crate) fn peek_recv_fd(fd: std::os::unix::io::RawFd, buf: &mut [u8]) -> io::Result<usize> {
+pub(crate) fn peek_recv_fd(handle: SocketHandle, fd: std::os::unix::io::RawFd, buf: &mut [u8]) -> io::Result<usize> {
+    let buffered = with_entry_opts(handle, |opts| {
+        let buffer = opts.recv_buffer.lock();
+        let n = buffer.len().min(buf.len());
+        for (dest, byte) in buf.iter_mut().zip(buffer.iter()).take(n) {
+            *dest = *byte;
+        }
+        n
+    }).unwrap_or(0);
+    if buffered > 0 { return Ok(buffered); }
     let n = unsafe {
         libc::recv(
             fd,
@@ -656,15 +708,15 @@ pub(crate) fn consume_fd(
     }
 }
 
-/// Consume exactly `dest.len()` bytes from a raw fd, looping on short reads.
-/// The caller should have peeked first to confirm the data is available.
-/// Use for line-mode reads where partial consume would desync buffers.
+/// The caller must peek through `peek_recv_fd` first: both operations consume
+/// the retained prefix before kernel bytes, keeping line boundaries aligned.
 #[cfg(mio_supported)]
 pub(crate) fn consume_exact_fd(
+    handle: SocketHandle,
     fd: std::os::unix::io::RawFd,
     dest: &mut [u8],
 ) -> io::Result<()> {
-    let mut offset = 0;
+    let mut offset = consume_recv_buffer(handle, dest);
     while offset < dest.len() {
         let n = unsafe {
             libc::recv(
@@ -690,12 +742,8 @@ pub(crate) fn consume_exact_fd(
 
 /// Read from a stream socket. Returns the bytes read, or an IO error.
 pub fn recv(stream_handle: SocketHandle) -> io::Result<Vec<u8>> {
-    use std::io::Read;
-
-    let stream = get_stream(stream_handle)?;
-
     let mut buf = vec![0u8; 4096];
-    let n = (&*stream).read(&mut buf)?;
+    let n = recv_into(stream_handle, &mut buf)?;
     if n == 0 {
         return Err(io::Error::new(
             io::ErrorKind::ConnectionAborted,
@@ -719,16 +767,12 @@ pub fn send(stream_handle: SocketHandle, data: &[u8]) -> io::Result<()> {
 /// `{packet, line}` line. Safety limit: stops after 300,000 bytes to
 /// prevent unbounded reads.
 pub fn recv_line(stream_handle: SocketHandle) -> io::Result<Vec<u8>> {
-    use std::io::Read;
-
-    let stream = get_stream(stream_handle)?;
-
     let mut line = Vec::new();
     let mut byte = [0u8; 1];
     const MAX_LINE: usize = 300_000;
 
     loop {
-        let n = (&*stream).read(&mut byte)?;
+        let n = recv_into(stream_handle, &mut byte)?;
         if n == 0 {
             if line.is_empty() {
                 return Err(io::Error::new(
@@ -747,9 +791,63 @@ pub fn recv_line(stream_handle: SocketHandle) -> io::Result<Vec<u8>> {
 
 /// Read exactly `length` bytes from a stream socket.
 pub fn recv_exact(stream_handle: SocketHandle, length: usize) -> io::Result<Vec<u8>> {
-    let stream = get_stream(stream_handle)?;
+    struct SocketReader(SocketHandle);
+    impl std::io::Read for SocketReader {
+        fn read(&mut self, dest: &mut [u8]) -> io::Result<usize> {
+            recv_into(self.0, dest)
+        }
+    }
+    read_exact_bytes(&mut SocketReader(stream_handle), length)
+}
 
-    read_exact_bytes(&mut &*stream, length)
+#[cfg(not(mio_supported))]
+pub(crate) fn recv_with_deadline(
+    handle: SocketHandle,
+    length: usize,
+    deadline: std::time::Instant,
+    poll_only: bool,
+) -> crate::process::IoResult {
+    use crate::process::IoResult;
+    let stream = match get_stream(handle) {
+        Ok(stream) => stream,
+        Err(e) => return IoResult::Err(e),
+    };
+    let mut buf = Vec::new();
+    let result = loop {
+        let remaining = deadline.saturating_duration_since(std::time::Instant::now());
+        // std rejects a zero SO_RCVTIMEO; nonblocking mode implements the poll instead.
+        let setup = if remaining.is_zero() {
+            stream.set_nonblocking(true)
+        } else {
+            stream.set_read_timeout(Some(remaining))
+        };
+        if let Err(e) = setup { break IoResult::Err(e); }
+        let mut tmp = [0u8; 4096];
+        let amount = if length == 0 { tmp.len() } else { (length - buf.len()).min(tmp.len()) };
+        match recv_into(handle, &mut tmp[..amount]) {
+            Ok(0) => break IoResult::Closed,
+            Ok(n) => {
+                buf.extend_from_slice(&tmp[..n]);
+                if length == 0 || buf.len() == length {
+                    break IoResult::OkBytes(std::mem::take(&mut buf));
+                }
+                if !poll_only && std::time::Instant::now() >= deadline {
+                    restore_recv_buffer(handle, std::mem::take(&mut buf));
+                    break IoResult::Timeout;
+                }
+            }
+            Err(e) if matches!(e.kind(), io::ErrorKind::WouldBlock | io::ErrorKind::TimedOut) => {
+                restore_recv_buffer(handle, std::mem::take(&mut buf));
+                break IoResult::Timeout;
+            }
+            Err(e) if e.kind() == io::ErrorKind::Interrupted => continue,
+            Err(e) => break IoResult::Err(e),
+        }
+    };
+    if let Err(e) = stream.set_nonblocking(false).and_then(|_| stream.set_read_timeout(None)) {
+        return IoResult::Err(e);
+    }
+    result
 }
 
 // Accumulate only bytes actually received. In particular, a peer that closes

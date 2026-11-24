@@ -380,7 +380,7 @@ functions as compiled Erlang in `erlang/stdlib/maps.erl`.
 |-----------------------|--------|----------------------------------------------|
 | listen/2              | ✅      | Supports `{packet, line}`, `binary` options  |
 | accept/1              | ✅      | Inherits listener socket options             |
-| recv/2,3              | ✅      | Blocking recv with optional timeout          |
+| recv/2,3              | ✅      | Receive with finite millisecond timeout, zero polling, or infinity |
 | send/2                | ✅      | Binary, iolist (nested lists/binaries)       |
 | close/1               | ✅      |                                              |
 | connect/3             | ✅      |                                              |

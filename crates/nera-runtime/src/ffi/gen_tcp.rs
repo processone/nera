@@ -281,7 +281,7 @@ pub unsafe extern "C" fn nera_rt_gen_tcp_recv(
     sock_term: u64,
     length_term: u64,
 ) -> u64 {
-    nera_rt_gen_tcp_recv_3(ctx, sock_term, length_term, ErlTerm::nil().0)
+    nera_rt_gen_tcp_recv_3(ctx, sock_term, length_term, ErlTerm::atom(global_atom_table().intern("infinity")).0)
 }
 
 /// gen_tcp:send(Sock, Data) -> ok | {error, Reason}
@@ -585,7 +585,7 @@ pub unsafe extern "C" fn nera_rt_gen_tcp_close(
 }
 
 /// gen_tcp:recv/3 — receive data from a socket with timeout (ms).
-/// Timeout is currently ignored (acts like infinity).
+/// Finite timeouts use a monotonic deadline shared by all partial reads.
 /// If length > 0, reads exactly that many bytes. If length == 0, reads
 /// any available data (same as recv/2).
 #[no_mangle]
@@ -593,7 +593,7 @@ pub unsafe extern "C" fn nera_rt_gen_tcp_recv_3(
     ctx: *mut ProcessContext,
     sock_term: u64,
     length_term: u64,
-    _timeout_term: u64,
+    timeout_term: u64,
 ) -> u64 {
     let Some(handle) = crate::socket::SocketHandle::from_term(ErlTerm(sock_term)) else {
         return socket_error(ctx, crate::atom_table::ATOM_ENOENT);
@@ -601,6 +601,22 @@ pub unsafe extern "C" fn nera_rt_gen_tcp_recv_3(
     let Some(length) = recv_length(ErlTerm(length_term)) else {
         return raise_badarg(ctx);
     };
+    let timeout = ErlTerm(timeout_term);
+    let deadline = if timeout == ErlTerm::atom(global_atom_table().intern("infinity")) {
+        None
+    } else {
+        let Some(ms) = timeout.as_small_int().and_then(|ms| u32::try_from(ms).ok()) else {
+            return raise_badarg(ctx);
+        };
+        Some(std::time::Instant::now() + std::time::Duration::from_millis(u64::from(ms)))
+    };
+    #[cfg(not(mio_supported))]
+    if let Some(deadline) = deadline {
+        let poll_only = timeout.as_small_int() == Some(0);
+        return submit_io_and_wait(ctx, Box::new(move || {
+            crate::socket::recv_with_deadline(handle, length, deadline, poll_only)
+        }));
+    }
     let self_pid = if !ctx.is_null() { unsafe { (*ctx).pid } } else { crate::process::ProcessId::new(0) };
 
     if length > 0 {
@@ -608,72 +624,33 @@ pub unsafe extern "C" fn nera_rt_gen_tcp_recv_3(
 
         #[cfg(mio_supported)]
         {
-            // Try reading the exact amount non-blocking first.
-            use std::io::Read;
-            match crate::socket::get_stream(handle) {
-                Ok(stream) => {
-                    let mut buf = Vec::with_capacity(len.min(4096));
-                    let mut tmp = [0u8; 4096];
-                    let read_len = len.min(tmp.len());
-                    match (&*stream).read(&mut tmp[..read_len]) {
-                        Ok(0) => {
-                            with_ctx_heap(ctx, |heap| {
-                                let error_atom = ErlTerm::atom(ATOM_ERROR);
-                                let closed_atom = ErlTerm::atom(
-                                    global_atom_table().intern("closed"),
-                                );
-                                heap.alloc_tuple(&[error_atom, closed_atom]).0
-                            })
+            let mut buf = Vec::with_capacity(len.min(4096));
+            let mut tmp = [0u8; 4096];
+            loop {
+                let read_len = (len - buf.len()).min(tmp.len());
+                match crate::socket::recv_into(handle, &mut tmp[..read_len]) {
+                    Ok(0) => return socket_error(ctx, global_atom_table().intern("closed")),
+                    Ok(n) => {
+                        buf.extend_from_slice(&tmp[..n]);
+                        if buf.len() == len {
+                            return with_ctx_heap(ctx, |heap| {
+                                let binary = heap.alloc_binary_auto(&buf);
+                                heap.alloc_tuple(&[ErlTerm::atom(ATOM_OK), binary]).0
+                            });
                         }
-                        Ok(n) => {
-                            buf.extend_from_slice(&tmp[..n]);
-                            if buf.len() >= len {
-                                buf.truncate(len);
-                                return with_ctx_heap(ctx, |heap| {
-                                    let ok_atom = ErlTerm::atom(ATOM_OK);
-                                    let binary = heap.alloc_binary_auto(&buf);
-                                    heap.alloc_tuple(&[ok_atom, binary]).0
-                                });
-                            }
-                            // Got some bytes but not enough — reactor
-                            // will accumulate the rest.
-                            submit_to_reactor_and_wait(
-                                ctx,
-                                crate::reactor::PendingOp::RecvExact {
-                                    pid: self_pid,
-                                    stream_handle: handle,
-                                    target_len: len,
-                                    buf,
-                                },
-                            )
-                        }
-                        Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => {
-                            submit_to_reactor_and_wait(
-                                ctx,
-                                crate::reactor::PendingOp::RecvExact {
-                                    pid: self_pid,
-                                    stream_handle: handle,
-                                    target_len: len,
-                                    buf: Vec::new(),
-                                },
-                            )
-                        }
-                        Err(e) => {
-                            with_ctx_heap(ctx, |heap| {
-                                let error_atom = ErlTerm::atom(ATOM_ERROR);
-                                let reason_atom = ErlTerm::atom(io_error_to_atom_id(&e));
-                                heap.alloc_tuple(&[error_atom, reason_atom]).0
-                            })
-                        }
+                        // A zero-timeout poll drains all currently available chunks, not just 4096 bytes.
+                        if timeout.as_small_int() == Some(0) { continue; }
                     }
+                    Err(e) if e.kind() == std::io::ErrorKind::WouldBlock => {}
+                    Err(e) => return socket_error(ctx, io_error_to_atom_id(&e)),
                 }
-                Err(e) => {
-                    with_ctx_heap(ctx, |heap| {
-                        let error_atom = ErlTerm::atom(ATOM_ERROR);
-                        let reason_atom = ErlTerm::atom(io_error_to_atom_id(&e));
-                        heap.alloc_tuple(&[error_atom, reason_atom]).0
-                    })
+                if deadline.is_some_and(|deadline| std::time::Instant::now() >= deadline) {
+                    crate::socket::restore_recv_buffer(handle, buf);
+                    return socket_error(ctx, global_atom_table().intern("timeout"));
                 }
+                return submit_to_reactor_and_wait(ctx, crate::reactor::PendingOp::RecvExact {
+                    pid: self_pid, stream_handle: handle, target_len: len, buf, deadline,
+                });
             }
         }
 
@@ -700,11 +677,15 @@ pub unsafe extern "C" fn nera_rt_gen_tcp_recv_3(
                     })
                 }
                 Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => {
+                    if deadline.is_some_and(|deadline| std::time::Instant::now() >= deadline) {
+                        return socket_error(ctx, global_atom_table().intern("timeout"));
+                    }
                     submit_to_reactor_and_wait(
                         ctx,
                         crate::reactor::PendingOp::Recv {
                             pid: self_pid,
                             stream_handle: handle,
+                            deadline,
                         },
                     )
                 }
@@ -982,7 +963,7 @@ pub unsafe extern "C" fn nera_rt_inet_setopts(
                         // (preventing edge-triggered kqueue spin when the
                         // reactor registers the fd).
                         let mut peek_buf = [0u8; 4096];
-                        match crate::socket::peek_recv_fd(fd, &mut peek_buf) {
+                        match crate::socket::peek_recv_fd(handle, fd, &mut peek_buf) {
                             Ok(0) => {
                                 // Connection closed — fast path, no reactor involved
                                 deliver_tcp_closed_to_self(ctx, handle);
@@ -994,7 +975,7 @@ pub unsafe extern "C" fn nera_rt_inet_setopts(
                                     // Complete line available — consume and deliver it
                                     // with its "\n" or "\r\n" terminator, as BEAM does.
                                     let line_len = pos + 1;
-                                    if crate::socket::consume_exact_fd(fd, &mut peek_buf[..line_len]).is_ok() {
+                                    if crate::socket::consume_exact_fd(handle, fd, &mut peek_buf[..line_len]).is_ok() {
                                         crate::reactor::COUNTER_SETOPTS_FASTPATH.fetch_add(
                                             1, std::sync::atomic::Ordering::Relaxed,
                                         );
@@ -1021,7 +1002,7 @@ pub unsafe extern "C" fn nera_rt_inet_setopts(
                                     // into the line buffer so the kernel buffer
                                     // drains (avoids kqueue spin on re-register).
                                     let mut consume_buf = vec![0u8; n];
-                                    let _ = crate::socket::consume_exact_fd(fd, &mut consume_buf);
+                                    let _ = crate::socket::consume_exact_fd(handle, fd, &mut consume_buf);
                                     crate::socket::set_line_buffer(handle, peek_buf[..n].to_vec());
                                     // Register with reactor for more data.
                                     crate::socket::set_active_local(handle, active);
@@ -1048,7 +1029,7 @@ pub unsafe extern "C" fn nera_rt_inet_setopts(
                     } else {
                         // Raw mode: try single read
                         let mut read_buf = [0u8; 4096];
-                        match crate::socket::consume_fd(fd, &mut read_buf) {
+                        match crate::socket::recv_into(handle, &mut read_buf) {
                             Ok(0) => {
                                 // Connection closed — fast path, no reactor involved
                                 deliver_tcp_closed_to_self(ctx, handle);

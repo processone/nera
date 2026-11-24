@@ -261,6 +261,7 @@ pub(crate) fn wake_process_with_result(pid: ProcessId, result: IoResult) {
 /// - `OkBytes(b)`   → `{ok, <<binary>>}`
 /// - `OkHandle(h)`  → `{ok, H}`  (small int)
 /// - `Closed`       → `{error, closed}`
+/// - `Timeout`      → `{error, timeout}`
 /// - `Err(e)`       → `{error, Reason}` where Reason is a POSIX atom
 pub(crate) fn io_result_to_term(heap: &mut crate::heap::ProcessHeap, result: IoResult) -> ErlTerm {
     match result {
@@ -278,6 +279,10 @@ pub(crate) fn io_result_to_term(heap: &mut crate::heap::ProcessHeap, result: IoR
         IoResult::Closed => heap.alloc_tuple(&[
             ErlTerm::atom(ATOM_ERROR),
             ErlTerm::atom(crate::atom_table::ATOM_CLOSED),
+        ]),
+        IoResult::Timeout => heap.alloc_tuple(&[
+            ErlTerm::atom(ATOM_ERROR),
+            ErlTerm::atom(crate::atom_table::global_atom_table().intern("timeout")),
         ]),
         IoResult::Err(e) => {
             let error_atom = ErlTerm::atom(ATOM_ERROR);
