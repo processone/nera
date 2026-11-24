@@ -18,8 +18,29 @@ fn raw_exit_scan_requires_an_unsafe_call() {
         .parent()
         .unwrap()
         .to_path_buf();
-    let library = std::fs::read_dir(&dependencies)
-        .unwrap()
+    let mut dependency_dirs = vec![dependencies.clone()];
+    if let Some(package_build_dir) = dependencies.parent().and_then(|dir| dir.parent()) {
+        if package_build_dir
+            .file_name()
+            .is_some_and(|name| name == "nera-runtime")
+        {
+            if let Some(build_dir) = package_build_dir.parent() {
+                for package in std::fs::read_dir(build_dir).unwrap().flatten() {
+                    if let Ok(fingerprints) = std::fs::read_dir(package.path()) {
+                        dependency_dirs.extend(
+                            fingerprints
+                                .flatten()
+                                .map(|fingerprint| fingerprint.path().join("out"))
+                                .filter(|output| output.is_dir()),
+                        );
+                    }
+                }
+            }
+        }
+    }
+    let library = dependency_dirs
+        .iter()
+        .flat_map(|directory| std::fs::read_dir(directory).unwrap())
         .map(|entry| entry.unwrap().path())
         .find(|path| {
             path.extension()
@@ -40,12 +61,17 @@ fn raw_exit_scan_requires_an_unsafe_call() {
             format!("use nera_runtime::{{process::Process, term::ErlTerm}};\n{adapter}\n{body}"),
         )
         .unwrap();
-        Command::new("rustc")
+        let mut command = Command::new("rustc");
+        command
             .args(["--edition=2021", "--crate-type=lib", "--emit=metadata"])
             .arg("--extern")
-            .arg(format!("nera_runtime={}", library.display()))
-            .arg("-L")
-            .arg(format!("dependency={}", dependencies.display()))
+            .arg(format!("nera_runtime={}", library.display()));
+        for directory in &dependency_dirs {
+            command
+                .arg("-L")
+                .arg(format!("dependency={}", directory.display()));
+        }
+        command
             .arg(&file)
             .arg("-o")
             .arg(directory.join("contract.rmeta"))

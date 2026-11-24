@@ -50,7 +50,7 @@ release label.
 ### Build from source
 
 Install Git, the linker and [Rust through rustup](https://rustup.rs/).
-The checkout selects Rust 1.99.0; `--locked` uses the committed dependency lock.
+The checkout selects Rust 1.100.0; `--locked` uses the committed dependency lock.
 Run these commands from a POSIX shell:
 
 ```sh

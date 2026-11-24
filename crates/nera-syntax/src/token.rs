@@ -27,13 +27,11 @@ pub enum Token {
     // hexadecimal and control-prefix syntax out of this fallback.
     #[regex(r"\$\\[^0-7x^\r\n]", parse_char_escape)]
     #[regex(r"\$\\[0-7]{1,3}", |lex| i64::from_str_radix(&lex.slice()[2..], 8).ok())]
-    #[regex(r"\$[^\\\s]", parse_char_literal)]
-    #[regex(r"\$[ \t]", parse_char_literal)]
+    #[regex(r"\$(?:[^\\\s]|[ \t])", parse_char_literal)]
     Integer(i64),
 
     /// Intermediate numeric token, normalized by the lexer wrapper.
-    #[regex(r"[0-9][0-9_]*", parse_number)]
-    #[regex(r"[0-9][0-9_]*#[0-9a-zA-Z_]+", parse_number)]
+    #[regex(r"[0-9][0-9_]*(?:#[0-9a-zA-Z_]+)?", parse_number)]
     Number(IntegerValue),
 
     /// Canonical decimal representation of an integer outside i64.
