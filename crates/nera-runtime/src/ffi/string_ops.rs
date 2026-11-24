@@ -153,6 +153,37 @@ unsafe fn codepoint_list(ctx: *mut ProcessContext, text: impl Iterator<Item = ch
     with_ctx_heap(ctx, |heap| heap.alloc_list_from_slice(&points).0)
 }
 
+fn extend_otp29_lowercase(output: &mut impl Extend<char>, character: char) {
+    // OTP 29's checksum matches Unicode 17; Unicode 18 added lowercase mappings for these codepoints.
+    if matches!(
+        character as u32,
+        0xA7DD
+            | 0xA7E2
+            | 0xAB6C
+            | 0xAB6D
+            | 0x1DF40
+            | 0x1DF48
+            | 0x1DF4A
+            | 0x1DF4D
+            | 0x1DF51
+            | 0x1DF68
+            | 0x1DF6A
+            | 0x1DF6C
+            | 0x1DF6E
+            | 0x1DF72
+            | 0x1DF74
+            | 0x1DF76
+            | 0x1DF78
+            | 0x1DF7A
+            | 0x1DF7C
+            | 0x1DF7E
+    ) {
+        output.extend(std::iter::once(character));
+    } else {
+        output.extend(character.to_lowercase());
+    }
+}
+
 /// string:lowercase/1. Full Unicode lowercase mapping applied one codepoint
 /// at a time with no context rules (final sigma stays plain sigma), as OTP
 /// does. Unchanged binaries and flat codepoint lists are returned as given;
@@ -168,18 +199,30 @@ pub unsafe extern "C" fn nera_rt_string_lowercase(ctx: *mut ProcessContext, inpu
             Ok(text) => text,
             Err(e) => return raise_badarg_rest(ctx, input, e.valid_up_to()),
         };
-        let lowered: String = text.chars().flat_map(char::to_lowercase).collect();
-        if lowered.as_bytes() == bytes { return input.0; }
+        let mut lowered = String::new();
+        for character in text.chars() {
+            extend_otp29_lowercase(&mut lowered, character);
+        }
+        if lowered.as_bytes() == bytes {
+            return input.0;
+        }
         return with_ctx_heap(ctx, |heap| heap.alloc_binary_auto(lowered.as_bytes()).0);
     }
-    if !input.is_cons() { return raise_badarg_with(ctx, input); }
+    if !input.is_cons() {
+        return raise_badarg_with(ctx, input);
+    }
     let text = match decode_chardata(input) {
         Ok(text) => text,
         Err(error) => return raise_input_error(ctx, error),
     };
-    let lowered: Vec<char> = text.chars().flat_map(char::to_lowercase).collect();
-    if is_flat_codepoint_list(input) && lowered.len() == text.chars().count()
-        && lowered.iter().copied().eq(text.chars()) {
+    let mut lowered = Vec::new();
+    for character in text.chars() {
+        extend_otp29_lowercase(&mut lowered, character);
+    }
+    if is_flat_codepoint_list(input)
+        && lowered.len() == text.chars().count()
+        && lowered.iter().copied().eq(text.chars())
+    {
         return input.0;
     }
     codepoint_list(ctx, lowered.into_iter())

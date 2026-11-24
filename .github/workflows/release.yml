@@ -38,7 +38,7 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: "1.99.0"
+          toolchain: "1.100.0"
           targets: ${{ matrix.cross && matrix.target || '' }}
 
       - name: Install cross-compilation tools (Linux aarch64)
@@ -52,7 +52,7 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: release-${{ runner.os }}-rust-1.99.0-${{ matrix.target }}-${{ hashFiles('**/Cargo.lock') }}
+          key: release-${{ runner.os }}-rust-1.100.0-${{ matrix.target }}-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Extract version
         id: version

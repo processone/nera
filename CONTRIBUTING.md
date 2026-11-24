@@ -7,7 +7,7 @@ guidelines for contributing to the project.
 
 ### Prerequisites
 
-- **Rust 1.99.0**, selected by `rust-toolchain.toml` and pinned in CI.
+- **Rust 1.100.0**, selected by `rust-toolchain.toml` and pinned in CI.
   Keep the root `Cargo.lock` under version control; update dependencies separately
   from toolchain changes and rerun the [baseline](docs/PROJECT_STATUS.md).
 - **A C linker** — `cc` on PATH (Xcode CLI Tools on macOS, `gcc`/`clang` on Linux)
