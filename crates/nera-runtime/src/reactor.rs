@@ -22,6 +22,7 @@ use std::io;
 use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
 use std::sync::Arc;
 use std::thread::{self, JoinHandle};
+use std::time::{Duration, Instant};
 
 use crossbeam_channel::{Receiver, Sender};
 use mio::unix::SourceFd;
@@ -92,6 +93,7 @@ pub enum PendingOp {
     Recv {
         pid: ProcessId,
         stream_handle: crate::socket::SocketHandle,
+        deadline: Option<Instant>,
     },
     /// Waiting to read exactly `target_len` bytes.
     RecvExact {
@@ -99,6 +101,7 @@ pub enum PendingOp {
         stream_handle: crate::socket::SocketHandle,
         target_len: usize,
         buf: Vec<u8>,
+        deadline: Option<Instant>,
     },
     /// Waiting to read until a newline character.
     RecvLine {
@@ -116,6 +119,13 @@ pub enum PendingOp {
 }
 
 impl PendingOp {
+    fn deadline(&self) -> Option<Instant> {
+        match self {
+            Self::Recv { deadline, .. } | Self::RecvExact { deadline, .. } => *deadline,
+            _ => None,
+        }
+    }
+
     /// The process ID that owns this pending operation.
     fn pid(&self) -> ProcessId {
         match self {
@@ -344,13 +354,13 @@ impl IoReactor {
     /// catches workers that raced in between our last `try_recv` and the
     /// clear (saw `true`, skipped their wake, left the cmd in the channel).
     fn run(&mut self) {
-        self.run_with_poll(|poll, events| {
-            poll.poll(events, Some(std::time::Duration::from_millis(100)))
+        self.run_with_poll(|poll, events, timeout| {
+            poll.poll(events, Some(timeout))
         });
     }
 
     // Keep the real command loop observable without a wall-clock assertion.
-    fn run_with_poll(&mut self, mut poll: impl FnMut(&mut Poll, &mut Events) -> std::io::Result<()>) {
+    fn run_with_poll(&mut self, mut poll: impl FnMut(&mut Poll, &mut Events, Duration) -> std::io::Result<()>) {
         let mut events = Events::with_capacity(256);
         loop {
             if self.shutdown.load(Ordering::SeqCst) {
@@ -377,6 +387,11 @@ impl IoReactor {
                 return;
             }
 
+            self.expire_receives();
+            let timeout = self.pending.values().filter_map(PendingOp::deadline)
+                .map(|deadline| deadline.saturating_duration_since(Instant::now()))
+                .fold(Duration::from_millis(100), Duration::min);
+
             // About to block: publish wake_pending=false so the next worker
             // push triggers a fresh wake. Re-check the channel for racers
             // that pushed between our try_recv and the store.
@@ -390,7 +405,7 @@ impl IoReactor {
             }
 
             // Poll for I/O events.
-            match poll(&mut self.poll, &mut events) {
+            match poll(&mut self.poll, &mut events, timeout) {
                 Ok(_) => {}
                 Err(e) if e.kind() == std::io::ErrorKind::Interrupted => continue,
                 Err(e) => {
@@ -403,6 +418,25 @@ impl IoReactor {
             // flag. If the poll woke on an I/O event, the flag is still
             // false. Re-arm the coalescing regime for the next iteration.
             self.wake_pending.store(true, Ordering::SeqCst);
+        }
+    }
+
+    fn expire_receives(&mut self) {
+        let now = Instant::now();
+        let expired: Vec<Token> = self.pending.iter()
+            .filter(|(_, op)| op.deadline().is_some_and(|deadline| deadline <= now))
+            .map(|(token, _)| *token).collect();
+        for token in expired {
+            let op = self.pending.remove(&token).expect("expired receive");
+            PENDING_COUNT.fetch_sub(1, Ordering::Relaxed);
+            let pid = op.pid();
+            let handle = op.socket_handle();
+            if let PendingOp::RecvExact { buf, .. } = op {
+                // A timed-out exact read must leave its consumed prefix for the next receive.
+                crate::socket::restore_recv_buffer(handle, buf);
+            }
+            self.deregister_fd(handle);
+            wake_process_with_result(pid, IoResult::Timeout);
         }
     }
 
@@ -444,6 +478,9 @@ impl IoReactor {
                             let _ = self.poll.registry().reregister(
                                 &mut SourceFd(&fd), token, Interest::READABLE,
                             );
+                        }
+                        if crate::socket::has_recv_buffer(stream_handle) {
+                            self.handle_event(token);
                         }
                     }
                 }
@@ -801,14 +838,14 @@ impl IoReactor {
         };
         PENDING_COUNT.fetch_sub(1, Ordering::Relaxed);
 
-        if let PendingOp::Recv { pid, stream_handle } = op {
+        if let PendingOp::Recv { pid, stream_handle, deadline } = op {
             match crate::socket::try_recv(stream_handle) {
                 Ok(bytes) => {
                     self.deregister_fd(stream_handle);
                     wake_process_with_result(pid, IoResult::OkBytes(bytes));
                 }
                 Err(ref e) if e.kind() == io::ErrorKind::WouldBlock => {
-                    self.pending.insert(token, PendingOp::Recv { pid, stream_handle });
+                    self.pending.insert(token, PendingOp::Recv { pid, stream_handle, deadline });
                     PENDING_COUNT.fetch_add(1, Ordering::Relaxed);
                 }
                 Err(e) => {
@@ -826,22 +863,12 @@ impl IoReactor {
         };
         PENDING_COUNT.fetch_sub(1, Ordering::Relaxed);
 
-        if let PendingOp::RecvExact { pid, stream_handle, target_len, mut buf } = op {
-            let stream = match crate::socket::get_stream(stream_handle) {
-                Ok(s) => s,
-                Err(e) => {
-                    self.deregister_fd(stream_handle);
-                    wake_process_with_result(pid, IoResult::Err(e));
-                    return;
-                }
-            };
-
-            use std::io::Read;
+        if let PendingOp::RecvExact { pid, stream_handle, target_len, mut buf, deadline } = op {
             let mut tmp = [0u8; 4096];
             loop {
                 let remaining = target_len - buf.len();
                 let read_len = remaining.min(tmp.len());
-                match (&*stream).read(&mut tmp[..read_len]) {
+                match crate::socket::recv_into(stream_handle, &mut tmp[..read_len]) {
                     Ok(0) => {
                         self.deregister_fd(stream_handle);
                         let e = io::Error::new(io::ErrorKind::UnexpectedEof, "connection closed");
@@ -856,12 +883,17 @@ impl IoReactor {
                             wake_process_with_result(pid, IoResult::OkBytes(buf));
                             return;
                         }
-                        // Continue draining until WouldBlock or enough data.
+                        if deadline.is_some_and(|deadline| Instant::now() >= deadline) {
+                            crate::socket::restore_recv_buffer(stream_handle, buf);
+                            self.deregister_fd(stream_handle);
+                            wake_process_with_result(pid, IoResult::Timeout);
+                            return;
+                        }
                     }
                     Err(ref e) if e.kind() == io::ErrorKind::WouldBlock => {
                         // Partial accumulation — re-insert and wait for more.
                         self.pending.insert(token, PendingOp::RecvExact {
-                            pid, stream_handle, target_len, buf,
+                            pid, stream_handle, target_len, buf, deadline,
                         });
                         PENDING_COUNT.fetch_add(1, Ordering::Relaxed);
                         return;
@@ -904,7 +936,7 @@ impl IoReactor {
             const MAX_LINE: usize = 300_000;
             let mut peek_buf = [0u8; 4096];
             loop {
-                match crate::socket::peek_recv_fd(fd, &mut peek_buf) {
+                match crate::socket::peek_recv_fd(stream_handle, fd, &mut peek_buf) {
                     Ok(0) => {
                         self.deregister_fd(stream_handle);
                         if buf.is_empty() {
@@ -917,8 +949,8 @@ impl IoReactor {
                     }
                     Ok(n) => {
                         if let Some(pos) = peek_buf[..n].iter().position(|&b| b == b'\n') {
-                            // Found newline — consume_exact pos+1 bytes from kernel.
-                            match crate::socket::consume_exact_fd(fd, &mut peek_buf[..pos + 1]) {
+                            // Leave bytes after this newline available for the next receive.
+                            match crate::socket::consume_exact_fd(stream_handle, fd, &mut peek_buf[..pos + 1]) {
                                 Ok(()) => {
                                     buf.extend_from_slice(&peek_buf[..pos]);
                                     if buf.last() == Some(&b'\r') {
@@ -935,7 +967,7 @@ impl IoReactor {
                             return;
                         }
                         // No newline — consume_exact all peeked bytes, append to buf.
-                        match crate::socket::consume_exact_fd(fd, &mut peek_buf[..n]) {
+                        match crate::socket::consume_exact_fd(stream_handle, fd, &mut peek_buf[..n]) {
                             Ok(()) => {
                                 buf.extend_from_slice(&peek_buf[..n]);
                             }
@@ -1068,6 +1100,12 @@ impl IoReactor {
             });
             self.active_handle_to_token.insert(stream_handle, token);
             PENDING_COUNT.fetch_add(1, Ordering::Relaxed);
+        }
+        // epoll/kqueue cannot signal bytes retained outside the kernel receive buffer.
+        if crate::socket::has_recv_buffer(stream_handle) {
+            if let Some(&token) = self.active_handle_to_token.get(&stream_handle) {
+                self.handle_event(token);
+            }
         }
     }
 
@@ -1231,6 +1269,56 @@ mod tests {
     }
 
     #[test]
+    fn expired_receive_releases_registration_and_preserves_prefix() {
+        if isolate_active_registration("expired_receive_releases_registration_and_preserves_prefix") { return; }
+        let (_handle, mut reactor) = active_registration_fixture();
+        let listener = std::net::TcpListener::bind(("127.0.0.1", 0)).unwrap();
+        let socket = crate::socket::connect("127.0.0.1", listener.local_addr().unwrap().port()).unwrap();
+        let (mut peer, _) = listener.accept().unwrap();
+        use std::io::Write;
+        let token = Token(NEXT_TOKEN.fetch_add(1, Ordering::Relaxed));
+        reactor.register_pending(token, PendingOp::Recv {
+            pid: ProcessId::new(1), stream_handle: socket, deadline: Some(Instant::now()),
+        });
+        assert!(reactor.pending.contains_key(&token));
+        reactor.expire_receives();
+        assert!(reactor.pending.is_empty());
+        assert!(!reactor.handle_to_token.contains_key(&socket));
+        reactor.register_pending(token, PendingOp::RecvExact {
+            pid: ProcessId::new(1), stream_handle: socket, target_len: 4,
+            buf: Vec::new(), deadline: None,
+        });
+        peer.write_all(b"ab").unwrap();
+        let mut events = Events::with_capacity(8);
+        reactor.poll.poll(&mut events, Some(Duration::from_secs(3))).unwrap();
+        assert!(events.iter().any(|event| event.token() == token));
+        reactor.handle_event(token);
+        let Some(PendingOp::RecvExact { buf, deadline, .. }) = reactor.pending.get_mut(&token) else {
+            panic!("incomplete read must remain pending");
+        };
+        assert_eq!(buf, b"ab");
+        *deadline = Some(Instant::now());
+        reactor.expire_receives();
+        assert!(reactor.pending.is_empty());
+        assert!(!reactor.handle_to_token.contains_key(&socket));
+        assert_eq!(PENDING_COUNT.load(Ordering::Relaxed), 0);
+        let mut bytes = [0; 2];
+        assert_eq!(crate::socket::recv_into(socket, &mut bytes).unwrap(), 2);
+        assert_eq!(&bytes, b"ab");
+        reactor.register_pending(token, PendingOp::Recv {
+            pid: ProcessId::new(1), stream_handle: socket, deadline: None,
+        });
+        assert!(reactor.pending.contains_key(&token));
+        peer.write_all(b"cd").unwrap();
+        reactor.poll.poll(&mut events, Some(Duration::from_secs(3))).unwrap();
+        assert!(events.iter().any(|event| event.token() == token));
+        reactor.handle_event(token);
+        assert!(reactor.pending.is_empty());
+        assert_eq!(PENDING_COUNT.load(Ordering::Relaxed), 0);
+        crate::socket::remove(socket);
+    }
+
+    #[test]
     fn active_registration_is_pending_until_published() {
         if isolate_active_registration("active_registration_is_pending_until_published") { return; }
         let (handle, mut reactor) = active_registration_fixture();
@@ -1269,7 +1357,7 @@ mod tests {
         reactor.drain_commands();
         assert!(reactor.active_regs.is_empty());
         assert!(!handle.has_pending(), "missing socket must not retain pending work");
-        handle.register_op(PendingOp::Recv { pid: ProcessId::new(1), stream_handle: gone });
+        handle.register_op(PendingOp::Recv { pid: ProcessId::new(1), stream_handle: gone, deadline: None });
         assert!(handle.has_pending(), "ordinary registrations share the same queue handoff");
         drop(reactor.cmd_rx.try_recv().unwrap());
         assert!(!handle.has_pending());
@@ -1318,7 +1406,7 @@ mod tests {
             let (handle, mut reactor) = active_registration_fixture();
             if queued { handle.shutdown(); }
             let mut polls = 0;
-            reactor.run_with_poll(|_, _| {
+            reactor.run_with_poll(|_, _, _| {
                 polls += 1;
                 assert!(!queued && polls == 1, "poll after Shutdown");
                 handle.shutdown();

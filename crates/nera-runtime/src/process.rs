@@ -680,30 +680,28 @@ fn handle_active_read_on_worker(
         // ── Line mode: peek + consume_exact with per-socket line buffer ──
         //
         // Uses peek to find newlines, then consume_exact to remove only
-        // the delivered line from the kernel buffer. Excess data (e.g. a
-        // data block after the command line) stays in the kernel for
-        // subsequent gen_tcp:recv calls in raw mode.
+        // the delivered line from retained or kernel bytes. Excess data (e.g. a
+        // data block after the command line) stays in the retained queue or
+        // kernel for subsequent gen_tcp:recv calls in raw mode.
         //
-        // When a partial line has no newline, the partial data is consumed
-        // from the kernel into a per-socket line buffer so the fd is no
-        // longer readable — preventing edge-triggered kqueue spin. The
-        // line buffer is prepended on the next readability event.
+        // Accumulating a partial line also drains kernel readiness, preventing
+        // edge-triggered kqueue spin. The partial prefix must precede bytes
+        // from the next notification, whether retained or newly received.
         let mut line_buf = crate::socket::take_line_buffer(stream_handle);
         let mut peek_buf = [0u8; 8192];
         let mut got_eof = false;
         loop {
-            match crate::socket::peek_recv_fd(fd, &mut peek_buf) {
+            match crate::socket::peek_recv_fd(stream_handle, fd, &mut peek_buf) {
                 Ok(0) => {
                     got_eof = true;
                     break;
                 }
                 Ok(n) => {
                     if let Some(ppos) = peek_buf[..n].iter().position(|&b| b == b'\n') {
-                        // Newline found in peeked data — consume up to and
-                        // including the newline, leaving excess in kernel.
+                        // Leave bytes after this newline available for the next receive.
                         let line_len = ppos + 1;
                         let mut tmp = vec![0u8; line_len];
-                        let _ = crate::socket::consume_exact_fd(fd, &mut tmp);
+                        let _ = crate::socket::consume_exact_fd(stream_handle, fd, &mut tmp);
 
                         // Build the line: line_buf (partial) + peek_buf[..=ppos].
                         // It keeps its "\n" or "\r\n" terminator, as BEAM
@@ -718,7 +716,7 @@ fn handle_active_read_on_worker(
 
                         if active_mode == ActiveMode::Once {
                             crate::socket::set_active_local(stream_handle, ActiveMode::Passive);
-                            // line_buf is empty; remaining data in kernel.
+                            // Leave later bytes buffered for the next active-once arm.
                             break;
                         }
                         // active == true: continue loop for more lines
@@ -726,7 +724,7 @@ fn handle_active_read_on_worker(
                         // No newline — consume all peeked data into line_buf
                         // so the kernel buffer drains (prevents kqueue spin).
                         let mut tmp = vec![0u8; n];
-                        let _ = crate::socket::consume_exact_fd(fd, &mut tmp);
+                        let _ = crate::socket::consume_exact_fd(stream_handle, fd, &mut tmp);
                         line_buf.extend_from_slice(&peek_buf[..n]);
                         break; // wait for next readability event
                     }
@@ -769,7 +767,7 @@ fn handle_active_read_on_worker(
         // ── Raw mode: consume whatever is available ──
         let mut buf = [0u8; 4096];
         loop {
-            match crate::socket::consume_fd(fd, &mut buf) {
+            match crate::socket::recv_into(stream_handle, &mut buf) {
                 Ok(0) => {
                     build_tcp_closed(proc, stream_handle);
                     crate::socket::set_active_local(stream_handle, ActiveMode::Passive);
@@ -921,6 +919,8 @@ pub enum IoResult {
     Ok,
     /// A socket was closed while its operation was pending.
     Closed,
+    /// A TCP receive deadline elapsed without completing the read.
+    Timeout,
     /// I/O error.
     Err(std::io::Error),
 }
