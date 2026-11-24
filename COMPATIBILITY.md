@@ -73,7 +73,41 @@ rm -rf "$beam_dir"
 The fixture must reach `proc_lib_init_crash_ok`; the native test runner checks
 this completion marker, and BEAM prints it. This is a scoped regression, not a successful
 Ranch or Cowboy startup: neither integration was rerun for this change.
-`start_link/5` still ignores finite timeouts and spawn options.
+`start_link/5` now honors finite timeouts; spawn options remain ignored.
+The timeout regression below covers that separate correction.
+
+## proc_lib startup timeout regression
+
+`tests/proc_lib_start_timeout.erl` checks finite and zero startup timeouts,
+child termination even when it traps exits, caller survival in both exit modes,
+unrelated mailbox messages and startup-signal cleanup. It also checks finite
+and infinite successful acknowledgement with the link preserved, and a child
+crashing before a finite deadline. Its required completion marker is
+`proc_lib_start_timeout_ok`.
+
+Reproduce with a freshly built runtime and compiler:
+
+```sh
+./target/release/nera test proc_lib_start_timeout -j 1 --timeout 30
+beam_dir=$(mktemp -d)
+erlc -o "$beam_dir" tests/proc_lib_start_timeout.erl
+erl -noshell -pa "$beam_dir" -eval 'ok = proc_lib_start_timeout:test(), halt().'
+rm -rf "$beam_dir"
+```
+
+On Linux x86_64 with Rust 1.100.0 and OTP 27, the repaired implementation
+passes ten consecutive runs with both default native schedulers and
+`NERA_SCHEDULERS=1`; the same fixture passes ten times on BEAM. Nera's own
+library also passes ten times on BEAM when renamed to avoid replacing OTP's
+core module. Each run reaches the completion marker and confirms the child is
+dead before startup returns.
+
+The original implementation fails this fixture's bounded startup watchdog
+natively and as a renamed library on BEAM. Native execution reports
+`start_link_still_waiting` before the runner's outer timeout. OTP 27 returns
+`{error, timeout}` and terminates the unacknowledged child.
+This fixture does not establish Ranch/Cowboy integration, other native
+platforms or spawn-option support.
 
 ## Cowboy analysis — 2026-10-20
 
