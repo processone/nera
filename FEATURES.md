@@ -274,6 +274,14 @@ process_info items supported: `registered_name`, `message_queue_len`,
 `group_leader` (stored leader, inherited on spawn), `priority` (`normal` or
 `low`). Unknown items raise `badarg`; a dead pid returns `undefined`.
 
+`current_stacktrace` limitation: `process_info(self(), current_stacktrace)`
+reads the caller's current compact call stack, innermost frame first. For another
+live process, `process_info(Pid, current_stacktrace)` instead reads the target's
+saved exception trace, not its live call stack as on BEAM. The result can be
+`[]` (the trace is cleared when an exception is caught or the process resumes
+from a receive) or a stale exception trace. Do not use remote `current_stacktrace`
+to diagnose where a process is currently running or waiting.
+
 ### io module
 
 | Function | Status |
