@@ -2949,6 +2949,47 @@ mod tests {
     }
 
     #[test]
+    fn projected_ets_binary_keeps_backing_after_full_gc() {
+        let (id, _) = make_test_table("projected_binary_full_gc");
+        let table = ErlTerm::small_int(id as i64);
+        let key = ErlTerm::small_int(7);
+        let mut source = ProcessHeap::new();
+        let bytes = [42; 128];
+        let binary = source.alloc_binary_auto(&bytes);
+        let nested = source.alloc_tuple(&[binary]);
+        let row = source.alloc_tuple(&[key, nested]);
+        // SAFETY: both heaps own the inputs used below; lookup retains the ETS storage.
+        unsafe { ets_insert(table, row) }.unwrap();
+        let mut receiver = ProcessHeap::new();
+        let lookup = unsafe { ets_lookup(table, key, &mut receiver) };
+        let (projected, backing) = unsafe {
+            let found = (*lookup.as_cons_ptr().unwrap()).head.as_boxed_ptr().unwrap();
+            let wrapper = ErlTerm(*found.add(2));
+            assert!(wrapper.is_external());
+            let term = ErlTerm(*wrapper.as_boxed_ptr().unwrap().add(1));
+            assert!(term.is_refc_binary());
+            assert!(!term.is_external());
+            let ptr = *term.as_boxed_ptr().unwrap().add(crate::term::REFC_BINARY_PTR_WORD_INDEX);
+            let owner = crate::heap::clone_arc_from_raw(ptr);
+            (term, Arc::downgrade(&owner))
+        };
+        assert!(ets_delete_table(table));
+        drop(source);
+
+        let mut roots = [projected, ErlTerm::small_int(-7)];
+        // SAFETY: the receiver retains the lookup storage and only these roots stay live.
+        unsafe { receiver.collect_full(&mut roots) };
+        assert!(backing.upgrade().is_some(), "collection dropped live binary backing");
+        assert_eq!(receiver.borrowed_heap_count(), 0);
+        assert_eq!(receiver.refc_binary_count(), 1);
+        assert_eq!(unsafe { roots[0].borrow(&receiver) }.binary_bytes(), Some(bytes.as_slice()));
+
+        // SAFETY: only the immediate root is needed after this collection.
+        unsafe { receiver.collect_full(&mut roots[1..]) };
+        assert!(backing.upgrade().is_none(), "collection kept dead binary backing");
+    }
+
+    #[test]
     fn delete_table_removes_from_registry() {
         let (id, _name) = make_test_table("test_delete_table_1");
 

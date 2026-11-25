@@ -247,7 +247,9 @@ pub struct ProcessHeap {
 
 Minor GC skips old container contents, so it keeps all `borrowed_heaps` owners.
 Major GC traces both generations and clears the owners only when it sees no
-reachable external pointer. If any remain, it conservatively keeps all owners.
+reachable external pointer. Before that sweep, it retains the backing of any
+binary copied from a projected ETS value. If any external pointers remain, it
+conservatively keeps all borrowed owners.
 
 #### 5d. Lookup path — before vs after
 

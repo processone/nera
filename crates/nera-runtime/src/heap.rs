@@ -922,6 +922,17 @@ impl ProcessHeap {
 
         // Sweep refc binaries, binary vheap, borrowed heaps.
         self.sweep_refc_binaries(&live_refc_ptrs);
+        if !self.borrowed_heaps.is_empty() && !live_refc_ptrs.is_empty() {
+            // A projection can expose an unmarked ETS binary. Its descriptor
+            // was copied, but its backing still needs a process-owned Arc.
+            let owned: HashSet<_> = self.refc_binaries.iter()
+                .map(|arc| Arc::as_ptr(arc) as u64)
+                .collect();
+            for &ptr in live_refc_ptrs.difference(&owned) {
+                // SAFETY: the borrowed heaps still own the backing stores.
+                self.refc_binaries.push(unsafe { clone_arc_from_raw(ptr) });
+            }
+        }
         self.old_refc_ptrs = live_refc_ptrs;
         self.update_binary_vheap();
         self.sweep_borrowed_heaps(has_external_terms);
