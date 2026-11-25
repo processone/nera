@@ -235,15 +235,9 @@ copy_term(term):
   ... (normal copy path)
 ```
 
-Process heap adds a new field:
-
-```rust
-pub struct ProcessHeap {
-    // ... existing fields ...
-    pub refc_binaries: Vec<Arc<Vec<u8>>>,
-    pub borrowed_heaps: Vec<Arc<StoredTupleInner>>,  // NEW
-}
-```
+The process heap keeps a `BTreeMap<usize, BorrowedHeap>` keyed by each
+retained snapshot's buffer start address. Each entry holds its end address,
+accounted byte count and owning reference.
 
 Minor GC skips old container contents, so it keeps all `borrowed_heaps` owners.
 Major GC traces both generations and keeps the snapshot containing each live
@@ -256,7 +250,7 @@ with the storage still live after a full collection.
 
 #### 5d. Lookup path — before vs after
 
-**Before (current):**
+**Before zero-copy lookups:**
 
 ```
 map.read()
@@ -270,58 +264,24 @@ alloc cons cell on process heap
 
 ```
 map.read()
-Arc::clone(inner)                        ← 1 atomic op
+for each element:
+  mark boxed or cons pointers; leave immediates unchanged
+if a pointer was marked:
+  register a retained owner by its buffer start address if not already present
 alloc tuple wrapper on process heap      ← 1+N words
-mark elements as external (set bit 63)   ← N bitwise ORs
 alloc cons cell                          ← 2 words
-store Arc in process.borrowed_heaps
 ```
 
-Total cost: 1 atomic + N+3 words of process heap.  No recursive walk.
-No data copy.  O(1) regardless of term complexity.
+The lookup walks the top-level fields, not the nested data. Immediate-only
+rows do not register an owner.
 
-#### 5e. Identifying external Arcs during GC
+#### 5e. Identifying external owners during GC
 
-When GC encounters an external boxed pointer, it needs to find which
-`Arc<StoredTupleInner>` to mark as live.  Options:
-
-- **A. Embed an identifier in the external term**: Use unused bits in
-  the pointer or header to encode an index into `borrowed_heaps`.
-  Fast but fragile (index invalidated if Vec is reordered).
-
-- **B. HashMap from address range to Arc index**: Pre-build a mapping
-  from CompactHeap word buffer address ranges to borrowed_heaps
-  indices.  O(1) lookup with a sorted-range binary search.
-
-- **C. Mark ALL borrowed_heaps as live during GC, sweep separately**:
-  During GC, don't try to match individual external pointers to
-  specific Arcs.  Instead, just keep a flag `has_external_terms: bool`.
-  After GC, if no external terms survived, clear all borrowed_heaps.
-  If any survived, keep all.  This over-retains but is simple and
-  correct.  On the next GC cycle, the stale Arcs will be dropped if
-  the process no longer holds external terms.
-
-- **D. Stamp each external term with the Arc's raw pointer**: Store the
-  `Arc::as_ptr()` value in a side table or in unused bits.  GC records
-  seen Arc pointers in a `live_borrowed_ptrs: HashSet<u64>`, then
-  sweeps borrowed_heaps via `retain()`.  This mirrors the refc binary
-  pattern exactly.
-
-**Recommended: Option D** — it matches the existing refc binary sweep
-pattern.  The Arc raw pointer can be stored in the process's own data
-structure (e.g., a `HashMap<address_range, u64>` built when the Arc is
-first borrowed).
-
-The simplest implementation: when a zero-copy lookup returns, store a
-mapping `(words_ptr..words_ptr+words_len) → Arc::as_ptr()` in the
-process.  When GC encounters an external pointer, look up which Arc it
-belongs to and add to `live_borrowed_ptrs`.  After GC, sweep.
-
-An even simpler approach: since each `StoredTupleInner` contains a
-`CompactHeap` with a known `words_ptr`, the GC can check if an external
-pointer falls within any borrowed CompactHeap's range.  With
-borrowed_heaps being a small Vec (typically 0-10 entries), a linear
-scan is fast enough.
+For each external pointer seen during a full trace, look up the greatest
+buffer start address at or below that pointer. Check that the address is
+below the recorded end before marking the owner live. This locates interior
+pointers without putting an owner identifier in the term. If an address
+cannot be matched, keep all owners rather than risk releasing live storage.
 
 ### Safety argument
 
@@ -871,10 +831,12 @@ After a test that inserts and deletes many entries:
 - Check `pool.live_region_count() == 0`
 - With zero-copy: after all processes drop their Arcs, verify same
 
-After a test with zero-copy lookups + GC:
-- Force GC on all processes
-- Verify `borrowed_heaps.len() == 0` (all Arcs swept)
-- Verify `Arc::strong_count() == 1` (only table holds it)
+After a test with zero-copy lookups:
+- Drop the lookup results from the roots and force a full collection in each
+  process.
+- Verify no borrowed owners remain and only the table owns the snapshot.
+- In a separate run with one lookup result rooted, verify its owner survives
+  while unused owners are reclaimed.
 
 ### Phase 6 verification (zero-copy message relay)
 
