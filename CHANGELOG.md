@@ -7,6 +7,8 @@ All notable milestones for the nera project are documented in this file.
 - Native sends no longer turn negative small integers into large positive
   integers. This affected tuples built in the send expression, such as
   `self() ! {id(-3)}`, and messages copied between processes.
+- Retained ETS snapshots now count toward full garbage collection, so a process
+  that reads frequently replaced table entries can reclaim old data sooner.
 
 ## Process startup deadlines
 

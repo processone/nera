@@ -229,7 +229,7 @@ copy_term(term):
   if immediate → return as-is
   if term.is_external():
     // Shared storage — do not copy, do not write forwarding pointer
-    record that at least one external pointer is reachable
+    record which snapshot contains the external pointer
     return term  // keep pointing to CompactHeap
   if forwarding[old_addr] exists → return forwarded
   ... (normal copy path)
@@ -246,10 +246,13 @@ pub struct ProcessHeap {
 ```
 
 Minor GC skips old container contents, so it keeps all `borrowed_heaps` owners.
-Major GC traces both generations and clears the owners only when it sees no
-reachable external pointer. Before that sweep, it retains the backing of any
-binary copied from a projected ETS value. If any external pointers remain, it
-conservatively keeps all borrowed owners.
+Major GC traces both generations and keeps the snapshot containing each live
+external pointer. Before freeing unused snapshots, it retains the backing of
+any binary copied from a projected ETS value.
+
+Each distinct retained snapshot counts once toward a full collection, including
+its word buffer and binary payloads. The threshold starts at 1 MiB and grows
+with the storage still live after a full collection.
 
 #### 5d. Lookup path — before vs after
 

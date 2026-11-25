@@ -3203,7 +3203,9 @@ mod tests {
         ]);
         let owner = std::sync::Arc::downgrade(&storage);
         let term = ErlTerm::boxed(storage.as_ptr()).with_external_bit();
-        process.heap.retain_borrowed_heap(storage);
+        let start = storage.as_ptr() as usize;
+        let bytes = std::mem::size_of_val(storage.as_slice());
+        process.heap.retain_borrowed_heap(storage, start..start + bytes, bytes);
         process.dictionary.push((ErlTerm::small_int(1), term));
         // SAFETY: the initialized external graph is anchored by this heap.
         unsafe { process.hibernate(); }
