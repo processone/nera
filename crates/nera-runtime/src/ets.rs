@@ -185,20 +185,21 @@ unsafe impl Sync for CompactHeap {}
 /// references from the table and from processes holding zero-copy
 /// lookup results.
 pub struct StoredTupleInner {
-    _heap: CompactHeap,
+    heap: CompactHeap,
+    retained_bytes: usize,
 }
 
 /// Deep-copied tuple stored in ETS (independent of any process heap).
 /// All elements are stored in a compact word buffer.
 ///
-/// The backing memory (`inner._heap`) is Arc-wrapped so that zero-copy
+/// The backing memory (`inner.heap`) is Arc-wrapped so that zero-copy
 /// lookups can hold a reference to the storage without preventing
 /// the table from being modified. `elements` stays outside the Arc
 /// so that `update_counter` can mutate element slots in place.
 struct StoredTuple {
     /// Arc-wrapped backing storage for all boxed terms in this tuple.
     inner: Arc<StoredTupleInner>,
-    /// The element terms (immediates or pointers into `inner._heap.words`).
+    /// The element terms (immediates or pointers into the compact heap).
     elements: Vec<ErlTerm>,
 }
 
@@ -561,8 +562,12 @@ unsafe fn deep_copy_tuple_to_stored(elements: &[ErlTerm], compact: CompactHeap) 
     let copied_elems: Vec<ErlTerm> = elements.iter()
         .map(|&elem| deep_copy_into_compact(elem, &mut compact))
         .collect();
+    let retained_bytes = compact.refc_binaries.iter()
+        .fold(compact.words_len * std::mem::size_of::<u64>(), |bytes, binary| {
+            bytes.saturating_add(binary.len())
+        });
     StoredTuple {
-        inner: Arc::new(StoredTupleInner { _heap: compact }),
+        inner: Arc::new(StoredTupleInner { heap: compact, retained_bytes }),
         elements: copied_elems,
     }
 }
@@ -1001,21 +1006,21 @@ unsafe fn store_tuple(table: &EtsTable, tuple_term: ErlTerm) -> Result<bool, ()>
 
 /// Build a zero-copy result tuple from a stored tuple.
 fn stored_to_zero_copy(stored: &StoredTuple, heap: &mut ProcessHeap) -> ErlTerm {
-    let arc = stored.inner.clone();
+    let mut borrows_storage = false;
     let elems: Vec<ErlTerm> = stored.elements.iter()
         .map(|&elem| {
-            if elem.is_atom() || elem.is_small_int()
-                || elem.is_pid() || elem.is_nil()
-            {
-                elem
-            } else {
-                elem.with_external_bit()
-            }
+            let term = elem.with_external_bit();
+            borrows_storage |= term.is_external();
+            term
         })
         .collect();
-    let result = heap.alloc_tuple(&elems);
-    heap.retain_borrowed_heap(arc);
-    result
+    if borrows_storage {
+        let compact = &stored.inner.heap;
+        let start = compact.allocation.as_ref().expect("boxed ETS storage").as_ptr() as usize;
+        let end = start + compact.words_len * std::mem::size_of::<u64>();
+        heap.retain_borrowed_heap(stored.inner.clone(), start..end, stored.inner.retained_bytes);
+    }
+    heap.alloc_tuple(&elems)
 }
 
 /// Look up tuples by key using zero-copy: returns tagged pointers
@@ -2946,6 +2951,127 @@ mod tests {
                 assert_eq!(ErlTerm(*nested.add(2)).as_small_int(), Some(99));
             }
         }).join().unwrap();
+    }
+
+    #[test]
+    fn projected_ets_binary_keeps_backing_after_full_gc() {
+        let (id, _) = make_test_table("projected_binary_full_gc");
+        let table = ErlTerm::small_int(id as i64);
+        let key = ErlTerm::small_int(7);
+        let mut source = ProcessHeap::new();
+        let bytes = [42; 128];
+        let binary = source.alloc_binary_auto(&bytes);
+        let nested = source.alloc_tuple(&[binary]);
+        let row = source.alloc_tuple(&[key, nested]);
+        // SAFETY: both heaps own the inputs used below; lookup retains the ETS storage.
+        unsafe { ets_insert(table, row) }.unwrap();
+        let mut receiver = ProcessHeap::new();
+        let lookup = unsafe { ets_lookup(table, key, &mut receiver) };
+        let (projected, backing) = unsafe {
+            let found = (*lookup.as_cons_ptr().unwrap()).head.as_boxed_ptr().unwrap();
+            let wrapper = ErlTerm(*found.add(2));
+            assert!(wrapper.is_external());
+            let term = ErlTerm(*wrapper.as_boxed_ptr().unwrap().add(1));
+            assert!(term.is_refc_binary());
+            assert!(!term.is_external());
+            let ptr = *term.as_boxed_ptr().unwrap().add(crate::term::REFC_BINARY_PTR_WORD_INDEX);
+            let owner = crate::heap::clone_arc_from_raw(ptr);
+            (term, Arc::downgrade(&owner))
+        };
+        assert!(ets_delete_table(table));
+        drop(source);
+
+        let mut roots = [projected, ErlTerm::small_int(-7)];
+        // SAFETY: the receiver retains the lookup storage and only these roots stay live.
+        unsafe { receiver.collect_full(&mut roots) };
+        assert!(backing.upgrade().is_some(), "collection dropped live binary backing");
+        assert_eq!(receiver.borrowed_heap_count(), 0);
+        assert_eq!(receiver.refc_binary_count(), 1);
+        assert_eq!(unsafe { roots[0].borrow(&receiver) }.binary_bytes(), Some(bytes.as_slice()));
+
+        // SAFETY: only the immediate root is needed after this collection.
+        unsafe { receiver.collect_full(&mut roots[1..]) };
+        assert!(backing.upgrade().is_none(), "collection kept dead binary backing");
+    }
+
+    #[test]
+    fn retained_ets_bytes_trigger_full_gc_without_dropping_live_snapshots() {
+        let (id, _) = make_test_table("retained_ets_bytes");
+        let table = ErlTerm::small_int(id as i64);
+        let key = ErlTerm::small_int(7);
+        let mut source = ProcessHeap::new();
+        let mut receiver = ProcessHeap::new();
+        let anchor_bytes = vec![42; 2 * 1024 * 1024];
+        let anchor = source.alloc_binary_auto(&anchor_bytes);
+        let prefix = source.alloc_float(1.5);
+        let row = source.alloc_tuple(&[key, prefix, anchor]);
+        // SAFETY: source owns row and lookup registers the receiver's retained owner.
+        unsafe { ets_insert(table, row) }.unwrap();
+        let retained = unsafe { ets_lookup(table, key, &mut receiver) };
+        assert!(receiver.needs_gc(), "the retained bytes alone should trigger collection");
+        let anchor = unsafe {
+            let row = (*retained.as_cons_ptr().unwrap()).head.as_boxed_ptr().unwrap();
+            ErlTerm(*row.add(3))
+        };
+        let mut roots = [anchor];
+        // SAFETY: these are the only receiver roots needed after collection.
+        unsafe { receiver.collect(&mut roots) };
+        assert!(!receiver.needs_gc(), "live snapshots need headroom after collection");
+
+        for _ in 0..8 {
+            unsafe { ets_lookup(table, key, &mut receiver) };
+        }
+        assert_eq!(receiver.borrowed_heap_count(), 1);
+        assert!(!receiver.needs_gc(), "repeat lookups should not charge the same storage again");
+
+        for (i, byte) in [17, 23].into_iter().enumerate() {
+            let binary = source.alloc_binary_auto(&vec![byte; 1280 * 1024]);
+            let row = source.alloc_tuple(&[key, binary]);
+            unsafe { ets_insert(table, row) }.unwrap();
+            unsafe { ets_lookup(table, key, &mut receiver) };
+            assert_eq!(receiver.needs_gc(), i == 1);
+        }
+        assert_eq!(receiver.borrowed_heap_count(), 3);
+        assert!(ets_delete_table(table));
+        unsafe { receiver.collect(&mut roots) };
+        assert_eq!(receiver.borrowed_heap_count(), 1, "reclaim only the two discarded snapshots");
+        assert!(!receiver.needs_gc());
+        unsafe {
+            assert_eq!(roots[0].borrow(&receiver).binary_bytes(), Some(anchor_bytes.as_slice()));
+            receiver.collect_full(&mut []);
+        }
+        assert_eq!(receiver.borrowed_heap_count(), 0);
+    }
+
+    #[test]
+    fn repeatedly_reading_one_large_ets_snapshot_does_not_force_full_gc() {
+        let (id, _) = make_test_table("repeated_large_ets_lookup");
+        let table = ErlTerm::small_int(id as i64);
+        let key = ErlTerm::small_int(7);
+        let other_key = ErlTerm::small_int(8);
+        let mut source = ProcessHeap::new();
+        let mut receiver = ProcessHeap::new();
+        let binary = source.alloc_binary_auto(&vec![42; 2 * 1024 * 1024]);
+        let row = source.alloc_tuple(&[key, binary]);
+        let other = source.alloc_tuple(&[other_key, binary]);
+        // SAFETY: source owns the inserted terms; no lookup result is rooted.
+        unsafe {
+            ets_insert(table, row).unwrap();
+            ets_insert(table, other).unwrap();
+            ets_lookup(table, key, &mut receiver);
+            assert!(receiver.needs_gc());
+            receiver.collect(&mut []);
+            assert_eq!(receiver.borrowed_heap_count(), 0);
+            for _ in 0..8 {
+                ets_lookup(table, key, &mut receiver);
+                assert!(!receiver.needs_gc(), "one large snapshot retriggered collection");
+            }
+            ets_lookup(table, other_key, &mut receiver);
+            assert!(receiver.needs_gc(), "another snapshot should still trigger collection");
+            assert!(ets_delete_table(table));
+            receiver.collect(&mut []);
+            assert_eq!(receiver.borrowed_heap_count(), 0);
+        }
     }
 
     #[test]
