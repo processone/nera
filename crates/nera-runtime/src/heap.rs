@@ -12,7 +12,8 @@
 use crate::binary::BinaryData;
 use bumpalo::Bump;
 use std::alloc::Layout;
-use std::collections::{HashMap, HashSet};
+use std::collections::{BTreeMap, HashMap, HashSet};
+use std::ops::Range;
 use std::sync::Arc;
 
 use crate::term::{
@@ -30,6 +31,9 @@ pub const DEFAULT_GC_THRESHOLD: usize = 2 * 1024;
 
 /// Default old-gen GC threshold: 1 MiB.
 pub const DEFAULT_OLD_GC_THRESHOLD: usize = 1024 * 1024;
+
+/// Minimum retained ETS storage before it can trigger a full collection.
+const DEFAULT_BORROWED_HEAP_THRESHOLD: usize = 1024 * 1024;
 
 /// Default binary virtual heap threshold: 256 KiB.
 /// Matches BEAM's `BIN_VH_MIN_SIZE` (32K words on 64-bit = 256 KiB).
@@ -271,13 +275,22 @@ pub struct ProcessHeap {
     binary_vheap_threshold: usize,
     /// Borrowed ETS heaps kept alive for zero-copy lookup results.
     /// Arc references prevent the backing CompactHeap from being freed
-    /// while the process holds external pointers into it.
-    /// Type-erased via `dyn Any + Send + Sync` to avoid a circular
-    /// dependency between heap.rs and ets.rs.
-    borrowed_heaps: Vec<Arc<dyn std::any::Any + Send + Sync>>,
+    /// while the process holds external pointers into it. The buffer start
+    /// identifies the owner and lets major GC resolve interior addresses.
+    /// Minor GC skips old containers, so only major GC sweeps these owners.
+    borrowed_heaps: BTreeMap<usize, BorrowedHeap>,
+    borrowed_heap_bytes: usize,
+    borrowed_heap_threshold: usize,
+    single_snapshot_headroom: usize,
     /// Current inline allocation chunk size in words. Starts small (64 words
     /// = 512 bytes) and doubles on each refill up to 512 words (4 KiB).
     inline_chunk_words: usize,
+}
+
+struct BorrowedHeap {
+    end: usize,
+    bytes: usize,
+    _owner: Arc<dyn std::any::Any + Send + Sync>,
 }
 
 /// Allocation-only storage for message fragments and process-info snapshots.
@@ -398,7 +411,10 @@ impl ProcessHeap {
             refc_unique_count: 0,
             binary_vheap_size: 0,
             binary_vheap_threshold: DEFAULT_BINARY_VHEAP_THRESHOLD,
-            borrowed_heaps: Vec::new(),
+            borrowed_heaps: BTreeMap::new(),
+            borrowed_heap_bytes: 0,
+            borrowed_heap_threshold: DEFAULT_BORROWED_HEAP_THRESHOLD,
+            single_snapshot_headroom: 0,
             inline_chunk_words: INLINE_CHUNK_MIN_WORDS,
         }
     }
@@ -424,7 +440,10 @@ impl ProcessHeap {
             refc_unique_count: 0,
             binary_vheap_size: 0,
             binary_vheap_threshold: DEFAULT_BINARY_VHEAP_THRESHOLD,
-            borrowed_heaps: Vec::new(),
+            borrowed_heaps: BTreeMap::new(),
+            borrowed_heap_bytes: 0,
+            borrowed_heap_threshold: DEFAULT_BORROWED_HEAP_THRESHOLD,
+            single_snapshot_headroom: 0,
             inline_chunk_words: INLINE_CHUNK_MIN_WORDS,
         }
     }
@@ -609,11 +628,18 @@ impl ProcessHeap {
         self.refc_binaries.push(data);
     }
 
-    /// Retain immutable external storage referenced by zero-copy lookup terms.
-    /// Collection releases these owners only when no external terms survive.
-    #[inline]
-    pub(crate) fn retain_borrowed_heap(&mut self, owner: Arc<dyn std::any::Any + Send + Sync>) {
-        self.borrowed_heaps.push(owner);
+    /// Retain a snapshot whose marked pointers all lead into this immutable,
+    /// contiguous range. Distinct owners have disjoint ranges.
+    pub(crate) fn retain_borrowed_heap(
+        &mut self,
+        owner: Arc<dyn std::any::Any + Send + Sync>,
+        range: Range<usize>,
+        bytes: usize,
+    ) {
+        if let std::collections::btree_map::Entry::Vacant(entry) = self.borrowed_heaps.entry(range.start) {
+            entry.insert(BorrowedHeap { end: range.end, bytes, _owner: owner });
+            self.borrowed_heap_bytes = self.borrowed_heap_bytes.saturating_add(bytes);
+        }
     }
 
     #[cfg(test)]
@@ -725,11 +751,17 @@ impl ProcessHeap {
         self.max_heap_size > 0 && self.bytes_allocated() > self.max_heap_size.saturating_mul(8)
     }
 
+    fn has_borrowed_heap_pressure(&self) -> bool {
+        self.borrowed_heap_bytes >= self.borrowed_heap_threshold
+            && (self.borrowed_heaps.len() != 1 || self.borrowed_heap_bytes > self.single_snapshot_headroom)
+    }
+
     /// Returns `true` if any GC trigger condition is met.
     pub fn needs_gc(&self) -> bool {
         self.young_bytes_allocated >= self.gc_threshold
             || self.old_bytes_allocated >= self.old_gc_threshold
             || self.binary_vheap_size >= self.binary_vheap_threshold
+            || self.has_borrowed_heap_pressure()
             || self.exceeds_max_heap_size()
     }
 
@@ -738,6 +770,7 @@ impl ProcessHeap {
     /// refc binaries too, so it's sufficient for binary-heavy workloads.
     fn needs_major_gc(&self) -> bool {
         self.old_bytes_allocated >= self.old_gc_threshold
+            || self.has_borrowed_heap_pressure()
             || self.minor_gc_count >= self.max_minor_gcs
     }
 
@@ -839,7 +872,6 @@ impl ProcessHeap {
 
         let promoted_bytes = copier.bytes_copied;
         let live_refc_ptrs = copier.live_refc_ptrs;
-        let has_external_terms = copier.has_external_terms;
 
         // Give a large, freshly traced promotion headroom instead of copying
         // it again on the next scheduler slice. Do not double the accumulated
@@ -887,9 +919,6 @@ impl ProcessHeap {
             self.old_refc_ptrs.contains(&(Arc::as_ptr(arc) as u64))
         });
         self.update_binary_vheap();
-        self.sweep_borrowed_heaps(has_external_terms);
-
-        // Drop old young gen (old_young goes out of scope).
     }
 
     /// Major GC: copy all live data (young + old) into a fresh Bump.
@@ -900,8 +929,8 @@ impl ProcessHeap {
         }
 
         let bytes_copied = copier.bytes_copied;
-        let live_refc_ptrs = copier.live_refc_ptrs.clone();
-        let has_external_terms = copier.has_external_terms;
+        let live_refc_ptrs = std::mem::take(&mut copier.live_refc_ptrs);
+        let live_external_ptrs = std::mem::take(&mut copier.live_external_ptrs);
 
         // Install copier's arena as the new old gen.
         self.old = copier.into_arena();
@@ -925,9 +954,34 @@ impl ProcessHeap {
 
         // Sweep refc binaries, binary vheap, borrowed heaps.
         self.sweep_refc_binaries(&live_refc_ptrs);
+        if !self.borrowed_heaps.is_empty() && !live_refc_ptrs.is_empty() {
+            // A projection can expose an unmarked ETS binary. Its descriptor
+            // was copied, but its backing still needs a process-owned Arc.
+            let owned: HashSet<_> = self.refc_binaries.iter()
+                .map(|arc| Arc::as_ptr(arc) as u64)
+                .collect();
+            for &ptr in live_refc_ptrs.difference(&owned) {
+                // SAFETY: the borrowed heaps still own the backing stores.
+                self.refc_binaries.push(unsafe { clone_arc_from_raw(ptr) });
+            }
+        }
         self.old_refc_ptrs = live_refc_ptrs;
         self.update_binary_vheap();
-        self.sweep_borrowed_heaps(has_external_terms);
+        let sole_snapshot_bytes = if self.borrowed_heaps.len() == 1 {
+            self.borrowed_heap_bytes
+        } else {
+            0
+        };
+        self.sweep_borrowed_heaps(&live_external_ptrs);
+        // An unchanged large row may still be table-owned after this sweep.
+        // Let a single read of the same size pass; never exempt accumulation.
+        self.single_snapshot_headroom = if self.borrowed_heaps.is_empty() {
+            sole_snapshot_bytes
+        } else {
+            0
+        };
+        self.borrowed_heap_threshold = DEFAULT_BORROWED_HEAP_THRESHOLD
+            .max(self.borrowed_heap_bytes.saturating_mul(2));
     }
 
     /// Sweep stale refc binaries: retain only those whose raw pointer was
@@ -972,11 +1026,30 @@ impl ProcessHeap {
         );
     }
 
-    /// Conservative borrowed_heaps sweep.
-    fn sweep_borrowed_heaps(&mut self, has_external_terms: bool) {
-        if !self.borrowed_heaps.is_empty() && !has_external_terms {
-            self.borrowed_heaps.clear();
+    /// Called after a full trace, once copied binaries have their own owners.
+    fn sweep_borrowed_heaps(&mut self, external_ptrs: &HashSet<usize>) {
+        if self.borrowed_heaps.is_empty() {
+            return;
         }
+        let mut live = HashSet::new();
+        for &ptr in external_ptrs {
+            let Some((&start, _)) = self.borrowed_heaps.range(..=ptr).next_back()
+                .filter(|(_, heap)| ptr < heap.end) else {
+                // Without a matching range we cannot prove any owner is dead.
+                return;
+            };
+            live.insert(start);
+        }
+        let mut bytes = 0usize;
+        self.borrowed_heaps.retain(|start, heap| {
+            if live.contains(start) {
+                bytes = bytes.saturating_add(heap.bytes);
+                true
+            } else {
+                false
+            }
+        });
+        self.borrowed_heap_bytes = bytes;
     }
 }
 
@@ -992,11 +1065,15 @@ enum GcTarget<'a> {
     Borrowed(&'a mut Bump),
 }
 
-/// An immediate without the external bit: the collector copies it as itself
-/// with no side effect.
+/// The collector can copy these terms unchanged. A small integer's high bit
+/// is its sign, not an external pointer marker.
 #[inline]
 pub(crate) fn is_plain_immediate(word: u64) -> bool {
-    word & EXTERNAL_BIT == 0 && matches!(word & TAG_MASK, TAG_SMALL_INT | TAG_ATOM | TAG_PID | TAG_NIL)
+    match word & TAG_MASK {
+        TAG_SMALL_INT => true,
+        TAG_ATOM | TAG_PID | TAG_NIL => word & EXTERNAL_BIT == 0,
+        _ => false,
+    }
 }
 
 /// Term slots of an object already allocated in the target arena whose
@@ -1025,8 +1102,8 @@ struct GcCopier<'a> {
     forwarding: HashMap<usize, usize>,
     /// Raw Arc pointers encountered during live-data traversal.
     live_refc_ptrs: HashSet<u64>,
-    /// Set to true if any external term was encountered.
-    has_external_terms: bool,
+    /// Addresses of marked pointers encountered during a major collection.
+    live_external_ptrs: HashSet<usize>,
     /// Bytes copied (allocated in major, promoted in minor).
     bytes_copied: usize,
 }
@@ -1042,7 +1119,7 @@ impl<'a> GcCopier<'a> {
             pending: Vec::new(),
             forwarding: HashMap::with_capacity(obj_estimate),
             live_refc_ptrs: HashSet::new(),
-            has_external_terms: false,
+            live_external_ptrs: HashSet::new(),
             bytes_copied: 0,
         }
     }
@@ -1056,7 +1133,7 @@ impl<'a> GcCopier<'a> {
             pending: Vec::new(),
             forwarding: HashMap::with_capacity(obj_estimate),
             live_refc_ptrs: HashSet::new(),
-            has_external_terms: false,
+            live_external_ptrs: HashSet::new(),
             bytes_copied: 0,
         }
     }
@@ -1224,7 +1301,9 @@ impl<'a> GcCopier<'a> {
     fn copy_object(&mut self, term: ErlTerm) -> ErlTerm {
         // External terms point into borrowed ETS heaps — preserve as-is.
         if term.is_external() {
-            self.has_external_terms = true;
+            if !self.is_minor() {
+                self.live_external_ptrs.insert((term.0 & !(TAG_MASK | EXTERNAL_BIT)) as usize);
+            }
             return term;
         }
         match term.tag() {
@@ -2500,6 +2579,37 @@ mod tests {
             let header = BoxedHeader(*hdr_ptr);
             assert_eq!(header.subtype(), BOXED_TUPLE);
             assert_eq!(ErlTerm(*hdr_ptr.add(1)).as_small_int(), Some(42));
+        }
+    }
+
+    #[test]
+    fn minor_gc_keeps_ets_storage_reachable_from_old_containers() {
+        for cons in [false, true] {
+            let mut heap = ProcessHeap::new();
+            let storage = Arc::new([
+                BoxedHeader::new(crate::term::BoxedSubtype::Float, 1).0,
+                42.0_f64.to_bits(),
+            ]);
+            let owner = Arc::downgrade(&storage);
+            let borrowed = ErlTerm::boxed(storage.as_ptr()).with_external_bit();
+            let start = storage.as_ptr() as usize;
+            let bytes = std::mem::size_of_val(storage.as_ref());
+            heap.retain_borrowed_heap(storage, start..start + bytes, bytes);
+            let container = if cons {
+                heap.alloc_cons(borrowed, ErlTerm::nil())
+            } else {
+                heap.alloc_tuple(&[borrowed])
+            };
+            let mut roots = [container, ErlTerm::small_int(-7)];
+
+            for _ in 0..3 {
+                heap.collect_minor(&mut roots);
+                assert!(owner.upgrade().is_some(), "minor GC dropped live ETS storage");
+            }
+            heap.collect_major(&mut roots);
+            assert!(owner.upgrade().is_some(), "major GC dropped live ETS storage");
+            heap.collect_major(&mut roots[1..]);
+            assert!(owner.upgrade().is_none(), "major GC kept dead ETS storage");
         }
     }
 

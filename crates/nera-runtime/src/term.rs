@@ -55,9 +55,8 @@ pub const TOMBSTONE_VALUE: u64 = 0b110;
 /// The tombstone is never a term, and `Mailbox::send` refuses it as a message.
 pub const NO_MESSAGE_VALUE: u64 = TOMBSTONE_VALUE;
 
-/// Bit 63 marks a term as "external" — it points into ETS storage
-/// (Arc-owned CompactHeap), not the process arena. GC must not
-/// relocate or forward external terms.
+/// Bit 63 marks a cons or boxed pointer into ETS storage, which GC must not
+/// relocate. On a small integer it is part of the signed payload instead.
 pub const EXTERNAL_BIT: u64 = 1u64 << 63;
 
 /// Minimum value representable as a small integer (61-bit signed).
@@ -807,22 +806,33 @@ impl ErlTerm {
 
     // -- External bit helpers -----------------------------------------------
 
-    /// True if this term has the EXTERNAL_BIT set (points into ETS storage).
+    /// True only for a pointer tagged as borrowing ETS storage.
     #[inline]
     pub fn is_external(&self) -> bool {
-        self.0 & EXTERNAL_BIT != 0
+        self.0 & EXTERNAL_BIT != 0 && self.has_pointer_tag()
     }
 
-    /// Return a copy of this term with EXTERNAL_BIT set.
+    #[inline]
+    fn has_pointer_tag(&self) -> bool {
+        matches!(self.tag(), TAG_BOXED | TAG_CONS)
+    }
+
     #[inline]
     pub fn with_external_bit(&self) -> ErlTerm {
-        ErlTerm(self.0 | EXTERNAL_BIT)
+        if self.has_pointer_tag() {
+            ErlTerm(self.0 | EXTERNAL_BIT)
+        } else {
+            *self
+        }
     }
 
-    /// Return a copy of this term with EXTERNAL_BIT cleared.
     #[inline]
     pub fn strip_external_bit(&self) -> ErlTerm {
-        ErlTerm(self.0 & !EXTERNAL_BIT)
+        if self.is_external() {
+            ErlTerm(self.0 & !EXTERNAL_BIT)
+        } else {
+            *self
+        }
     }
 }
 
@@ -1123,6 +1133,27 @@ mod tests {
             assert!(!term.is_pid());
             assert_eq!(term.as_small_int(), Some(val));
         }
+    }
+
+    #[test]
+    fn external_marker_is_only_for_cons_and_boxed_pointers() {
+        let mut heap = ProcessHeap::new();
+        let cons = heap.alloc_cons(ErlTerm::small_int(1), ErlTerm::nil());
+        let boxed = heap.alloc_tuple(&[cons]);
+        for term in [cons, boxed] {
+            let external = term.with_external_bit();
+            assert!(!term.is_external());
+            assert!(external.is_external());
+            assert_eq!(external.strip_external_bit(), term);
+            assert_eq!(external.as_cons_ptr(), term.as_cons_ptr());
+            assert_eq!(external.as_boxed_ptr(), term.as_boxed_ptr());
+        }
+
+        let negative = ErlTerm::small_int(SMALL_INT_MIN);
+        assert!(!negative.is_external());
+        assert_eq!(negative.strip_external_bit().as_small_int(), Some(SMALL_INT_MIN));
+        let positive = ErlTerm::small_int(1);
+        assert_eq!(positive.with_external_bit(), positive);
     }
 
     #[test]

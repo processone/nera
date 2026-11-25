@@ -29,7 +29,8 @@ pub const BOXED_REFC_BINARY: u64 = 0x6;
 pub const BOXED_REFERENCE: u64 = 0x7;
 pub const BOXED_MATCH_CTX: u64 = 0x8;
 
-/// Bit 63 marks a term as "external" (points into ETS storage).
+/// Bit 63 marks a cons or boxed pointer into ETS storage. On a small integer
+/// it is the sign bit.
 pub const EXTERNAL_BIT: u64 = 1u64 << 63;
 
 // Sizes (in bytes)

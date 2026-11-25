@@ -63,6 +63,13 @@ retained line prefix is followed by new socket data. It requires
 `recv_timeout_active_ok` and also runs unchanged on BEAM. These assertions prevent kernel-only readiness or
 line scanning from stranding retained bytes or delivering later bytes first.
 
+## Negative integers in messages
+
+`nera test send_negative_small_int` checks the exact mailbox values for
+inline tuples and messages sent by a spawned process, including the native
+small-integer boundary. The same fixture runs on BEAM with `erlc` and
+`send_negative_small_int:test/0`; it must print `send_negative_small_int_ok`.
+
 ## Focused runtime contracts
 
 The [runtime contract index](../docs/RUNTIME_CONTRACTS.md) names the semantic
