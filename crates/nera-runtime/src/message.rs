@@ -735,6 +735,29 @@ mod tests {
     };
 
     #[test]
+    fn negative_small_ints_survive_message_copies() {
+        let mut source = ProcessHeap::new();
+        let min = ErlTerm::small_int(crate::term::SMALL_INT_MIN);
+        let negative = ErlTerm::small_int(-7);
+        let inline = source.alloc_tuple(&[min, negative]);
+        let simple = source.alloc_tuple(&[ErlTerm::atom(1), min, negative]);
+        let nested = source.alloc_tuple(&[inline, simple]);
+
+        for root in [negative, inline, simple, nested] {
+            let mut target = ProcessHeap::new();
+            // SAFETY: sender and target have separate, live heaps.
+            let direct = unsafe { direct_copy_message(root, &mut target) };
+            let queued = unsafe { MessageFragment::from_term(root) }.copy_to_heap(&mut target);
+            for copy in [direct, queued] {
+                let equal = unsafe {
+                    crate::ffi::compare::nera_rt_exact_eq(std::ptr::null_mut(), root.0, copy.0)
+                };
+                assert_eq!(equal, ErlTerm::atom(crate::atom_table::ATOM_TRUE).0);
+            }
+        }
+    }
+
+    #[test]
     fn partial_refc_windows_keep_bit_length_through_all_message_paths() {
         for arity in [0,2,4] {
             let mut source = ProcessHeap::new();

@@ -2,6 +2,12 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Native sends preserve negative integers
+
+- Native sends no longer turn negative small integers into large positive
+  integers. This affected tuples built in the send expression, such as
+  `self() ! {id(-3)}`, and messages copied between processes.
+
 ## Process startup deadlines
 
 - `proc_lib:start_link/5` now kills an unacknowledged child when its finite

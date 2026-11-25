@@ -992,11 +992,15 @@ enum GcTarget<'a> {
     Borrowed(&'a mut Bump),
 }
 
-/// An immediate without the external bit: the collector copies it as itself
-/// with no side effect.
+/// The collector can copy these terms unchanged. A small integer's high bit
+/// is its sign, not an external pointer marker.
 #[inline]
 pub(crate) fn is_plain_immediate(word: u64) -> bool {
-    word & EXTERNAL_BIT == 0 && matches!(word & TAG_MASK, TAG_SMALL_INT | TAG_ATOM | TAG_PID | TAG_NIL)
+    match word & TAG_MASK {
+        TAG_SMALL_INT => true,
+        TAG_ATOM | TAG_PID | TAG_NIL => word & EXTERNAL_BIT == 0,
+        _ => false,
+    }
 }
 
 /// Term slots of an object already allocated in the target arena whose
