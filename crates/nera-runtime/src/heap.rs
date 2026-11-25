@@ -281,6 +281,7 @@ pub struct ProcessHeap {
     borrowed_heaps: BTreeMap<usize, BorrowedHeap>,
     borrowed_heap_bytes: usize,
     borrowed_heap_threshold: usize,
+    single_snapshot_headroom: usize,
     /// Current inline allocation chunk size in words. Starts small (64 words
     /// = 512 bytes) and doubles on each refill up to 512 words (4 KiB).
     inline_chunk_words: usize,
@@ -413,6 +414,7 @@ impl ProcessHeap {
             borrowed_heaps: BTreeMap::new(),
             borrowed_heap_bytes: 0,
             borrowed_heap_threshold: DEFAULT_BORROWED_HEAP_THRESHOLD,
+            single_snapshot_headroom: 0,
             inline_chunk_words: INLINE_CHUNK_MIN_WORDS,
         }
     }
@@ -441,6 +443,7 @@ impl ProcessHeap {
             borrowed_heaps: BTreeMap::new(),
             borrowed_heap_bytes: 0,
             borrowed_heap_threshold: DEFAULT_BORROWED_HEAP_THRESHOLD,
+            single_snapshot_headroom: 0,
             inline_chunk_words: INLINE_CHUNK_MIN_WORDS,
         }
     }
@@ -748,12 +751,17 @@ impl ProcessHeap {
         self.max_heap_size > 0 && self.bytes_allocated() > self.max_heap_size.saturating_mul(8)
     }
 
+    fn has_borrowed_heap_pressure(&self) -> bool {
+        self.borrowed_heap_bytes >= self.borrowed_heap_threshold
+            && (self.borrowed_heaps.len() != 1 || self.borrowed_heap_bytes > self.single_snapshot_headroom)
+    }
+
     /// Returns `true` if any GC trigger condition is met.
     pub fn needs_gc(&self) -> bool {
         self.young_bytes_allocated >= self.gc_threshold
             || self.old_bytes_allocated >= self.old_gc_threshold
             || self.binary_vheap_size >= self.binary_vheap_threshold
-            || self.borrowed_heap_bytes >= self.borrowed_heap_threshold
+            || self.has_borrowed_heap_pressure()
             || self.exceeds_max_heap_size()
     }
 
@@ -762,7 +770,7 @@ impl ProcessHeap {
     /// refc binaries too, so it's sufficient for binary-heavy workloads.
     fn needs_major_gc(&self) -> bool {
         self.old_bytes_allocated >= self.old_gc_threshold
-            || self.borrowed_heap_bytes >= self.borrowed_heap_threshold
+            || self.has_borrowed_heap_pressure()
             || self.minor_gc_count >= self.max_minor_gcs
     }
 
@@ -959,7 +967,19 @@ impl ProcessHeap {
         }
         self.old_refc_ptrs = live_refc_ptrs;
         self.update_binary_vheap();
+        let sole_snapshot_bytes = if self.borrowed_heaps.len() == 1 {
+            self.borrowed_heap_bytes
+        } else {
+            0
+        };
         self.sweep_borrowed_heaps(&live_external_ptrs);
+        // An unchanged large row may still be table-owned after this sweep.
+        // Let a single read of the same size pass; never exempt accumulation.
+        self.single_snapshot_headroom = if self.borrowed_heaps.is_empty() {
+            sole_snapshot_bytes
+        } else {
+            0
+        };
         self.borrowed_heap_threshold = DEFAULT_BORROWED_HEAP_THRESHOLD
             .max(self.borrowed_heap_bytes.saturating_mul(2));
     }

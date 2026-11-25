@@ -3044,6 +3044,37 @@ mod tests {
     }
 
     #[test]
+    fn repeatedly_reading_one_large_ets_snapshot_does_not_force_full_gc() {
+        let (id, _) = make_test_table("repeated_large_ets_lookup");
+        let table = ErlTerm::small_int(id as i64);
+        let key = ErlTerm::small_int(7);
+        let other_key = ErlTerm::small_int(8);
+        let mut source = ProcessHeap::new();
+        let mut receiver = ProcessHeap::new();
+        let binary = source.alloc_binary_auto(&vec![42; 2 * 1024 * 1024]);
+        let row = source.alloc_tuple(&[key, binary]);
+        let other = source.alloc_tuple(&[other_key, binary]);
+        // SAFETY: source owns the inserted terms; no lookup result is rooted.
+        unsafe {
+            ets_insert(table, row).unwrap();
+            ets_insert(table, other).unwrap();
+            ets_lookup(table, key, &mut receiver);
+            assert!(receiver.needs_gc());
+            receiver.collect(&mut []);
+            assert_eq!(receiver.borrowed_heap_count(), 0);
+            for _ in 0..8 {
+                ets_lookup(table, key, &mut receiver);
+                assert!(!receiver.needs_gc(), "one large snapshot retriggered collection");
+            }
+            ets_lookup(table, other_key, &mut receiver);
+            assert!(receiver.needs_gc(), "another snapshot should still trigger collection");
+            assert!(ets_delete_table(table));
+            receiver.collect(&mut []);
+            assert_eq!(receiver.borrowed_heap_count(), 0);
+        }
+    }
+
+    #[test]
     fn delete_table_removes_from_registry() {
         let (id, _name) = make_test_table("test_delete_table_1");
 

@@ -246,7 +246,9 @@ any binary copied from a projected ETS value.
 
 Each distinct retained snapshot counts once toward a full collection, including
 its word buffer and binary payloads. The threshold starts at 1 MiB and grows
-with the storage still live after a full collection.
+with the storage still live after a full collection. If a collection drops its
+only snapshot, a lone snapshot up to that size does not trigger another full
+collection. The normal threshold still applies when distinct snapshots accumulate.
 
 #### 5d. Lookup path — before vs after
 
