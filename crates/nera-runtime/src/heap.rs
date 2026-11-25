@@ -271,7 +271,8 @@ pub struct ProcessHeap {
     binary_vheap_threshold: usize,
     /// Borrowed ETS heaps kept alive for zero-copy lookup results.
     /// Arc references prevent the backing CompactHeap from being freed
-    /// while the process holds external pointers into it.
+    /// while the process holds external pointers into it. Minor GC skips old
+    /// container contents, so only major GC can prove these owners are dead.
     /// Type-erased via `dyn Any + Send + Sync` to avoid a circular
     /// dependency between heap.rs and ets.rs.
     borrowed_heaps: Vec<Arc<dyn std::any::Any + Send + Sync>>,
@@ -839,7 +840,6 @@ impl ProcessHeap {
 
         let promoted_bytes = copier.bytes_copied;
         let live_refc_ptrs = copier.live_refc_ptrs;
-        let has_external_terms = copier.has_external_terms;
 
         // Give a large, freshly traced promotion headroom instead of copying
         // it again on the next scheduler slice. Do not double the accumulated
@@ -887,9 +887,6 @@ impl ProcessHeap {
             self.old_refc_ptrs.contains(&(Arc::as_ptr(arc) as u64))
         });
         self.update_binary_vheap();
-        self.sweep_borrowed_heaps(has_external_terms);
-
-        // Drop old young gen (old_young goes out of scope).
     }
 
     /// Major GC: copy all live data (young + old) into a fresh Bump.
@@ -972,7 +969,7 @@ impl ProcessHeap {
         );
     }
 
-    /// Conservative borrowed_heaps sweep.
+    /// Called after a full trace; keep all owners if any external pointer survives.
     fn sweep_borrowed_heaps(&mut self, has_external_terms: bool) {
         if !self.borrowed_heaps.is_empty() && !has_external_terms {
             self.borrowed_heaps.clear();
@@ -2504,6 +2501,35 @@ mod tests {
             let header = BoxedHeader(*hdr_ptr);
             assert_eq!(header.subtype(), BOXED_TUPLE);
             assert_eq!(ErlTerm(*hdr_ptr.add(1)).as_small_int(), Some(42));
+        }
+    }
+
+    #[test]
+    fn minor_gc_keeps_ets_storage_reachable_from_old_containers() {
+        for cons in [false, true] {
+            let mut heap = ProcessHeap::new();
+            let storage = Arc::new([
+                BoxedHeader::new(crate::term::BoxedSubtype::Float, 1).0,
+                42.0_f64.to_bits(),
+            ]);
+            let owner = Arc::downgrade(&storage);
+            let borrowed = ErlTerm::boxed(storage.as_ptr()).with_external_bit();
+            heap.retain_borrowed_heap(storage);
+            let container = if cons {
+                heap.alloc_cons(borrowed, ErlTerm::nil())
+            } else {
+                heap.alloc_tuple(&[borrowed])
+            };
+            let mut roots = [container, ErlTerm::small_int(-7)];
+
+            for _ in 0..3 {
+                heap.collect_minor(&mut roots);
+                assert!(owner.upgrade().is_some(), "minor GC dropped live ETS storage");
+            }
+            heap.collect_major(&mut roots);
+            assert!(owner.upgrade().is_some(), "major GC dropped live ETS storage");
+            heap.collect_major(&mut roots[1..]);
+            assert!(owner.upgrade().is_none(), "major GC kept dead ETS storage");
         }
     }
 

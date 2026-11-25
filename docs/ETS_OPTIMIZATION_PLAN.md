@@ -197,15 +197,15 @@ Term operations:
 |------------------|--------------------------------------------|
 | `is_boxed()`     | Check low 3 bits = 000 (unchanged)         |
 | `is_cons()`      | Check low 3 bits = 001 (unchanged)         |
-| `is_external()`  | Check bit 63 (new)                         |
+| `is_external()`  | Check bit 63 only on boxed and cons tags   |
 | `as_boxed_ptr()` | Mask off bit 63 + low 3 bits               |
 | Pattern match    | Follow pointer transparently (mask bit 63) |
 | Comparison       | Follow pointer transparently               |
 | Hashing          | Follow pointer transparently               |
 
-The external bit is set ONLY on terms returned from ETS lookups.  It
-tells the GC: "this pointer leads to shared memory — do not copy the
-target, do not write a forwarding pointer."
+Only boxed and cons pointers returned from ETS lookups carry this marker.
+For small integers, bit 63 is the sign bit and must be preserved. The
+marker tells GC not to copy the shared target or write a forwarding pointer.
 
 #### 5c. GC integration
 
@@ -229,7 +229,7 @@ copy_term(term):
   if immediate → return as-is
   if term.is_external():
     // Shared storage — do not copy, do not write forwarding pointer
-    record associated Arc as "live" (like live_refc_ptrs)
+    record that at least one external pointer is reachable
     return term  // keep pointing to CompactHeap
   if forwarding[old_addr] exists → return forwarded
   ... (normal copy path)
@@ -245,16 +245,9 @@ pub struct ProcessHeap {
 }
 ```
 
-Post-GC sweep for borrowed_heaps mirrors refc_binaries:
-
-```rust
-// Track which Arc pointers are still reachable
-// (from external terms encountered during copy_term)
-self.borrowed_heaps.retain(|arc| {
-    let raw_ptr = Arc::as_ptr(arc) as u64;
-    copier.live_borrowed_ptrs.contains(&raw_ptr)
-});
-```
+Minor GC skips old container contents, so it keeps all `borrowed_heaps` owners.
+Major GC traces both generations and clears the owners only when it sees no
+reachable external pointer. If any remain, it conservatively keeps all owners.
 
 #### 5d. Lookup path — before vs after
 
@@ -714,10 +707,11 @@ here would be silent and devastating.
 
 #### A4. External bit tag (Rust unit)
 
-- Create an ErlTerm with bit 63 set, verify `is_external() == true`
-- Verify `is_boxed()` still works (low 3 bits unchanged)
-- Verify `as_boxed_ptr()` masks bit 63 and returns correct address
-- Round-trip: `boxed_external(ptr)` → `as_boxed_ptr()` → same ptr
+- Mark a boxed pointer and a cons pointer with `with_external_bit()`;
+  verify `is_external()` recognizes each and pointer accessors return the
+  original addresses.
+- Verify a negative small integer is not external and `strip_external_bit()`
+  leaves its signed value intact.
 
 #### A5. GC skips external pointers (Rust unit)
 
@@ -725,7 +719,8 @@ here would be silent and devastating.
 - Run GC (collect)
 - Verify: local terms were relocated (new addresses)
 - Verify: external terms kept their original addresses (unchanged)
-- Verify: borrowed_heaps Vec retains only live Arcs
+- Verify: owners survive repeated minor collections even when their pointers
+  are reachable only through old containers.
 
 #### A6. GC does not write forwarding pointers to external memory (Rust unit)
 
@@ -747,7 +742,7 @@ here would be silent and devastating.
 
 - Lookup term → borrowed_heaps has 1 Arc (count=2)
 - Overwrite the process variable (term no longer in roots)
-- Run GC
+- Run major GC with no external pointers left in the live graph
 - Verify: Arc swept from borrowed_heaps (count=1, only table)
 
 #### B6. Concurrent lookup + delete with zero-copy (Rust)

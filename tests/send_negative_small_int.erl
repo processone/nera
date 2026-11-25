@@ -1,5 +1,5 @@
 -module(send_negative_small_int).
--export([test/0]).
+-export([test/0, send_tuple/2]).
 
 %% EXPECT: send_negative_small_int_ok
 
@@ -14,7 +14,7 @@ test() ->
     -3 = next_message(),
     spawn(fun() -> Parent ! id(-7) end),
     -7 = next_message(),
-    spawn(fun() -> Parent ! {Min, id(-11)} end),
+    spawn(?MODULE, send_tuple, [Parent, Min]),
     {Min, -11} = next_message(),
     spawn(fun() -> Parent ! {tag, id(-13), {[Min], id(-15)}} end),
     {tag, -13, {[Min], -15}} = next_message(),
@@ -22,6 +22,9 @@ test() ->
     {-17, -19, 0, 1, -1152921504606846977} = next_message(),
     io:format("send_negative_small_int_ok~n"),
     ok.
+
+send_tuple(Parent, Min) ->
+    Parent ! {Min, id(-11)}.
 
 id(X) -> X.
 

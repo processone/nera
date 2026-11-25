@@ -1136,6 +1136,27 @@ mod tests {
     }
 
     #[test]
+    fn external_marker_is_only_for_cons_and_boxed_pointers() {
+        let mut heap = ProcessHeap::new();
+        let cons = heap.alloc_cons(ErlTerm::small_int(1), ErlTerm::nil());
+        let boxed = heap.alloc_tuple(&[cons]);
+        for term in [cons, boxed] {
+            let external = term.with_external_bit();
+            assert!(!term.is_external());
+            assert!(external.is_external());
+            assert_eq!(external.strip_external_bit(), term);
+            assert_eq!(external.as_cons_ptr(), term.as_cons_ptr());
+            assert_eq!(external.as_boxed_ptr(), term.as_boxed_ptr());
+        }
+
+        let negative = ErlTerm::small_int(SMALL_INT_MIN);
+        assert!(!negative.is_external());
+        assert_eq!(negative.strip_external_bit().as_small_int(), Some(SMALL_INT_MIN));
+        let positive = ErlTerm::small_int(1);
+        assert_eq!(positive.with_external_bit(), positive);
+    }
+
+    #[test]
     fn atom_roundtrip() {
         for id in [0u32, 1, 42, 1000, u32::MAX >> 3] {
             let term = ErlTerm::atom(id);
