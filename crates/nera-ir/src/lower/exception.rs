@@ -1,6 +1,7 @@
 //! Exception handling lowering: try/catch, throw, error.
 
 use nera_syntax::ast::{self, BinOp};
+use nera_syntax::span::Span;
 use crate::ir::*;
 use crate::pattern;
 use super::{IrBuilder, LowerError};
@@ -53,9 +54,12 @@ impl IrBuilder {
 
     // ---- Exception handling ----
 
-    /// Lower `throw(Reason)` to IR.
-    pub(super) fn lower_throw(&mut self, reason_expr: &ast::Expr) -> Result<VarId, LowerError> {
+    /// Lower `throw(Reason)` to IR. `span` is the throw call's: the captured
+    /// top frame names its line, as an ordinary call's frame does.
+    pub(super) fn lower_throw(&mut self, reason_expr: &ast::Expr, span: Span) -> Result<VarId, LowerError> {
         let reason = self.lower_expr(reason_expr, false)?;
+        // After the reason, whose own calls record their lines first.
+        self.emit_set_line(span);
         let result = self.fresh_var();
         self.emit(Instruction::RaiseException(
             result,

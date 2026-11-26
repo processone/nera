@@ -200,7 +200,7 @@ impl IrBuilder {
                         && (resolved == crate::resolution::Resolution::AutoImport
                             || resolved == crate::resolution::Resolution::Import(self.erlang_atom_id))
                     {
-                        return self.lower_throw(&args[0]);
+                        return self.lower_throw(&args[0], expr.span());
                     }
                 }
 
@@ -480,8 +480,8 @@ impl IrBuilder {
             }
 
             // ── Throw ──
-            ast::Expr::Throw(reason_expr, _span) => {
-                self.lower_throw(reason_expr)
+            ast::Expr::Throw(reason_expr, span) => {
+                self.lower_throw(reason_expr, *span)
             }
 
             // ── Catch (unary) ──
