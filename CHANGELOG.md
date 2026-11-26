@@ -2,6 +2,16 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Throw stack frames name the throw's line
+
+- The top frame of a `throw/1` stacktrace now names the line of the throw
+  call, as `error/1`'s frame does and as on BEAM. Previously it named line 0
+  or a line left by an earlier call, sometimes one in another function. This
+  shows in caught stacktraces, in the `{{nocatch, Value}, Stacktrace}` exit
+  reason and in the native crash report.
+- The `throw_stacktrace_line` fixture checks caught, catch-clause, multi-line,
+  fun, comprehension and uncaught throws natively and on BEAM.
+
 ## Native sends preserve negative integers
 
 - Native sends no longer turn negative small integers into large positive
