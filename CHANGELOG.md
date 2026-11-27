@@ -2,6 +2,16 @@
 
 All notable milestones for the nera project are documented in this file.
 
+## Generated MIME tables compile with less memory
+
+- The compiler reuses backend variable slots for block-local temporaries in
+  functions without suspension points. Parameters, values shared between
+  blocks and values read before a local definition keep distinct slots.
+- Cowlib 2.22.0's unchanged `cow_mimetypes` module now compiles and links on
+  Linux x86-64 under a 6,800,000 KiB address-space limit instead of aborting
+  on allocation. Its 1,009 literal MIME lookups and eight path/fallback checks
+  pass on both Nera and Erlang/OTP 27.3.4.6.
+
 ## Throw stack frames name the throw's line
 
 - The top frame of a `throw/1` stacktrace now names the line of the throw
