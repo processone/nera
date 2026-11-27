@@ -37,7 +37,7 @@ use signatures::{
     declare_runtime_func, declare_runtime_func_void,
     declare_tuple_element,
 };
-use liveness::{compute_suspend_points, SuspendPoint};
+use liveness::{block_local_variables, compute_suspend_points, SuspendPoint};
 #[cfg(test)]
 use liveness::{collect_instruction_defs, collect_instruction_uses, collect_terminator_uses, terminator_successors};
 
@@ -289,6 +289,22 @@ impl FuncTranslator {
 
         // Variable map: IR VarId -> Cranelift Variable
         let mut var_map: HashMap<VarId, Variable> = HashMap::new();
+
+        // Cranelift keeps a dense block-definition array per variable. Reusing
+        // slots for block-local temporaries avoids quadratic storage in generated
+        // lookup tables. Resumption introduces extra definitions and uses outside
+        // the IR blocks, so keep its variables distinct.
+        if suspend_info.is_empty() {
+            let mut local_slots = Vec::new();
+            for locals in block_local_variables(ir_func) {
+                for (slot, var) in locals.into_iter().enumerate() {
+                    if slot == local_slots.len() {
+                        local_slots.push(builder.declare_var(types::I64));
+                    }
+                    var_map.insert(var, local_slots[slot]);
+                }
+            }
+        }
 
         let declare_var = |var_id: VarId,
                                var_map: &mut HashMap<VarId, Variable>,

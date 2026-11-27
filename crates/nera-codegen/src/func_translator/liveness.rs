@@ -8,6 +8,52 @@ use nera_ir::ir::{BlockId, CallTarget, IrFunction, Instruction, Terminator, VarI
 // Liveness analysis for variables across suspend points (receive & calls)
 // ---------------------------------------------------------------------------
 
+/// A use before a local definition must retain its incoming SSA value, even
+/// when this is the only block mentioning the variable (for example a parameter).
+pub(super) fn block_local_variables(ir_func: &IrFunction) -> Vec<Vec<VarId>> {
+    let mut owners: HashMap<VarId, Option<BlockId>> = HashMap::new();
+    let mut excluded: HashSet<VarId> = ir_func.params.iter().copied().collect();
+    for block in &ir_func.blocks {
+        let mut defined = HashSet::new();
+        let mut mentioned = HashSet::new();
+        for inst in &block.instructions {
+            let mut uses = HashSet::new();
+            collect_instruction_uses(inst, &mut uses);
+            excluded.extend(uses.difference(&defined).copied());
+            mentioned.extend(uses);
+            let mut defs = HashSet::new();
+            collect_instruction_defs(inst, &mut defs);
+            mentioned.extend(defs.iter().copied());
+            defined.extend(defs);
+        }
+        let mut uses = HashSet::new();
+        collect_terminator_uses(&block.terminator, &mut uses);
+        excluded.extend(uses.difference(&defined).copied());
+        mentioned.extend(uses);
+        for var in mentioned {
+            owners
+                .entry(var)
+                .and_modify(|owner| *owner = None)
+                .or_insert(Some(block.id));
+        }
+    }
+    let mut locals: HashMap<BlockId, Vec<VarId>> = HashMap::new();
+    for (var, owner) in owners {
+        if let Some(block) = owner.filter(|_| !excluded.contains(&var)) {
+            locals.entry(block).or_default().push(var);
+        }
+    }
+    ir_func
+        .blocks
+        .iter()
+        .map(|block| {
+            let mut vars = locals.remove(&block.id).unwrap_or_default();
+            vars.sort_by_key(|var| var.0);
+            vars
+        })
+        .collect()
+}
+
 /// A suspend point is a location in the function where execution may need
 /// to be suspended and later resumed. This includes receive_peek calls (the
 /// process waits for a message) and local function calls (the callee may

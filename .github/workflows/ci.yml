@@ -234,6 +234,13 @@ jobs:
             --nera "$GITHUB_WORKSPACE/target/release/nera" \
             --work-dir "$RUNNER_TEMP/cowlib-differential"
 
+      - name: Compile and run pinned MIME tables under the address-space cap
+        timeout-minutes: 10
+        run: |
+          python3 tests/integration/cowlib/mimetypes.py \
+            --nera "$GITHUB_WORKSPACE/target/release/nera" \
+            --out "$RUNNER_TEMP/cowlib-differential/mimetypes"
+
       - name: Preserve Cowlib differential evidence
         if: always()
         uses: actions/upload-artifact@v7
@@ -243,6 +250,7 @@ jobs:
             ${{ runner.temp }}/cowlib-differential/report.json
             ${{ runner.temp }}/cowlib-differential/*.stdout
             ${{ runner.temp }}/cowlib-differential/*.stderr
+            ${{ runner.temp }}/cowlib-differential/mimetypes/
 
       - name: Build pinned PropEr reference (Linux)
         timeout-minutes: 10

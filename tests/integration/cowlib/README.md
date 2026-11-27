@@ -16,6 +16,45 @@ path even when the working copy contains spaces. The external target paths
 below record historical campaign commands, not a current build requirement.
 See [the build regression](../../../CONTRIBUTING.md#building).
 
+## Generated MIME table memory regression
+
+Cowlib **2.22.0**, commit **b92326f02df30dd62045d622a17f6ba52d96d53a**,
+now builds its unchanged `cow_mimetypes.erl` under a **6,800,000 KiB**
+address-space limit on **Linux x86-64**, with Rust **1.100.0**. The previous
+compiler aborted during code generation with an allocation failure, reaching
+**5,142,956 KiB** peak RSS. With backend variable-slot reuse for block-local
+temporaries, the object build completes at **2,345,844 KiB** peak RSS. These
+are single-run RSS observations, not a maximum-memory or throughput guarantee;
+the enforced address-space limit is the regression contract.
+
+The regression compiles the original module to objects and links a native
+probe under that limit. It extracts the **1,009** literal expectations directly
+from the pinned upstream tables, then checks every public `all/1` or `web/1`
+lookup using a filename with that extension. It also checks no extension,
+unknown extension, trailing dot and uppercase HTML paths for each API:
+**1,017/1,017** assertions complete on both Nera and **Erlang/OTP 27.3.4.6**.
+The original compiler fails this same regression at capped object emission,
+after the BEAM reference has completed all assertions.
+
+Run after building the runtime and release compiler, with OTP installed:
+
+```sh
+python3 tests/integration/cowlib/mimetypes.py \
+  --nera target/release/nera --out /external/cowlib-mimetypes-evidence
+```
+
+The script downloads only the pinned module, verifies its SHA-256, retains
+command output and a JSON verdict in `--out`, and deletes its temporary source,
+probe, objects and executable. `--source /external/cow_mimetypes.erl` reuses an
+already downloaded file with the same digest. The Linux Cowlib CI job runs it
+and retains its logs. Object-build RSS can be measured separately with
+`/usr/bin/time -v nera build cow_mimetypes.erl --emit-obj` in a disposable
+folder after `ulimit -v 6800000`.
+
+Scope: compilation, linking and all literal MIME table entries, not full
+Cowlib EUnit/PropEr, protocol compliance, exhaustive filename inputs or native
+macOS/Windows validation. No allocator defaults or upstream sources change.
+
 ## cow_cookie / cow_date upstream EUnit on Cowlib 2.22.0 — 2026-11-12
 
 Starting point: main **`3b2abf2`**, macOS 27 arm64, Rust 1.99.0, OTP
