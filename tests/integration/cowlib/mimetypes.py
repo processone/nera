@@ -20,6 +20,7 @@ import urllib.request
 PIN = json.loads((Path(__file__).parent / "upstream-2.22.0.json").read_text())
 SOURCE_SHA256 = "bbdd5d794a0c970cdd0420109ceaf2aaeb4ec70294a5c8a053737e67e3e3779b"
 LIMIT_KIB = 6_800_000
+EXPECTED_ENTRIES = 1_009
 
 
 def capped():
@@ -64,8 +65,8 @@ def main():
         report["compiler_sha256"] = hashlib.sha256(nera.read_bytes()).hexdigest()
         entries = re.findall(r'^(all|web)_ext\((<<"[^"]+">>)\) -> (\{.*\});$',
                              source.decode(), re.M)
-        if not entries or {entry[0] for entry in entries} != {"all", "web"}:
-            raise ValueError("generated table inventory missing")
+        if len(entries) != EXPECTED_ENTRIES or {entry[0] for entry in entries} != {"all", "web"}:
+            raise ValueError(f"expected {EXPECTED_ENTRIES} generated MIME entries, found {len(entries)}")
         assertions = [f'{expected} = cow_mimetypes:{api}(<<"file.{extension[3:-3]}">>)'
                       for api, extension, expected in entries]
         fallback = '{<<"application">>, <<"octet-stream">>, []}'

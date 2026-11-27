@@ -234,13 +234,6 @@ jobs:
             --nera "$GITHUB_WORKSPACE/target/release/nera" \
             --work-dir "$RUNNER_TEMP/cowlib-differential"
 
-      - name: Compile and run pinned MIME tables under the address-space cap
-        timeout-minutes: 10
-        run: |
-          python3 tests/integration/cowlib/mimetypes.py \
-            --nera "$GITHUB_WORKSPACE/target/release/nera" \
-            --out "$RUNNER_TEMP/cowlib-differential/mimetypes"
-
       - name: Preserve Cowlib differential evidence
         if: always()
         uses: actions/upload-artifact@v7
@@ -250,7 +243,6 @@ jobs:
             ${{ runner.temp }}/cowlib-differential/report.json
             ${{ runner.temp }}/cowlib-differential/*.stdout
             ${{ runner.temp }}/cowlib-differential/*.stderr
-            ${{ runner.temp }}/cowlib-differential/mimetypes/
 
       - name: Build pinned PropEr reference (Linux)
         timeout-minutes: 10
@@ -311,6 +303,14 @@ jobs:
             --gb-trees "$stdlib/src/gb_trees.erl" \
             --work-dir "$RUNNER_TEMP/cowlib-cookie-date-eunit"
 
+      - name: Compile and run pinned MIME tables under the address-space cap
+        timeout-minutes: 10
+        run: |
+          python3 tests/integration/cowlib/mimetypes.py \
+            --nera "$GITHUB_WORKSPACE/target/release/nera" \
+            --source "$RUNNER_TEMP/cowlib-2.22.0/src/cow_mimetypes.erl" \
+            --out "$RUNNER_TEMP/cowlib-cookie-date-eunit/mimetypes"
+
       - name: Preserve Cowlib cookie and date EUnit evidence
         if: always()
         uses: actions/upload-artifact@v7
@@ -320,6 +320,7 @@ jobs:
             ${{ runner.temp }}/cowlib-cookie-date-eunit/report.json
             ${{ runner.temp }}/cowlib-cookie-date-eunit/*.stdout
             ${{ runner.temp }}/cowlib-cookie-date-eunit/*.stderr
+            ${{ runner.temp }}/cowlib-cookie-date-eunit/mimetypes/
 
   thoas:
     name: Thoas (Linux x86_64)

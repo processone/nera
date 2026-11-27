@@ -11,47 +11,55 @@ use nera_ir::ir::{BlockId, CallTarget, IrFunction, Instruction, Terminator, VarI
 /// A use before a local definition must retain its incoming SSA value, even
 /// when this is the only block mentioning the variable (for example a parameter).
 pub(super) fn block_local_variables(ir_func: &IrFunction) -> Vec<Vec<VarId>> {
-    let mut owners: HashMap<VarId, Option<BlockId>> = HashMap::new();
-    let mut excluded: HashSet<VarId> = ir_func.params.iter().copied().collect();
-    for block in &ir_func.blocks {
-        let mut defined = HashSet::new();
-        let mut mentioned = HashSet::new();
-        for inst in &block.instructions {
-            let mut uses = HashSet::new();
-            collect_instruction_uses(inst, &mut uses);
-            excluded.extend(uses.difference(&defined).copied());
-            mentioned.extend(uses);
-            let mut defs = HashSet::new();
-            collect_instruction_defs(inst, &mut defs);
-            mentioned.extend(defs.iter().copied());
-            defined.extend(defs);
-        }
-        let mut uses = HashSet::new();
-        collect_terminator_uses(&block.terminator, &mut uses);
-        excluded.extend(uses.difference(&defined).copied());
-        mentioned.extend(uses);
-        for var in mentioned {
-            owners
-                .entry(var)
-                .and_modify(|owner| *owner = None)
-                .or_insert(Some(block.id));
-        }
+    if ir_func.blocks.len() < 2 {
+        return Vec::new();
     }
-    let mut locals: HashMap<BlockId, Vec<VarId>> = HashMap::new();
-    for (var, owner) in owners {
-        if let Some(block) = owner.filter(|_| !excluded.contains(&var)) {
-            locals.entry(block).or_default().push(var);
-        }
-    }
-    ir_func
-        .blocks
+    let mut owners: HashMap<VarId, Option<usize>> = ir_func
+        .params
         .iter()
-        .map(|block| {
-            let mut vars = locals.remove(&block.id).unwrap_or_default();
-            vars.sort_by_key(|var| var.0);
-            vars
-        })
-        .collect()
+        .map(|var| (*var, None))
+        .collect();
+    let mut operands = HashSet::new();
+    let mut defined = HashSet::new();
+    for (index, block) in ir_func.blocks.iter().enumerate() {
+        defined.clear();
+        for inst in &block.instructions {
+            collect_instruction_uses(inst, &mut operands);
+            for var in operands.drain() {
+                if !defined.contains(&var) {
+                    owners.insert(var, None);
+                }
+            }
+            collect_instruction_defs(inst, &mut operands);
+            for var in operands.drain() {
+                owners
+                    .entry(var)
+                    .and_modify(|owner| {
+                        if *owner != Some(index) {
+                            *owner = None;
+                        }
+                    })
+                    .or_insert(Some(index));
+                defined.insert(var);
+            }
+        }
+        collect_terminator_uses(&block.terminator, &mut operands);
+        for var in operands.drain() {
+            if !defined.contains(&var) {
+                owners.insert(var, None);
+            }
+        }
+    }
+    let mut locals = vec![Vec::new(); ir_func.blocks.len()];
+    for (var, owner) in owners {
+        if let Some(block) = owner {
+            locals[block].push(var);
+        }
+    }
+    for vars in &mut locals {
+        vars.sort_by_key(|var| var.0);
+    }
+    locals
 }
 
 /// A suspend point is a location in the function where execution may need
