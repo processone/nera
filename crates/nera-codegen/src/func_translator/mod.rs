@@ -15,6 +15,8 @@ mod signatures;
 mod terminators;
 #[cfg(test)]
 mod tests;
+#[cfg(test)]
+mod slot_tests;
 
 use std::collections::{HashMap, HashSet};
 
@@ -28,7 +30,7 @@ use cranelift_module::{DataId, FuncId, Linkage, Module};
 use cranelift_object::ObjectModule;
 
 use nera_ir::ir::{
-    BlockId, CallTarget, IrFunction, IrModule, Instruction, Terminator, VarId,
+    BlockId, CallTarget, IrFunction, IrModule, Instruction, VarId,
 };
 use crate::term_layout::*;
 
@@ -37,9 +39,12 @@ use signatures::{
     declare_runtime_func, declare_runtime_func_void,
     declare_tuple_element,
 };
-use liveness::{compute_suspend_points, SuspendPoint};
+use liveness::{
+    block_local_variables, collect_instruction_defs, collect_terminator_uses,
+    compute_suspend_points, SuspendPoint,
+};
 #[cfg(test)]
-use liveness::{collect_instruction_defs, collect_instruction_uses, collect_terminator_uses, terminator_successors};
+use liveness::{collect_instruction_uses, terminator_successors};
 
 /// Error during function translation.
 #[derive(Debug)]
@@ -290,6 +295,22 @@ impl FuncTranslator {
         // Variable map: IR VarId -> Cranelift Variable
         let mut var_map: HashMap<VarId, Variable> = HashMap::new();
 
+        // Cranelift keeps a dense block-definition array per variable. Reusing
+        // slots for block-local temporaries avoids quadratic storage in generated
+        // lookup tables. Resumption introduces extra definitions and uses outside
+        // the IR blocks, so keep its variables distinct.
+        if suspend_info.is_empty() {
+            let mut local_slots = Vec::new();
+            for locals in block_local_variables(ir_func) {
+                for (slot, var) in locals.into_iter().enumerate() {
+                    if slot == local_slots.len() {
+                        local_slots.push(builder.declare_var(types::I64));
+                    }
+                    var_map.insert(var, local_slots[slot]);
+                }
+            }
+        }
+
         let declare_var = |var_id: VarId,
                                var_map: &mut HashMap<VarId, Variable>,
                                builder: &mut FunctionBuilder| {
@@ -298,138 +319,20 @@ impl FuncTranslator {
 
         self.current_blocks = block_map.clone();
 
-        // Pre-declare all variables used in the function
+        let mut inventory = HashSet::new();
         for ir_block in &ir_func.blocks {
             for inst in &ir_block.instructions {
-                match inst {
-                    Instruction::Arithmetic(site) => {
-                        if let Some(v) = site.result {
-                            declare_var(v, &mut var_map, &mut builder);
-                        }
-                    }
-                    Instruction::Const(v, _)
-                    | Instruction::BinOp(v, _, _, _)
-                    | Instruction::UnaryOp(v, _, _)
-                    | Instruction::MakeTuple(v, _)
-                    | Instruction::MakeCons(v, _, _)
-                    | Instruction::TupleElement(v, _, _)
-                    | Instruction::ListHead(v, _)
-                    | Instruction::ListTail(v, _)
-                    | Instruction::Call(v, _, _)
-                    | Instruction::GetSelf(v)
-                    | Instruction::Spawn(v, _, _, _)
-                    | Instruction::Send(v, _, _)
-                    | Instruction::SendDirect(v, _, _)
-                    | Instruction::TypeTest(v, _, _)
-                    | Instruction::Move(v, _)
-                    | Instruction::TupleSize(v, _)
-                    | Instruction::MakeBinary(v, _)
-                    | Instruction::BinaryGetInteger(v, _, _, _, _)
-                    | Instruction::BinaryGetFloat(v, _, _, _, _)
-                    | Instruction::BinaryGetBinary(v, _, _, _)
-                    | Instruction::BsMatchBitOffset(v, _)
-                    | Instruction::BinarySize(v, _)
-                    | Instruction::BsGetIntegerInline(v, _, _, _, _)
-                    | Instruction::BsMaterialize(v, _, _, _)
-                    | Instruction::MakeMap(v, _)
-                    | Instruction::MapGet(v, _, _)
-                    | Instruction::MapPut(v, _, _, _)
-                    | Instruction::MapUpdateExact(v, _, _, _)
-                    | Instruction::RaiseException(v, _, _)
-                    | Instruction::GetExceptionClass(v)
-                    | Instruction::GetExceptionReason(v)
-                    | Instruction::GetExceptionStacktrace(v)
-                    | Instruction::CheckException(v) => {
-                        declare_var(*v, &mut var_map, &mut builder);
-                    }
-                    Instruction::MakeClosure(v, _, _, ref env_vars) => {
-                        declare_var(*v, &mut var_map, &mut builder);
-                        for ev in env_vars {
-                            declare_var(*ev, &mut var_map, &mut builder);
-                        }
-                    }
-                    Instruction::MakeRemoteFunRef(v, _, _, _) => {
-                        declare_var(*v, &mut var_map, &mut builder);
-                    }
-                    Instruction::MakeDynamicRemoteFunRef(v, _, _, _) => {
-                        declare_var(*v, &mut var_map, &mut builder);
-                    }
-                    Instruction::BsStartMatch(base_ptr, total_bytes, _) => {
-                        declare_var(*base_ptr, &mut var_map, &mut builder);
-                        declare_var(*total_bytes, &mut var_map, &mut builder);
-                    }
-                    Instruction::BsMatchStart2(match_ctx, base_ptr, total_bits, _) => {
-                        declare_var(*match_ctx, &mut var_map, &mut builder);
-                        declare_var(*base_ptr, &mut var_map, &mut builder);
-                        declare_var(*total_bits, &mut var_map, &mut builder);
-                    }
-                    Instruction::BsMatchCtxAdvance(_, _) => {
-                        // No result variables to declare — side effect only
-                    }
-                    Instruction::BinaryPutInteger(_, _, _, _, _) => {}
-                    Instruction::BinaryPutFloat(_, _, _, _, _) => {}
-                    Instruction::BinaryPutBinary(_, _, _, _) => {}
-                    Instruction::BinaryPutUtf8(bits_written, _, _, _) => {
-                        declare_var(*bits_written, &mut var_map, &mut builder);
-                    }
-                    Instruction::BinaryPutUtf16(bits_written, _, _, _, _) => {
-                        declare_var(*bits_written, &mut var_map, &mut builder);
-                    }
-                    Instruction::BinaryPutUtf32(bits_written, _, _, _, _) => {
-                        declare_var(*bits_written, &mut var_map, &mut builder);
-                    }
-                    Instruction::BsGetUtf8(cp, bits_consumed, _, _, _) => {
-                        declare_var(*cp, &mut var_map, &mut builder);
-                        declare_var(*bits_consumed, &mut var_map, &mut builder);
-                    }
-                    Instruction::BsGetUtf16(cp, bits_consumed, _, _, _, _) => {
-                        declare_var(*cp, &mut var_map, &mut builder);
-                        declare_var(*bits_consumed, &mut var_map, &mut builder);
-                    }
-                    Instruction::BsGetUtf32(cp, bits_consumed, _, _, _, _) => {
-                        declare_var(*cp, &mut var_map, &mut builder);
-                        declare_var(*bits_consumed, &mut var_map, &mut builder);
-                    }
-                    Instruction::BinaryResize(_, _) => {}
-                    Instruction::CheckReductions => {}
-                    Instruction::YieldCheck => {}
-                    Instruction::SetLine(_) => {}
-                    Instruction::ClearException => {}
+                collect_instruction_defs(inst, &mut inventory);
+                if let Instruction::MakeClosure(_, _, _, env_vars) = inst {
+                    inventory.extend(env_vars);
+                }
+                for var in inventory.drain() {
+                    declare_var(var, &mut var_map, &mut builder);
                 }
             }
-        }
-
-        // Also declare variables referenced in terminators (e.g., Return, Branch, TailCall)
-        for ir_block in &ir_func.blocks {
-            match &ir_block.terminator {
-                Terminator::Return(v) => {
-                    declare_var(*v, &mut var_map, &mut builder);
-                }
-                Terminator::Branch(v, _, _) => {
-                    declare_var(*v, &mut var_map, &mut builder);
-                }
-                Terminator::Switch { scrutinee, .. } => {
-                    declare_var(*scrutinee, &mut var_map, &mut builder);
-                }
-                Terminator::TailCall(_, args) => {
-                    for a in args {
-                        declare_var(*a, &mut var_map, &mut builder);
-                    }
-                }
-                Terminator::Jump(_, args) => {
-                    for a in args {
-                        declare_var(*a, &mut var_map, &mut builder);
-                    }
-                }
-                Terminator::Receive { clauses, timeout, .. } => {
-                    for clause in clauses {
-                        declare_var(clause.binding, &mut var_map, &mut builder);
-                    }
-                    if let Some((t, _)) = timeout {
-                        declare_var(*t, &mut var_map, &mut builder);
-                    }
-                }
-                Terminator::Unreachable => {}
+            collect_terminator_uses(&ir_block.terminator, &mut inventory);
+            for var in inventory.drain() {
+                declare_var(var, &mut var_map, &mut builder);
             }
         }
 
