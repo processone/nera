@@ -30,7 +30,7 @@ use cranelift_module::{DataId, FuncId, Linkage, Module};
 use cranelift_object::ObjectModule;
 
 use nera_ir::ir::{
-    BlockId, CallTarget, IrFunction, IrModule, Instruction, Terminator, VarId,
+    BlockId, CallTarget, IrFunction, IrModule, Instruction, VarId,
 };
 use crate::term_layout::*;
 

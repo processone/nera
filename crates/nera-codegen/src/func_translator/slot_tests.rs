@@ -1,5 +1,5 @@
 use super::*;
-use nera_ir::lower::IrBuilder;
+use nera_ir::{ir::Terminator, lower::IrBuilder};
 use nera_syntax::parser::Parser;
 
 #[test]
