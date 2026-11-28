@@ -57,10 +57,12 @@ that a preceding complete line still arrives with its terminator before
 `tcp_closed`, and that a tail on its own produces only `tcp_closed`, including
 when `{active, once}` is armed after the peer closes.
 
-Before the fix, Nera delivered the tail as an extra `tcp` message in all
-four cases. On Linux x86_64, Erlang/OTP 27.3.4.6 matches the expected mailbox
-sequences with both the `inet` and `socket` backends. Reproduce with a freshly
-built Nera runtime and compiler (Rust 1.100.0) and the same fixture on BEAM:
+On Linux x86_64, the native Nera reactor delivered the tail as an extra
+`tcp` message in all four cases before the fix. After the fix, the reactor
+matched Erlang/OTP 27.3.4.6 with both the `inet` and `socket` backends:
+`STATUS\r\n` followed by `tcp_closed` in the complete-line case, and only
+`tcp_closed` in the three tail-only cases. Reproduce with a freshly built
+Nera runtime and compiler (Rust 1.100.0) and the same fixture on BEAM:
 
 ```sh
 ./target/release/nera test tcp_line_close -j 1 --timeout 30
@@ -74,8 +76,9 @@ rm -rf "$beam_dir"
 ```
 
 Every successful run prints `tcp_line_close_ok` after checking all four
-mailbox sequences. This does not establish passive line framing or behavior
-when re-arming a still-open line socket with an already-buffered prefix.
+mailbox sequences. This does not establish non-reactor mailbox behavior,
+passive line framing, or behavior when re-arming a still-open line socket
+with an already-buffered prefix.
 
 ## proc_lib startup failure regression
 

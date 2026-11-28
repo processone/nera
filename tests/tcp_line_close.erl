@@ -36,7 +36,13 @@ maybe_arm(_Socket, _Mode, _Arm, _When) -> ok.
 until_close(Socket, Acc) ->
     receive
         {tcp, Socket, Data} -> until_close(Socket, [{tcp, Data} | Acc]);
-        {tcp_closed, Socket} -> lists:reverse([tcp_closed | Acc]);
+        {tcp_closed, Socket} ->
+            receive
+                Extra when element(2, Extra) =:= Socket ->
+                    erlang:error({message_after_close, Extra})
+            after 0 -> ok
+            end,
+            lists:reverse([tcp_closed | Acc]);
         {tcp_error, Socket, Reason} -> lists:reverse([{tcp_error, Reason} | Acc])
     after 2000 ->
         lists:reverse([timeout | Acc])

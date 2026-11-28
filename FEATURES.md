@@ -398,9 +398,9 @@ Socket handles are plain integers (GC-safe). Blocking I/O operations are
 dispatched to an async I/O thread pool so scheduler threads stay free for
 CPU-bound process reductions. Active-mode sockets (`{active, once}`) deliver
 `{tcp, Socket, Data}` messages to the controlling process. In `{packet, line}`
-mode each message is one line with its `"\r\n"` or `"\n"`, as on BEAM. When
-an active line socket's peer closes, the receiver gets `{tcp_closed, Socket}`
-without a data message for any unterminated tail.
+mode each complete line keeps its `"\r\n"` or `"\n"`, as on BEAM. On the
+reactor path, an active line socket sends `{tcp_closed, Socket}` at peer close
+without delivering an unterminated tail.
 On the mio reactor path, queued and in-flight registration commands keep the
 scheduler alive until registration completes or fails. This includes active
 TCP registration before any readiness event exists.

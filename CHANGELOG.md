@@ -40,10 +40,9 @@ All notable milestones for the nera project are documented in this file.
 
 ## Active TCP line sockets discard incomplete lines at close
 
-- When the peer closes an active `{packet, line}` socket, Nera sends
-  `{tcp_closed, Socket}` without delivering an unterminated last line, as
-  BEAM does. Any complete lines it delivers before the close still carry
-  their terminators.
+- On the TCP reactor path, peer close on an active `{packet, line}` socket
+  sends `{tcp_closed, Socket}` without delivering an unterminated last line,
+  as BEAM does. Complete lines delivered before close keep their terminators.
 
 ## TCP receive deadlines
 
