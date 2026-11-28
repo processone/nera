@@ -763,9 +763,9 @@ pub fn send(stream_handle: SocketHandle, data: &[u8]) -> io::Result<()> {
 }
 
 /// Read from a stream socket up to and including the next newline (`\n`).
-/// The line keeps its `"\n"` or `"\r\n"` terminator, as BEAM delivers a
-/// `{packet, line}` line. Safety limit: stops after 300,000 bytes to
-/// prevent unbounded reads.
+/// Keep the line terminator and discard an unterminated tail at EOF, as
+/// BEAM does. Safety limit: stops after 300,000 bytes to prevent unbounded
+/// reads.
 pub fn recv_line(stream_handle: SocketHandle) -> io::Result<Vec<u8>> {
     let mut line = Vec::new();
     let mut byte = [0u8; 1];
@@ -774,13 +774,7 @@ pub fn recv_line(stream_handle: SocketHandle) -> io::Result<Vec<u8>> {
     loop {
         let n = recv_into(stream_handle, &mut byte)?;
         if n == 0 {
-            if line.is_empty() {
-                return Err(io::Error::new(
-                    io::ErrorKind::ConnectionAborted,
-                    "closed",
-                ));
-            }
-            return Ok(line);
+            return Err(io::Error::new(io::ErrorKind::ConnectionAborted, "closed"));
         }
         line.push(byte[0]);
         if byte[0] == b'\n' || line.len() >= MAX_LINE {
@@ -1127,10 +1121,10 @@ mod tests {
         assert!(remove(h_new));
     }
 
-    /// The `{packet, line}` reader that delivers active-mode lines where the
-    /// reactor is unavailable: each line keeps its terminator, as on BEAM.
+    /// The non-reactor active line reader must keep terminators and discard
+    /// an unterminated tail at peer EOF, as BEAM does.
     #[test]
-    fn recv_line_keeps_each_line_terminator() {
+    fn recv_line_delivers_only_complete_lines_at_eof() {
         use std::io::Write;
         let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
         let mut client = std::net::TcpStream::connect(listener.local_addr().unwrap()).unwrap();
@@ -1139,14 +1133,15 @@ mod tests {
         #[cfg(mio_supported)]
         let server = mio::net::TcpStream::from_std(server);
         let handle = register(Socket::Stream(Arc::new(server))).unwrap();
-        client.write_all(b"P\r\nQ\n\n\r\n").unwrap();
+        client.write_all(b"P\r\nQ\n\n\r\nQUIT\r").unwrap();
         client.shutdown(std::net::Shutdown::Write).unwrap();
         assert_eq!(recv_line(handle).unwrap(), b"P\r\n");
         assert_eq!(recv_line(handle).unwrap(), b"Q\n");
         assert_eq!(recv_line(handle).unwrap(), b"\n");
         assert_eq!(recv_line(handle).unwrap(), b"\r\n");
-        assert_eq!(recv_line(handle).unwrap_err().kind(), io::ErrorKind::ConnectionAborted);
+        let eof = recv_line(handle);
         assert!(remove(handle));
+        assert_eq!(eof.unwrap_err().kind(), io::ErrorKind::ConnectionAborted);
     }
 
     // ---------------------------------------------------------------
