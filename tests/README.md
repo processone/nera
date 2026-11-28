@@ -501,6 +501,7 @@ These are automatically skipped by the runner and show up as SKIP in output.
 
 | Test File                 | Feature Category                          | Assertions |
 |---------------------------|-------------------------------------------|------------|
+| `tcp_line_close.erl` | On the reactor path, peer close discards an incomplete last line on an active `{packet, line}` socket. A complete preceding line arrives before `tcp_closed`; no further socket message is already queued. Covers `{active, true}` and `{active, once}` armed before sending or after peer close; also runnable on BEAM | 4 cases |
 | `tcp_line_terminator.erl` | An active `{packet, line}` socket delivers each line with its `"\r\n"` or `"\n"`: `{active, once}` armed before the data arrives and while it is waiting, then a passive recv of the rest; `{active, true}` with several lines and empty lines in one write, and lines split across writes, one between `"\r"` and `"\n"`; a partial line completed by a later write; also run on BEAM | 5 cases |
 
 ### OTP Behaviours
