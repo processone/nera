@@ -38,6 +38,13 @@ All notable milestones for the nera project are documented in this file.
 - Timeout cleanup waits for child termination and removes only that child's
   startup monitor and exit signals, preserving unrelated mailbox messages.
 
+## Active TCP line sockets discard incomplete lines at close
+
+- When the peer closes an active `{packet, line}` socket, Nera sends
+  `{tcp_closed, Socket}` without delivering an unterminated last line, as
+  BEAM does. Any complete lines it delivers before the close still carry
+  their terminators.
+
 ## TCP receive deadlines
 
 - `gen_tcp:recv/3` now returns `{error, timeout}` when its finite timeout

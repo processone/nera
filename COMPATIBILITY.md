@@ -49,6 +49,34 @@ a dependency, or using the editor tools does not establish runtime compatibility
 Dated Thoas sections below preserve historical evidence; the table above and
 the integration README summary define the current verdict.
 
+## Active TCP line close regression
+
+`tests/tcp_line_close.erl` compares the Erlang mailbox messages when a peer
+closes an active `{packet, line}` socket with an unterminated tail. It checks
+that a preceding complete line still arrives with its terminator before
+`tcp_closed`, and that a tail on its own produces only `tcp_closed`, including
+when `{active, once}` is armed after the peer closes.
+
+Before the fix, Nera delivered the tail as an extra `tcp` message in all
+four cases. On Linux x86_64, Erlang/OTP 27.3.4.6 matches the expected mailbox
+sequences with both the `inet` and `socket` backends. Reproduce with a freshly
+built Nera runtime and compiler (Rust 1.100.0) and the same fixture on BEAM:
+
+```sh
+./target/release/nera test tcp_line_close -j 1 --timeout 30
+beam_dir=$(mktemp -d)
+erlc -o "$beam_dir" tests/tcp_line_close.erl
+for backend in inet socket; do
+    erl -kernel inet_backend "$backend" -noshell -pa "$beam_dir" \
+        -eval 'ok = tcp_line_close:test(), halt().'
+done
+rm -rf "$beam_dir"
+```
+
+Every successful run prints `tcp_line_close_ok` after checking all four
+mailbox sequences. This does not establish passive line framing or behavior
+when re-arming a still-open line socket with an already-buffered prefix.
+
 ## proc_lib startup failure regression
 
 On macOS arm64 with Rust 1.99.0 and Erlang/OTP 29.1.2, the same

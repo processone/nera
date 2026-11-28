@@ -745,24 +745,12 @@ fn handle_active_read_on_worker(
             }
         }
         if got_eof {
-            // Deliver any remaining partial line before tcp_closed,
-            // matching BEAM behavior for incomplete lines at EOF.
-            if !line_buf.is_empty() {
-                let end = if line_buf.last() == Some(&b'\r') {
-                    line_buf.len() - 1
-                } else {
-                    line_buf.len()
-                };
-                if end > 0 {
-                    build_tcp_data(proc, stream_handle, &line_buf[..end]);
-                }
-                line_buf.clear();
-            }
+            // BEAM discards any bytes that never reached a newline at EOF.
             build_tcp_closed(proc, stream_handle);
             crate::socket::set_active_local(stream_handle, ActiveMode::Passive);
+        } else {
+            crate::socket::set_line_buffer(stream_handle, line_buf);
         }
-        // Save any remaining partial-line data for the next event.
-        crate::socket::set_line_buffer(stream_handle, line_buf);
     } else {
         // ── Raw mode: consume whatever is available ──
         let mut buf = [0u8; 4096];
